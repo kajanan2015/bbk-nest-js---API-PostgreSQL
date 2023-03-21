@@ -1,45 +1,121 @@
-**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**
+# Nest.js Auth Sample
 
-When you're done, you can delete the content in this README and update the file with details for others getting started with your repository.
+A starter library for authentication using email/password to sign in and JWT for API access. Based on the example from the [NestJS Authentication docs](https://docs.nestjs.com/techniques/authentication). [Repo](https://github.com/nestjs/nest/tree/master/sample/19-auth-jwt).
 
-*We recommend that you open this README in another tab as you perform the tasks below. You can [watch our video](https://youtu.be/0ocf7u76WSo) for a full demo of all the steps in this tutorial. Open the video in a new tab to avoid leaving Bitbucket.*
+**Note that you should not use this in production as is**. At the very least you should:
+ - switch to https
+ - change the JWT signing algorithm to use certificates (RS256) 
 
----
+## Quick Start
 
-## Edit a file
+```bash
+git clone git@github.com:nowzoo/nest-js-auth-starter.git
+cd nest-js-auth-starter
+npm i
+```
 
-You’ll start by editing this README file to learn how to edit a file in Bitbucket.
+### Set up the database
 
-1. Click **Source** on the left side.
-2. Click the README.md link from the list of files.
-3. Click the **Edit** button.
-4. Delete the following text: *Delete this line to make a change to the README from Bitbucket.*
-5. After making your change, click **Commit** and then **Commit** again in the dialog. The commit page will open and you’ll see the change you just made.
-6. Go back to the **Source** page.
+Take a look at the database setup in [src/database/database.providers.ts](https://github.com/nowzoo/nest-js-auth-starter/blob/master/src/database/database.providers.ts). The library is set up top use a MySQL/MariaDb database named `nest_auth_demo` with the root user and no password. At a minimum, you need to create the database:
 
----
+```bash
+mysql -uroot
+CREATE DATABASE nest_auth_demo;
+```
 
-## Create a file
+### Start the server
 
-Next, you’ll add a new file to this repository.
+```bash
+npm run start:dev
+```
 
-1. Click the **New file** button at the top of the **Source** page.
-2. Give the file a filename of **contributors.txt**.
-3. Enter your name in the empty file space.
-4. Click **Commit** and then **Commit** again in the dialog.
-5. Go back to the **Source** page.
 
-Before you move on, go ahead and explore the repository. You've already seen the **Source** page, but check out the **Commits**, **Branches**, and **Settings** pages.
+## Endpoints 
 
----
+Note that out of the box the app runs on port `3001` (not `3000`).
 
-## Clone a repository
+### Sign Up
 
-Use these steps to clone from SourceTree, our client for using the repository command-line free. Cloning allows you to work on your files locally. If you don't yet have SourceTree, [download and install first](https://www.sourcetreeapp.com/). If you prefer to clone from the command line, see [Clone a repository](https://confluence.atlassian.com/x/4whODQ).
+`POST /auth/sign-up`  
 
-1. You’ll see the clone button under the **Source** heading. Click that button.
-2. Now click **Check out in SourceTree**. You may need to create a SourceTree account or log in.
-3. When you see the **Clone New** dialog in SourceTree, update the destination path and name if you’d like to and then click **Clone**.
-4. Open the directory you just created to see your repository’s files.
+Sign up a new user. Provide `name`, `email` and `password` as JSON.
 
-Now that you're more familiar with your Bitbucket repository, go ahead and add a new file locally. You can [push your change back to Bitbucket with SourceTree](https://confluence.atlassian.com/x/iqyBMg), or you can [add, commit,](https://confluence.atlassian.com/x/8QhODQ) and [push from the command line](https://confluence.atlassian.com/x/NQ0zDQ).
+```bash
+curl -X POST http://localhost:3001/auth/sign-up -d '{"name": "Foo Bar", "email": "foo@bar.com", "password": "changeme"}' -H "Content-Type: application/json" 
+```
+This returns the access token on success:
+```json
+{"access_token":"..."}
+```
+
+If the user already exists by email address you'll get an `auth/account-exists` error...
+
+```json
+{"statusCode":400,"error":"Bad Request","message":"auth/account-exists"}
+```
+
+### Sign In
+
+`POST /auth/sign-in`  
+
+Sign in with an existing user's email and password. Provide `email` and `password` as JSON.
+
+```bash
+curl -X POST http://localhost:3001/auth/sign-in -d '{"email": "foo@bar.com", "password": "changeme"}' -H "Content-Type: application/json" 
+```
+
+This returns the access token on success:
+
+```json
+{"access_token":"..."}
+```
+
+
+
+If the user does not exist by email you'll get an `auth/account-not-found` error.
+```bash
+curl -X POST http://localhost:3001/auth/sign-in -d '{"email": "notauser@bar.com", "password": "changeme"}' -H "Content-Type: application/json" 
+```
+
+```json
+{"statusCode":400,"error":"Bad Request","message":"auth/account-not-found"}
+```
+
+If the wrong password is supplied you'll get an `auth/wrong-password` error.
+
+```bash
+curl -X POST http://localhost:3001/auth/sign-in -d '{"email": "foo@bar.com", "password": "wrong"}' -H "Content-Type: application/json" 
+```
+```json 
+{"statusCode":400,"error":"Bad Request","message":"auth/wrong-password"}
+```
+
+
+
+### Profile 
+
+`GET /profile` 
+
+An api route protected by a JWT. Provide the token (fetched from one of the other two endpoints) in the request header.
+
+```bash
+# Note the token is truncated below.
+curl http://localhost:3001/profile -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI..."
+```
+
+Result:
+
+```json
+{"id":2,"email":"foo@bar.com","name":"Foo Bar"}
+```
+
+A bad or missing token will result in:
+
+```json
+{"statusCode":401,"error":"Unauthorized"}
+```
+
+
+
+
+
