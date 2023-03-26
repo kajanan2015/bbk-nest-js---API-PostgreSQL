@@ -8,6 +8,8 @@ import { AppService } from "./app.service";
 import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./user/user.module";
 import { CommonModule } from "./common/common.module";
+import { CompaniesModule } from "./companies/companies.module";
+
 
 import { MailModule } from './mail/mail.module';
 
@@ -24,6 +26,7 @@ const settings = require("../ormconfig.js");
     AuthModule,
     UserModule,
     CommonModule,
+    CompaniesModule,
     MailModule,
   ],
   controllers: [AppController],
