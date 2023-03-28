@@ -3,6 +3,9 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../user/user.service';
 import { User } from '../user/user.entity';
 import * as bcrypt from 'bcryptjs';
+import { Repository, UpdateResult } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { AuthEntity } from './auth.entity';
 
 
 @Injectable()
@@ -10,6 +13,8 @@ export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    @InjectRepository(AuthEntity)
+    private readonly authRepository: Repository<AuthEntity>,
   ) {}
 
   async signIn(email: string, password: string): Promise<User> {
@@ -63,8 +68,14 @@ export class AuthService {
       user
     };
   }
-
-  async login(user: User) {
+// ip saving process added by nuwan and kanjanan
+  async login(user: User, ip) {
+    const data = {
+      username:user.email,
+      ipAddress:ip,
+      userid:user.id
+    };
+    await this.authRepository.save(data)
     const payload = { utype: user.utype, name: user.name, email: user.email, sub: user.id  , bisDis: user.bisDis ,  bisName: user.bisName , bisLoc: user.bisLoc ,  notDis: user.notDis ,   phone: user.phone ,   contactmethod: user.contactmethod ,   telephone: user.telephone} ;
 
     
