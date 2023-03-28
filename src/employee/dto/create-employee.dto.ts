@@ -1,4 +1,4 @@
-import { CompaniesEntity } from "src/companies/entity/companies.entity";
+import { CompaniesEntity } from "src/companies/companies.entity";
 
 export class CreateEmployeeDto {
     id: number;

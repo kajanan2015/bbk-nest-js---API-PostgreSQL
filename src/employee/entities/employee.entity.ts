@@ -1,6 +1,6 @@
 import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { CompaniesEntity } from 'src/companies/entity/companies.entity';
+import { CompaniesEntity } from 'src/companies/companies.entity';
 
 @Entity()
 export class Employee  {

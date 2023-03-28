@@ -9,9 +9,9 @@ import {
     HttpStatus,
     Patch,
   } from '@nestjs/common';
+import { CompaniesDTO } from './companies.dto';
 
   import { CompaniesService } from './companies.service';
-  import { CompaniesDTO } from './dto/companies.dto';
 
   @Controller('companies')
   export class CompaniesController {
