@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Employee } from 'src/employee/entities/employee.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
 @Entity('company')
 export class CompaniesEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
@@ -6,6 +7,9 @@ export class CompaniesEntity {
 
   @Column("varchar", { name: "name", nullable: true, length: 30 })
   name: string | null;
+
+  @Column({ type: 'boolean' })
+  status: Boolean;
 
   @Column("int", { name: "creaby", nullable: true })
   creaby: number;
@@ -19,5 +23,6 @@ export class CompaniesEntity {
   @Column("timestamp", { name: "updatedat", default: () => "CURRENT_TIMESTAMP" })
   updatedat: Date;
 
- 
+  @ManyToMany(() => Employee, (employee) => employee.companies)
+  employees: Employee[];
 }
