@@ -8,7 +8,7 @@ export class CompaniesEntity {
   @Column("varchar", { name: "name", nullable: true, length: 30 })
   name: string | null;
 
-  @Column({ type: 'boolean' })
+  @Column({ type: 'boolean', default:true})
   status: Boolean;
 
   @Column("int", { name: "creaby", nullable: true })
