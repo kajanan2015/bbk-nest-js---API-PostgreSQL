@@ -7,10 +7,11 @@ import {
     Body,
     Param,
     HttpStatus,
+    Patch,
   } from '@nestjs/common';
 
   import { CompaniesService } from './companies.service';
-  import { CompaniesDTO } from './companies.dto';
+  import { CompaniesDTO } from './dto/companies.dto';
 
   @Controller('companies')
   export class CompaniesController {
@@ -27,10 +28,10 @@ import {
 
     @Post()
     async create(@Body() data: CompaniesDTO) {
-       const user = await this.service.create(data);
+       const company = await this.service.create(data);
       return {
         statusCode: HttpStatus.OK,
-        user
+        company
       };
     }
 
@@ -49,16 +50,7 @@ import {
       await this.service.update(id, data);
       return {
         statusCode: HttpStatus.OK,
-        message: 'User updated successfully',
-      };
-    }
-
-    @Delete('/delete/:id')
-    async delete(@Param('id') id: number) {
-      await this.service.destroy(id);
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'User deleted successfully',
+        message: 'Company updated successfully',
       };
     }
   }

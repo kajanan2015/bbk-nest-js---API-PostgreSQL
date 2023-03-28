@@ -1,46 +1,55 @@
-import { Injectable, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpStatus, NotFoundException } from '@nestjs/common';
     import { InjectRepository } from '@nestjs/typeorm';
     import { Repository } from 'typeorm';
 
-    import { CompaniesEntity } from './companies.entity';
-    import { CompaniesDTO } from './companies.dto';
+    import { CompaniesEntity } from './entity/companies.entity';
+    import { CompaniesDTO } from './dto/companies.dto';
 
     @Injectable()
     export class CompaniesService {
       constructor(
         @InjectRepository(CompaniesEntity)
-        private usersRepository: Repository<CompaniesEntity>,
+        private companyRepository: Repository<CompaniesEntity>,
       ) {}
 
       async showAll() {
-        return await this.usersRepository.find();
+        return await this.companyRepository.find();
       }
 
       async create(data: CompaniesDTO) {
-        const user = this.usersRepository.create(data);
-        await this.usersRepository.save(data);
-        return user;
+        const company = this.companyRepository.create(data);
+        await this.companyRepository.save(data);
+        return company;
       }
 
       async findByEmail(email: string): Promise<CompaniesDTO> {
-        return await this.usersRepository.findOne({
+        return await this.companyRepository.findOne({
           where: {
             email: email,
           },
         });
       }
 
+      async findByName(name: string): Promise<CompaniesEntity> {
+        const company = await this.companyRepository.findOne({ name });
+        if (!company) {
+          throw new NotFoundException(`Company with name '${name}' not found`);
+        }
+        return company;
+      }
+      
       async read(id: number) {
-        return await this.usersRepository.findOne({ where: { id: id } });
+        return await this.companyRepository.findOne({ where: { id: id } });
       }
 
       async update(id: number, data: Partial<CompaniesDTO>) {
-        await this.usersRepository.update({ id }, data);
-        return await this.usersRepository.findOne({ id });
+        await this.companyRepository.update({ id }, data);
+        return await this.companyRepository.findOne({ id });
       }
 
       async destroy(id: number) {
-        await this.usersRepository.delete({ id });
+        await this.companyRepository.delete({ id });
         return { deleted: true };
       }
+    
     }
