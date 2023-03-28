@@ -37,6 +37,9 @@ export class Employee  {
   @Column("varchar", { nullable: true , length: 30 })
   country: string;
   
+  @Column()
+  status: Number;
+
   @ManyToMany(() => CompaniesEntity, (company) => company.employees)
   @JoinTable()
   companies: CompaniesEntity[];

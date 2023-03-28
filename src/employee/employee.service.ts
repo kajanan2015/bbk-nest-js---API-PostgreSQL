@@ -1,3 +1,4 @@
+//by Abi - 28/03/2023
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CompaniesService } from 'src/companies/companies.service';
@@ -14,19 +15,10 @@ export class EmployeeService {
     private readonly companiesService: CompaniesService,
   ) {}
 
+  //create employee
   async create(createEmployeeDto: CreateEmployeeDto) {
-    const employee = new Employee();
-    employee.firstName = createEmployeeDto.firstName;
-    employee.middleName = createEmployeeDto.middleName;
-    employee.lastName = createEmployeeDto.lastName;
-    employee.employeeNumber = createEmployeeDto.employeeNumber;
-    employee.dob = createEmployeeDto.dob;
-    employee.address = createEmployeeDto.address;
-    employee.email = createEmployeeDto.email;
-    employee.phone = createEmployeeDto.phone;
-    employee.nationality = createEmployeeDto.nationality;
-    employee.country = createEmployeeDto.country;
-    
+    const employee = Object.assign(new Employee(), createEmployeeDto);
+
     const companies = [];
     for (const companyName of createEmployeeDto.companies) {
       const company = await this.companiesService.findByName(companyName.name);
@@ -40,19 +32,40 @@ export class EmployeeService {
     return this.employeeRepository.save(employee);
   }
   
-  findAll() {
-    return `This action returns all employee`;
+  //edit employee
+  async update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
+    const employee = await this.employeeRepository.findOne(id);
+    if (!employee) {
+      throw new NotFoundException(`Employee with ID '${id}' not found`);
+    }
+  
+    Object.assign(employee, updateEmployeeDto);
+  
+    const companies = [];
+    for (const companyName of updateEmployeeDto.companies) {
+      const company = await this.companiesService.findByName(companyName.name);
+      if (!company) {
+        throw new NotFoundException(`Company with name '${companyName}' not found`);
+      }
+      companies.push(company);
+    }
+    employee.companies = companies;
+  
+    return this.employeeRepository.save(employee);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} employee`;
+  //get all employee
+  async findAll(): Promise<Employee[]> {
+    return this.employeeRepository.find();
   }
 
-  update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
-    return `This action updates a #${id} employee`;
-  }
+  //get employee by id
+  async findOne(id: number): Promise<Employee> {
+    const employee = await this.employeeRepository.findOne(id, { relations: ['companies'] });
+    if (!employee) {
+      throw new NotFoundException(`Employee with ID '${id}' not found`);
+    }
+    return employee;
+  } 
 
-  remove(id: number) {
-    return `This action removes a #${id} employee`;
-  }
 }
