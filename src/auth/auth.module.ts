@@ -8,9 +8,11 @@ import { LocalSignUpStrategy } from './strategies/local-sign-up.strategy';
 import { LocalSignInStrategy } from './strategies/local-sign-in.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthController } from './auth.controller';
-
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthEntity } from './auth.entity';
 @Module({
   imports: [
+    TypeOrmModule.forFeature([AuthEntity]),
     UserModule,
     PassportModule,
     JwtModule.register({

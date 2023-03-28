@@ -7,17 +7,20 @@ import { User } from '../user/user.entity';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
-
+// ip saving process added by nuwan and kanjanan
   @UseGuards(AuthGuard('local-sign-up'))
   @Post('sign-up')
   async signUp(@Req() req: Request) {
-    return this.authService.login(req.user as User);
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    return this.authService.login(req.user as User,ip);
   }
-
+// ip saving process added by nuwan and kanjanan
   @UseGuards(AuthGuard('local-sign-in'))
   @Post('sign-in')
   async login(@Req() req: Request) {
-    return this.authService.login(req.user as User);
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    return this.authService.login(req.user as User,ip);
+    
   }
 
 

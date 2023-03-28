@@ -1,3 +1,4 @@
+// added by nuwan and kanjanan
 import {
   Entity,
   Column,
@@ -5,35 +6,23 @@ import {
   BeforeInsert,
   BeforeUpdate,
 } from "typeorm";
-import { Request } from "express";
-import { IpAddressMiddleware } from "./auth.middlewareware";
 
-@Entity()
-export class User {
+
+@Entity('userloginip')
+export class AuthEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   username: string;
 
-  @Column({ nullable: true })
-  lastLoginTime: Date;
-
+  @Column()
+  userid: number;
 
   @Column({ nullable: true })
   ipAddress: string;
 
-  @BeforeInsert()
-  async setLoginTimeAndIpOnCreate() {
-    const request: Request = IpAddressMiddleware.getRequest();
-    this.lastLoginTime = new Date();
-    this.ipAddress = request.ipAddress;
-  }
+  @Column("timestamp", { name: "loginat", default: () => "CURRENT_TIMESTAMP" })
+  createdat: Date;
 
-  @BeforeUpdate()
-  async setLoginTimeAndIpOnUpdate() {
-    const request: Request = IpAddressMiddleware.getRequest();
-    this.lastLoginTime = new Date();
-    this.ipAddress = request.ipAddress;
-  }
 }
