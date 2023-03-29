@@ -1,9 +1,9 @@
 //by Abi - 28/03/2023
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Put } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
-import { CreateEmployeeDto } from './dto/create-employee.dto';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import { Employee } from './entities/employee.entity';
+import { CreateEmployeeDto } from './create-employee.dto';
+import { UpdateEmployeeDto } from './update-employee.dto';
+import { Employee } from './employee.entity';
 
 @Controller('employee')
 export class EmployeeController {
