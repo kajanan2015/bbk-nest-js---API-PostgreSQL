@@ -40,6 +40,12 @@ export class Employee  {
   @Column()
   status: Number;
 
+  @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
+  createdat: Date;
+
+  @Column("timestamp", { name: "updatedat", default: () => "CURRENT_TIMESTAMP" })
+  updatedat: Date;
+
   @ManyToMany(() => CompaniesEntity, (company) => company.employees)
   @JoinTable()
   companies: CompaniesEntity[];

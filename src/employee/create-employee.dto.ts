@@ -12,5 +12,8 @@ export class CreateEmployeeDto {
     phone: string;
     nationality: string;
     country: string;
+    status:Boolean;
+    createdat:Date;
+    updatedat:Date;
     companies: CompaniesEntity[];
 }
