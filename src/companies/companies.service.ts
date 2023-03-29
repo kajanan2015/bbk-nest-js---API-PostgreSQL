@@ -12,7 +12,9 @@ import { CompaniesEntity } from './companies.entity';
       ) {}
 
       async showAll() {
-        return await this.companyRepository.find();
+        return await this.companyRepository.find(
+          { where: { status: 1 } }
+        );
       }
 
       async create(data: CompaniesDTO) {
