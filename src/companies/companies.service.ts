@@ -21,12 +21,8 @@ import { CompaniesEntity } from './companies.entity';
         return company;
       }
 
-      async findByEmail(email: string): Promise<CompaniesDTO> {
-        return await this.companyRepository.findOne({
-          where: {
-            email: email,
-          },
-        });
+      async findById(id: number): Promise<CompaniesDTO> {
+        return await this.companyRepository.findOne({ id });
       }
 
       async findByName(name: string): Promise<CompaniesEntity> {

@@ -37,8 +37,8 @@ export class Employee  {
   @Column("varchar", { nullable: true , length: 30 })
   country: string;
   
-  @Column()
-  status: Number;
+  @Column({ type: 'boolean', default:true })
+  status: boolean;
 
   @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
   createdat: Date;

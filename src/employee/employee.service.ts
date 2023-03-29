@@ -4,8 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CompaniesService } from 'src/companies/companies.service';
 import { Repository } from 'typeorm';
 import { CreateEmployeeDto } from './create-employee.dto';
-import { UpdateEmployeeDto } from './update-employee.dto';
 import { Employee } from './employee.entity';
+import { UpdateEmployeeDto } from './update-employee.dto';
 
 @Injectable()
 export class EmployeeService {
@@ -21,11 +21,11 @@ export class EmployeeService {
 
     const companies = [];
     for (const companyName of createEmployeeDto.companies) {
-      const company = await this.companiesService.findByName(companyName.name);
+      const company = await this.companiesService.findById(companyName.id);
       if (!company) {
         throw new NotFoundException(`Company with name '${companyName}' not found`);
       }
-      companies.push(company);
+      companies.push(company.id);
     }
     employee.companies = companies;
   
@@ -44,11 +44,11 @@ export class EmployeeService {
   
     const companies = [];
     for (const companyName of updateEmployeeDto.companies) {
-      const company = await this.companiesService.findByName(companyName.name);
+      const company = await this.companiesService.findById(companyName.id);
       if (!company) {
         throw new NotFoundException(`Company with name '${companyName}' not found`);
       }
-      companies.push(company);
+      companies.push(company.id);
     }
     employee.companies = companies;
   
