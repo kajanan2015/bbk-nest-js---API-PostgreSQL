@@ -21,11 +21,11 @@ export class EmployeeService {
 
     const companies = [];
     for (const companyName of createEmployeeDto.companies) {
-      const company = await this.companiesService.findById(companyName.id);
-      if (!company) {
-        throw new NotFoundException(`Company with name '${companyName}' not found`);
-      }
-      companies.push(company.id);
+      // const company = await this.companiesService.findById(companyName.id);
+      // if (!company) {
+      //   throw new NotFoundException(`Company with name '${companyName}' not found`);
+      // }
+      companies.push(companyName.id);
     }
     employee.companies = companies;
   
@@ -44,11 +44,11 @@ export class EmployeeService {
   
     const companies = [];
     for (const companyName of updateEmployeeDto.companies) {
-      const company = await this.companiesService.findById(companyName.id);
-      if (!company) {
-        throw new NotFoundException(`Company with name '${companyName}' not found`);
-      }
-      companies.push(company.id);
+      // const company = await this.companiesService.findById(companyName.id);
+      // if (!company) {
+      //   throw new NotFoundException(`Company with name '${companyName}' not found`);
+      // }
+      companies.push(companyName.id);
     }
     employee.companies = companies;
   
