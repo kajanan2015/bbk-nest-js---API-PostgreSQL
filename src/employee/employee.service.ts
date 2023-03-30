@@ -30,6 +30,7 @@ export class EmployeeService {
       companies.push(company);
     }
     employee.companies = companies;
+    // added by nuwan 
     const existing = await this.userService.findByEmail(createEmployeeDto.email);
     if (existing) {
       throw new BadRequestException('auth/account-exists');
@@ -63,7 +64,7 @@ export class EmployeeService {
 
   //get all employee
   async findAll(): Promise<Employee[]> {
-    return this.employeeRepository.find();
+    return this.employeeRepository.find({ relations: ['companies'] });
   }
 
   //get employee by id
