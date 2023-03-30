@@ -38,7 +38,7 @@ export class Employee  {
   country: string;
   
   @Column({ type: 'boolean', default:true})
-  status: Boolean;
+  employeeStatus: Boolean;
 
   @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
   createdat: Date;

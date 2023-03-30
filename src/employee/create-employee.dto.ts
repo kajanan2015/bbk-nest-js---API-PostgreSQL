@@ -12,7 +12,7 @@ export class CreateEmployeeDto {
     phone: string;
     nationality: string;
     country: string;
-    status: Boolean;
+    employeeStatus: Boolean;
     createdat:Date;
     updatedat:Date;
     companies: CompaniesEntity[];
