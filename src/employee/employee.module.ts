@@ -7,9 +7,10 @@ import { Employee } from './employee.entity';
 
 import { CompaniesService } from 'src/companies/companies.service';
 import { CompaniesEntity } from 'src/companies/companies.entity';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Employee, CompaniesEntity]), CompaniesModule],
+  imports: [TypeOrmModule.forFeature([Employee, CompaniesEntity]), CompaniesModule, UserModule],
   controllers: [EmployeeController],
   providers: [EmployeeService, CompaniesService]
 })

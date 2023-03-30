@@ -15,5 +15,6 @@ export class CreateEmployeeDto {
     employeeStatus: Boolean;
     createdat:Date;
     updatedat:Date;
+    password: string;
     companies: CompaniesEntity[];
 }
