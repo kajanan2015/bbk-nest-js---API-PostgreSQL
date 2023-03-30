@@ -23,11 +23,12 @@ export class UserService {
   async findByEmail(email: string): Promise<User> {
     return await this.userRepository.findOne({ where: { email } });
   }
-
-  async create(name: string, email: string, password: string): Promise<User> {
+// we added same login for employee and admin, we need to identify uniquly employee data, that why we pass employee id
+  async create(name: string, email: string, password: string, employee_id:number): Promise<User> {
     const user = new User();
     user.name = name;
     user.email = email;
+    user.emp_id=employee_id;
     user.password = await this.hashPassword(password);
     return await this.userRepository.save(user);
   }

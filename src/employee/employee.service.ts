@@ -30,14 +30,16 @@ export class EmployeeService {
       companies.push(company);
     }
     employee.companies = companies;
-    // added by nuwan 
-    const existing = await this.userService.findByEmail(createEmployeeDto.email);
-    if (existing) {
-      throw new BadRequestException('auth/account-exists');
-    }
-    await this.userService.create(createEmployeeDto.firstName, createEmployeeDto.email, createEmployeeDto.password);
-    return this.employeeRepository.save(employee);
-  }
+     // added by nuwan
+     const existing = await this.userService.findByEmail(createEmployeeDto.email);
+     if (existing) {
+       throw new BadRequestException('auth/account-exists');
+     }
+     const response=await this.employeeRepository.save(employee);
+     const employee_id=response.id;
+     await this.userService.create(createEmployeeDto.firstName, createEmployeeDto.email, createEmployeeDto.password, employee_id);
+     return this.employeeRepository.save(employee);
+   }
   
   //edit employee
   async update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
