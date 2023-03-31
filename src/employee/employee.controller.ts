@@ -20,9 +20,20 @@ export class EmployeeController {
   }
 
   //edit employee
-  @Put(':id')
+  @Patch(':id')
   update(@Param('id') id: number, @Body() updateEmployeeDto: UpdateEmployeeDto) {
     return this.employeeService.update(+id, updateEmployeeDto);
+  }
+
+  @Patch('status/:id')
+  async updateEmployeeStatus(
+    @Param('id') id: number,
+    @Body() updateEmployeeStatusDto: UpdateEmployeeDto,
+  ): Promise<void> {
+    await this.employeeService.updateEmployeeStatus(
+      id,
+      updateEmployeeStatusDto.employeeStatus.toString(),
+    );
   }
 
   //get all employee

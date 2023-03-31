@@ -39,7 +39,7 @@ export class EmployeeService {
      const employee_id=response.id;
      await this.userService.create(createEmployeeDto.firstName, createEmployeeDto.email, createEmployeeDto.password, employee_id);
      return this.employeeRepository.save(employee);
-   }
+  }
   
   //edit employee
   async update(id: number, updateEmployeeDto: UpdateEmployeeDto) {
@@ -62,6 +62,16 @@ export class EmployeeService {
     employee.companies = companies;
   
     return this.employeeRepository.save(employee);
+  }
+
+  //update employee status
+  async updateEmployeeStatus(id: number, employeeStatus: string): Promise<void> {
+    await this.employeeRepository
+      .createQueryBuilder()
+      .update(Employee)
+      .set({ employeeStatus: employeeStatus })
+      .where({id:id})
+      .execute();
   }
 
   //get all employee

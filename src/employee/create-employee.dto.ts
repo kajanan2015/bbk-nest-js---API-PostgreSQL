@@ -12,7 +12,7 @@ export class CreateEmployeeDto {
     phone: string;
     nationality: string;
     country: string;
-    employeeStatus: Boolean;
+    employeeStatus: boolean;
     createdat:Date;
     updatedat:Date;
     password: string;
