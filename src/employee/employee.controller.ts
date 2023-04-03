@@ -20,7 +20,7 @@ export class EmployeeController {
   }
 
   //edit employee
-  @Patch(':id')
+  @Put('edit/:id')
   update(@Param('id') id: number, @Body() updateEmployeeDto: UpdateEmployeeDto) {
     return this.employeeService.update(+id, updateEmployeeDto);
   }
