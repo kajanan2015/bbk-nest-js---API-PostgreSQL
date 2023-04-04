@@ -36,6 +36,13 @@ export class AuthController {
     return this.authService.account(header.authorization);
   }
 
+  @Get()
+  async findAll() {
+    const companies =  await this.authService.findAll();
+    return {
+      companies
+    };
+  }
 
 
 }
