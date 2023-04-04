@@ -12,6 +12,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { Request } from "express";
 import { AuthService } from "./auth.service";
 import { User } from "../user/user.entity";
+import { RealIP } from "nestjs-real-ip";
 
 @Controller("auth")
 export class AuthController {
@@ -19,15 +20,13 @@ export class AuthController {
   // ip saving process added by nuwan and kanjanan
   @UseGuards(AuthGuard("local-sign-up"))
   @Post("sign-up")
-  async signUp(@Req() req: Request) {
-    const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  async signUp(@Req() req: Request, @RealIP() ip: string) {
     return this.authService.login(req.user as User, ip);
   }
   // ip saving process added by nuwan and kanjanan
   @UseGuards(AuthGuard("local-sign-in"))
   @Post("sign-in")
-  async login(@Req() req: Request) {
-    const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  async login(@Req() req: Request, @RealIP() ip: string) {
     return this.authService.login(req.user as User, ip);
   }
 
