@@ -8,15 +8,17 @@ import {
     Param,
     HttpStatus,
     Patch,
+    UseGuards,
   } from '@nestjs/common';
 import { CompaniesDTO } from './companies.dto';
 
   import { CompaniesService } from './companies.service';
-
+import { AuthGuard } from '@nestjs/passport';
+@UseGuards(AuthGuard('jwt'))
   @Controller('companies')
   export class CompaniesController {
     constructor(private service: CompaniesService) {}
-
+    
     @Get()
     async showAll() {
       const companies =  await this.service.showAll();

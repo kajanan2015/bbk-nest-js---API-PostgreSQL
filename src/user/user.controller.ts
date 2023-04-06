@@ -7,6 +7,7 @@ import {
   Body,
   Param,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 
 
@@ -14,9 +15,10 @@ const stripe = require('stripe')('sk_test_51LfvAGChovVblxJg8YUMSd7MefCrw6DieaPiE
 
 
 import { UserService } from './user.service';
+import { AuthGuard } from '@nestjs/passport';
 
 
-
+@UseGuards(AuthGuard('jwt'))
 @Controller('user')
 export class UserController {
   constructor(private service: UserService) {}

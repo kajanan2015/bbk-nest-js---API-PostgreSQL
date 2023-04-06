@@ -7,6 +7,7 @@ import {
   Body,
   Get,
   Param,
+  Headers
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Request } from "express";
@@ -29,19 +30,19 @@ export class AuthController {
   async login(@Req() req: Request, @RealIP() ip: string) {
     return this.authService.login(req.user as User, ip);
   }
-
+  @UseGuards(AuthGuard('jwt'))
   @Get("check-email/:email")
   async checkemail(@Param("email") email) {
     return this.authService.checkemail(email);
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get("account")
-  async account(@Req() req: Request) {
-    const header = req.headers;
-
-    return this.authService.account(header.authorization);
+  async account(@Headers('Authorization') authorizationHeader: string) {
+    const token = authorizationHeader.split(' ')[1];
+    return this.authService.account(token);
   }
-
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   async findAll() {
     const userLoginData = await this.authService.findAll();
