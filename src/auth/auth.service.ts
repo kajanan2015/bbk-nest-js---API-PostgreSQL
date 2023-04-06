@@ -21,12 +21,13 @@ export class AuthService {
     const user = await this.userService.findByEmail(email);
     if (! user) {
       throw new BadRequestException('auth/account-not-found');
+      
     }
     const matches: boolean = await bcrypt.compare(password, user.password);
     if (! matches) {
       throw new BadRequestException({
-        "statusCode": 100,
-        "message": "Please check your username and password"
+        "statusCode": 200,
+        "message": "Please check your username 2 and password"
       });
     }
     delete user.password;
