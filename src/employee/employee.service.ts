@@ -50,7 +50,6 @@ export class EmployeeService {
     }
   
     Object.assign(employee, updateEmployeeDto);
-  
     const companies = [];
     for (const companyName of updateEmployeeDto.companies) {
       const company = await this.companiesService.findById(companyName.id);
@@ -60,7 +59,13 @@ export class EmployeeService {
       companies.push(company);
     }
     employee.companies = companies;
-  
+    const employeeupdatedata:any={
+      "name":updateEmployeeDto.firstName,
+      "password":updateEmployeeDto.password,
+      "email":updateEmployeeDto.email
+    }
+    // console.log(employeeupdatedata,99999999)
+    await this.userService.updateEmployeePassword(id,employeeupdatedata);
     return this.employeeRepository.save(employee);
   }
 

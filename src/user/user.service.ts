@@ -45,5 +45,17 @@ export class UserService {
     return await this.userRepository.findOne({ where: {  email : id } });
   }
 
+  async updateEmployeePassword(id: number, employeeupdatedata: Partial<User>) {
+    const user = new User();
+    user.name = employeeupdatedata.name;
+    user.email = employeeupdatedata.email;
+    if(employeeupdatedata.password){
+      user.password = await this.hashPassword(employeeupdatedata.password);
+    }
+    
+// return ;
+    await this.userRepository.update({ emp_id : id }, user);
+    return await this.userRepository.findOne({ where: {  emp_id : id } });
+  }
   
 }
