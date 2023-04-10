@@ -13,6 +13,8 @@ import { CompaniesModule } from "./companies/companies.module";
 
 import { MailModule } from './mail/mail.module';
 import { EmployeeModule } from './employee/employee.module';
+import { TripModule } from './trip/trip.module';
+
 
 
 
@@ -30,6 +32,7 @@ const settings = require("../ormconfig.js");
     CompaniesModule,
     MailModule,
     EmployeeModule,
+    TripModule,
   ],
   controllers: [AppController],
   providers: [AppService],
