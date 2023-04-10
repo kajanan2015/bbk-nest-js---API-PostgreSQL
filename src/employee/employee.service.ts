@@ -37,7 +37,7 @@ export class EmployeeService {
      }
      const response=await this.employeeRepository.save(employee);
      const employee_id=response.id;
-     await this.userService.create(createEmployeeDto.firstName, createEmployeeDto.email, createEmployeeDto.password, employee_id);
+     await this.userService.create(createEmployeeDto.firstName, createEmployeeDto.email, createEmployeeDto.password, "USER", employee_id,null);
      return this.employeeRepository.save(employee);
   }
   

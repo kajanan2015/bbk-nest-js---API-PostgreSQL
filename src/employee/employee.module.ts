@@ -15,3 +15,4 @@ import { UserModule } from 'src/user/user.module';
   providers: [EmployeeService, CompaniesService]
 })
 export class EmployeeModule {}
+

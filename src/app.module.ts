@@ -15,6 +15,7 @@ import { MailModule } from './mail/mail.module';
 import { EmployeeModule } from './employee/employee.module';
 import { TripModule } from './trip/trip.module';
 import { VehicleTypeModule } from "./vehicle-type/vehicle-type.module";
+import { DriverModule } from "./driver/driver.module";
 
 
 
@@ -34,7 +35,8 @@ const settings = require("../ormconfig.js");
     MailModule,
     EmployeeModule,
     TripModule,
-    VehicleTypeModule
+    VehicleTypeModule,
+    DriverModule
   ],
   controllers: [AppController],
   providers: [AppService],

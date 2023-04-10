@@ -20,6 +20,9 @@ export class User  {
   @Column("int", { name: "emp_id", nullable: true })
   emp_id: number;
 
+  @Column("int", { name: "drv_id", nullable: true })
+  drv_id: number;
+
   @Column({ type: 'boolean', default:true})
   status: Boolean;
   
