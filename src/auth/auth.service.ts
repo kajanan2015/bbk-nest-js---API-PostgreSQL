@@ -42,7 +42,7 @@ export class AuthService {
 
     
 // we assign 0 for add value to emp id column, because we use same login for employee and admin- added by nuwan
-    const user: User = await this.userService.create(name, email, password,"ADMIN",null,null);
+    const user: User = await this.userService.create(name, email, password,"",null,null);
     delete user.password;
     return user;
   }
