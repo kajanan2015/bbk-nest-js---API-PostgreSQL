@@ -32,19 +32,18 @@ export class DriverService {
     return this.driverRepository.save(driver);
   }
 
-  findAll() {
-    return `This action returns all driver`;
+  async findAll() {
+    return await this.driverRepository.find(
+      { where: { status: 1 } }
+    );
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} driver`;
+  async findById(id: number): Promise<CreateDriverDto> {
+    return await this.driverRepository.findOne({ id });
   }
 
-  update(id: number, updateDriverDto: UpdateDriverDto) {
-    return `This action updates a #${id} driver`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} driver`;
+  async update(id: number, data: Partial<CreateDriverDto>) {
+    await this.driverRepository.update({ id }, data);
+    return await this.driverRepository.findOne({ id });
   }
 }

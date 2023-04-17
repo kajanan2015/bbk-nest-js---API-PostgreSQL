@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { DriverService } from './driver.service';
 import { CreateDriverDto } from './create-driver.dto';
 import { UpdateDriverDto } from './update-driver.dto';
+import { Put } from '@nestjs/common';
 
 @Controller('driver')
 export class DriverController {
@@ -19,16 +20,11 @@ export class DriverController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.driverService.findOne(+id);
+    return this.driverService.findById(+id);
   }
 
-  @Patch(':id')
+  @Put('/edit/:id')
   update(@Param('id') id: string, @Body() updateDriverDto: UpdateDriverDto) {
     return this.driverService.update(+id, updateDriverDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.driverService.remove(+id);
   }
 }
