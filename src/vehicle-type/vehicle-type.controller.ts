@@ -3,9 +3,10 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
+  Put,
+  HttpStatus,
+ 
 } from "@nestjs/common";
 import { VehicleTypeService } from "./vehicle-type.service";
 import { CreateVehicleTypeDto } from "./create-vehicle-type.dto";
@@ -13,6 +14,7 @@ import { UpdateVehicleTypeDto } from "./update-vehicle-type.dto";
 
 @Controller("vehicle-type")
 export class VehicleTypeController {
+  service: any;
   constructor(private readonly vehicleTypeService: VehicleTypeService) {}
 
   @Post()
@@ -26,20 +28,18 @@ export class VehicleTypeController {
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.vehicleTypeService.findOne(+id);
+  findById(@Param("id") id: string) {
+    return this.vehicleTypeService.findById(+id);
   }
 
-  @Patch(":id")
-  update(
-    @Param("id") id: string,
-    @Body() updateVehicleTypeDto: UpdateVehicleTypeDto
-  ) {
-    return this.vehicleTypeService.update(+id, updateVehicleTypeDto);
-  }
+  @Put('/edit/:id')
+    async uppdate(@Param('id') id: number, @Body() data: Partial<UpdateVehicleTypeDto>) {
+      await this.vehicleTypeService.update(id, data);
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Vehicle type is updated successfully',
+      };
+    }
 
-  @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.vehicleTypeService.remove(+id);
-  }
+  
 }
