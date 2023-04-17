@@ -34,7 +34,7 @@ export class DriverService {
 
   async findAll() {
     return await this.driverRepository.find(
-      { where: { status: 1 } }
+      { where: { driverStatus: 1 } }
     );
   }
 
