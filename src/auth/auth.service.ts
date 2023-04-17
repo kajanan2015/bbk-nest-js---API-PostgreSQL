@@ -77,7 +77,7 @@ export class AuthService {
       userid:user.id
     };
     await this.authRepository.save(data)
-    const payload = { utype: user.utype, name: user.name, email: user.email, sub: user.id, employee_id:user.emp_id } ;
+    const payload = { utype: user.utype, name: user.name, email: user.email, sub: user.id, employee_id:user.empId } ;
 
     
     return {

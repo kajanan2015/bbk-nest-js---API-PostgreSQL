@@ -29,8 +29,8 @@ export class UserService {
     user.name = name;
     user.email = email;
     user.utype = usertype;
-    user.emp_id = employee_id;
-    user.drv_id = driver_id;
+    user.empId = employee_id;
+    user.drvId = driver_id;
     user.password = await this.hashPassword(password);
     return await this.userRepository.save(user);
   }
@@ -56,8 +56,8 @@ export class UserService {
     }
     
 // return ;
-    await this.userRepository.update({ emp_id : id }, user);
-    return await this.userRepository.findOne({ where: {  emp_id : id } });
+    await this.userRepository.update({ empId : id }, user);
+    return await this.userRepository.findOne({ where: {  empId : id } });
   }
   
 }

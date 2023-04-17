@@ -17,11 +17,11 @@ export class User  {
   @Column("varchar", { name: "utype", default: () => "'USER'", length: 6 })
   utype: string ;
 
-  @Column("int", { name: "emp_id", nullable: true })
-  emp_id: number;
+  @Column("int", { name: "empId", nullable: true })
+  empId: number;
 
-  @Column("int", { name: "drv_id", nullable: true })
-  drv_id: number;
+  @Column("int", { name: "drvId", nullable: true })
+  drvId: number;
 
   @Column({ type: 'boolean', default:true})
   status: Boolean;
