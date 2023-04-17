@@ -9,4 +9,6 @@ export class CreateDriverDto {
     driverStatus: Boolean;
     createdat: Date;
     updatedat: Date;
+    subCompanies: number[];
+    driverAvailability: number;
 }

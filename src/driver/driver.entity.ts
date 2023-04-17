@@ -1,4 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+
 @Entity('driver')
 export class DriverEntity {
     @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
@@ -21,6 +22,12 @@ export class DriverEntity {
   
     @Column("varchar", { nullable: false , length: 100 })
     driverPhone: string;
+
+    @Column({ type: "simple-array" })
+    subCompanies: number[];
+
+    @Column({ type: "int" , default: 1})
+    driverAvailability: number;
   
     @Column({ type: 'boolean', default:true})
     driverStatus: Boolean;
