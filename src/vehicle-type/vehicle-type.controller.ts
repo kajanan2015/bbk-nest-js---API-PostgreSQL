@@ -40,6 +40,5 @@ export class VehicleTypeController {
         message: 'Vehicle type is updated successfully',
       };
     }
-
   
 }
