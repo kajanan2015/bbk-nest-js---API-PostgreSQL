@@ -9,28 +9,28 @@ import { Repository } from 'typeorm';
 export class PermissionRoleService {
   constructor(
     @InjectRepository(PermissionRoleEntity)
-    private companyRepository: Repository<PermissionRoleEntity>,
+    private permissionRoleRepository: Repository<PermissionRoleEntity>,
   ) {}
   
   async create(createPermissionRoleDto: CreatePermissionRoleDto) {
-    const permissionRole = this.companyRepository.create(createPermissionRoleDto);
-    await this.companyRepository.save(createPermissionRoleDto);
+    const permissionRole = this.permissionRoleRepository.create(createPermissionRoleDto);
+    await this.permissionRoleRepository.save(createPermissionRoleDto);
     return permissionRole;
   }
 
-  findAll() {
-    return `This action returns all permissionRole`;
+  async findAll() {
+    return await this.permissionRoleRepository.find(
+      { where: { roleStatus: 1 } }
+    );
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} permissionRole`;
+  async findById(id: number): Promise<PermissionRoleEntity> {
+    return await this.permissionRoleRepository.findOne({ id });
   }
 
-  update(id: number, updatePermissionRoleDto: UpdatePermissionRoleDto) {
-    return `This action updates a #${id} permissionRole`;
+  async update(id: number, updatePermissionRoleDto: UpdatePermissionRoleDto) {
+    await this.permissionRoleRepository.update({ id }, updatePermissionRoleDto);
+    return await this.permissionRoleRepository.findOne({ id });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} permissionRole`;
-  }
 }

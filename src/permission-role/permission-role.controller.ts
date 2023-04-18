@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
 import { PermissionRoleService } from './permission-role.service';
 import { CreatePermissionRoleDto } from './create-permission-role.dto';
 import { UpdatePermissionRoleDto } from './update-permission-role.dto';
@@ -19,16 +19,12 @@ export class PermissionRoleController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.permissionRoleService.findOne(+id);
+    return this.permissionRoleService.findById(+id);
   }
 
-  @Patch(':id')
+  @Put('/edit/:id')
   update(@Param('id') id: string, @Body() updatePermissionRoleDto: UpdatePermissionRoleDto) {
     return this.permissionRoleService.update(+id, updatePermissionRoleDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.permissionRoleService.remove(+id);
-  }
 }
