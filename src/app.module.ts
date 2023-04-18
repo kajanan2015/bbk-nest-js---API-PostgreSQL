@@ -9,7 +9,7 @@ import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./user/user.module";
 import { CommonModule } from "./common/common.module";
 import { CompaniesModule } from "./companies/companies.module";
-
+import { pagepermissionModule } from "./pagepermission/pagepermission.module";
 
 import { MailModule } from './mail/mail.module';
 import { EmployeeModule } from './employee/employee.module';
@@ -44,7 +44,8 @@ const settings = require("../ormconfig.js");
     ImageUploadModule,
     DriverTypeModule,
     PermissionRoleModule,
-    SubCompaniesModule
+    SubCompaniesModule,
+    pagepermissionModule
   ],
   controllers: [AppController],
   providers: [AppService],
