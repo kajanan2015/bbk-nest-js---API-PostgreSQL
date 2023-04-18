@@ -18,6 +18,7 @@ import { VehicleTypeModule } from "./vehicle-type/vehicle-type.module";
 import { DriverModule } from "./driver/driver.module";
 import { ImageUploadModule } from "./imageupload/imageupload.module";
 import { DriverTypeModule } from './driver-type/driver-type.module';
+import { PermissionRoleModule } from './permission-role/permission-role.module';
 
 
 
@@ -40,7 +41,8 @@ const settings = require("../ormconfig.js");
     VehicleTypeModule,
     DriverModule,
     ImageUploadModule,
-    DriverTypeModule
+    DriverTypeModule,
+    PermissionRoleModule
   ],
   controllers: [AppController],
   providers: [AppService],
