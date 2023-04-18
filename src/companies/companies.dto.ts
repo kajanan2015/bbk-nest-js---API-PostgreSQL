@@ -1,9 +1,11 @@
 export interface CompaniesDTO {
-    id: number;
-    name: string;
-    status: Boolean;
-    creaby:number;
-    createdatlocal:Date;
-    createdat:Date;
-    updatedat:Date;
-  }
+  id: number;
+  companyName: string;
+  companyEmail: string;
+  companyContact: string;
+  companyStatus: Boolean;
+  createdBy: number;
+  createdat: Date;
+  updatedat: Date;
+  subCompanyId: number;
+}
