@@ -17,6 +17,7 @@ import { TripModule } from './trip/trip.module';
 import { VehicleTypeModule } from "./vehicle-type/vehicle-type.module";
 import { DriverModule } from "./driver/driver.module";
 import { ImageUploadModule } from "./imageupload/imageupload.module";
+import { DriverTypeModule } from './driver-type/driver-type.module';
 
 
 
@@ -38,7 +39,8 @@ const settings = require("../ormconfig.js");
     TripModule,
     VehicleTypeModule,
     DriverModule,
-    ImageUploadModule
+    ImageUploadModule,
+    DriverTypeModule
   ],
   controllers: [AppController],
   providers: [AppService],
