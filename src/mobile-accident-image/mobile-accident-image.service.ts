@@ -1,23 +1,43 @@
+import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { CreateMobileAccidentImageDto } from './create-mobile-accident-image.dto';
 import { UpdateMobileAccidentImageDto } from './update-mobile-accident-image.dto';
-
+import { MobileAccidentImage } from './mobile-accident-image.entity';
 @Injectable()
 export class MobileAccidentImageService {
-  create(createMobileAccidentImageDto: CreateMobileAccidentImageDto) {
-    return 'This action adds a new mobileAccidentImage';
+  constructor(
+    @InjectRepository(MobileAccidentImage)
+    private mobileAccidentImageRepository: Repository<MobileAccidentImage>,
+  ) {}
+
+  async create(createMobileAccidentImageDto: CreateMobileAccidentImageDto) {
+    const mobileaccidentImage = Object.assign(new MobileAccidentImage(), createMobileAccidentImageDto);
+    console.log(mobileaccidentImage)
+    const response=await this.mobileAccidentImageRepository.save(mobileaccidentImage);
+    return response;
   }
 
-  findAll() {
-    return `This action returns all mobileAccidentImage`;
+ async findAll() {
+    return await this.mobileAccidentImageRepository.find({ 
+      where: { Status: 1 }, 
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} mobileAccidentImage`;
+  async findOne(id: number) {
+    const mobileaccident = await this.mobileAccidentImageRepository.findOne(id);
+    if (!mobileaccident) {
+      throw new NotFoundException(`Employee with ID '${id}' not found`);
+    }
+    return mobileaccident;
   }
 
-  update(id: number, updateMobileAccidentImageDto: UpdateMobileAccidentImageDto) {
-    return `This action updates a #${id} mobileAccidentImage`;
+  async update(id: number, updateMobileAccidentImageDto: UpdateMobileAccidentImageDto) {
+    await this.mobileAccidentImageRepository.update({ id }, updateMobileAccidentImageDto);
+   console.log("df")
+    return await this.mobileAccidentImageRepository.findOne({ id });
+
   }
 
   remove(id: number) {

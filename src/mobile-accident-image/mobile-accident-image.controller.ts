@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, HttpStatus,Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { MobileAccidentImageService } from './mobile-accident-image.service';
 import { CreateMobileAccidentImageDto } from './create-mobile-accident-image.dto';
 import { UpdateMobileAccidentImageDto } from './update-mobile-accident-image.dto';
@@ -8,9 +8,13 @@ export class MobileAccidentImageController {
   constructor(private readonly mobileAccidentImageService: MobileAccidentImageService) {}
 
   @Post()
-  create(@Body() createMobileAccidentImageDto: CreateMobileAccidentImageDto) {
-    return this.mobileAccidentImageService.create(createMobileAccidentImageDto);
-  }
+  async create(@Body() createMobileAccidentImageDto: CreateMobileAccidentImageDto) {
+     const mobileaccident=await this.mobileAccidentImageService.create(createMobileAccidentImageDto);
+     return {
+      statusCode: HttpStatus.OK,
+      mobileaccident
+    };
+    }
 
   @Get()
   findAll() {
@@ -23,12 +27,16 @@ export class MobileAccidentImageController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMobileAccidentImageDto: UpdateMobileAccidentImageDto) {
-    return this.mobileAccidentImageService.update(+id, updateMobileAccidentImageDto);
+  async update(@Param('id') id: string, @Body() updateMobileAccidentImageDto: UpdateMobileAccidentImageDto) {
+    await this.mobileAccidentImageService.update(+id, updateMobileAccidentImageDto);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Company updated successfully',
+    };
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.mobileAccidentImageService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.mobileAccidentImageService.remove(+id);
+  // }
 }
