@@ -7,4 +7,5 @@ export class CreateMobileAccidentImageDto {
     createdat:Date;
     updatedat:Date;
     Status: Boolean;
+    PatheImage:String;
 }

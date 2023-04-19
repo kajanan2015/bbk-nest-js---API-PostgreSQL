@@ -25,6 +25,9 @@ createdat: Date;
 @Column("timestamp", { name: "updatedat", default: () => "CURRENT_TIMESTAMP" })
 updatedat: Date;
 
+@Column("varchar",{nullable:true})
+PatheImage:String;
+
 @Column({ type: 'boolean', default:true})
 Status: Boolean;
 
