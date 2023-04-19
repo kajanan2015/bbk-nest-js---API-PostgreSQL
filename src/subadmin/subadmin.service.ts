@@ -3,9 +3,9 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { CompaniesService } from 'src/companies/companies.service';
 import { Repository } from 'typeorm';
-import { CreateEmployeeDto } from './create-subadmin.dto';
-import { Employee } from './employee.entity';
-import { UpdateEmployeeDto } from './update-employee.dto';
+import { CreateSubadminDto } from './create-subadmin.dto';
+import { Employee } from '../employee/employee.entity';
+import { UpdateEmployeeDto } from '../employee/update-employee.dto';
 import { UserService } from '../user/user.service';
 
 @Injectable()
@@ -18,11 +18,11 @@ export class EmployeeService {
   ) {}
 
   //create employee
-  async create(createEmployeeDto: CreateEmployeeDto) {
-    const employee = Object.assign(new Employee(), createEmployeeDto);
+  async create(CreateSubadminDto: CreateSubadminDto) {
+    const employee = Object.assign(new Employee(), CreateSubadminDto);
 
     const companies = [];
-    for (const companyName of createEmployeeDto.companies) {
+    for (const companyName of CreateSubadminDto.companies) {
       const company = await this.companiesService.findById(companyName.id);
       if (!company) {
         throw new NotFoundException(`Company with name '${companyName}' not found`);
@@ -31,13 +31,13 @@ export class EmployeeService {
     }
     employee.companies = companies;
      // added by nuwan
-     const existing = await this.userService.findByEmail(createEmployeeDto.email);
+     const existing = await this.userService.findByEmail(CreateSubadminDto.email);
      if (existing) {
        throw new BadRequestException('auth/account-exists');
      }
      const response=await this.employeeRepository.save(employee);
      const employee_id=response.id;
-     await this.userService.create(createEmployeeDto.firstName, createEmployeeDto.email, createEmployeeDto.password, "CADMIN", employee_id,null);
+     await this.userService.create(CreateSubadminDto.firstName, CreateSubadminDto.email, CreateSubadminDto.password, "CADMIN", employee_id,null);
      return this.employeeRepository.save(employee);
   }
   

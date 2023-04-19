@@ -1,9 +1,9 @@
 //by Abi - 28/03/2023
 import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Put, UseGuards } from '@nestjs/common';
 import { EmployeeService } from './subadmin.service';
-import { CreateEmployeeDto } from './create-subadmin.dto';
-// import { UpdateEmployeeDto } from './update-employee.dto';
-// import { Employee } from './employee.entity';
+import { CreateSubadminDto } from './create-subadmin.dto';
+import { UpdateEmployeeDto } from '../employee/update-employee.dto';
+import { Employee } from '../employee/employee.entity';
 import { AuthGuard } from '@nestjs/passport';
 
 @UseGuards(AuthGuard('jwt'))
@@ -13,8 +13,8 @@ export class EmployeeController {
 
   //create employee
   @Post()
-  async create(@Body() createEmployeeDto: CreateEmployeeDto) {
-    const employee = await this.employeeService.create(createEmployeeDto);
+  async create(@Body() CreateSubadminDto: CreateSubadminDto) {
+    const employee = await this.employeeService.create(CreateSubadminDto);
     return {
       statusCode: HttpStatus.OK,
       employee
