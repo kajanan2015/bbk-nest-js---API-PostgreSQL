@@ -20,6 +20,7 @@ import { ImageUploadModule } from "./imageupload/imageupload.module";
 import { DriverTypeModule } from './driver-type/driver-type.module';
 import { PermissionRoleModule } from './permission-role/permission-role.module';
 import { SubCompaniesModule } from './sub-companies/sub-companies.module';
+import { SubadminassignModule } from './subadminassign/subadminassign.module';
 
 
 
@@ -45,7 +46,8 @@ const settings = require("../ormconfig.js");
     DriverTypeModule,
     PermissionRoleModule,
     SubCompaniesModule,
-    pagepermissionModule
+    pagepermissionModule,
+    SubadminassignModule
   ],
   controllers: [AppController],
   providers: [AppService],
