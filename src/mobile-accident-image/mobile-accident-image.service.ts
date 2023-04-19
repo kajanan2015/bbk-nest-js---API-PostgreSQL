@@ -12,11 +12,9 @@ export class MobileAccidentImageService {
     private mobileAccidentImageRepository: Repository<MobileAccidentImage>,
   ) {}
 
-  async create(createMobileAccidentImageDto: CreateMobileAccidentImageDto) {
-    const mobileaccidentImage = Object.assign(new MobileAccidentImage(), createMobileAccidentImageDto);
-    console.log(mobileaccidentImage)
-    const response=await this.mobileAccidentImageRepository.save(mobileaccidentImage);
-    return response;
+  async create(createMobileAccidentImage: MobileAccidentImage): Promise<MobileAccidentImage> {
+    const response=this.mobileAccidentImageRepository.create(createMobileAccidentImage);
+    return await this.mobileAccidentImageRepository.save(response);
   }
 
  async findAll() {
@@ -35,7 +33,6 @@ export class MobileAccidentImageService {
 
   async update(id: number, updateMobileAccidentImageDto: UpdateMobileAccidentImageDto) {
     await this.mobileAccidentImageRepository.update({ id }, updateMobileAccidentImageDto);
-   console.log("df")
     return await this.mobileAccidentImageRepository.findOne({ id });
 
   }

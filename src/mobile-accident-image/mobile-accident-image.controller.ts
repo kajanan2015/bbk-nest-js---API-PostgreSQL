@@ -31,7 +31,7 @@ export class MobileAccidentImageController {
     await this.mobileAccidentImageService.update(+id, updateMobileAccidentImageDto);
     return {
       statusCode: HttpStatus.OK,
-      message: 'Company updated successfully',
+      message: 'accicdent image updated successfully',
     };
   }
 
