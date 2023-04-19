@@ -27,9 +27,9 @@ export class CompaniesController {
     };
   }
 
-  @Get('/subcompanies')
-  async showSubAll() {
-    const companies = await this.service.showSubAll();
+  @Get('/subcompanies/:mainCompanyId')
+  async showSubAll(@Param('mainCompanyId') mainCompanyId: number) {
+    const companies = await this.service.showSubAll(mainCompanyId);
     return {
       statusCode: HttpStatus.OK,
       companies

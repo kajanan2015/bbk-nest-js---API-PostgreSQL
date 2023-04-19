@@ -20,10 +20,12 @@ export class CompaniesService {
     );
   }
 
-  async showSubAll() {
+  async showSubAll(mainCompanyId: number): Promise<CompaniesEntity[]> {
     return await this.companyRepository.find(
       {
-        where: { companyStatus: 1 , mainCompany: Not(IsNull()) },
+        where: { companyStatus: 1 , mainCompany: {
+          id: mainCompanyId
+        }},
         relations: ['mainCompany']
       }
     );
