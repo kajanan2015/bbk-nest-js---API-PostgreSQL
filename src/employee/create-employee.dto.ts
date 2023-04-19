@@ -16,5 +16,6 @@ export class CreateEmployeeDto {
     createdat:Date;
     updatedat:Date;
     password: string;
+    typeEmployee:string;
     companies: CompaniesEntity[];
 }

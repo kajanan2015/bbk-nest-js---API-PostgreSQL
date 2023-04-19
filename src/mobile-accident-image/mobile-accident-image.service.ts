@@ -26,7 +26,7 @@ export class MobileAccidentImageService {
   async findOne(id: number) {
     const mobileaccident = await this.mobileAccidentImageRepository.findOne(id);
     if (!mobileaccident) {
-      throw new NotFoundException(`Employee with ID '${id}' not found`);
+      throw new NotFoundException(` ID '${id}' not found`);
     }
     return mobileaccident;
   }

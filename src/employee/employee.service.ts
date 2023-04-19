@@ -87,6 +87,14 @@ export class EmployeeService {
     });
   }
 
+  //get all employee
+  async findAllsubadmin(): Promise<Employee[]> {
+    return this.employeeRepository.find({ 
+      relations: ['companies'],
+      where: { employeeStatus: 1,typeEmployee:"SADMIN" }, 
+    });
+  }
+
   //get employee by id
   async findOne(id: number): Promise<Employee> {
     const employee = await this.employeeRepository.findOne(id, { relations: ['companies'] });

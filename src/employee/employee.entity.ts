@@ -46,7 +46,11 @@ export class Employee  {
   @Column("timestamp", { name: "updatedat", default: () => "CURRENT_TIMESTAMP" })
   updatedat: Date;
 
+  @Column("varchar", { name: "typeEmployee",length: 30 ,nullable: true })
+  typeEmployee: string ;
+
   @ManyToMany(() => CompaniesEntity, (company) => company.employees)
   @JoinTable()
   companies: CompaniesEntity[];
 }
+
