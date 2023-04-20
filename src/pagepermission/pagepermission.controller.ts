@@ -1,58 +1,39 @@
 import {
-    Controller,
-    Get,
-    Post,
-    Put,
-    Delete,
-    Body,
-    Param,
-    HttpStatus,
-    Patch,
-    UseGuards,
-  } from '@nestjs/common';
+  Controller,
+  Get,
+  Post,
+  Put,
+  Body,
+  Param,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
 import { pagepermissionDTO } from './pagepermission.dto';
 
-  import { pagepermissionService } from './pagepermission.service';
+import { PagePermissionService } from './pagepermission.service';
 import { AuthGuard } from '@nestjs/passport';
 @UseGuards(AuthGuard('jwt'))
-  @Controller('pagepermission')
-  export class pagepermissionController {
-    constructor(private service: pagepermissionService) {}
-    
-    @Get()
-    async showAll() {
-      const permissions =  await this.service.showAll();
-      return {
-        statusCode: HttpStatus.OK,
-        permissions
-      };
-    }
+@Controller('pagepermission')
+export class PagePermissionController {
+  constructor(private pagePermissionService: PagePermissionService) { }
 
-    @Post()
-    async create(@Body() data: pagepermissionDTO) {
-       const permissions = await this.service.create(data);
-      return {
-        statusCode: HttpStatus.OK,
-        permissions
-      };
-    }
-
-    @Get(':id')
-    async read(@Param('id') id: number) {
-      const permissions =  await this.service.read(id);
-      return {
-        statusCode: HttpStatus.OK,
-        permissions,
-      };
-    }
-
-    @Put('/edit/:id')
-    async uppdate(@Param('id') id: number, @Body() data: Partial<pagepermissionDTO>) {
-
-      await this.service.update(id, data);
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'Permission updated successfully',
-      };
-    }
+  @Get()
+  async showAll() {
+    return await this.pagePermissionService.showAll();
   }
+
+  @Post()
+  async create(@Body() data: pagepermissionDTO) {
+    return await this.pagePermissionService.create(data);
+  }
+
+  @Get(':id')
+  async read(@Param('id') id: number) {
+    return await this.pagePermissionService.read(id);
+  }
+
+  @Put('/edit/:id')
+  async update(@Param('id') id: number, @Body() data: Partial<pagepermissionDTO>) {
+    return await this.pagePermissionService.update(id, data);
+  }
+}

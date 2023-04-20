@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { pagepermissionController } from './pagepermission.controller';
-import { pagepermissionService } from './pagepermission.service';
-import { pagepermissionEntity } from './pagepermission.entity';
+import { PagePermissionController } from './pagepermission.controller';
+import { PagePermissionService } from './pagepermission.service';
+import { PagePermissionEntity } from './pagepermission.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([pagepermissionEntity])],
-  controllers: [pagepermissionController],
-  providers: [pagepermissionService],
+  imports: [TypeOrmModule.forFeature([PagePermissionEntity])],
+  controllers: [PagePermissionController],
+  providers: [PagePermissionService],
 })
-export class pagepermissionModule {}
+export class PagePermissionModule {}
