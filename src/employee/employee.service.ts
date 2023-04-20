@@ -91,7 +91,7 @@ export class EmployeeService {
   async findAllsubadmin(): Promise<Employee[]> {
     return this.employeeRepository.find({ 
       relations: ['companies'],
-      where: { employeeStatus: 1,typeEmployee:"SADMIN" }, 
+      where: { employeeStatus: 1,parentCompanyid:"1" }, 
     });
   }
 
