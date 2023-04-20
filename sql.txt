@@ -1,2 +1,2 @@
 20/04/2023
-SELECT * FROM `employee` - added by nuwan
+ALTER TABLE `employee` CHANGE `typeEmployee` `parentCompanyid` int NULL - added by nuwan
