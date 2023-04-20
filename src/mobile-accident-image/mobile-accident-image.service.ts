@@ -19,7 +19,7 @@ export class MobileAccidentImageService {
 
  async findAll() {
     return await this.mobileAccidentImageRepository.find({ 
-      where: { Status: 1 }, 
+      where: { status: 1 }, 
     });
   }
 

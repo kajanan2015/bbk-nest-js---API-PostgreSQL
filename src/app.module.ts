@@ -26,6 +26,7 @@ import { MobileAccidentImageModule } from './mobile-accident-image/mobile-accide
 
 
 
+
 const settings = require("../ormconfig.js");
 
 @Module({

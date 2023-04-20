@@ -1,12 +1,12 @@
 import {
     Post,
     UseInterceptors,
-    UploadedFile,
+    UploadedFiles,
     Body,
     Controller,
   } from "@nestjs/common";
   
-  import { FileInterceptor } from "@nestjs/platform-express";
+  import { AnyFilesInterceptor } from "@nestjs/platform-express";
   
   import { ImageUploadService } from "./imageupload.service";
   
@@ -15,8 +15,8 @@ import {
     constructor(private readonly imageUploadService: ImageUploadService) {}
   
     @Post("upload")
-    @UseInterceptors(FileInterceptor("file"))
-    async upload(@UploadedFile() file , @Body() body) {
+    @UseInterceptors(AnyFilesInterceptor())
+    async upload(@UploadedFiles() file , @Body() body) {
       return await this.imageUploadService.upload(file , body);
     }
   

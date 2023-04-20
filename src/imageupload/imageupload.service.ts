@@ -39,10 +39,17 @@ export class ImageUploadService {
     });
   }
 
-  async upload(file, name) {
+  async upload(files, name) {
     const bucketS3 = "intaap";
 
-    const obj = await this.uploadS3Add(file.buffer, bucketS3, name.lname );
+    let fileInfo = [];
+
+    for (const file of files) {
+      let obj = await this.uploadS3Add(file.buffer, bucketS3, file.originalname);
+      fileInfo.push(obj);
+    }
+
+    
 
     // const connection: Connection = getConnection();
     // const queryRunner: QueryRunner = connection.createQueryRunner();
@@ -65,7 +72,7 @@ export class ImageUploadService {
 
 
 
-    return obj;
+   return fileInfo;
   }
 
 

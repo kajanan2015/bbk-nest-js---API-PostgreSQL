@@ -26,9 +26,9 @@ createdat: Date;
 updatedat: Date;
 
 @Column("varchar",{nullable:true})
-PatheImage:String;
+patheImage:String;
 
 @Column({ type: 'boolean', default:true})
-Status: Boolean;
+status: Boolean;
 
 }
