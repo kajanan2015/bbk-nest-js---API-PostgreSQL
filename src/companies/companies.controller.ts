@@ -13,7 +13,7 @@ import { CompaniesDTO } from './companies.dto';
 import { CompaniesService } from './companies.service';
 import { AuthGuard } from '@nestjs/passport';
 import { CompaniesEntity } from './companies.entity';
-
+@UseGuards(AuthGuard('jwt'))
 @Controller('companies')
 export class CompaniesController {
   constructor(private service: CompaniesService) { }
