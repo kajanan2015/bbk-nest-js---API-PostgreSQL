@@ -1,15 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete,UseGuards,HttpStatus } from '@nestjs/common';
 import { SubadminassignService } from './subadminassign.service';
-import { CreateSubadminassignDto } from './create-subadminassign.dto';
-import { UpdateSubadminassignDto } from './update-subadminassign.dto';
+import { CreateEmployeeDto } from '../employee/create-employee.dto';
+import { UpdateEmployeeDto } from '../employee/update-employee.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { Subadminassign } from './subadminassign.entity';
 
+@UseGuards(AuthGuard('jwt'))
 @Controller('subadminassign')
 export class SubadminassignController {
   constructor(private readonly subadminassignService: SubadminassignService) {}
 
   @Post()
-  create(@Body() createSubadminassignDto: CreateSubadminassignDto) {
-    return this.subadminassignService.create(createSubadminassignDto);
+  async create(@Body() CreateEmployeeDto: CreateEmployeeDto) {
+    const employee= await this.subadminassignService.create(CreateEmployeeDto);
+    return {
+      statusCode: HttpStatus.OK,
+      employee
+    };
   }
 
   @Get()
@@ -23,8 +30,8 @@ export class SubadminassignController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSubadminassignDto: UpdateSubadminassignDto) {
-    return this.subadminassignService.update(+id, updateSubadminassignDto);
+  update(@Param('id') id: string, @Body() UpdateEmployeeDto: UpdateEmployeeDto) {
+    return this.subadminassignService.update(+id, UpdateEmployeeDto);
   }
 
   @Delete(':id')
@@ -32,3 +39,4 @@ export class SubadminassignController {
     return this.subadminassignService.remove(+id);
   }
 }
+
