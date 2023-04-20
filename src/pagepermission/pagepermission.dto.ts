@@ -7,4 +7,5 @@ export interface pagepermissionDTO {
     createdat:Date;
     updatedat:Date;
     createdBy: number;
+    pageType:number;
   }

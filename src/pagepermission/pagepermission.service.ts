@@ -20,10 +20,18 @@ export class PagePermissionService {
     );
   }
 
-  async create(data: pagepermissionDTO) {
-    const page = this.pagepermissionRepository.create(data);
-    await this.pagepermissionRepository.save(data);
-    return page;
+  async showParentPage(pageTypeId: number): Promise<PagePermissionEntity[]> {
+    return await this.pagepermissionRepository.find(
+      {
+        where: { pageStatus: 1 , pageType: pageTypeId - 1 },
+        relations: ['parentPage']
+      }
+    );
+  }
+
+  async create(pageData: PagePermissionEntity): Promise<PagePermissionEntity> {
+    const page = this.pagepermissionRepository.create(pageData);
+    return await this.pagepermissionRepository.save(page);
   }
 
   async read(id: number) {

@@ -1,15 +1,15 @@
 
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Check} from 'typeorm';
 @Entity('pages')
 export class PagePermissionEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
   id: number;
 
   @Column("varchar", { nullable: true, length: 30 })
-  pageName: string | null;
+  pageName: string;
 
   @Column("varchar", { nullable: true, length: 50 })
-  pageURL: string | null;
+  pageURL: string;
 
   @ManyToOne(() => PagePermissionEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'parentPageId' })
@@ -24,6 +24,9 @@ export class PagePermissionEntity {
 
   @Column({ type: "int", unsigned: true })
   createdBy: number;
+
+  @Column({ type: 'int', unsigned: true })
+  pageType: number;
 
   @Column({ type: 'boolean', default:true})
   pageStatus: Boolean;
