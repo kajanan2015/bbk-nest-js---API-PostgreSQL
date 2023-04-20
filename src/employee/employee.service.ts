@@ -88,10 +88,10 @@ export class EmployeeService {
   }
 
   //get all employee
-  async findAllsubadmin(): Promise<Employee[]> {
+  async findAllsubadmin(comid: number): Promise<Employee[]> {
     return this.employeeRepository.find({ 
       relations: ['companies'],
-      where: { employeeStatus: 1,parentCompanyid:"1" }, 
+      where: { employeeStatus: 1,parentCompanyid:comid }, 
     });
   }
 

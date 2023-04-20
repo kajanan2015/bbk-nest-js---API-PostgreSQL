@@ -39,9 +39,9 @@ export class EmployeeController {
   }
 
   //get all employee
-  @Get('subadmin')
-  async findAllsubadmin(): Promise<Employee[]> {
-    return this.employeeService.findAllsubadmin();
+  @Get('subadmin/:id')
+  async findAllsubadmin(@Param('id') comid: number): Promise<Employee[]> {
+    return this.employeeService.findAllsubadmin(+comid);
   }
 
   @Get()
