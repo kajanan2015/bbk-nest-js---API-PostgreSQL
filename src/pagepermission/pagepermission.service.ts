@@ -23,7 +23,16 @@ export class PagePermissionService {
   async showParentPage(pageTypeId: number): Promise<PagePermissionEntity[]> {
     return await this.pagepermissionRepository.find(
       {
-        where: { pageStatus: 1 , pageType: pageTypeId - 1 },
+        where: { pageStatus: 1 , pageType: pageTypeId === 1 ? pageTypeId - 1 : pageTypeId - 2},
+        relations: ['parentPage']
+      }
+    );
+  }
+
+  async showChildPage(parentPageValueId: number): Promise<PagePermissionEntity[]> {
+    return await this.pagepermissionRepository.find(
+      {
+        where: { pageStatus: 1 , parentPage: parentPageValueId },
         relations: ['parentPage']
       }
     );

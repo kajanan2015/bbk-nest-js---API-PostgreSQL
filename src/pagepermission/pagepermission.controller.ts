@@ -13,7 +13,7 @@ import { pagepermissionDTO } from './pagepermission.dto';
 import { PagePermissionService } from './pagepermission.service';
 import { AuthGuard } from '@nestjs/passport';
 import { PagePermissionEntity } from './pagepermission.entity';
-
+@UseGuards(AuthGuard('jwt'))
 @Controller('pagepermission')
 export class PagePermissionController {
   constructor(private pagePermissionService: PagePermissionService) { }
@@ -26,7 +26,11 @@ export class PagePermissionController {
   @Get(':pageTypeId')
   async showParentPage(@Param('pageTypeId') pageTypeId: number) {
     return await this.pagePermissionService.showParentPage(pageTypeId);
+  }
 
+  @Get('/childpage/:parentPageValueId')
+  async showChildPage(@Param('parentPageValueId') parentPageValueId: number) {
+    return await this.pagePermissionService.showChildPage(parentPageValueId);
   }
 
   @Post()
