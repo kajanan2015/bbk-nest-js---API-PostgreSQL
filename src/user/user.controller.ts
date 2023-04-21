@@ -26,7 +26,7 @@ export class UserController {
   
 
   @Put('/edit/:id')
-  async uppdate(@Param('id') id: string, @Body() data: any) {
+  async uppdate(@Param('id') id: number, @Body() data: any) {
 
     console.log(id, 'ranga')
     await this.service.update(id, data);
