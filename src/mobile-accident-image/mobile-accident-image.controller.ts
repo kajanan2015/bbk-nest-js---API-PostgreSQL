@@ -1,21 +1,35 @@
-import { Controller, HttpStatus,Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, HttpStatus,Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles } from '@nestjs/common';
 import { MobileAccidentImageService } from './mobile-accident-image.service';
 import { CreateMobileAccidentImageDto } from './create-mobile-accident-image.dto';
 import { UpdateMobileAccidentImageDto } from './update-mobile-accident-image.dto';
-
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { ImageUploadService } from 'src/imageupload/imageupload.service';
 @Controller('mobile-accident-image')
 export class MobileAccidentImageController {
-  constructor(private readonly mobileAccidentImageService: MobileAccidentImageService) {}
+  constructor(private readonly mobileAccidentImageService: MobileAccidentImageService, private   readonly imageUploadService: ImageUploadService,) {}
 
   @Post()
-  async create(@Body() createMobileAccidentImageDto: CreateMobileAccidentImageDto) {
-     const mobileaccident=await this.mobileAccidentImageService.create(createMobileAccidentImageDto);
+  @UseInterceptors(AnyFilesInterceptor())
+  async create(@UploadedFiles() file ,@Body() createMobileAccidentImageDto:CreateMobileAccidentImageDto) {
+    const filename=await this.imageUploadService.upload(file , "body");
+    const data={
+      ...createMobileAccidentImageDto,
+      "patheImage":filename
+    }
+     const mobileaccident=await this.mobileAccidentImageService.create(data);
      return {
       statusCode: HttpStatus.OK,
-      mobileaccident
+      // mobileaccident
     };
     }
-
+    
+    @Post("upload")
+    @UseInterceptors(AnyFilesInterceptor())
+    async upload(@UploadedFiles() file , @Body() body) {
+      const response=await this.imageUploadService.upload(file , body);
+      console.log(response,89898)
+      return await this.imageUploadService.upload(file , body);
+    }
   @Get()
   findAll() {
     return this.mobileAccidentImageService.findAll();

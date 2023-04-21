@@ -5,16 +5,22 @@ import { Repository } from 'typeorm';
 import { CreateMobileAccidentImageDto } from './create-mobile-accident-image.dto';
 import { UpdateMobileAccidentImageDto } from './update-mobile-accident-image.dto';
 import { MobileAccidentImage } from './mobile-accident-image.entity';
+import { ImageUploadService } from 'src/imageupload/imageupload.service';
 @Injectable()
 export class MobileAccidentImageService {
   constructor(
     @InjectRepository(MobileAccidentImage)
     private mobileAccidentImageRepository: Repository<MobileAccidentImage>,
+    private   readonly imageUploadServiceRepository: ImageUploadService,
   ) {}
 
-  async create(createMobileAccidentImage: MobileAccidentImage): Promise<MobileAccidentImage> {
+  async create(createMobileAccidentImage) {
+   
+    // const imageUrl=await this.imageUploadServiceRepository.uploadimage(imagepath);
+    // console.log(imageUrl,9090909090909);
     const response=this.mobileAccidentImageRepository.create(createMobileAccidentImage);
     return await this.mobileAccidentImageRepository.save(response);
+    // return "succe";
   }
 
  async findAll() {
