@@ -12,9 +12,7 @@ import { walkarroundcheckvtypeEntity } from './walkarroundcheckvtype.entity';
       ) {}
 
       async showAll() {
-        return await this.walkarroundcheckvtypeRepository.find(
-          { where: { status: 1 } }
-        );
+        return await this.walkarroundcheckvtypeRepository.find();
       }
 
       async create(data: walkarroundcheckvtypeDTO) {
