@@ -21,12 +21,13 @@ export class PagePermissionService {
   }
 
   async showParentPage(pageTypeId: number): Promise<PagePermissionEntity[]> {
-    return await this.pagepermissionRepository.find(
+    const x = await this.pagepermissionRepository.find(
       {
-        where: { pageStatus: 1 , pageType: pageTypeId === 1 ? pageTypeId - 1 : pageTypeId - 2},
+        where: { pageStatus: 1 , pageType: pageTypeId},
         relations: ['parentPage']
       }
     );
+    return x;
   }
 
   async showChildPage(parentPageValueId: number): Promise<PagePermissionEntity[]> {
