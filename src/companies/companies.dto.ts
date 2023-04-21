@@ -7,5 +7,5 @@ export interface CompaniesDTO {
   createdBy: number;
   createdat: Date;
   updatedat: Date;
-  subCompanyId: number;
+  parentCompanyId: number;
 }

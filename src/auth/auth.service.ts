@@ -42,9 +42,10 @@ export class AuthService {
 
     
 // we assign 0 for add value to emp id column, because we use same login for employee and admin- added by nuwan
-    const user: User = await this.userService.create(name, email, password,"",null,null);
-    delete user.password;
-    return user;
+    // const user: User = await this.userService.create(name, email, password,"",null,null);
+    // delete user.password;
+    // return user;
+    return 
   }
 
 
@@ -77,7 +78,7 @@ export class AuthService {
       userid:user.id
     };
     await this.authRepository.save(data)
-    const payload = { utype: user.utype, name: user.name, email: user.email, sub: user.id, employee_id:user.empId } ;
+    const payload = { utype: user.uType, name: user.firstName, email: user.email, sub: user.id } ;
 
     
     return {

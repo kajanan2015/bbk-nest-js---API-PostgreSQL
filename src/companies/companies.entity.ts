@@ -28,14 +28,14 @@ export class CompaniesEntity {
   updatedat: Date;
 
   @ManyToOne(() => CompaniesEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'subCompanyId' })
+  @JoinColumn({ name: 'parentCompanyId' })
   mainCompany: CompaniesEntity;
 
-  get subCompanyId(): number {
+  get parentCompanyId(): number {
     return this.mainCompany ? this.mainCompany.id : 0;
   }
 
-  set subCompanyId(value: number) {
+  set parentCompanyId(value: number) {
   }
   
   @ManyToMany(() => Employee, (employee) => employee.companies)

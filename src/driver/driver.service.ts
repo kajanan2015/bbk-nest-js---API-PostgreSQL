@@ -22,13 +22,13 @@ export class DriverService {
     }
     const response=await this.driverRepository.save(driver);
     const driver_id=response.id;
-    await this.userService.create(
-      createDriverDto.driverName, 
-      createDriverDto.driverEmail, 
-      createDriverDto.driverPassword,
-      "DRIVER",
-      null, 
-      driver_id);
+    // await this.userService.create(
+    //   createDriverDto.driverName, 
+    //   createDriverDto.driverEmail, 
+    //   createDriverDto.driverPassword,
+    //   "DRIVER",
+    //   null, 
+    //   driver_id);
     return this.driverRepository.save(driver);
   }
 

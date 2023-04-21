@@ -4,7 +4,7 @@ import { Repository, UpdateResult } from 'typeorm';
 
 import { User } from './user.entity';
 import * as bcrypt from 'bcryptjs';
-
+import { CreateUserDto } from './user.dto';
 @Injectable()
 export class UserService {
   constructor(
@@ -13,7 +13,10 @@ export class UserService {
   ) { }
 
   async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
+    return await this.userRepository.find({ 
+      relations: ['companies'],
+      where: { status: 1 }, 
+    });
   }
 
   async find(id: number): Promise<User> {
@@ -24,14 +27,12 @@ export class UserService {
     return await this.userRepository.findOne({ where: { email } });
   }
 // we added same login for employee and admin, we need to identify uniquly employee data, that why we pass employee id
-  async create(name: string, email: string, password: string, usertype: string, employee_id:number, driver_id:number): Promise<User> {
-    const user = new User();
-    user.name = name;
-    user.email = email;
-    user.utype = usertype;
-    user.empId = employee_id;
-    user.drvId = driver_id;
-    user.password = await this.hashPassword(password);
+  async create(data:CreateUserDto){
+    const newhashpassword = await this.hashPassword(data.password);
+    const user = {
+      ...data,
+      password: newhashpassword,
+    };
     return await this.userRepository.save(user);
   }
 
@@ -42,22 +43,45 @@ export class UserService {
   }
 
 
-  async update(id: string, data: Partial<User>) {
-    await this.userRepository.update({ email : id }, data);
-    return await this.userRepository.findOne({ where: {  email : id } });
+  async update(id: number, data: Partial<User>) {
+    if(data.password){
+      const newhashpassword = await this.hashPassword(data.password);
+      const user = {
+        ...data,
+        password: newhashpassword,
+      };
+    }
+    await this.userRepository.update({ id : id }, data);
+    return await this.userRepository.findOne({ where: {  id : id } });
+  }
+
+  async updateUserStatus(id:number,status:string):Promise<void>{
+    await this.userRepository
+    .createQueryBuilder()
+    .update(User)
+    .set({ status: status })
+    .where({id:id})
+    .execute();
   }
 
   async updateEmployeePassword(id: number, employeeupdatedata: Partial<User>) {
-    const user = new User();
-    user.name = employeeupdatedata.name;
-    user.email = employeeupdatedata.email;
+    let user
     if(employeeupdatedata.password){
-      user.password = await this.hashPassword(employeeupdatedata.password);
+      const newhashpassword = await this.hashPassword(employeeupdatedata.password);
+      let user = {
+        ...employeeupdatedata,
+        password: newhashpassword,
+      };
+    }else{
+      const { password, ...dataWithoutPassword } = employeeupdatedata;
+      let user = {
+        ...dataWithoutPassword,
+      };
     }
     
 // return ;
-    await this.userRepository.update({ empId : id }, user);
-    return await this.userRepository.findOne({ where: {  empId : id } });
+    await this.userRepository.update({ id : id }, user);
+    return await this.userRepository.findOne({ where: {  id : id } });
   }
   
 }
