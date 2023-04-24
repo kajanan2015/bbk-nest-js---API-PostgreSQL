@@ -4,7 +4,7 @@ import { CreateMobileAccidentImageDto } from './create-mobile-accident-image.dto
 import { UpdateMobileAccidentImageDto } from './update-mobile-accident-image.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
-@Controller('mobile-accident-image')
+@Controller('mobile-bodymark')
 export class MobileAccidentImageController {
   constructor(private readonly mobileAccidentImageService: MobileAccidentImageService, private   readonly imageUploadService: ImageUploadService,) {}
 
@@ -45,7 +45,7 @@ export class MobileAccidentImageController {
     await this.mobileAccidentImageService.update(+id, updateMobileAccidentImageDto);
     return {
       statusCode: HttpStatus.OK,
-      message: 'accicdent image updated successfully',
+      message: 'accident image updated successfully',
     };
   }
 

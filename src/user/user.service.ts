@@ -32,6 +32,7 @@ export class UserService {
     const user = {
       ...data,
       password: newhashpassword,
+      uType:"CADMIN"
     };
     return await this.userRepository.save(user);
   }
