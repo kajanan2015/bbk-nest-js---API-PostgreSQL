@@ -3,9 +3,12 @@ export interface CompaniesDTO {
   companyName: string;
   companyEmail: string;
   companyContact: string;
+  companyWebsite: string;
+  companyLogo: string;
   companyStatus: Boolean;
-  createdBy: number;
   createdat: Date;
   updatedat: Date;
+  createdBy: number;
   parentCompanyId: number;
 }
+

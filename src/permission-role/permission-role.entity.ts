@@ -5,7 +5,7 @@ export class PermissionRoleEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
   id: number;
 
-  @Column("varchar", { name: "driverType", nullable: true, length: 30 })
+  @Column("varchar", { name: "roleName", nullable: true, length: 30 })
   roleName: string | null;
 
   @Column({ type: 'boolean', default:true})

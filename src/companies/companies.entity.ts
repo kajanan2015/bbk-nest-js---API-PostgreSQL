@@ -17,6 +17,12 @@ export class CompaniesEntity {
   @Column({ type: 'boolean', default:true})
   companyStatus: Boolean;
 
+  @Column("varchar", {  length: 100 })
+  companyWebsite: string;
+
+  @Column("varchar", {  length: 100 })
+  companyLogo: string;
+
   @Column("int")
   createdBy: number;
 
