@@ -1,5 +1,5 @@
 
-import { Employee } from 'src/employee/employee.entity';
+
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
 @Entity('driver_type')
 export class DriverTypeEntity {

@@ -1,5 +1,4 @@
 
-import { Employee } from 'src/employee/employee.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinColumn } from 'typeorm';
 @Entity('company')
 export class CompaniesEntity {
@@ -38,6 +37,6 @@ export class CompaniesEntity {
   set parentCompanyId(value: number) {
   }
   
-  @ManyToMany(() => Employee, (employee) => employee.companies)
-  employees: Employee[];
+  // @ManyToMany(() => Employee, (employee) => employee.companies)
+  // employees: Employee[];
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { Repository, UpdateResult,Not } from 'typeorm';
 
 import { User } from './user.entity';
 import * as bcrypt from 'bcryptjs';
@@ -14,17 +14,16 @@ export class UserService {
 
   async findAll(): Promise<User[]> {
     return await this.userRepository.find({ 
-      relations: ['companies'],
-      where: { status: 1 }, 
+      where: { status: 1,uType: Not('ADMIN') }, 
     });
   }
 
   async find(id: number): Promise<User> {
-    return await this.userRepository.findOne({ where: { id } });
+    return await this.userRepository.findOne({ where: { id:id, status: 1  } });
   }
 
   async findByEmail(email: string): Promise<User> {
-    return await this.userRepository.findOne({ where: { email } });
+    return await this.userRepository.findOne({ where: { email:email,status: 1  } });
   }
 // we added same login for employee and admin, we need to identify uniquly employee data, that why we pass employee id
   async create(data:CreateUserDto){

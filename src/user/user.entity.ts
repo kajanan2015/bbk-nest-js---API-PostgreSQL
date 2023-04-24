@@ -53,8 +53,8 @@ export class User  {
   @Column("timestamp", { name: "updatedat", default: () => "CURRENT_TIMESTAMP" })
   updatedat: Date;
 
-  @ManyToMany(() => CompaniesEntity, (company) => company.employees)
-  @JoinTable()
-  companies: CompaniesEntity[];
+  // @ManyToMany(() => CompaniesEntity, (company) => company.employees)
+  // @JoinTable()
+  // companies: CompaniesEntity[];
 
 }
