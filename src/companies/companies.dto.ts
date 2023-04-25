@@ -1,3 +1,5 @@
+import { CompaniesEntity } from "./companies.entity";
+
 export interface CompaniesDTO {
   id: number;
   companyName: string;
@@ -5,10 +7,12 @@ export interface CompaniesDTO {
   companyContact: string;
   companyWebsite: string;
   companyLogo: string;
-  companyStatus: Boolean;
+  companyStatus: boolean;
   createdat: Date;
   updatedat: Date;
   createdBy: number;
   parentCompanyId: number;
+  file: File;
+  mainCompany: CompaniesEntity;
 }
 

@@ -7,16 +7,21 @@ import {
   Param,
   HttpStatus,
   UseGuards,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 import { CompaniesDTO } from './companies.dto';
 
 import { CompaniesService } from './companies.service';
 import { AuthGuard } from '@nestjs/passport';
-import { CompaniesEntity } from './companies.entity';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { ImageUploadService } from 'src/imageupload/imageupload.service';
 @UseGuards(AuthGuard('jwt'))
 @Controller('companies')
 export class CompaniesController {
-  constructor(private service: CompaniesService) { }
+  constructor(
+    private service: CompaniesService,
+    private   readonly imageUploadService: ImageUploadService) { }
 
   @Get()
   async showAll() {
@@ -37,8 +42,14 @@ export class CompaniesController {
   }
 
   @Post()
-  async create(@Body() companyData: CompaniesEntity): Promise<CompaniesEntity> {
-    return await this.service.create(companyData);
+  @UseInterceptors(AnyFilesInterceptor())
+  async create(@UploadedFiles() file ,@Body() companyData ) {
+    const filename=await this.imageUploadService.upload(file , "body");
+    const data={
+      ...companyData,
+      "companyLogo":filename
+    }
+    return await this.service.create(data);
   }
 
   @Get(':id')

@@ -15,7 +15,7 @@ export class CompaniesEntity {
   companyContact: string | null;
 
   @Column({ type: 'boolean', default:true})
-  companyStatus: Boolean;
+  companyStatus: boolean;
 
   @Column("varchar", {  length: 100 })
   companyWebsite: string;
