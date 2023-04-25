@@ -62,12 +62,15 @@ export class CompaniesController {
   }
 
   @Put('/edit/:id')
-  async uppdate(@Param('id') id: number, @Body() data: Partial<CompaniesDTO>) {
-
-    await this.service.update(id, data);
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'Company updated successfully',
-    };
+  @UseInterceptors(AnyFilesInterceptor())
+  async update(@Param('id') id: number,@UploadedFiles() file , @Body() companyData) {
+    
+    const filename=await this.imageUploadService.upload(file , "body");
+    const data={
+      ...companyData,
+      "companyLogo":filename[0]
+    }
+   
+    return await this.service.update(id, data);
   }
 }
