@@ -23,6 +23,7 @@ import { SubCompaniesModule } from './sub-companies/sub-companies.module';
 import { SubadminassignModule } from './subadminassign/subadminassign.module';
 import { MobileAccidentImageModule } from './mobile-accident-image/mobile-accident-image.module';
 import { WalkarroundcheckvtypeModule } from './walkarroundcheckvtype/walkarroundcheckvtype.module';
+import { DefectCasesModule } from './defect-cases/defect-cases.module';
 
 
 
@@ -52,7 +53,8 @@ const settings = require("../ormconfig.js");
     PagePermissionModule,
     SubadminassignModule,
     MobileAccidentImageModule,
-    WalkarroundcheckvtypeModule
+    WalkarroundcheckvtypeModule,
+    DefectCasesModule
   ],
   controllers: [AppController],
   providers: [AppService],
