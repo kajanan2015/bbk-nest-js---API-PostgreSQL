@@ -19,7 +19,7 @@ export class ImageUploadService {
 
     const params = {
       Bucket: bucket,
-      Key: String(name),
+      Key: String(Date.now().toString()+"_"+name),
       Body: file,
     };
     return new Promise((resolve, reject) => {
@@ -49,27 +49,20 @@ export class ImageUploadService {
       fileInfo.push(obj);
     }
 
-    
 
-    // const connection: Connection = getConnection();
-    // const queryRunner: QueryRunner = connection.createQueryRunner();
-
-    // await queryRunner.connect();
-    // await queryRunner.startTransaction();
-
-    // let obj1 = {
-    //   listingsId: name.idm,
-    //   imgname:String(obj) ,
-     
-    // };
-
-    // await queryRunner.manager.save(ListingsimagesEntity, obj1);
-    // await queryRunner.commitTransaction();
-    // await queryRunner.release();
+   return fileInfo;
+  }
 
 
+  async uploadoiikii(files, name) {
+    const bucketS3 = "oiikii";
 
+    let fileInfo = [];
 
+    for (const file of files) {
+      let obj = await this.uploadS3Add(file.buffer, bucketS3, file.originalname);
+      fileInfo.push(obj);
+    }
 
 
    return fileInfo;

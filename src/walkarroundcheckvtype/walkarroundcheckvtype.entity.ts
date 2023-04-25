@@ -5,6 +5,11 @@ export class walkarroundcheckvtypeEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
   id: number;
 
+
+  @Column("varchar", { name: "vmake", nullable: true, length: 50 })
+  vmake: string | null;
+
+
   @Column("varchar", { name: "vtype", nullable: true, length: 10 })
   vtype: string | null;
 

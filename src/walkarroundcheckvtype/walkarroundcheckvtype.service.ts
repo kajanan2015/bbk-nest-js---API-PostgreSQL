@@ -15,7 +15,7 @@ import { walkarroundcheckvtypeEntity } from './walkarroundcheckvtype.entity';
         return await this.walkarroundcheckvtypeRepository.find();
       }
 
-      async create(data: walkarroundcheckvtypeDTO) {
+      async create(data) {
         const company = this.walkarroundcheckvtypeRepository.create(data);
         await this.walkarroundcheckvtypeRepository.save(data);
         return company;
