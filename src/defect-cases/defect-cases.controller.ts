@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { DefectCasesService } from './defect-cases.service';
-import { CreateDefectCaseDto } from './dto/create-defect-case.dto';
-import { UpdateDefectCaseDto } from './dto/update-defect-case.dto';
+import { CreateDefectCaseDto } from './create-defect-case.dto';
+import { UpdateDefectCaseDto } from './update-defect-case.dto';
 
 @Controller('defect-cases')
 export class DefectCasesController {
