@@ -24,6 +24,8 @@ import { SubadminassignModule } from './subadminassign/subadminassign.module';
 import { MobileAccidentImageModule } from './mobile-accident-image/mobile-accident-image.module';
 import { WalkarroundcheckvtypeModule } from './walkarroundcheckvtype/walkarroundcheckvtype.module';
 import { DefectCasesModule } from './defect-cases/defect-cases.module';
+import { DefectCasesResultModule } from './defect-cases-result/defect-cases-result.module';
+import { DefectTripModule } from './defect-trip/defect-trip.module';
 
 
 
@@ -54,7 +56,9 @@ const settings = require("../ormconfig.js");
     SubadminassignModule,
     MobileAccidentImageModule,
     WalkarroundcheckvtypeModule,
-    DefectCasesModule
+    DefectCasesModule,
+    DefectCasesResultModule,
+    DefectTripModule
   ],
   controllers: [AppController],
   providers: [AppService],
