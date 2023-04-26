@@ -52,6 +52,11 @@ export class CompaniesService {
     return await this.companyRepository.findOne({ id });
   }
 
+  async updateCompanyStatus(id: number, companyStatus: string) {
+    await this.companyRepository.update({ id }, { companyStatus: () => companyStatus });
+    return await this.companyRepository.findOne({ id });
+  }
+  
   async destroy(id: number) {
     await this.companyRepository.delete({ id });
     return { deleted: true };
