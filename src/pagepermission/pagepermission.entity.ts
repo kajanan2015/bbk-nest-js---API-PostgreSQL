@@ -1,5 +1,6 @@
 
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Check} from 'typeorm';
+import { CompaniesEntity } from 'src/companies/companies.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Check, ManyToMany, JoinTable} from 'typeorm';
 @Entity('pages')
 export class PagePermissionEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
@@ -37,4 +38,6 @@ export class PagePermissionEntity {
   @Column("timestamp", { name: "updatedat", default: () => "CURRENT_TIMESTAMP" })
   updatedat: Date;
 
+  @ManyToMany(() => CompaniesEntity, (company) => company.pages)
+  companies: CompaniesEntity[];
 }

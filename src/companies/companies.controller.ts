@@ -111,4 +111,11 @@ export class CompaniesController {
     return await this.service.updateCompanyStatus(id, companyStatus);
   }
 
+  @Post('pages/:companyId')
+  async addPageToCompany(
+    @Param('companyId') companyId: number,
+    @Body('pageIds') pageIds,
+  ) {
+    await this.service.addPageToCompany(companyId, pageIds);
+  }
 }

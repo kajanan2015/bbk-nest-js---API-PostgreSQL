@@ -1,3 +1,4 @@
+import { PagePermissionEntity } from "src/pagepermission/pagepermission.entity";
 import { CompaniesEntity } from "./companies.entity";
 
 export interface CompaniesDTO {
@@ -14,5 +15,6 @@ export interface CompaniesDTO {
   parentCompanyId: number;
   file: File;
   mainCompany: CompaniesEntity;
+  pages: PagePermissionEntity[];
 }
 
