@@ -85,15 +85,16 @@ export class CompaniesController {
   @Put('/edit/:id')
   @UseInterceptors(AnyFilesInterceptor())
   async updateStatus(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
+    console.log(companyData,11)
     let data = { ...companyData };
     if (file && Array.isArray(file) && file.length === 0) {
-      const { companyLogo, companyStatus, ...companyDataWithoutLogo } = companyData;
+      const { companyLogo, ...companyDataWithoutLogo } = companyData;
       data = {
         ...companyDataWithoutLogo,
       }
     } else {
       const filename = await this.imageUploadService.upload(file, "body");
-      const { companyStatus, ...companyDataWithoutStatus } = companyData;
+      const { ...companyDataWithoutStatus } = companyData;
       data = {
         ...companyDataWithoutStatus,
         "companyLogo": filename[0]
