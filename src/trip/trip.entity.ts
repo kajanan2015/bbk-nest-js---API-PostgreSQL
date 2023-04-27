@@ -11,11 +11,35 @@ export class TripEntity {
   @Column("varchar", { name: "code", nullable: true, length: 20 })
   code: string | null;
 
+  @Column("int")
+  driverId: number;
+
+  @Column("int")
+  vehicleId: number;
+
+  @Column("int")
+  movementId: number;
+
+  @Column("varchar")
+  frameLayout: string;
+
+  @Column("varchar")
+  vehicleCompany: string;
+  
+  @Column("varchar")
+  defectStatus: string;
+
+  @Column("varchar")
+  previousMileage: string;
+
+  @Column("timestamp", { name: "date", default: () => "CURRENT_TIMESTAMP" })
+  date: Date;
+
+  @Column("varchar")
+  res: string;
+
+  
   @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
   createdat: Date;
-
-  @Column("timestamp", { name: "updatedat", default: () => "CURRENT_TIMESTAMP" })
-  updatedat: Date;
-
  
 }
