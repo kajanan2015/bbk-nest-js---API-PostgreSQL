@@ -36,8 +36,18 @@ export class CompaniesService {
   }
 
   async create(companyData: CompaniesEntity): Promise<CompaniesEntity> {
-    const newCompany = this.companyRepository.create(companyData);
     const response=await this.systemcodeService.findOne('company')
+    const companyCode=response.code+'/'+response.startValue   
+    const newstartvalue={
+      startValue:response.startValue+1
+    }
+    const newcompanyData={
+      ...companyData,
+      companyCode:companyCode
+    }
+    console.log(newstartvalue,'sdsdsdsd');
+    await this.systemcodeService.update(response.id,newstartvalue)
+    const newCompany = this.companyRepository.create(newcompanyData);
     return await this.companyRepository.save(newCompany);
   }
 

@@ -24,7 +24,10 @@ export class CompaniesEntity {
   @Column("varchar", {  length: 100 })
   companyLogo: string;
 
-  @Column("int")
+  @Column("varchar", {  length: 100 })
+  companyCode: string;
+
+  @Column("int",{nullable:true,default: () => null})
   createdBy: number;
 
   @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
@@ -33,6 +36,7 @@ export class CompaniesEntity {
   @Column("timestamp", { name: "updatedat", default: () => "CURRENT_TIMESTAMP" })
   updatedat: Date;
 
+  
   @ManyToOne(() => CompaniesEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'parentCompanyId' })
   mainCompany: CompaniesEntity;
