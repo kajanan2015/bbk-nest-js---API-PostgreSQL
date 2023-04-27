@@ -5,7 +5,6 @@ import { Repository, UpdateResult,Not } from 'typeorm';
 import { User } from './user.entity';
 import * as bcrypt from 'bcryptjs';
 import { CreateUserDto } from './user.dto';
-import { PermissionRoleService } from 'src/permission-role/permission-role.service';
 import { PermissionRoleEntity } from 'src/permission-role/permission-role.entity';
 @Injectable()
 export class UserService {
@@ -87,24 +86,33 @@ export class UserService {
     return await this.userRepository.findOne({ where: {  id : id } });
   }
 
-  async addRoleToEmployee(employeeId: number, roleIds: number[]): Promise<void> {
+  async updateRolesForEmployee(employeeId: number, roleIds: number[]): Promise<void> {
     const employee = await this.userRepository.findOne(employeeId, {
       relations: ['roles'],
     });
   
-    console.log(employeeId,11)
-    console.log(roleIds,22)
-    const existingRoles = employee.roles.map((role) => role.id);
-    const newRoles = roleIds.filter((roleId) => !existingRoles.includes(roleId));
+    console.log(employeeId, 11);
+    console.log(roleIds, 22);
   
-    if (newRoles.length !== roleIds.length) {
-      const missingroleIds = roleIds.filter((roleId) => !newRoles.includes(roleId));
-      throw new NotFoundException(`Already selected ${missingroleIds.join(',')}`);
+    const existingRoles = employee.roles.map((role) => role.id);
+    const rolesToRemove = existingRoles.filter((roleId) => !roleIds.includes(roleId));
+    const rolesToAdd = roleIds.filter((roleId) => !existingRoles.includes(roleId));
+  
+    if (rolesToRemove.length) {
+      const rolesToRemoveEntities = await this.permissionRoleRepository.findByIds(
+        rolesToRemove
+      );
+      employee.roles = employee.roles.filter((role) => !rolesToRemove.includes(role.id));
+      await this.permissionRoleRepository.remove(rolesToRemoveEntities);
     }
   
-    const rolesToAdd = await this.permissionRoleRepository.findByIds(newRoles);
+    if (rolesToAdd.length) {
+      const rolesToAddEntities = await this.permissionRoleRepository.findByIds(
+        rolesToAdd
+      );
+      employee.roles.push(...rolesToAddEntities);
+    }
   
-    employee.roles.push(...rolesToAdd);
     await this.userRepository.save(employee);
   }
   
