@@ -18,7 +18,6 @@ import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
 
 
-@UseGuards(AuthGuard('jwt'))
 @Controller('user')
 export class UserController {
   constructor(private service: UserService) {}
@@ -50,6 +49,14 @@ export class UserController {
       statusCode: HttpStatus.OK,
       user,
     };
+  }
+
+  @Post('pages/:employeeId')
+  async addPageToCompany(
+    @Param('employeeId') employeeId: number,
+    @Body('roleIds') roleIds,
+  ) {
+    await this.service.addRoleToEmployee(employeeId, roleIds);
   }
 
   @Post('/strip')

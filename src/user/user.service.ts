@@ -1,15 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult,Not } from 'typeorm';
 
 import { User } from './user.entity';
 import * as bcrypt from 'bcryptjs';
 import { CreateUserDto } from './user.dto';
+import { PermissionRoleService } from 'src/permission-role/permission-role.service';
+import { PermissionRoleEntity } from 'src/permission-role/permission-role.entity';
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(PermissionRoleEntity)
+    private readonly permissionRoleRepository: Repository<PermissionRoleEntity>,
   ) { }
 
   async findAll(): Promise<User[]> {
@@ -41,7 +45,6 @@ export class UserService {
     const hashed: string = await bcrypt.hash(plain, saltRounds);
     return hashed;
   }
-
 
   async update(id: number, data: Partial<User>) {
     if(data.password){
@@ -82,6 +85,27 @@ export class UserService {
 // return ;
     await this.userRepository.update({ id : id }, user);
     return await this.userRepository.findOne({ where: {  id : id } });
+  }
+
+  async addRoleToEmployee(employeeId: number, roleIds: number[]): Promise<void> {
+    const employee = await this.userRepository.findOne(employeeId, {
+      relations: ['roles'],
+    });
+  
+    console.log(employeeId,11)
+    console.log(roleIds,22)
+    const existingRoles = employee.roles.map((role) => role.id);
+    const newRoles = roleIds.filter((roleId) => !existingRoles.includes(roleId));
+  
+    if (newRoles.length !== roleIds.length) {
+      const missingroleIds = roleIds.filter((roleId) => !newRoles.includes(roleId));
+      throw new NotFoundException(`Already selected ${missingroleIds.join(',')}`);
+    }
+  
+    const rolesToAdd = await this.permissionRoleRepository.findByIds(newRoles);
+  
+    employee.roles.push(...rolesToAdd);
+    await this.userRepository.save(employee);
   }
   
 }
