@@ -1,26 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDefectTripDto } from './create-defect-trip.dto';
 import { UpdateDefectTripDto } from './update-defect-trip.dto';
-
+import { DefectTrip } from './defect-trip.entity';
+import { ImageUploadService } from 'src/imageupload/imageupload.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 @Injectable()
 export class DefectTripService {
-  create(createDefectTripDto: CreateDefectTripDto) {
-    return 'This action adds a new defectTrip';
+
+  constructor(
+    @InjectRepository(DefectTrip)
+    private defectrip: Repository<DefectTrip>,
+    private   readonly imageUploadServiceRepository: ImageUploadService,
+  ) {}
+
+  async create(createDefectTripDto: CreateDefectTripDto) {
+    const response=this.defectrip.create(createDefectTripDto);
+    return await this.defectrip.save(response);
   }
 
-  findAll() {
-    return `This action returns all defectTrip`;
+  async findAll() {
+    return await this.defectrip.find({ 
+      where: { status: 1 },
+      relations: ['defectCaseResultId'] 
+    }, );
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} defectTrip`;
+ async findOne(id: number) {
+  const defecttrip = await this.defectrip.findOne(id);
+  if (!defecttrip) {
+    throw new NotFoundException(` ID '${id}' not found`);
+  }
+  return defecttrip;
   }
 
-  update(id: number, updateDefectTripDto: UpdateDefectTripDto) {
-    return `This action updates a #${id} defectTrip`;
+  async update(id: number, updateDefectTripDto: UpdateDefectTripDto) {
+    await this.defectrip.update({ id }, updateDefectTripDto);
+    return await this.defectrip.findOne({ id });
   }
 
-  remove(id: number) {
+  async remove(id: number) {
     return `This action removes a #${id} defectTrip`;
   }
 }

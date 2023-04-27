@@ -1,6 +1,7 @@
-import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { CompaniesEntity } from 'src/companies/companies.entity';
+import { DefectCasesResult } from 'src/defect-cases-result/defect-cases-result.entity';
+@Entity()
 export class DefectTrip {
     @PrimaryGeneratedColumn()
     id:number;
@@ -9,20 +10,32 @@ export class DefectTrip {
     submitdate: Date;
 
     @Column("int",{nullable:true})
-    driverId:number;
-
-    @Column("int",{nullable:true})
     tripId:number;
 
-    @Column("int",{nullable:true})
-    questionId:number;
-    
-    @Column("int",{nullable:true})
-    resultQuestion:number;
+    @Column("varchar",{nullable:true})
+    vehicleRegNo:string;
     
     @Column("varchar",{nullable:true})
-    note:string;
+    vehicleRegPhoto:string;
+
+    @Column("varchar",{nullable:true})
+    odometerReading:string;
     
+    @Column("varchar",{nullable:true})
+    place:string;
+
+    @Column("varchar",{nullable:true})
+    defectNote:string;
+    
+    @Column("int",{nullable:true})
+    nilDefect:number;
+
     @Column({ type: 'boolean', default:true})
     status: Boolean;
+
+
+    @OneToMany(() => DefectCasesResult, defectcaseresult => defectcaseresult.defecttrip, { cascade: true })
+    defectCaseResultId: DefectCasesResult;
+
+
 }
