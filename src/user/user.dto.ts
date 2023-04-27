@@ -1,4 +1,5 @@
 import { CompaniesEntity } from "src/companies/companies.entity";
+import { PermissionRoleEntity } from "src/permission-role/permission-role.entity";
 
 export class CreateUserDto {
     id: number;
@@ -18,4 +19,5 @@ export class CreateUserDto {
     createdat:Date;
     updatedat:Date;
     companies: CompaniesEntity[];
+    roles: PermissionRoleEntity[];
 }

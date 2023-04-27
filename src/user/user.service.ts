@@ -1,15 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult,Not } from 'typeorm';
 
 import { User } from './user.entity';
 import * as bcrypt from 'bcryptjs';
 import { CreateUserDto } from './user.dto';
+import { PermissionRoleEntity } from 'src/permission-role/permission-role.entity';
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(PermissionRoleEntity)
+    private readonly permissionRoleRepository: Repository<PermissionRoleEntity>,
   ) { }
 
   async findAll(): Promise<User[]> {
@@ -41,7 +44,6 @@ export class UserService {
     const hashed: string = await bcrypt.hash(plain, saltRounds);
     return hashed;
   }
-
 
   async update(id: number, data: Partial<User>) {
     if(data.password){
@@ -82,6 +84,33 @@ export class UserService {
 // return ;
     await this.userRepository.update({ id : id }, user);
     return await this.userRepository.findOne({ where: {  id : id } });
+  }
+
+  async updateRolesForEmployee(employeeId: number, roleIds: number[]): Promise<void> {
+    const employee = await this.userRepository.findOne(employeeId, {
+      relations: ['roles'],
+    });
+  
+    console.log(employeeId, 11);
+    console.log(roleIds, 22);
+  
+    const existingRoles = employee.roles.map((role) => role.id);
+    const rolesToRemove = existingRoles.filter((roleId) => !roleIds.includes(roleId));
+    const rolesToAdd = roleIds.filter((roleId) => !existingRoles.includes(roleId));
+  
+    if (rolesToRemove.length) {
+      employee.roles = employee.roles.filter((role) => !rolesToRemove.includes(role.id));
+      await this.userRepository.save(employee);
+    }    
+  
+    if (rolesToAdd.length) {
+      const rolesToAddEntities = await this.permissionRoleRepository.findByIds(
+        rolesToAdd
+      );
+      employee.roles.push(...rolesToAddEntities);
+    }
+  
+    await this.userRepository.save(employee);
   }
   
 }

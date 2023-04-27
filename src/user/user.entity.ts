@@ -1,7 +1,6 @@
 
-import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import * as bcrypt from 'bcryptjs';
-import { CompaniesEntity } from 'src/companies/companies.entity';
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { PermissionRoleEntity } from 'src/permission-role/permission-role.entity';
 
 @Entity()
 export class User  {
@@ -53,8 +52,7 @@ export class User  {
   @Column("timestamp", { name: "updatedat", default: () => "CURRENT_TIMESTAMP" })
   updatedat: Date;
 
-  // @ManyToMany(() => CompaniesEntity, (company) => company.employees)
-  // @JoinTable()
-  // companies: CompaniesEntity[];
-
+  @ManyToMany(() => PermissionRoleEntity, (role) => role.employees)
+  @JoinTable()
+  roles: PermissionRoleEntity[];
 }

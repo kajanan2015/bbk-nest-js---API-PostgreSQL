@@ -17,7 +17,6 @@ const stripe = require('stripe')('sk_test_51LfvAGChovVblxJg8YUMSd7MefCrw6DieaPiE
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
 
-
 @UseGuards(AuthGuard('jwt'))
 @Controller('user')
 export class UserController {
@@ -51,6 +50,17 @@ export class UserController {
       user,
     };
   }
+
+  @Post('roles/:employeeId')
+  async updateRolesForEmployee(
+    @Param('employeeId') employeeId: number,
+    @Body('roleIds') roleIds,
+  ) {
+    console.log(employeeId,33)
+    console.log(roleIds,44)
+    await this.service.updateRolesForEmployee(employeeId, roleIds);
+  }
+
 
   @Post('/strip')
   async stripcreate(@Body() data: any) {
