@@ -11,11 +11,11 @@ export class TripEntity {
   @Column("varchar", { name: "code", nullable: true, length: 20 })
   code: string | null;
 
-  @Column("int")
-  driverId: number;
+  @Column("varchar")
+  driverId: string;
 
-  @Column("int")
-  vehicleId: number;
+  @Column("varchar")
+  vehicleId: string;
 
   @Column("int")
   movementId: number;
