@@ -4,14 +4,15 @@ import { IsNull, Not, Repository } from 'typeorm';
 import { CompaniesDTO } from './companies.dto';
 import { CompaniesEntity } from './companies.entity';
 import { PagePermissionEntity } from 'src/pagepermission/pagepermission.entity';
-
+import { SystemCodeService } from 'src/system-code/system-code.service';
 @Injectable()
 export class CompaniesService {
   constructor(
     @InjectRepository(CompaniesEntity)
     private companyRepository: Repository<CompaniesEntity>,
     @InjectRepository(PagePermissionEntity)
-    private pagePermissionRepository: Repository<PagePermissionEntity>
+    private pagePermissionRepository: Repository<PagePermissionEntity>,
+    private readonly systemcodeService:SystemCodeService
   ) { }
 
   async showAll() {
@@ -36,6 +37,7 @@ export class CompaniesService {
 
   async create(companyData: CompaniesEntity): Promise<CompaniesEntity> {
     const newCompany = this.companyRepository.create(companyData);
+    const response=await this.systemcodeService.findOne('company')
     return await this.companyRepository.save(newCompany);
   }
 

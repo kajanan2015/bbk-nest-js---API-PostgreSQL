@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CreateDefectTripDto } from './dto/create-defect-trip.dto';
-import { UpdateDefectTripDto } from './dto/update-defect-trip.dto';
+import { CreateDefectTripDto } from './create-defect-trip.dto';
+import { UpdateDefectTripDto } from './update-defect-trip.dto';
 
 @Injectable()
 export class DefectTripService {

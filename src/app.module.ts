@@ -26,6 +26,8 @@ import { WalkarroundcheckvtypeModule } from './walkarroundcheckvtype/walkarround
 import { DefectCasesModule } from './defect-cases/defect-cases.module';
 import { DefectCasesResultModule } from './defect-cases-result/defect-cases-result.module';
 import { DefectTripModule } from './defect-trip/defect-trip.module';
+import { VehicleModule } from './vehicle/vehicle.module';
+import { SystemCodeModule } from './system-code/system-code.module';
 
 
 
@@ -58,7 +60,9 @@ const settings = require("../ormconfig.js");
     WalkarroundcheckvtypeModule,
     DefectCasesModule,
     DefectCasesResultModule,
-    DefectTripModule
+    DefectTripModule,
+    VehicleModule,
+    SystemCodeModule
   ],
   controllers: [AppController],
   providers: [AppService],
