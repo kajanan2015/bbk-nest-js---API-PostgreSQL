@@ -99,12 +99,9 @@ export class UserService {
     const rolesToAdd = roleIds.filter((roleId) => !existingRoles.includes(roleId));
   
     if (rolesToRemove.length) {
-      const rolesToRemoveEntities = await this.permissionRoleRepository.findByIds(
-        rolesToRemove
-      );
       employee.roles = employee.roles.filter((role) => !rolesToRemove.includes(role.id));
-      await this.permissionRoleRepository.remove(rolesToRemoveEntities);
-    }
+      await this.userRepository.save(employee);
+    }    
   
     if (rolesToAdd.length) {
       const rolesToAddEntities = await this.permissionRoleRepository.findByIds(
