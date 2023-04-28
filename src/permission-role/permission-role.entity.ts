@@ -12,6 +12,9 @@ export class PermissionRoleEntity {
   @Column({ type: 'boolean', default:true})
   roleStatus: Boolean;
 
+  @Column("int",{nullable:true, default: () => null})
+  assignCompany: number;
+
   @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
   createdat: Date;
 

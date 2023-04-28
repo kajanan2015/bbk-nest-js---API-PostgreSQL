@@ -16,7 +16,7 @@ export class User  {
   @Column({ length: 500 })
   lastName: string;
 
-  @Column("varchar", { nullable: false , length: 30 })
+  @Column("varchar", { nullable: false , length: 30, default: () => null })
   employeeNumber: string;
 
   @Column({ nullable: true})

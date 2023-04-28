@@ -23,7 +23,7 @@ export class PagePermissionEntity {
   set parentPageId(value: number) {
   }
 
-  @Column({ type: "int", unsigned: true })
+  @Column({ type: "int", unsigned: true, default: () => null})
   createdBy: number;
 
   @Column({ type: 'int', unsigned: true })

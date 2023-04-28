@@ -27,7 +27,7 @@ export class CompaniesEntity {
   @Column("varchar", {  length: 100,nullable:true,default: () => null })
   companyCode: string;
 
-  @Column("int",{nullable:true,default: () => null})
+  @Column("int",{nullable:true, default: () => null})
   createdBy: number;
 
   @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
