@@ -1,34 +1,48 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles, HttpStatus } from '@nestjs/common';
 import { DefectTripService } from './defect-trip.service';
 import { CreateDefectTripDto } from './create-defect-trip.dto';
 import { UpdateDefectTripDto } from './update-defect-trip.dto';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { ImageUploadService } from 'src/imageupload/imageupload.service';
 
 @Controller('defect-trip')
 export class DefectTripController {
-  constructor(private readonly defectTripService: DefectTripService) {}
+
+  constructor(private readonly defectTripService: DefectTripService,private   readonly imageUploadService: ImageUploadService) {}
 
   @Post()
-  create(@Body() createDefectTripDto: CreateDefectTripDto) {
-    return this.defectTripService.create(createDefectTripDto);
+  @UseInterceptors(AnyFilesInterceptor())
+  async create(@UploadedFiles() vehicleRegPhoto ,@Body() createDefectTripDto: CreateDefectTripDto) {
+   
+    const filename=await this.imageUploadService.upload(vehicleRegPhoto , "body");
+    const data={
+      ...createDefectTripDto,
+      "vehicleRegPhoto":filename
+    }
+    const defecttrip=await this.defectTripService.create(data);
+    return {
+      statusCode: HttpStatus.OK,
+      defecttrip
+    };
   }
 
   @Get()
-  findAll() {
+  async findAll() {
     return this.defectTripService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+ async  findOne(@Param('id') id: string) {
     return this.defectTripService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDefectTripDto: UpdateDefectTripDto) {
+ async update(@Param('id') id: string, @Body() updateDefectTripDto: UpdateDefectTripDto) {
     return this.defectTripService.update(+id, updateDefectTripDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string) {
     return this.defectTripService.remove(+id);
   }
 }

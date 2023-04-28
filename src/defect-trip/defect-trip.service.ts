@@ -22,12 +22,12 @@ export class DefectTripService {
   async findAll() {
     return await this.defectrip.find({ 
       where: { status: 1 },
-      relations: ['defectCaseResultId'] 
+      relations: ['defectCaseResults'] 
     }, );
   }
 
  async findOne(id: number) {
-  const defecttrip = await this.defectrip.findOne(id);
+  const defecttrip = await this.defectrip.findOne(id,{ relations: ['defectCaseResults'] });
   if (!defecttrip) {
     throw new NotFoundException(` ID '${id}' not found`);
   }

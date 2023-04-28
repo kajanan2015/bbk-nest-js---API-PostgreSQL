@@ -35,7 +35,7 @@ export class DefectTrip {
 
 
     @OneToMany(() => DefectCasesResult, defectcaseresult => defectcaseresult.defecttrip, { cascade: true })
-    defectCaseResultId: DefectCasesResult;
+    defectCaseResults: DefectCasesResult[];
 
 
 }

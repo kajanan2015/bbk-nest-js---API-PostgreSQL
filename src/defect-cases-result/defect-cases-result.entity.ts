@@ -20,7 +20,7 @@ note:string;
 @Column({ type: 'boolean', default:true})
 status: Boolean;
 
-@ManyToOne(() => DefectTrip, defecttrip => defecttrip.defectCaseResultId)
+@ManyToOne(() => DefectTrip, defecttrip => defecttrip.defectCaseResults)
 @JoinColumn()
 defecttrip: DefectTrip;
 }

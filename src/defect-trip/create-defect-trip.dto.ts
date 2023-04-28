@@ -4,7 +4,6 @@ export class CreateDefectTripDto {
     submitdate: Date;
     tripId:number;
     vehicleRegNo:string;
-    vehicleRegPhoto:string;
     odometerReading:string;
     place:string;
     defectNote:string;
