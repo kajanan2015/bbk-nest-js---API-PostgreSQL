@@ -78,16 +78,21 @@ export class CompaniesService {
     });
   
     const existingPages = company.pages.map((page) => page.id);
-    const newPages = pageIds.filter((pageId) => !existingPages.includes(pageId));
+    const pagesToRemove = existingPages.filter((pageId) => !pageIds.includes(pageId));
+    const pagesToAdd = pageIds.filter((pageId) => !existingPages.includes(pageId));
   
-    if (newPages.length !== pageIds.length) {
-      const missingPageIds = pageIds.filter((pageId) => !newPages.includes(pageId));
-      throw new NotFoundException(`Page(s) with ids ${missingPageIds.join(',')} not found`);
+    if (pagesToRemove.length) {
+      company.pages = company.pages.filter((page) => !pagesToRemove.includes(page.id));
+      await this.companyRepository.save(company);
+    }    
+  
+    if (pagesToAdd.length) {
+      const pagesToAddEntities = await this.pagePermissionRepository.findByIds(
+        pagesToAdd
+      );
+      company.pages.push(...pagesToAddEntities);
     }
   
-    const pagesToAdd = await this.pagePermissionRepository.findByIds(newPages);
-  
-    company.pages.push(...pagesToAdd);
     await this.companyRepository.save(company);
   }
   
