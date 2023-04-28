@@ -22,8 +22,6 @@ import { AuthGuard } from '@nestjs/passport';
 export class UserController {
   constructor(private service: UserService) {}
 
-  
-
   @Put('/edit/:id')
   async uppdate(@Param('id') id: number, @Body() data: any) {
 
@@ -61,6 +59,10 @@ export class UserController {
     await this.service.updateRolesForEmployee(employeeId, roleIds);
   }
 
+  @Get('roles/:employeeId')
+  async getEmployeeRoleIds(@Param('employeeId') employeeId: number): Promise<number[]> {
+    return await this.service.getEmployeeRoleIds(employeeId);
+  }
 
   @Post('/strip')
   async stripcreate(@Body() data: any) {
@@ -102,8 +104,6 @@ export class UserController {
         {price: 'price_1LiQSVChovVblxJgToISRMMR'},
       ],
     });
-
-    
 
     return {
       statusCode: HttpStatus.OK,

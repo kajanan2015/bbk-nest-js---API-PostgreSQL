@@ -112,5 +112,16 @@ export class UserService {
   
     await this.userRepository.save(employee);
   }
+
+  async getEmployeeRoleIds(employeeId: number): Promise<number[]> {
+    const employee = await this.userRepository.findOne(employeeId, {
+      relations: ['roles'],
+    });
+  
+    const roleIds = employee.roles.map((role) => role.id);
+    console.log(roleIds,5555)
+    return roleIds;
+  }
+  
   
 }
