@@ -35,17 +35,27 @@ export class CompaniesService {
     );
   }
 
-  async create(companyData: CompaniesEntity): Promise<CompaniesEntity> {
+  async create(companyData) {
+   console.log(companyData.filename,7777);
+   console.log(companyData.filename[1].profilepic[0],3323232)
     const response=await this.systemcodeService.findOne('company')
-    const companyCode=response.code+'/'+response.startValue   
+    const companyCode=response.code+''+response.startValue   
     const newstartvalue={
       startValue:response.startValue+1
     }
     const newcompanyData={
       ...companyData,
-      companyCode:companyCode
+      companyCode:companyCode,
+      companyLogo:companyData.filename[0].companylogo[0]
     }
-    console.log(newstartvalue,'sdsdsdsd');
+    const profileData={
+     firstname: companyData.firstname,
+     lastname: companyData.lastname,
+     email:companyData.email,
+     password: companyData.password,
+     profilePic: companyData.filename[1].profilepic[0]
+    }
+    
     await this.systemcodeService.update(response.id,newstartvalue)
     const newCompany = this.companyRepository.create(newcompanyData);
     return await this.companyRepository.save(newCompany);

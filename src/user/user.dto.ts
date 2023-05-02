@@ -13,6 +13,7 @@ export class CreateUserDto {
     phone: string;
     nationality: string;
     country: string;
+    profilePic: string;
     password:string;
     uType:string;
     status: Boolean;

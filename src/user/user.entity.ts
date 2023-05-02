@@ -37,6 +37,9 @@ export class User  {
   @Column("varchar", { nullable: true , length: 30 })
   country: string;
 
+  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  profilePic: string;
+
   @Column({ length: 500 })
   password: string;
 

@@ -45,12 +45,13 @@ export class CompaniesController {
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   async create(@UploadedFiles() file, @Body() companyData) {
-    const filename = await this.imageUploadService.upload(file, "body");
+    const filename = await this.imageUploadService.uploadcompany(file, "body");
     const data = {
       ...companyData,
-      "companyLogo": filename[0]
+      "filename": filename
     }
     return await this.service.create(data);
+  //  return filename
   }
 
   @Get(':id')
