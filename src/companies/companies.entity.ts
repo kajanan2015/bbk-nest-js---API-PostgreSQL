@@ -1,6 +1,7 @@
 
 import { PagePermissionEntity } from 'src/pagepermission/pagepermission.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinColumn, JoinTable, OneToMany } from 'typeorm';
+import { CompanyDocument } from 'src/company-document/company-document.entity';
 @Entity('company')
 export class CompaniesEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
@@ -48,30 +49,11 @@ export class CompaniesEntity {
   set parentCompanyId(value: number) {
   }
 
-  @OneToMany(() => CompanyDocuments, (companyDocuments: { company: any; }) => companyDocuments.company)
-  documents: CompanyDocuments[];
+  @OneToMany(() => CompanyDocument, companyDocuments => companyDocuments.company)
+  documents: CompanyDocument[];
 
   @ManyToMany(() => PagePermissionEntity, (page) => page.companies)
   @JoinTable()
   pages: PagePermissionEntity[];
 }
 
-@Entity('companyDocuments')
-export class CompanyDocuments {
-  @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
-  id: number;
-
-  @Column("varchar", {  length: 250 })
-  documentPath: string;
-
-  @Column("int")
-  companyId: number;
-
-  @ManyToOne(() => CompaniesEntity, company => company.documents )
-  @JoinColumn({ name: 'companyId' })
-  company: CompaniesEntity;
-
-  @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
-  createdat: Date;
-
-}

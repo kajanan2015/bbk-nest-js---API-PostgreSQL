@@ -28,6 +28,7 @@ import { DefectCasesResultModule } from './defect-cases-result/defect-cases-resu
 import { DefectTripModule } from './defect-trip/defect-trip.module';
 import { VehicleModule } from './vehicle/vehicle.module';
 import { SystemCodeModule } from './system-code/system-code.module';
+import { CompanyDocumentModule } from './company-document/company-document.module';
 
 
 
@@ -62,7 +63,8 @@ const settings = require("../ormconfig.js");
     DefectCasesResultModule,
     DefectTripModule,
     VehicleModule,
-    SystemCodeModule
+    SystemCodeModule,
+    CompanyDocumentModule
   ],
   controllers: [AppController],
   providers: [AppService],
