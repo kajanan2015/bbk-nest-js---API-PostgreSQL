@@ -7,8 +7,9 @@ import { User } from './user.entity';
 import { PermissionRoleEntity } from 'src/permission-role/permission-role.entity';
 import { PermissionRoleModule } from 'src/permission-role/permission-role.module';
 import { TripEntity } from 'src/trip/trip.entity';
+import { CompaniesEntity } from 'src/companies/companies.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([User, PermissionRoleEntity,TripEntity]), PermissionRoleModule],
+  imports: [TypeOrmModule.forFeature([User, PermissionRoleEntity,TripEntity, CompaniesEntity]), PermissionRoleModule],
   controllers: [UserController],
   exports: [TypeOrmModule, UserService],
   providers: [UserService],

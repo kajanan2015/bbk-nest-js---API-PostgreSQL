@@ -11,8 +11,9 @@ import { SystemCodeModule } from 'src/system-code/system-code.module';
 import { SystemCodeService } from 'src/system-code/system-code.service';
 import { SystemCode } from 'src/system-code/system-code.entity';
 import { CompanyDocument } from 'src/company-document/company-document.entity';
+import { User } from 'src/user/user.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([CompaniesEntity, PagePermissionEntity, SystemCode,CompanyDocument]), PagePermissionModule,SystemCodeModule],
+  imports: [TypeOrmModule.forFeature([CompaniesEntity, PagePermissionEntity, SystemCode,CompanyDocument,User]), PagePermissionModule,SystemCodeModule],
   controllers: [CompaniesController],
   providers: [CompaniesService, ImageUploadService, PagePermissionService,SystemCodeService],
 })

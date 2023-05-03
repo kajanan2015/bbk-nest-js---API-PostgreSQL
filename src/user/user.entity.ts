@@ -2,6 +2,7 @@
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { PermissionRoleEntity } from 'src/permission-role/permission-role.entity';
 import { TripEntity } from 'src/trip/trip.entity';
+import { CompaniesEntity } from 'src/companies/companies.entity';
 @Entity()
 export class User  {
   @PrimaryGeneratedColumn()
@@ -61,4 +62,8 @@ export class User  {
 
   @OneToMany(()=>TripEntity, trip => trip.jobuser,{cascade:true})
   jobdata:TripEntity[]
+
+  @ManyToMany(() => CompaniesEntity, company => company.users)
+  @JoinTable()
+  companies: CompaniesEntity[];
 }

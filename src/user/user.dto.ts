@@ -1,6 +1,7 @@
 import { CompaniesEntity } from "src/companies/companies.entity";
 import { PermissionRoleEntity } from "src/permission-role/permission-role.entity";
 import { TripEntity } from "src/trip/trip.entity";
+
 export class CreateUserDto {
     id: number;
     firstName: string;

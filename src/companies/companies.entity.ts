@@ -2,6 +2,7 @@
 import { PagePermissionEntity } from 'src/pagepermission/pagepermission.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinColumn, JoinTable, OneToMany } from 'typeorm';
 import { CompanyDocument } from 'src/company-document/company-document.entity';
+import { User } from 'src/user/user.entity';
 @Entity('company')
 export class CompaniesEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
@@ -56,4 +57,7 @@ export class CompaniesEntity {
   @ManyToMany(() => PagePermissionEntity, (page) => page.companies)
   @JoinTable()
   pages: PagePermissionEntity[];
+
+  @ManyToMany(() => User, user => user.companies)
+  users: User[];
 }
