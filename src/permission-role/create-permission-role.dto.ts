@@ -1,3 +1,4 @@
+import { User } from "src/user/user.entity";
 export class CreatePermissionRoleDto {
     id: number;
     roleName: string;
@@ -5,4 +6,5 @@ export class CreatePermissionRoleDto {
     assignCompany:number;
     createdat:Date;
     updatedat:Date;
+    employees: User[];
 }

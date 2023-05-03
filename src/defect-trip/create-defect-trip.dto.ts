@@ -9,5 +9,5 @@ export class CreateDefectTripDto {
     defectNote:string;
     nilDefect:number;
     status: Boolean;
-    defectCaseResultId:DefectCasesResult;
+    defectCaseResults: DefectCasesResult[];
 }

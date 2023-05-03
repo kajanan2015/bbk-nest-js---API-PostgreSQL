@@ -1,3 +1,4 @@
+import { CompaniesEntity } from "src/companies/companies.entity";
 export interface pagepermissionDTO {
     id: number;
     pageName: string;
@@ -8,4 +9,5 @@ export interface pagepermissionDTO {
     updatedat:Date;
     createdBy: number;
     pageType:number;
+    companies: CompaniesEntity[];
   }
