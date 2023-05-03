@@ -38,6 +38,9 @@ export class CompaniesEntity {
   updatedat: Date;
 
   
+  @OneToMany(() => CompanyDocument, companyDocuments => companyDocuments.company,{ cascade: true })
+  documents: CompanyDocument[];
+  
   @ManyToOne(() => CompaniesEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'parentCompanyId' })
   mainCompany: CompaniesEntity;
@@ -49,11 +52,8 @@ export class CompaniesEntity {
   set parentCompanyId(value: number) {
   }
 
-  @OneToMany(() => CompanyDocument, companyDocuments => companyDocuments.company)
-  documents: CompanyDocument[];
 
   @ManyToMany(() => PagePermissionEntity, (page) => page.companies)
   @JoinTable()
   pages: PagePermissionEntity[];
 }
-

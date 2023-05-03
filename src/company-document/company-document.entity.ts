@@ -1,9 +1,9 @@
 
 import { CompaniesEntity } from 'src/companies/companies.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinColumn, JoinTable, OneToMany } from 'typeorm';
-@Entity('companyDocuments')
+@Entity()
 export class CompanyDocument {
-    @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
+    @PrimaryGeneratedColumn()
   id: number;
 
   @Column("varchar", {  length: 250 })
