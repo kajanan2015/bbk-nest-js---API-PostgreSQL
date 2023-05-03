@@ -5,6 +5,7 @@ import { DefectTrip } from './defect-trip.entity';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { TripService } from 'src/trip/trip.service';
 @Injectable()
 export class DefectTripService {
 
@@ -12,10 +13,15 @@ export class DefectTripService {
     @InjectRepository(DefectTrip)
     private defectrip: Repository<DefectTrip>,
     private   readonly imageUploadServiceRepository: ImageUploadService,
-  ) {}
+    private readonly tripservice:TripService
+    ) {}
 
   async create(createDefectTripDto: CreateDefectTripDto) {
-    const response=this.defectrip.create(createDefectTripDto);
+    const response=await this.defectrip.create(createDefectTripDto);
+    const data={
+      res:'DEFECT'
+    }
+    await this.tripservice.update(createDefectTripDto.tripId,data);
     return await this.defectrip.save(response);
   }
 
