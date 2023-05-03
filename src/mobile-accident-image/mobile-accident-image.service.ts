@@ -42,8 +42,15 @@ export class MobileAccidentImageService {
     return await this.mobileAccidentImageRepository.findOne({ id });
 
   }
-  
-  remove(id: number) {
-    return `This action removes a #${id} mobileAccidentImage`;
+
+  async remove(id: number) {
+    const mobileaccident = await this.mobileAccidentImageRepository.find({ 
+      where: { tripId: id }, 
+    });
+    if (!mobileaccident) {
+      throw new NotFoundException(` ID '${id}' not found`);
+    }
+    return this.mobileAccidentImageRepository.remove(mobileaccident)
+    
   }
 }
