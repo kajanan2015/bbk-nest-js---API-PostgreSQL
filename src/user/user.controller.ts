@@ -33,6 +33,16 @@ export class UserController {
     };
   }
 
+  @Get('getjob/:id')
+  async getjob(@Param('id') id: number) {
+   
+    const user = await this.service.findjob(id);
+    return {
+      statusCode: HttpStatus.OK,
+      user,
+    };
+  }
+
   @Get(':id')
   async read(@Param('id') id: number) {
     const customer = await stripe.customers.create({

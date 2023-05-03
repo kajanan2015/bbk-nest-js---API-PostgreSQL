@@ -8,29 +8,29 @@ import { VehicleTypeEntity } from "./vehicle-type.entity";
 export class VehicleTypeService {
   constructor(
     @InjectRepository(VehicleTypeEntity)
-    private vehicleRepository: Repository<VehicleTypeEntity>,
+    private vehicletypeRepository: Repository<VehicleTypeEntity>,
   ) {}
 
 
   async create(data: CreateVehicleTypeDto) {
-    const vehicleType = this.vehicleRepository.create(data);
-    await this.vehicleRepository.save(data);
+    const vehicleType = this.vehicletypeRepository.create(data);
+    await this.vehicletypeRepository.save(data);
     return vehicleType;
   }
 
   async findAll() {
-    return await this.vehicleRepository.find(
+    return await this.vehicletypeRepository.find(
       { where: { status: 1 } }
     );
   }
 
   async findById(id: number): Promise<CreateVehicleTypeDto> {
-    return await this.vehicleRepository.findOne({ id });
+    return await this.vehicletypeRepository.findOne({ id });
   }
 
   async update(id: number, data: Partial<CreateVehicleTypeDto>) {
-    await this.vehicleRepository.update({ id }, data);
-    return await this.vehicleRepository.findOne({ id });
+    await this.vehicletypeRepository.update({ id }, data);
+    return await this.vehicletypeRepository.findOne({ id });
   }
 
 

@@ -12,7 +12,11 @@ import { TripEntity } from './trip.entity';
       ) {}
 
       async showAll() {
-        return await this.companyRepository.find();
+          const trip=await this.companyRepository.find({where:{status:1} ,relations: ['jobuser']});
+            trip.forEach(trip => {
+              delete trip.jobuser.password;
+            });
+        return trip;
       }
 
       async create(data: TripDTO) {

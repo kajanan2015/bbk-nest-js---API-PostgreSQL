@@ -24,4 +24,3 @@ status: Boolean;
 @JoinColumn()
 defecttrip: DefectTrip;
 }
-

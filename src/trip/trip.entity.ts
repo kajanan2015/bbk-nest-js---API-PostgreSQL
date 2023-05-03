@@ -1,5 +1,7 @@
 
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { User } from 'src/user/user.entity';
+import { Vehicle } from 'src/vehicle/vehicle.entity';
 @Entity('trip')
 export class TripEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
@@ -11,20 +13,12 @@ export class TripEntity {
   @Column("varchar", { name: "code", nullable: true, length: 20 })
   code: string | null;
 
-  @Column("varchar")
-  driverId: string;
-
-  @Column("varchar")
-  vehicleId: string;
-
   @Column("int")
   movementId: number;
 
   @Column("varchar")
   frameLayout: string;
 
-  @Column("varchar")
-  vehicleCompany: string;
   
   @Column("varchar")
   defectStatus: string;
@@ -38,8 +32,17 @@ export class TripEntity {
   @Column("varchar")
   res: string;
 
-  
+  @Column({ type: 'boolean', default:true})
+  status: Boolean;
+
   @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
   createdat: Date;
  
+  @ManyToOne(() => User, user => user.jobdata)
+  @JoinColumn()
+  jobuser: User;
+  
+  @ManyToOne(() => Vehicle, vehicle => vehicle.vehicletrip)
+  @JoinColumn()
+  vehicle: Vehicle;
 }

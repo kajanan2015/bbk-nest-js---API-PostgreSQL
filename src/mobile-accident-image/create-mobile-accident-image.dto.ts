@@ -3,7 +3,7 @@ export class CreateMobileAccidentImageDto {
     x:number;
     y:number;
     side:number;
-    userId:number;
+    tripId:number;
     createdat:Date;
     updatedat:Date;
     status: Boolean;

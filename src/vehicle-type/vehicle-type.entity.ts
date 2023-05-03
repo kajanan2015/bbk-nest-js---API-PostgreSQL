@@ -1,5 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Vehicle } from "src/vehicle/vehicle.entity";
 
 
 @Entity()
@@ -23,5 +23,7 @@ export class VehicleTypeEntity {
   @Column("timestamp", { name: "updatedat", default: () => "CURRENT_TIMESTAMP" })
   updatedat: Date;
    
+  @OneToMany(()=>Vehicle, vehicle => vehicle.vehicletype,{cascade:true})
+  vehicle:Vehicle[]
 
 }

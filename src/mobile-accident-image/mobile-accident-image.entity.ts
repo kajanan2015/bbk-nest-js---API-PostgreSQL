@@ -3,7 +3,7 @@ import * as bcrypt from 'bcryptjs';
 import { CompaniesEntity } from 'src/companies/companies.entity';
 
 @Entity()
-export class MobileAccidentImage {
+export class Bodymark {
 @PrimaryGeneratedColumn()
 id:number;
 
@@ -17,7 +17,7 @@ y:number;
 side:number;
 
 @Column("int")
-userId: number;
+tripId: number;
 
 @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
 createdat: Date;

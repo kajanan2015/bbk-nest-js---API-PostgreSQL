@@ -4,13 +4,13 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { CreateMobileAccidentImageDto } from './create-mobile-accident-image.dto';
 import { UpdateMobileAccidentImageDto } from './update-mobile-accident-image.dto';
-import { MobileAccidentImage } from './mobile-accident-image.entity';
+import { Bodymark } from './mobile-accident-image.entity';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
 @Injectable()
 export class MobileAccidentImageService {
   constructor(
-    @InjectRepository(MobileAccidentImage)
-    private mobileAccidentImageRepository: Repository<MobileAccidentImage>,
+    @InjectRepository(Bodymark)
+    private mobileAccidentImageRepository: Repository<Bodymark>,
     private   readonly imageUploadServiceRepository: ImageUploadService,
   ) {}
 
@@ -42,7 +42,7 @@ export class MobileAccidentImageService {
     return await this.mobileAccidentImageRepository.findOne({ id });
 
   }
-
+  
   remove(id: number) {
     return `This action removes a #${id} mobileAccidentImage`;
   }

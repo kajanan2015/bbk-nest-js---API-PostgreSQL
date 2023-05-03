@@ -21,8 +21,13 @@ export class UserService {
     });
   }
 
+  async findjob(id:number){
+    const job=await this.userRepository.findOne({ where: { id:id, status: 1},relations:['jobdata','jobdata.vehicle','jobdata.vehicle.vehicletype'] });
+   delete job.password;
+    return job
+  }
   async find(id: number): Promise<User> {
-    return await this.userRepository.findOne({ where: { id:id, status: 1  } });
+    return await this.userRepository.findOne({ where: { id:id, status: 1 },relations:['jobdata']  });
   }
 
   async findByEmail(email: string): Promise<User> {

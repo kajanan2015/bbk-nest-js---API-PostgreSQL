@@ -23,7 +23,7 @@ export class DefectTripService {
     return await this.defectrip.find({ 
       where: { status: 1 },
       relations: ['defectCaseResults'] 
-    }, );
+    } );
   }
 
  async findOne(id: number) {
