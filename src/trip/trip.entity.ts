@@ -38,6 +38,12 @@ export class TripEntity {
   @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
   createdat: Date;
  
+  @Column("timestamp", { name: "startedTime",nullable:true, default: null })
+  startedTime: Date;
+
+  @Column("timestamp", { name: "completedTime",nullable:true, default: null })
+  completedTime: Date;
+
   @ManyToOne(() => User, user => user.jobdata)
   @JoinColumn()
   jobuser: User;

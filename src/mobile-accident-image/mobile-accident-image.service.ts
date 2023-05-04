@@ -22,14 +22,17 @@ export class MobileAccidentImageService {
     // console.log(imageUrl,9090909090909);
     const response=this.mobileAccidentImageRepository.create(createMobileAccidentImage);
      let data;
+     const currentDate = new Date();
     if(createMobileAccidentImage.inOut==0){
       data={
-        res:'STARTED'
+        res:'STARTED',
+        startedTime:currentDate
       }
     }
     else if(createMobileAccidentImage.inOut==1){
       data={
-        res:'COMPLETED'
+        res:'COMPLETED',
+        completedTime:currentDate
       }
     }
     else{
@@ -74,12 +77,14 @@ export class MobileAccidentImageService {
     let data;
     if(bodydata.inOut==0){
        data={
-        res:'DEFECT'
+        res:'DEFECT',
+        startedTime:null
       }
     }
     else if(bodydata.inOut==1){
      data={
-        res:'STARTED'
+        res:'STARTED',
+        completedTime:null
       }
     }
     else{

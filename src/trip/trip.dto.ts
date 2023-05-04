@@ -10,5 +10,7 @@ export interface TripDTO {
   date: Date;
   res: string;
   status: Boolean;
+  completedTime: Date;
+  startedTime: Date;
 
   }
