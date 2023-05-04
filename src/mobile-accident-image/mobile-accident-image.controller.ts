@@ -31,13 +31,19 @@ export class MobileAccidentImageController {
       return await this.imageUploadService.upload(file , body);
     }
   @Get()
-  findAll() {
-    return this.mobileAccidentImageService.findAll();
+  async findAll() {
+    return await this.mobileAccidentImageService.findAll();
+  }
+
+
+  @Get('/findbytrip/:id')
+  async findbyTrip(@Param('id') id: string) {
+    return await this.mobileAccidentImageService.findBytripOne(+id);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.mobileAccidentImageService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    return await this.mobileAccidentImageService.findOne(+id);
   }
 
   @Patch(':id')
@@ -50,7 +56,7 @@ export class MobileAccidentImageController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @Body() body) {
-    return this.mobileAccidentImageService.remove(+id, body);
+ async remove(@Param('id') id: string, @Body() body) {
+    return await this.mobileAccidentImageService.remove(+id, body);
   }
 }

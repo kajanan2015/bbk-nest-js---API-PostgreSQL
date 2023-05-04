@@ -51,6 +51,15 @@ export class MobileAccidentImageService {
     });
   }
 
+
+  async findBytripOne(id: number) {
+    const mobileaccident = await this.mobileAccidentImageRepository.find({where:{tripId:id}});
+    if (!mobileaccident) {
+      throw new NotFoundException(` ID '${id}' not found`);
+    }
+    return mobileaccident;
+  }
+
   async findOne(id: number) {
     const mobileaccident = await this.mobileAccidentImageRepository.findOne(id);
     if (!mobileaccident) {
