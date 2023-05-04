@@ -5,6 +5,7 @@ import { CompaniesDTO } from './companies.dto';
 import { CompaniesEntity } from './companies.entity';
 import { PagePermissionEntity } from 'src/pagepermission/pagepermission.entity';
 import { SystemCodeService } from 'src/system-code/system-code.service';
+import { UserService } from 'src/user/user.service';
 @Injectable()
 export class CompaniesService {
   constructor(
@@ -37,28 +38,34 @@ export class CompaniesService {
 
   async create(companyData) {
    console.log(companyData.filename,7777);
-   console.log(companyData.filename[1].profilepic[0],3323232)
-    const response=await this.systemcodeService.findOne('company')
-    const companyCode=response.code+''+response.startValue   
-    const newstartvalue={
-      startValue:response.startValue+1
-    }
-    const newcompanyData={
-      ...companyData,
-      companyCode:companyCode,
-      companyLogo:companyData.filename[0].companylogo[0]
-    }
-    const profileData={
-     firstname: companyData.firstname,
-     lastname: companyData.lastname,
-     email:companyData.email,
-     password: companyData.password,
-     profilePic: companyData.filename[1].profilepic[0]
-    }
+   console.log(companyData.filename[0].profileImg[0],3323232)
+   const userdata={
+    firstName:companyData.firstName,
+    lastName:companyData.firstName,
     
-    await this.systemcodeService.update(response.id,newstartvalue)
-    const newCompany = this.companyRepository.create(newcompanyData);
-    return await this.companyRepository.save(newCompany);
+   }
+    // const response=await this.systemcodeService.findOne('company')
+    // const companyCode=response.code+''+response.startValue   
+    // const newstartvalue={
+    //   startValue:response.startValue+1
+    // }
+    // const newcompanyData={
+    //   ...companyData,
+    //   companyCode:companyCode,
+    //   companyLogo:companyData.filename[0].companylogo[0]
+    // }
+    // const profileData={
+    //  firstname: companyData.firstname,
+    //  lastname: companyData.lastname,
+    //  email:companyData.email,
+    //  password: companyData.password,
+    //  profilePic: companyData.filename[1].profilepic[0]
+    // }
+    
+    // await this.systemcodeService.update(response.id,newstartvalue)
+    // const newCompany = this.companyRepository.create(newcompanyData);
+    // return await this.companyRepository.save(newCompany);
+  return ;
   }
 
   async findById(id: number): Promise<CompaniesEntity> {
