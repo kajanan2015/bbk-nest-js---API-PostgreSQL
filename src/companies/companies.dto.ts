@@ -17,6 +17,7 @@ export interface CompaniesDTO {
   file: File;
   mainCompany: CompaniesEntity;
   companyCode: string;
+  compstatus: number;
   documents: CompanyDocument[];
   pages: PagePermissionEntity[];
   users: User[];

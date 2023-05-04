@@ -9,4 +9,6 @@ export class CreateMobileAccidentImageDto {
     status: Boolean;
     patheImage:String;
     file:File;
+    inOut:number;
+    orderMeterId:String;
 }

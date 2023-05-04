@@ -50,7 +50,7 @@ export class MobileAccidentImageController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.mobileAccidentImageService.remove(+id);
+  remove(@Param('id') id: string, @Body() body) {
+    return this.mobileAccidentImageService.remove(+id, body);
   }
 }

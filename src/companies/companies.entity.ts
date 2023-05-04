@@ -39,6 +39,9 @@ export class CompaniesEntity {
   updatedat: Date;
 
   
+  @Column("bigint",{default:0,comment: '0-pending,1-active,2-deactivate'})
+  compstatus: number;
+  
   @OneToMany(() => CompanyDocument, companyDocuments => companyDocuments.company,{ cascade: true })
   documents: CompanyDocument[];
   

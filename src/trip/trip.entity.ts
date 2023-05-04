@@ -29,7 +29,7 @@ export class TripEntity {
   @Column("timestamp", { name: "date", default: () => "CURRENT_TIMESTAMP" })
   date: Date;
 
-  @Column("varchar")
+  @Column("varchar",{default: 'NOTSTARTED'})
   res: string;
 
   @Column({ type: 'boolean', default:true})

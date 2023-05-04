@@ -28,6 +28,12 @@ updatedat: Date;
 @Column("varchar",{nullable:true})
 patheImage:String;
 
+@Column("varchar",{nullable:true,default:null})
+orderMeterId:String;
+
+@Column("bigint",{default:0,comment: '0-in,1-out'})
+inOut:number;
+
 @Column({ type: 'boolean', default:true})
 status: Boolean;
 
