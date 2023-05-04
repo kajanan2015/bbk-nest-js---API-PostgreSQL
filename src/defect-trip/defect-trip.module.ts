@@ -8,8 +8,9 @@ import { DefectCasesResult } from 'src/defect-cases-result/defect-cases-result.e
 import { TripService } from 'src/trip/trip.service';
 import { TripModule } from 'src/trip/trip.module';
 import { TripEntity } from 'src/trip/trip.entity';
+import { defectCases } from 'src/defect-cases/defect-case.entity';
 @Module({
-  imports:[TypeOrmModule.forFeature([DefectTrip, DefectCasesResult,TripEntity]),TripModule],
+  imports:[TypeOrmModule.forFeature([DefectTrip, DefectCasesResult,TripEntity,defectCases]),TripModule],
   controllers: [DefectTripController],
   providers: [DefectTripService, ImageUploadService,TripService]
 })

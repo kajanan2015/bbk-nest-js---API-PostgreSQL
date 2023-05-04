@@ -18,7 +18,7 @@ export class DefectCasesResultService {
 
  async  findAll() {
     return await this.defectripresult.find({ 
-      where: { status: 1 }, 
+      where: { status: 1 },relations:['question'] 
     });
   }
 

@@ -31,6 +31,12 @@ export class DefectTripController {
     return this.defectTripService.findAll();
   }
 
+  @Get('/finddefectbytrip/:id')
+  async  findDefectOne(@Param('id') tripid: string) {
+     return this.defectTripService.findDefectOne(+tripid);
+   }
+
+
   @Get(':id')
  async  findOne(@Param('id') id: string) {
     return this.defectTripService.findOne(+id);

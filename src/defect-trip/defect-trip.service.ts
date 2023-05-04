@@ -32,6 +32,17 @@ export class DefectTripService {
     } );
   }
 
+
+  async findDefectOne(id: number) {
+    const defecttrip = await this.defectrip.findOne({ where:{tripId:id},relations: ['defectCaseResults','defectCaseResults.question'] });
+    if (!defecttrip) {
+      throw new NotFoundException(` ID '${id}' not found`);
+    }
+    return defecttrip;
+    }
+  
+
+
  async findOne(id: number) {
   const defecttrip = await this.defectrip.findOne(id,{ relations: ['defectCaseResults'] });
   if (!defecttrip) {

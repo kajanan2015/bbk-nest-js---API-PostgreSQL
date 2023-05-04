@@ -5,8 +5,9 @@ import { DefectCasesResult } from './defect-cases-result.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
 import { DefectTrip } from 'src/defect-trip/defect-trip.entity';
+import { defectCases } from 'src/defect-cases/defect-case.entity';
 @Module({
-  imports:[TypeOrmModule.forFeature([DefectCasesResult, DefectTrip])],
+  imports:[TypeOrmModule.forFeature([DefectCasesResult, DefectTrip,defectCases])],
   controllers: [DefectCasesResultController],
   providers: [DefectCasesResultService,ImageUploadService]
 })
