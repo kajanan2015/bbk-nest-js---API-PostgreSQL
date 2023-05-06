@@ -1,4 +1,4 @@
-import { Injectable, HttpStatus, NotFoundException } from '@nestjs/common';
+import { Injectable, HttpStatus, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Not, Repository } from 'typeorm';
 import { CompaniesDTO } from './companies.dto';
@@ -6,6 +6,7 @@ import { CompaniesEntity } from './companies.entity';
 import { PagePermissionEntity } from 'src/pagepermission/pagepermission.entity';
 import { SystemCodeService } from 'src/system-code/system-code.service';
 import { UserService } from 'src/user/user.service';
+import { User } from 'src/user/user.entity';
 @Injectable()
 export class CompaniesService {
   constructor(
@@ -13,7 +14,10 @@ export class CompaniesService {
     private companyRepository: Repository<CompaniesEntity>,
     @InjectRepository(PagePermissionEntity)
     private pagePermissionRepository: Repository<PagePermissionEntity>,
-    private readonly systemcodeService:SystemCodeService
+    private readonly systemcodeService:SystemCodeService,
+    private readonly userservice:UserService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User> 
   ) { }
 
   async showAll() {
@@ -36,19 +40,45 @@ export class CompaniesService {
     );
   }
 
+//   async create(companyData) {
+
+//     const usersjj = await this.userservice.findUsingId("26");
+//  console.log(usersjj,333) 
+//   }
+
+
   async create(companyData) {
    console.log(companyData.filename,7777);
-   console.log(companyData.filename[0].profileImg[0],3323232)
-   const userdata={
-    firstName:companyData.firstName,
-    lastName:companyData.firstName,
-    
+   console.log(companyData.filename[1].logoImg[0],3323232)
+   const existing = await this.userservice.findByEmail(companyData.email);
+   if (existing) {
+     throw new BadRequestException('auth/account-exists');
    }
-    // const response=await this.systemcodeService.findOne('company')
-    // const companyCode=response.code+''+response.startValue   
-    // const newstartvalue={
-    //   startValue:response.startValue+1
-    // }
+   const userData={
+    firstName:companyData.firstName,
+    lastName:companyData.lastName,
+    uType:"CADMIN",
+    profilePic:companyData.filename[0].profileImg[0],
+    password:companyData.password,
+    phone:companyData.phone,
+    email:companyData.email
+   }
+ const userResponse= await this.userservice.create(userData);
+
+ const response=await this.systemcodeService.findOne('company')
+    const companyCode=response.code+''+response.startValue   
+    const newstartvalue={
+      startValue:response.startValue+1
+    }
+   console.log(companyCode,888)
+   console.log(newstartvalue,77)
+    const dataCompany={
+      ...companyData,
+      companyLogo:companyData.filename[1].logoImg[0],
+      companyCode:companyCode,
+      users:[userResponse.id]
+   }
+   console.log(dataCompany,666666)
     // const newcompanyData={
     //   ...companyData,
     //   companyCode:companyCode,
@@ -61,10 +91,10 @@ export class CompaniesService {
     //  password: companyData.password,
     //  profilePic: companyData.filename[1].profilepic[0]
     // }
-    
-    // await this.systemcodeService.update(response.id,newstartvalue)
-    // const newCompany = this.companyRepository.create(newcompanyData);
-    // return await this.companyRepository.save(newCompany);
+   
+    await this.systemcodeService.update(response.id,newstartvalue)
+    const newCompany = this.companyRepository.create(dataCompany);
+    return await this.companyRepository.save(newCompany);
   return ;
   }
 
@@ -85,7 +115,7 @@ export class CompaniesService {
   }
 
   async updateCompanyStatus(id: number, companyStatus: string) {
-    await this.companyRepository.update({ id }, { companyStatus: () => companyStatus });
+    await this.companyRepository.update({ id }, { status: () => companyStatus });
     return await this.companyRepository.findOne({ id });
   }
   

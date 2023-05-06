@@ -8,53 +8,53 @@ export class User  {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 500 })
-  firstName: string;
+  @Column({ nullable: true , length: 250, default: () => null })
+  firstName: string|null;
 
-  @Column({ length: 500 })
+  @Column("varchar",{ nullable: true , length: 250, default: () => null })
   middleName: string;
 
-  @Column({ length: 500 })
-  lastName: string;
+  @Column({ nullable: true , length: 250, default: () => null })
+  lastName: string|null;
 
-  @Column("varchar", { nullable: false , length: 30, default: () => null })
-  employeeNumber: string;
+  @Column("varchar",{ nullable: true , length: 250, default: () => null })
+  employeeNumber: string|null;
 
-  @Column({ nullable: true})
-  dob: Date;
-
-  @Column("varchar", { nullable: false , length: 100 })
-  address: string;
-
-  @Column({ length: 500 })
-  email: string;
-
-  @Column("varchar", { nullable: false , length: 100 })
-  phone: string;
-
-  @Column("varchar", { nullable: true , length: 30 })
-  nationality: string;
-
-  @Column("varchar", { nullable: true , length: 30 })
-  country: string;
+  @Column({ nullable: true , default: () => null })
+  dob: Date|null;
 
   @Column("varchar", { nullable: true , length: 250, default: () => null })
-  profilePic: string;
+  address: string|null;
 
-  @Column({ length: 500 })
-  password: string;
+  @Column({ nullable: true , length: 250, default: () => null })
+  email: string|null;
 
-  @Column("varchar", { name: "utype", default: () => "'USER'", length: 6 })
-  uType: string ;
+  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  phone: string|null;
+
+  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  nationality: string|null;
+
+  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  country: string|null;
+
+  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  profilePic: string|null;
+
+  @Column({ nullable: true , length: 250, default: () => null })
+  password: string|null;
+
+  @Column("varchar", { name:"utype", default: () => "'USER'", length: 50 })
+  uType: string|null ;
 
   @Column({ type: 'boolean', default:true})
-  status: Boolean;
+  status: Boolean|null;
   
   @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
-  createdat: Date;
+  createdat: Date|null;
 
   @Column("timestamp", { name: "updatedat", default: () => "CURRENT_TIMESTAMP" })
-  updatedat: Date;
+  updatedat: Date|null;
 
   @ManyToMany(() => PermissionRoleEntity, (role) => role.employees)
   @JoinTable()

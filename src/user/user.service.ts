@@ -26,6 +26,12 @@ export class UserService {
    delete job.password;
     return job
   }
+
+  async findUsingId(id):Promise<User[]>{
+    // return await this.userRepository.findOne({ where: { id:id, status: 1 },relations:['jobdata']  });
+    const users= await this.userRepository.findByIds(id);
+    return users
+  }
   async find(id: number): Promise<User> {
     return await this.userRepository.findOne({ where: { id:id, status: 1 },relations:['jobdata']  });
   }
@@ -34,12 +40,12 @@ export class UserService {
     return await this.userRepository.findOne({ where: { email:email,status: 1  } });
   }
 // we added same login for employee and admin, we need to identify uniquly employee data, that why we pass employee id
-  async create(data:CreateUserDto){
+  async create(data){
     const newhashpassword = await this.hashPassword(data.password);
     const user = {
       ...data,
       password: newhashpassword,
-      uType:"CADMIN"
+      
     };
     return await this.userRepository.save(user);
   }

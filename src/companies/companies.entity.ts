@@ -8,22 +8,61 @@ export class CompaniesEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
   id: number;
 
-  @Column("varchar", {  length: 30 })
+  @Column("int",{ nullable: true ,  default: () => null })
+  companyType: number | null;
+
+  @Column("varchar", { nullable: true , length: 250, default: () => null })
   companyName: string | null;
 
-  @Column("varchar", {  length: 30 })
+  @Column("varchar", { nullable: true , length: 250, default: () => null })
   companyEmail: string | null;
 
-  @Column("varchar", {  length: 30 })
-  companyContact: string | null;
+  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  companyPhone: string | null;
+
+  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  website: string | null;
+
+  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  number: string | null;
+
+  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  street: string | null;
+
+  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  city: string | null;
+
+  @Column("int",{ nullable: true , default: () => null })
+  country: number | null;
+
+  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  postalCode: string | null;
+
+  @Column("varchar",{ nullable: true , length: 250, default: () => null })
+  vat: string | null;
+
+  @Column("varchar",{ nullable: true , length: 250, default: () => null })
+  registrationNumber: string | null;
+
+  @Column("varchar",{ nullable: true , length: 250, default: () => null })
+  regAddressNo: string | null;
+
+  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  regAddressStreet: string | null;
+
+  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  regAddressCity: string | null;
+
+  @Column("int",{ nullable: true , default: () => null })
+  regAddressCountry: number;
+
+  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  regAddressPostalCode: string | null;
 
   @Column({ type: 'boolean', default:true})
-  companyStatus: boolean;
+  status: boolean;
 
-  @Column("varchar", {  length: 100 })
-  companyWebsite: string;
-
-  @Column("varchar", {  length: 100 })
+  @Column("varchar", {  length: 300,nullable:true,default: () => null })
   companyLogo: string;
 
   @Column("varchar", {  length: 100,nullable:true,default: () => null })
@@ -38,9 +77,11 @@ export class CompaniesEntity {
   @Column("timestamp", { name: "updatedat", default: () => "CURRENT_TIMESTAMP" })
   updatedat: Date;
 
-  
   @Column("bigint",{default:0,comment: '0-pending,1-active,2-deactivate'})
   compstatus: number;
+
+  @Column("varchar", {  length: 100,nullable:true,default: () => null })
+  billing: string;
   
   @OneToMany(() => CompanyDocument, companyDocuments => companyDocuments.company,{ cascade: true })
   documents: CompanyDocument[];
