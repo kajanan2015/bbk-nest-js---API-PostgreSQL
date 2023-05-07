@@ -21,7 +21,7 @@ import { DriverTypeModule } from './driver-type/driver-type.module';
 import { PermissionRoleModule } from './permission-role/permission-role.module';
 import { SubCompaniesModule } from './sub-companies/sub-companies.module';
 import { SubadminassignModule } from './subadminassign/subadminassign.module';
-import { MobileAccidentImageModule } from './mobile-accident-image/mobile-accident-image.module';
+import { MobileAccidentImageModule } from './defect/mobile-accident-image.module';
 import { WalkarroundcheckvtypeModule } from './walkarroundcheckvtype/walkarroundcheckvtype.module';
 import { DefectCasesModule } from './defect-cases/defect-cases.module';
 import { DefectCasesResultModule } from './defect-cases-result/defect-cases-result.module';
@@ -29,6 +29,9 @@ import { DefectTripModule } from './defect-trip/defect-trip.module';
 import { VehicleModule } from './vehicle/vehicle.module';
 import { SystemCodeModule } from './system-code/system-code.module';
 import { CompanyDocumentModule } from './company-document/company-document.module';
+import { AccidentUploadModule } from './accident-upload/accident-upload.module';
+import { AccidentUploadImageModule } from './accident-upload-image/accident-upload-image.module';
+import { AccidentUploadThirdPartyModule } from './accident-upload-third-party/accident-upload-third-party.module';
 
 
 
@@ -64,7 +67,10 @@ const settings = require("../ormconfig.js");
     DefectTripModule,
     VehicleModule,
     SystemCodeModule,
-    CompanyDocumentModule
+    CompanyDocumentModule,
+    AccidentUploadModule,
+    AccidentUploadImageModule,
+    AccidentUploadThirdPartyModule
   ],
   controllers: [AppController],
   providers: [AppService],
