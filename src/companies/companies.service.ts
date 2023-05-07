@@ -23,8 +23,8 @@ export class CompaniesService {
   async showAll() {
     return await this.companyRepository.find(
       {
-        where: { companyStatus: 1 , mainCompany: null },
-        relations: ['mainCompany']
+        where: { status: 1 , mainCompany: null },
+        relations: ['mainCompany','users']
       }
     );
   }
@@ -32,7 +32,7 @@ export class CompaniesService {
   async showSubAll(mainCompanyId: number): Promise<CompaniesEntity[]> {
     return await this.companyRepository.find(
       {
-        where: { companyStatus: 1 , mainCompany: {
+        where: { status: 1 , mainCompany: {
           id: mainCompanyId
         }},
         relations: ['mainCompany']
@@ -76,8 +76,8 @@ export class CompaniesService {
       ...companyData,
       companyLogo:companyData.filename[1].logoImg[0],
       companyCode:companyCode,
-      users:[userResponse.id]
    }
+   
    console.log(dataCompany,666666)
     // const newcompanyData={
     //   ...companyData,
