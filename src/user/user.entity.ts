@@ -64,6 +64,5 @@ export class User  {
   jobdata:TripEntity[]
 
   @ManyToMany(() => CompaniesEntity, company => company.users)
-  @JoinTable()
   companies: CompaniesEntity[];
 }

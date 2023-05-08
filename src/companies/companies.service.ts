@@ -7,6 +7,7 @@ import { PagePermissionEntity } from 'src/pagepermission/pagepermission.entity';
 import { SystemCodeService } from 'src/system-code/system-code.service';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/user.entity';
+import { Connection, QueryRunner } from 'typeorm';
 @Injectable()
 export class CompaniesService {
   constructor(
@@ -16,6 +17,7 @@ export class CompaniesService {
     private pagePermissionRepository: Repository<PagePermissionEntity>,
     private readonly systemcodeService:SystemCodeService,
     private readonly userservice:UserService,
+    private readonly connection: Connection,
     @InjectRepository(User)
     private readonly userRepository: Repository<User> 
   ) { }
@@ -27,6 +29,13 @@ export class CompaniesService {
         relations: ['mainCompany','users']
       }
     );
+  }
+
+  async getcountry(){
+    const query = 'SELECT * FROM `country`';
+    console.log(query,99999)
+    const countryList = await this.connection.query(query);
+    return countryList;
   }
 
   async showSubAll(mainCompanyId: number): Promise<CompaniesEntity[]> {
@@ -50,33 +59,62 @@ export class CompaniesService {
   async create(companyData) {
    console.log(companyData.filename,7777);
    console.log(companyData.filename[1].logoImg[0],3323232)
-   const existing = await this.userservice.findByEmail(companyData.email);
-   if (existing) {
-     throw new BadRequestException('auth/account-exists');
-   }
-   const userData={
-    firstName:companyData.firstName,
-    lastName:companyData.lastName,
-    uType:"CADMIN",
-    profilePic:companyData.filename[0].profileImg[0],
-    password:companyData.password,
-    phone:companyData.phone,
-    email:companyData.email
-   }
- const userResponse= await this.userservice.create(userData);
 
- const response=await this.systemcodeService.findOne('company')
-    const companyCode=response.code+''+response.startValue   
-    const newstartvalue={
-      startValue:response.startValue+1
+   const response=await this.systemcodeService.findOne('company')
+   const companyCode=response.code+''+response.startValue   
+   const newstartvalue={
+     startValue:response.startValue+1
+   }
+
+   let dataCompany;
+   if(companyData.parentCompany&&companyData.parentCompany!=""){
+    const company = await this.companyRepository.findOne(companyData.parentCompany, {
+      relations: ['users']
+    });
+    if (!company) {
+      throw new NotFoundException(`Company with ID ${companyData.parentCompany} not found`);
     }
-   console.log(companyCode,888)
-   console.log(newstartvalue,77)
-    const dataCompany={
+    const userIds = company.users.map(user => user.id);
+    const users = await this.userRepository.findByIds(userIds);
+    dataCompany={
       ...companyData,
       companyLogo:companyData.filename[1].logoImg[0],
       companyCode:companyCode,
+      users:users
    }
+   }else{
+    const existing = await this.userservice.findByEmail(companyData.email);
+    if (existing) {
+      throw new BadRequestException('auth/account-exists');
+    }
+    console.log(companyData.users,889898)
+    const userData={
+     firstName:companyData.firstName,
+     lastName:companyData.lastName,
+     uType:"CADMIN",
+     profilePic:companyData.filename[0].profileImg[0],
+     password:companyData.password,
+     phone:companyData.phone,
+     email:companyData.email
+    }
+     const userResponse= await this.userservice.create(userData);
+     const userIds = userResponse.id.toString();  
+     const users = await this.userRepository.findByIds(userIds);
+    }
+   
+   
+
+  
+
+// retrieve the user entities based on the array of IDs
+
+// console.log(users)
+//        dataCompany={
+//       ...companyData,
+//       companyLogo:companyData.filename[1].logoImg[0],
+//       companyCode:companyCode,
+//       users:users
+//    }
    
    console.log(dataCompany,666666)
     // const newcompanyData={
@@ -105,7 +143,7 @@ export class CompaniesService {
   async read(id: number): Promise<CompaniesEntity> {
     return await this.companyRepository.findOne(
       id, 
-      { relations: ['mainCompany'] },
+      { relations: ['mainCompany','users'] },
     );
   }
 

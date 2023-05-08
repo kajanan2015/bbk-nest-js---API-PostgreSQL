@@ -55,6 +55,15 @@ export class CompaniesController {
  
   }
 
+  @Get('/country')
+  async getcountry(){
+    const countries = await this.service.getcountry();
+    return {
+      statusCode: HttpStatus.OK,
+      countries
+    };
+  }
+
   @Get(':id')
   async read(@Param('id') id: number) {
     const company = await this.service.read(id);

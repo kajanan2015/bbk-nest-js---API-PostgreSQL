@@ -103,5 +103,6 @@ export class CompaniesEntity {
   pages: PagePermissionEntity[];
 
   @ManyToMany(() => User, user => user.companies)
+  @JoinTable()
   users: User[];
 }
