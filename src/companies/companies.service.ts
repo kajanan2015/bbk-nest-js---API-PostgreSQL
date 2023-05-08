@@ -98,23 +98,22 @@ export class CompaniesService {
      email:companyData.email
     }
      const userResponse= await this.userservice.create(userData);
-     const userIds = userResponse.id.toString();  
-     const users = await this.userRepository.findByIds(userIds);
+     const userIds = userResponse.id.toString();   
+    const users = await this.userRepository.findByIds(userIds);
+
     }
    
    
 
   
 
-// retrieve the user entities based on the array of IDs
-
-// console.log(users)
-//        dataCompany={
-//       ...companyData,
-//       companyLogo:companyData.filename[1].logoImg[0],
-//       companyCode:companyCode,
-//       users:users
-//    }
+// retrieve the user entities based on the array of IDsconsole.log(users)
+  //      dataCompany={
+  //     ...companyData,
+  //     companyLogo:companyData.filename[1].logoImg[0],
+  //     companyCode:companyCode,
+  //     users:users
+  //  }
    
    console.log(dataCompany,666666)
     // const newcompanyData={
