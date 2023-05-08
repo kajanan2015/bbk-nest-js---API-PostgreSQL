@@ -57,8 +57,7 @@ export class CompaniesService {
 
 
   async create(companyData) {
-   console.log(companyData.filename,7777);
-   console.log(companyData.filename[1].logoImg[0],3323232)
+  
 
    const response=await this.systemcodeService.findOne('company')
    const companyCode=response.code+''+response.startValue   
@@ -75,12 +74,36 @@ export class CompaniesService {
       throw new NotFoundException(`Company with ID ${companyData.parentCompany} not found`);
     }
     const userIds = company.users.map(user => user.id);
+    console.log(companyData.sameParentCompanyAdmin)
+    if(companyData.sameParentCompanyAdmin=="false"){
+      console.log(companyData.parentCompany,88787)
+      const existing = await this.userservice.findByEmail(companyData.email);
+      if (existing) {
+        console.log('dsdsd',4454)
+        throw new BadRequestException('auth/account-exists');
+      }
+      console.log(companyData.users,889898)
+      const userData={
+          firstName:companyData.firstName,
+          lastName:companyData.lastName,
+          uType:"CADMIN",
+          profilePic:companyData.filename[0].profileImg[0],
+          password:companyData.password,
+          phone:companyData.phone,
+          email:companyData.email
+      }
+       const userResponse= await this.userservice.create(userData);
+       const useraccount = userResponse.id.toString();   
+       userIds.push(useraccount);
+       console.log(userIds,5555)
+    }
     const users = await this.userRepository.findByIds(userIds);
     dataCompany={
       ...companyData,
       companyLogo:companyData.filename[1].logoImg[0],
       companyCode:companyCode,
-      users:users
+      users:users,
+      mainCompany:companyData.parentCompany
    }
    }else{
     const existing = await this.userservice.findByEmail(companyData.email);
@@ -99,23 +122,25 @@ export class CompaniesService {
     }
      const userResponse= await this.userservice.create(userData);
      const userIds = userResponse.id.toString();   
-    const users = await this.userRepository.findByIds(userIds);
-
+     const users = await this.userRepository.findByIds(userIds);
+      dataCompany={
+      ...companyData,
+      companyLogo:companyData.filename[1].logoImg[0],
+      companyCode:companyCode,
+      users:users
+   }
     }
    
    
-
+    await this.systemcodeService.update(response.id,newstartvalue)
+    const newCompany = this.companyRepository.create(dataCompany);
+    return await this.companyRepository.save(newCompany);
   
 
 // retrieve the user entities based on the array of IDsconsole.log(users)
-  //      dataCompany={
-  //     ...companyData,
-  //     companyLogo:companyData.filename[1].logoImg[0],
-  //     companyCode:companyCode,
-  //     users:users
-  //  }
+ 
    
-   console.log(dataCompany,666666)
+  //  console.log(dataCompany,666666)
     // const newcompanyData={
     //   ...companyData,
     //   companyCode:companyCode,
@@ -129,10 +154,8 @@ export class CompaniesService {
     //  profilePic: companyData.filename[1].profilepic[0]
     // }
    
-    await this.systemcodeService.update(response.id,newstartvalue)
-    const newCompany = this.companyRepository.create(dataCompany);
-    return await this.companyRepository.save(newCompany);
-  return ;
+   
+  // return ;
   }
 
   async findById(id: number): Promise<CompaniesEntity> {
