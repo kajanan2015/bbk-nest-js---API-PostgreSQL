@@ -58,13 +58,17 @@ export class CompaniesService {
 
   async create(companyData) {
   
-
    const response=await this.systemcodeService.findOne('company')
    const companyCode=response.code+''+response.startValue   
    const newstartvalue={
      startValue:response.startValue+1
    }
-
+   let documentUpload=[];
+   if( companyData.filename[2]){
+    documentUpload=companyData.filename[2]?.['files[]']
+   }
+   const files = documentUpload.map(documentPath => ({ documentPath }));
+   console.log(files,666)
    let dataCompany;
    if(companyData.parentCompany&&companyData.parentCompany!=""){
     const company = await this.companyRepository.findOne(companyData.parentCompany, {
@@ -103,7 +107,8 @@ export class CompaniesService {
       companyLogo:companyData.filename[1].logoImg[0],
       companyCode:companyCode,
       users:users,
-      mainCompany:companyData.parentCompany
+      mainCompany:companyData.parentCompany,
+      documents:files
    }
    }else{
     const existing = await this.userservice.findByEmail(companyData.email);
@@ -127,7 +132,8 @@ export class CompaniesService {
       ...companyData,
       companyLogo:companyData.filename[1].logoImg[0],
       companyCode:companyCode,
-      users:users
+      users:users,
+      documents:files
    }
     }
    
