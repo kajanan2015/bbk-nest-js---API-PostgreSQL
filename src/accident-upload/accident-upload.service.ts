@@ -13,11 +13,11 @@ export class AccidentUploadService {
   ){}
  async create(createAccidentUploadDto: CreateAccidentUploadDto) {
   console.log(createAccidentUploadDto)
-  console.log(createAccidentUploadDto.filename[1].accidentImages)
-  console.log(createAccidentUploadDto.filename[0].vehicleRegPhoto)
+  console.log(createAccidentUploadDto.filename[0].accidentImages)
+  // console.log(createAccidentUploadDto.filename[0].vehicleRegPhoto)
   let accidentImage=[];
-  if(createAccidentUploadDto.filename[1]){
-   accidentImage=createAccidentUploadDto.filename[1].accidentImages
+  if(createAccidentUploadDto.filename[0]){
+   accidentImage=createAccidentUploadDto.filename[0].accidentImages
   }
   const files = accidentImage.map(patheImage => ({ patheImage }));
    console.log(files,666)
@@ -38,7 +38,7 @@ submitdata.push(newObj);
   console.log(submitdata)
   console.log(createAccidentUploadDto.accidentThirdParty,4444);
   const accidentThirdParty = [...createAccidentUploadDto.accidentThirdParty];
-const newsubmitdata=submitdata.splice(2);
+const newsubmitdata=submitdata.splice(1);
 for (let i = 0; i < newsubmitdata.length; i++) {
   accidentThirdParty[i].vehicleRegPhoto = newsubmitdata[i][`accidentThirdParty[${i}][vehicleRegPhoto]`];
 }
