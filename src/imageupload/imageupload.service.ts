@@ -53,6 +53,26 @@ export class ImageUploadService {
    return fileInfo;
   }
 
+  async uploadmobile(files, name) {
+    const bucketS3 = "intaap";
+
+    let fileInfo = [];
+
+    for (const file of files) {
+      let obj = await this.uploadS3Add(file.buffer, bucketS3, file.originalname);
+      let fieldName = file.fieldname;
+      let existingObj = fileInfo.find((f) => f[fieldName]);
+        if (existingObj) {
+          existingObj[fieldName].push(obj);
+        } else {
+          const newObj = { [fieldName]: [obj] };
+          fileInfo.push(newObj);
+        }
+        }
+   return fileInfo;
+  }
+
+
 
   async uploadcompany(files, name) {
     const bucketS3 = "intaap";

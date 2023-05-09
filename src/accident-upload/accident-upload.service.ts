@@ -12,7 +12,36 @@ export class AccidentUploadService {
     private accidentupload:Repository<AccidentUpload>
   ){}
  async create(createAccidentUploadDto: CreateAccidentUploadDto) {
-    const response=this.accidentupload.create(createAccidentUploadDto);
+  console.log(createAccidentUploadDto)
+  console.log(createAccidentUploadDto.filename[1].accidentImages)
+  console.log(createAccidentUploadDto.filename[0].vehicleRegPhoto)
+  let accidentImage=[];
+  if(createAccidentUploadDto.filename[1]){
+   accidentImage=createAccidentUploadDto.filename[1].accidentImages
+  }
+  const files = accidentImage.map(patheImage => ({ patheImage }));
+   console.log(files,666)
+  let vehicleRegPhoto;
+  
+  let submitdata=[]
+  createAccidentUploadDto.filename.forEach(element => {
+    const keys = Object.keys(element);
+    const values = Object.values(element);
+    console.log(keys[0],34636746354)
+    console.log(values[0][0],34636746354)
+    const pair = [keys[0]].concat(values[0][0]);
+const newObj = { [keys[0]]: [values] };
+submitdata.push(newObj);
+
+  });
+  console.log(submitdata,4444);
+
+  const data={
+    ...createAccidentUploadDto,
+    accidentImages:files,
+  }
+console.log(data,89898989898)
+    const response=this.accidentupload.create(data);
     return await this.accidentupload.save(response);
   }
 
