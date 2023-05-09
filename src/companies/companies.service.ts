@@ -165,7 +165,7 @@ export class CompaniesService {
   async read(id: number): Promise<CompaniesEntity> {
     return await this.companyRepository.findOne(
       id, 
-      { relations: ['mainCompany','users'] },
+      { relations: ['mainCompany','users','documents'] },
     );
   }
 
