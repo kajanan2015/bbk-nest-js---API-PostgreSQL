@@ -25,20 +25,34 @@ export class AccidentUploadService {
   
   let submitdata=[]
   createAccidentUploadDto.filename.forEach(element => {
+   
     const keys = Object.keys(element);
     const values = Object.values(element);
-    console.log(keys[0],34636746354)
+    const keyed=keys[0]
     console.log(values[0][0],34636746354)
     const pair = [keys[0]].concat(values[0][0]);
-const newObj = { [keys[0]]: [values] };
+const newObj = { [keyed]: values[0][0] };
 submitdata.push(newObj);
 
   });
-  console.log(submitdata,4444);
+  console.log(submitdata)
+  console.log(createAccidentUploadDto.accidentThirdParty,4444);
+  const accidentThirdParty = [...createAccidentUploadDto.accidentThirdParty];
+const newsubmitdata=submitdata.splice(2);
+for (let i = 0; i < newsubmitdata.length; i++) {
+  accidentThirdParty[i].vehicleRegPhoto = newsubmitdata[i][`accidentThirdParty[${i}][vehicleRegPhoto]`];
+}
 
+// accidentThirdParty[0].vehicleRegPhoto = "hghhhfgf/lkk"
+const newaccidentvalue=Object.values(accidentThirdParty)
+
+console.log(accidentThirdParty,11112223)
+// accidentThirdParty[1].vehicleRegPhoto = "hghhhfgf/lkk"
   const data={
     ...createAccidentUploadDto,
     accidentImages:files,
+    newaccidentvalue
+   
   }
 console.log(data,89898989898)
     const response=this.accidentupload.create(data);
