@@ -34,22 +34,24 @@ const newObj = { [keyed]: values[0][0] };
 submitdata.push(newObj);
 
   });
- 
+ if(createAccidentUploadDto.accidentThirdParty){
   const accidentThirdParty = [...createAccidentUploadDto.accidentThirdParty];
-const newsubmitdata=submitdata.splice(1);
-for (let i = 0; i < newsubmitdata.length; i++) {
-  accidentThirdParty[i].vehicleRegPhoto = newsubmitdata[i][`accidentThirdParty[${i}][vehicleRegPhoto]`];
-}
-
-// accidentThirdParty[0].vehicleRegPhoto = "hghhhfgf/lkk"
-const newaccidentvalue=Object.values(accidentThirdParty)
+  const newsubmitdata=submitdata.splice(1);
+  for (let i = 0; i < newsubmitdata.length; i++) {
+    accidentThirdParty[i].vehicleRegPhoto = newsubmitdata[i][`accidentThirdParty[${i}][vehicleRegPhoto]`];
+  }
+  
+  // accidentThirdParty[0].vehicleRegPhoto = "hghhhfgf/lkk"
+  const newaccidentvalue=Object.values(accidentThirdParty)
+ }
+ 
 
 
 // accidentThirdParty[1].vehicleRegPhoto = "hghhhfgf/lkk"
   const data={
     ...createAccidentUploadDto,
     accidentImages:files,
-    newaccidentvalue
+    // newaccidentvalue
    
   }
 

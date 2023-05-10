@@ -24,6 +24,9 @@ export class AccidentUploadThirdParty {
     @Column("varchar",{nullable:true})
     insuarancePolicy:string;
 
+    @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
+    createdat: Date;
+
     @ManyToOne(() => AccidentUpload, accidentUpload => accidentUpload.accidentThirdParty)
     @JoinColumn({ name: 'accidentId' })
     accidentUpload: AccidentUpload;

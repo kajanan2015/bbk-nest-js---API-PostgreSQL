@@ -8,6 +8,7 @@ export class CreateAccidentUploadDto {
         withnessStatement: number;
         accidentDescription:String;
         status: Boolean;
+        createdat: Date;
         filename:any;
         accidentImages: AccidentUploadImage[];
         accidentThirdParty: AccidentUploadThirdParty[];

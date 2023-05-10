@@ -29,9 +29,11 @@ accidentDescription:String;
 @Column({ type: 'boolean', default:true})
 status: Boolean;
 
+@Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
+createdat: Date;
+
 @OneToMany(() => AccidentUploadImage, accidentimage => accidentimage.accidentUpload,{ cascade: true })
 accidentImages: AccidentUploadImage[];
-
 
 @OneToMany(() => AccidentUploadThirdParty, accidentthirdparty => accidentthirdparty.accidentUpload,{ cascade: true })
 accidentThirdParty: AccidentUploadThirdParty[];

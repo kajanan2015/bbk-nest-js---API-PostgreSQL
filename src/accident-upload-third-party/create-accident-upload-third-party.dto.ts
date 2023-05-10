@@ -7,5 +7,6 @@ export class CreateAccidentUploadThirdPartyDto {
     vehicleRegPhoto:string;
     insuaranceCompany:string;
     insuarancePolicy:string;
+    createdat: Date;
 }
 

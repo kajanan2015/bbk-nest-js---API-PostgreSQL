@@ -13,6 +13,9 @@ export class AccidentUploadImage {
     @Column({ type: 'boolean', default:true})
     status: Boolean;
 
+    @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
+    createdat: Date;
+
     @ManyToOne(() => AccidentUpload, accidentupload => accidentupload.accidentImages)
     @JoinColumn({ name: 'accidentId' })
     accidentUpload: AccidentUpload;
