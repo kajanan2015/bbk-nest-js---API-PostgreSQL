@@ -6,12 +6,14 @@ import {
   Param,
   Put,
   HttpStatus,
+  UseGuards,
  
 } from "@nestjs/common";
 import { VehicleTypeService } from "./vehicle-type.service";
 import { CreateVehicleTypeDto } from "./create-vehicle-type.dto";
 import { UpdateVehicleTypeDto } from "./update-vehicle-type.dto";
-
+import { AuthGuard } from '@nestjs/passport';
+@UseGuards(AuthGuard('jwt'))
 @Controller("vehicle-type")
 export class VehicleTypeController {
   service: any;

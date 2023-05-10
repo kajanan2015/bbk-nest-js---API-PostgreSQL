@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards } from '@nestjs/common';
 import { PermissionRoleService } from './permission-role.service';
 import { CreatePermissionRoleDto } from './create-permission-role.dto';
 import { UpdatePermissionRoleDto } from './update-permission-role.dto';
-
+import { AuthGuard } from '@nestjs/passport';
+@UseGuards(AuthGuard('jwt'))
 @Controller('permission-role')
 export class PermissionRoleController {
   constructor(private readonly permissionRoleService: PermissionRoleService) {}

@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles, HttpStatus, UseGuards } from '@nestjs/common';
 import { DefectTripService } from './defect-trip.service';
 import { CreateDefectTripDto } from './create-defect-trip.dto';
 import { UpdateDefectTripDto } from './update-defect-trip.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
-
+import { AuthGuard } from '@nestjs/passport';
+@UseGuards(AuthGuard('jwt'))
 @Controller('defect-trip')
 export class DefectTripController {
 

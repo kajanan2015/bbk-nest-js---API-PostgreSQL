@@ -6,10 +6,12 @@ import {
   Param,
   Put,
   HttpStatus,
+  UseGuards,
 } from "@nestjs/common";
 import { SubCompaniesService } from "./sub-companies.service";
 import { CreateSubCompanyDto } from "./create-sub-company.dto";
-
+import { AuthGuard } from '@nestjs/passport';
+@UseGuards(AuthGuard('jwt'))
 @Controller("sub-companies")
 export class SubCompaniesController {
   constructor(private readonly subCompaniesService: SubCompaniesService) {}

@@ -12,15 +12,14 @@ export class AccidentUploadService {
     private accidentupload:Repository<AccidentUpload>
   ){}
  async create(createAccidentUploadDto: CreateAccidentUploadDto) {
-  console.log(createAccidentUploadDto)
-  console.log(createAccidentUploadDto.filename[0].accidentImages)
+  
   // console.log(createAccidentUploadDto.filename[0].vehicleRegPhoto)
   let accidentImage=[];
   if(createAccidentUploadDto.filename[0]){
    accidentImage=createAccidentUploadDto.filename[0].accidentImages
   }
   const files = accidentImage.map(patheImage => ({ patheImage }));
-   console.log(files,666)
+   
   let vehicleRegPhoto;
   
   let submitdata=[]
@@ -35,8 +34,7 @@ const newObj = { [keyed]: values[0][0] };
 submitdata.push(newObj);
 
   });
-  console.log(submitdata)
-  console.log(createAccidentUploadDto.accidentThirdParty,4444);
+ 
   const accidentThirdParty = [...createAccidentUploadDto.accidentThirdParty];
 const newsubmitdata=submitdata.splice(1);
 for (let i = 0; i < newsubmitdata.length; i++) {
@@ -46,7 +44,7 @@ for (let i = 0; i < newsubmitdata.length; i++) {
 // accidentThirdParty[0].vehicleRegPhoto = "hghhhfgf/lkk"
 const newaccidentvalue=Object.values(accidentThirdParty)
 
-console.log(accidentThirdParty,11112223)
+
 // accidentThirdParty[1].vehicleRegPhoto = "hghhhfgf/lkk"
   const data={
     ...createAccidentUploadDto,
@@ -54,7 +52,7 @@ console.log(accidentThirdParty,11112223)
     newaccidentvalue
    
   }
-console.log(data,89898989898)
+
     const response=this.accidentupload.create(data);
     return await this.accidentupload.save(response);
   }

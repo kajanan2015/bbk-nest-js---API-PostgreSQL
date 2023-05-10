@@ -54,7 +54,7 @@ export class ImageUploadService {
   }
 
   async uploadmobile(files, name) {
-    const bucketS3 = "intaap";
+    const bucketS3 = "intaap/mobile";
 
     let fileInfo = [];
 

@@ -5,7 +5,7 @@ export class CreateAccidentUploadDto {
         id:number;
         dateTime: Date;
         location:String;
-        withnessStatement: Boolean;
+        withnessStatement: number;
         accidentDescription:String;
         status: Boolean;
         filename:any;

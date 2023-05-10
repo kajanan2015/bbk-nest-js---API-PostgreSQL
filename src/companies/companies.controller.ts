@@ -17,7 +17,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
 import { CompaniesEntity } from './companies.entity';
-// @UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'))
 @Controller('companies')
 export class CompaniesController {
   constructor(
@@ -73,25 +73,25 @@ export class CompaniesController {
     };
   }
 
-  @Put('/edit/:id')
-  @UseInterceptors(AnyFilesInterceptor())
-  async update(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
-    let data = { ...companyData };
-    if (file && Array.isArray(file) && file.length === 0) {
-      const { companyLogo, companyStatus, ...companyDataWithoutLogo } = companyData;
-      data = {
-        ...companyDataWithoutLogo,
-      }
-    } else {
-      const filename = await this.imageUploadService.upload(file, "body");
-      const { companyStatus, ...companyDataWithoutStatus } = companyData;
-      data = {
-        ...companyDataWithoutStatus,
-        "companyLogo": filename[0]
-      }
-    }
-    return await this.service.update(id, data);
-  }
+  // @Put('/edit/:id')
+  // @UseInterceptors(AnyFilesInterceptor())
+  // async update(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
+  //   let data = { ...companyData };
+  //   if (file && Array.isArray(file) && file.length === 0) {
+  //     const { companyLogo, companyStatus, ...companyDataWithoutLogo } = companyData;
+  //     data = {
+  //       ...companyDataWithoutLogo,
+  //     }
+  //   } else {
+  //     const filename = await this.imageUploadService.upload(file, "body");
+  //     const { companyStatus, ...companyDataWithoutStatus } = companyData;
+  //     data = {
+  //       ...companyDataWithoutStatus,
+  //       "companyLogo": filename[0]
+  //     }
+  //   }
+  //   return await this.service.update(id, data);
+  // }
 
   @Put('/edit/:id')
   @UseInterceptors(AnyFilesInterceptor())

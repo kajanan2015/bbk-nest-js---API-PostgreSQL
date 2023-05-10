@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { AccidentUploadImageService } from './accident-upload-image.service';
 import { CreateAccidentUploadImageDto } from './create-accident-upload-image.dto';
 import { UpdateAccidentUploadImageDto } from './update-accident-upload-image.dto';
-
+import { AuthGuard } from '@nestjs/passport';
+@UseGuards(AuthGuard('jwt'))
 @Controller('accident-upload-image')
 export class AccidentUploadImageController {
   constructor(private readonly accidentUploadImageService: AccidentUploadImageService) {}

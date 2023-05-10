@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { SystemCodeService } from './system-code.service';
 import { CreateSystemCodeDto } from './create-system-code.dto';
 import { UpdateSystemCodeDto } from './update-system-code.dto';
-
+import { AuthGuard } from '@nestjs/passport';
+@UseGuards(AuthGuard('jwt'))
 @Controller('system-code')
 export class SystemCodeController {
   constructor(private readonly systemCodeService: SystemCodeService) {}

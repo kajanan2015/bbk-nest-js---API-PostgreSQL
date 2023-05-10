@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { CompanyDocumentService } from './company-document.service';
 import { CreateCompanyDocumentDto } from './create-company-document.dto';
 import { UpdateCompanyDocumentDto } from './update-company-document.dto';
-
+import { AuthGuard } from '@nestjs/passport';
+@UseGuards(AuthGuard('jwt'))
 @Controller('company-document')
 export class CompanyDocumentController {
   constructor(private readonly companyDocumentService: CompanyDocumentService) {}

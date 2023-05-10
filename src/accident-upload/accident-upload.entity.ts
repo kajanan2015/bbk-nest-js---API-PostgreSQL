@@ -20,8 +20,8 @@ tripId:number;
 @Column("varchar",{length:250,nullable:true,default:null})
 location:String;
 
-@Column({ type: 'boolean', default:true})
-withnessStatement: Boolean;
+@Column({ type: 'int', default:'1'})
+withnessStatement: number;
 
 @Column("varchar",{length:500,nullable:true,default:null})
 accidentDescription:String;

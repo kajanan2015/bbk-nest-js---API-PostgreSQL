@@ -1,9 +1,12 @@
-import { Controller, HttpStatus,Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, HttpStatus,Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFiles, UseGuards } from '@nestjs/common';
 import { MobileAccidentImageService } from './mobile-accident-image.service';
 import { CreateMobileAccidentImageDto } from './create-mobile-accident-image.dto';
 import { UpdateMobileAccidentImageDto } from './update-mobile-accident-image.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
+import { AuthGuard } from '@nestjs/passport';
+@UseGuards(AuthGuard('jwt'))
+
 @Controller('mobile-bodymark')
 export class MobileAccidentImageController {
   constructor(private readonly mobileAccidentImageService: MobileAccidentImageService, private   readonly imageUploadService: ImageUploadService,) {}

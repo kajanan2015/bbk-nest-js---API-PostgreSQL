@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
 import { DriverService } from './driver.service';
 import { CreateDriverDto } from './create-driver.dto';
 import { UpdateDriverDto } from './update-driver.dto';
 import { Put } from '@nestjs/common';
-
+import { AuthGuard } from '@nestjs/passport';
+@UseGuards(AuthGuard('jwt'))
 @Controller('driver')
 export class DriverController {
   constructor(private readonly driverService: DriverService) {}
