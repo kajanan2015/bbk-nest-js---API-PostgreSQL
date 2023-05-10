@@ -33,9 +33,38 @@ export class CompaniesController {
     };
   }
 
+
+  @Get('/showonlyActivemainCompany/:value')
+  async showonlyActivemainCompany(@Param('value') value: number) {
+    const companies = await this.service.showonlyActivemainCompany(value);
+    return {
+      statusCode: HttpStatus.OK,
+      companies
+    };
+  }
+
+
+  @Get('/showonlyActivemainCompany/:value')
+  async showonlyActivesubCompany(@Param('value') value: number) {
+    const companies = await this.service.showonlyActivesubCompany(value);
+    return {
+      statusCode: HttpStatus.OK,
+      companies
+    };
+  }
+
   @Get('/subcompanies/:mainCompanyId')
   async showSubAll(@Param('mainCompanyId') mainCompanyId: number) {
     const companies = await this.service.showSubAll(mainCompanyId);
+    return {
+      statusCode: HttpStatus.OK,
+      companies
+    };
+  }
+
+  @Get('/showsubcompaniesonly')
+  async showSubonlyCompanies() {
+    const companies = await this.service.showonlySubCompany();
     return {
       statusCode: HttpStatus.OK,
       companies
@@ -73,39 +102,18 @@ export class CompaniesController {
     };
   }
 
-  // @Put('/edit/:id')
-  // @UseInterceptors(AnyFilesInterceptor())
-  // async update(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
-  //   let data = { ...companyData };
-  //   if (file && Array.isArray(file) && file.length === 0) {
-  //     const { companyLogo, companyStatus, ...companyDataWithoutLogo } = companyData;
-  //     data = {
-  //       ...companyDataWithoutLogo,
-  //     }
-  //   } else {
-  //     const filename = await this.imageUploadService.upload(file, "body");
-  //     const { companyStatus, ...companyDataWithoutStatus } = companyData;
-  //     data = {
-  //       ...companyDataWithoutStatus,
-  //       "companyLogo": filename[0]
-  //     }
-  //   }
-  //   return await this.service.update(id, data);
-  // }
-
   @Put('/edit/:id')
   @UseInterceptors(AnyFilesInterceptor())
-  async updateStatus(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
-    console.log(companyData,11)
+  async update(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
     let data = { ...companyData };
     if (file && Array.isArray(file) && file.length === 0) {
-      const { companyLogo, ...companyDataWithoutLogo } = companyData;
+      const { companyLogo, companyStatus, ...companyDataWithoutLogo } = companyData;
       data = {
         ...companyDataWithoutLogo,
       }
     } else {
       const filename = await this.imageUploadService.upload(file, "body");
-      const { ...companyDataWithoutStatus } = companyData;
+      const { companyStatus, ...companyDataWithoutStatus } = companyData;
       data = {
         ...companyDataWithoutStatus,
         "companyLogo": filename[0]
@@ -113,6 +121,27 @@ export class CompaniesController {
     }
     return await this.service.update(id, data);
   }
+
+  // @Put('/edit/:id')
+  // @UseInterceptors(AnyFilesInterceptor())
+  // async updateStatus(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
+  //   console.log(companyData,11)
+  //   let data = { ...companyData };
+  //   if (file && Array.isArray(file) && file.length === 0) {
+  //     const { companyLogo, ...companyDataWithoutLogo } = companyData;
+  //     data = {
+  //       ...companyDataWithoutLogo,
+  //     }
+  //   } else {
+  //     const filename = await this.imageUploadService.upload(file, "body");
+  //     const { ...companyDataWithoutStatus } = companyData;
+  //     data = {
+  //       ...companyDataWithoutStatus,
+  //       "companyLogo": filename[0]
+  //     }
+  //   }
+  //   return await this.service.update(id, data);
+  // }
 
   @Put('/status/:id')
   async updateCompanyStatus(

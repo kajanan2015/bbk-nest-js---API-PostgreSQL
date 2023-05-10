@@ -14,8 +14,9 @@ import { CompanyDocument } from 'src/company-document/company-document.entity';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { UserModule } from 'src/user/user.module';
+import { country } from './country.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([CompaniesEntity, PagePermissionEntity, SystemCode,CompanyDocument,User]), PagePermissionModule,SystemCodeModule, UserModule],
+  imports: [TypeOrmModule.forFeature([CompaniesEntity, PagePermissionEntity, SystemCode,CompanyDocument,User,country]), PagePermissionModule,SystemCodeModule, UserModule],
   controllers: [CompaniesController],
   providers: [CompaniesService, ImageUploadService, PagePermissionService,SystemCodeService, UserService],
 })

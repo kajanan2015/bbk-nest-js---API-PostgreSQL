@@ -31,6 +31,34 @@ export class CompaniesService {
     );
   }
 
+  async showonlySubCompany() {
+    return await this.companyRepository.find(
+      {
+        where: { status: 1 , mainCompany: Not(IsNull()) },
+        relations: ['mainCompany','users']
+      }
+    );
+  }
+
+  async showonlyActivemainCompany(value) {
+    return await this.companyRepository.find(
+      {
+        where: { status: 1 , mainCompany: null,compstatus:value },
+        relations: ['mainCompany','users']
+      }
+    );
+  }
+
+
+  async showonlyActivesubCompany(value) {
+    return await this.companyRepository.find(
+      {
+        where: { status: 1 , mainCompany:  Not(IsNull()),compstatus:value },
+        relations: ['mainCompany','users']
+      }
+    );
+  }
+
   async getcountry(){
     const query = 'SELECT * FROM `country`';
     console.log(query,99999)
@@ -44,7 +72,7 @@ export class CompaniesService {
         where: { status: 1 , mainCompany: {
           id: mainCompanyId
         }},
-        relations: ['mainCompany']
+        relations: ['mainCompany','users']
       }
     );
   }
@@ -171,7 +199,7 @@ export class CompaniesService {
   async read(id: number): Promise<CompaniesEntity> {
     return await this.companyRepository.findOne(
       id, 
-      { relations: ['mainCompany','users','documents'] },
+      { relations: ['mainCompany','users','documents','country','regAddressCountry'] },
     );
   }
 

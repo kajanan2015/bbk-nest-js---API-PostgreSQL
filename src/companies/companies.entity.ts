@@ -3,6 +3,8 @@ import { PagePermissionEntity } from 'src/pagepermission/pagepermission.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinColumn, JoinTable, OneToMany } from 'typeorm';
 import { CompanyDocument } from 'src/company-document/company-document.entity';
 import { User } from 'src/user/user.entity';
+import { country } from './country.entity';
+
 @Entity('company')
 export class CompaniesEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
@@ -32,8 +34,8 @@ export class CompaniesEntity {
   @Column("varchar", { nullable: true , length: 250, default: () => null })
   city: string | null;
 
-  @Column("int",{ nullable: true , default: () => null })
-  country: number | null;
+  // @Column("int",{ nullable: true , default: () => null })
+  // country: number | null;
 
   @Column("varchar", { nullable: true , length: 250, default: () => null })
   postalCode: string | null;
@@ -53,8 +55,8 @@ export class CompaniesEntity {
   @Column("varchar", { nullable: true , length: 250, default: () => null })
   regAddressCity: string | null;
 
-  @Column("int",{ nullable: true , default: () => null })
-  regAddressCountry: number;
+  // @Column("int",{ nullable: true , default: () => null })
+  // regAddressCountry: number;
 
   @Column("varchar", { nullable: true , length: 250, default: () => null })
   regAddressPostalCode: string | null;
@@ -105,4 +107,13 @@ export class CompaniesEntity {
   @ManyToMany(() => User, user => user.companies)
   @JoinTable()
   users: User[];
+
+  @ManyToOne(() => country, country => country.companyCountry)
+@JoinColumn({ name: 'country' })
+country: country;
+
+@ManyToOne(() => country, countryreg => countryreg.companyRegAddressCountry)
+@JoinColumn({ name: 'regAddressCountry' })
+regAddressCountry: country;
+
 }
