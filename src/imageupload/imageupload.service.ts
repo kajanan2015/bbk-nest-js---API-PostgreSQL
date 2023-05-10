@@ -39,6 +39,20 @@ export class ImageUploadService {
     });
   }
 
+  async uploadmobiledefect(files, name) {
+    const bucketS3 = "intaap/mobile";
+
+    let fileInfo = [];
+
+    for (const file of files) {
+      let obj = await this.uploadS3Add(file.buffer, bucketS3, file.originalname);
+      fileInfo.push(obj);
+    }
+
+
+   return fileInfo;
+  }
+
   async upload(files, name) {
     const bucketS3 = "intaap";
 

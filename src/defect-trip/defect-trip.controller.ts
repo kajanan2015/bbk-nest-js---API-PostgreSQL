@@ -15,7 +15,7 @@ export class DefectTripController {
   @UseInterceptors(AnyFilesInterceptor())
   async create(@UploadedFiles() vehicleRegPhoto ,@Body() createDefectTripDto: CreateDefectTripDto) {
    
-    const filename=await this.imageUploadService.upload(vehicleRegPhoto , "body");
+    const filename=await this.imageUploadService.uploadmobiledefect(vehicleRegPhoto , "body");
     const data={
       ...createDefectTripDto,
       "vehicleRegPhoto":filename
