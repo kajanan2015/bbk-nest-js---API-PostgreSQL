@@ -60,7 +60,22 @@ console.log(data,89898989898)
   }
 
   async findAll() {
-    return await this.accidentupload.find();
+    return await this.accidentupload.find(
+      {
+        where: { status: 1},
+        relations: ['accidentThirdParty','accidentImages','vehicle']
+      }
+    );
+  }
+
+  async findOneByTrip(id: number) {
+    console.log(id,89899898989889)
+    return await this.accidentupload.find(
+      {
+        where: { status: 1,tripId:id},
+        relations: ['accidentThirdParty','accidentImages','vehicle']
+      }
+    );
   }
 
   async findOne(id: number) {

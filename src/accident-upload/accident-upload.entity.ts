@@ -1,7 +1,11 @@
-import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { AccidentUploadImage } from 'src/accident-upload-image/accident-upload-image.entity';
 import { AccidentUploadThirdParty } from 'src/accident-upload-third-party/accident-upload-third-party.entity';
+import { Vehicle } from 'src/vehicle/vehicle.entity';
+
+
+
 @Entity()
 export class AccidentUpload {
 @PrimaryGeneratedColumn()
@@ -9,6 +13,9 @@ id:number;
 
 @Column("timestamp", { name: "dateTime", default: () => "CURRENT_TIMESTAMP" })
 dateTime: Date;
+
+@Column("int",{nullable:true,default:null})
+tripId:number;
 
 @Column("varchar",{length:250,nullable:true,default:null})
 location:String;
@@ -28,5 +35,9 @@ accidentImages: AccidentUploadImage[];
 
 @OneToMany(() => AccidentUploadThirdParty, accidentthirdparty => accidentthirdparty.accidentUpload,{ cascade: true })
 accidentThirdParty: AccidentUploadThirdParty[];
+
+@ManyToOne(() => Vehicle, vehicle => vehicle.vehicleaccident)
+@JoinColumn()
+vehicle: Vehicle;
 
 }

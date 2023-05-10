@@ -35,6 +35,11 @@ export class AccidentUploadController {
     return this.accidentUploadService.findOne(+id);
   }
 
+  @Get('/findOneByTrip/:id')
+  findOneByTrip(@Param('id') id: string) {
+    return this.accidentUploadService.findOneByTrip(+id);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAccidentUploadDto: UpdateAccidentUploadDto) {
     return this.accidentUploadService.update(+id, updateAccidentUploadDto);
