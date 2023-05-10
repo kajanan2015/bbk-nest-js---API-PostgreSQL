@@ -203,13 +203,18 @@ export class CompaniesService {
     );
   }
 
-  async update(id: number, data: Partial<CompaniesDTO>) {
-    await this.companyRepository.update({ id }, data);
-    return await this.companyRepository.findOne({ id });
+  async update(id: number, data) {
+   
+   console.log(id);
+   console.log(data,9990009)
+  //  console.log(data['updatedFields'],5555555555)
+  //  console.log(JSON.stringify(data['updatedFields']),9900909)
+  //   await this.companyRepository.update({ id },data);
+  //   return await this.companyRepository.findOne({ id });
   }
 
-  async updateCompanyStatus(id: number, companyStatus: string) {
-    await this.companyRepository.update({ id }, { status: () => companyStatus });
+  async updateCompanyStatus(id: number) {
+    await this.companyRepository.update({ id }, { compstatus: () => '0' });
     return await this.companyRepository.findOne({ id });
   }
   

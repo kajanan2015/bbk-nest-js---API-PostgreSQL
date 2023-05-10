@@ -102,24 +102,36 @@ export class CompaniesController {
     };
   }
 
+  
+
   @Put('/edit/:id')
   @UseInterceptors(AnyFilesInterceptor())
   async update(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
-    let data = { ...companyData };
-    if (file && Array.isArray(file) && file.length === 0) {
-      const { companyLogo, companyStatus, ...companyDataWithoutLogo } = companyData;
-      data = {
-        ...companyDataWithoutLogo,
-      }
-    } else {
-      const filename = await this.imageUploadService.upload(file, "body");
-      const { companyStatus, ...companyDataWithoutStatus } = companyData;
-      data = {
-        ...companyDataWithoutStatus,
-        "companyLogo": filename[0]
-      }
-    }
-    return await this.service.update(id, data);
+
+console.log(companyData,787878)
+console.log(id,909099090)
+console.log(file,89898989)    
+    // const filename = await this.imageUploadService.uploadcompany(file, "body");
+    // const data = {
+    //   ...companyData,
+    //    filename
+    // }
+    // console.log(data,8090909)
+    // let data = { ...companyData };
+    // if (file && Array.isArray(file) && file.length === 0) {
+    //   const { companyLogo, companyStatus, ...companyDataWithoutLogo } = companyData;
+    //   data = {
+    //     ...companyDataWithoutLogo,
+    //   }
+    // } else {
+    //   const filename = await this.imageUploadService.upload(file, "body");
+    //   const { companyStatus, ...companyDataWithoutStatus } = companyData;
+    //   data = {
+    //     ...companyDataWithoutStatus,
+    //     "companyLogo": filename[0]
+    //   }
+    // }
+    // return await this.service.update(id, data);
   }
 
   // @Put('/edit/:id')
@@ -145,10 +157,8 @@ export class CompaniesController {
 
   @Put('/status/:id')
   async updateCompanyStatus(
-    @Param('id') id: number,
-    @Body('companyStatus') companyStatus: string
-  ): Promise<CompaniesEntity> {
-    return await this.service.updateCompanyStatus(id, companyStatus);
+    @Param('id') id: number): Promise<CompaniesEntity> {
+    return await this.service.updateCompanyStatus(id);
   }
 
   @Post('pages/:companyId')
