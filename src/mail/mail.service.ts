@@ -9,21 +9,21 @@ import { Injectable } from "@nestjs/common";
 export class MailService {
   constructor(private mailerService: MailerService) {}
 
-  async sendUserConfirmation(
-    sender: string,
+  async sendcompanyCreate(
+    password: string,
     name: string,
     toemail: string,
-    ptype: string
+    username: string
   ) {
     await this.mailerService.sendMail({
       to: toemail.trim(),
       from: "noreply@hexagonasia.com", // override default from
-      subject: `Please approve ${ptype} from ${sender}`,
-      template: "/templates/confirmation", // `.hbs` extension is appended automatically
+      subject: `Company succefully created`,
+      template: "./confirmation", // `.hbs` extension is appended automatically
       context: {
         name,
-        sender,
-        ptype,
+        username,
+        password,
       },
     });
   }
@@ -33,8 +33,8 @@ export class MailService {
 
     
     await this.mailerService.sendMail({
-      to: "kidsactivitiesaustralia@gmail.com ",
-      from: "no-reply@kidsactivitiesaustralia.com.au", // override default from
+      to: "nuwanpriyamal@gmail.com ",
+      from: "nuwan@intaap.com", // override default from
       subject: `tset`,
       template: "./customer", // `.hbs` extension is appended automatically
       context: {},

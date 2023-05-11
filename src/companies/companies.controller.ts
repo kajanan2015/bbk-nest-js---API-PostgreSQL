@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Body,
   Param,
   HttpStatus,
@@ -104,18 +105,18 @@ export class CompaniesController {
 
   
 
-  @Put('/edit/:id')
+  @Patch('/edit/:id')
   @UseInterceptors(AnyFilesInterceptor())
   async update(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
 
 console.log(companyData,787878)
 console.log(id,909099090)
 console.log(file,89898989)    
-    // const filename = await this.imageUploadService.uploadcompany(file, "body");
-    // const data = {
-    //   ...companyData,
-    //    filename
-    // }
+    const filename = await this.imageUploadService.uploadcompany(file, "body");
+    const data = {
+      ...companyData,
+       filename
+    }
     // console.log(data,8090909)
     // let data = { ...companyData };
     // if (file && Array.isArray(file) && file.length === 0) {
@@ -131,7 +132,7 @@ console.log(file,89898989)
     //     "companyLogo": filename[0]
     //   }
     // }
-    // return await this.service.update(id, data);
+    return await this.service.update(id, data);
   }
 
   // @Put('/edit/:id')
@@ -167,5 +168,10 @@ console.log(file,89898989)
     @Body('pageIds') pageIds,
   ) {
     await this.service.addPageToCompany(companyId, pageIds);
+  }
+
+  @Post('sendemail')
+  async sendemail() {
+    await this.service.testemail();
   }
 }

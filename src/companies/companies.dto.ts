@@ -39,5 +39,6 @@ documents: CompanyDocument[];
 pages: PagePermissionEntity[];
 users: User[];
 country:country;
-regAddressCountry:country
+regAddressCountry:country,
+userId:number
 }

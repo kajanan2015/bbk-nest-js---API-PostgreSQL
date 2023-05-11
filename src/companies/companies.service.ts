@@ -8,6 +8,7 @@ import { SystemCodeService } from 'src/system-code/system-code.service';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/user.entity';
 import { Connection, QueryRunner } from 'typeorm';
+import { MailService } from 'src/mail/mail.service';
 @Injectable()
 export class CompaniesService {
   constructor(
@@ -17,6 +18,7 @@ export class CompaniesService {
     private pagePermissionRepository: Repository<PagePermissionEntity>,
     private readonly systemcodeService:SystemCodeService,
     private readonly userservice:UserService,
+    private readonly mailservice:MailService,
     private readonly connection: Connection,
     @InjectRepository(User)
     private readonly userRepository: Repository<User> 
@@ -199,7 +201,7 @@ export class CompaniesService {
   async read(id: number): Promise<CompaniesEntity> {
     return await this.companyRepository.findOne(
       id, 
-      { relations: ['mainCompany','users','documents','country','regAddressCountry'] },
+      { relations: ['mainCompany','users','documents','regAddressCountry'] },
     );
   }
 
@@ -207,10 +209,105 @@ export class CompaniesService {
    
    console.log(id);
    console.log(data,9990009)
+  //  console.log(data.users[0].firstName,9990009)
+
+   
+   const passcompanyData={
+    ...(data.companyName ? { companyName: data.companyName } : {}),
+    ...(data.companyEmail ? { companyEmail: data.companyEmail } : {}),
+    ...(data.website ? { website: data.website } : {}),
+    ...(data.companyPhone ? { companyPhone: data.companyPhone } : {}),
+    ...(data.number ? { number: data.number } : {}),
+    ...(data.street ? { street: data.street } : {}),
+    ...(data.city ? { city: data.city } : {}),
+    ...(data.postalCode ? { postalCode: data.postalCode } : {}),
+    ...(data.vat ? { vat: data.vat } : {}),
+    ...(data.registrationNumber ? { registrationNumber: data.registrationNumber } : {}),
+    ...(data.regAddressNo ? { regAddressNo: data.regAddressNo } : {}),
+    ...(data.regAddressStreet ? { regAddressStreet: data.regAddressStreet } : {}),
+    ...(data.regAddressCity ? { regAddressCity: data.regAddressCity } : {}),
+    ...(data.regAddressPostalCode ? { regAddressPostalCode: data.regAddressPostalCode } : {}),
+    ...(data.country ? { country: data.country.id } : {}),
+    ...(data.companyType ? { companyType: data.companyType } : {}),
+    ...(data.regAddressCountry ? { regAddressCountry: data.regAddressCountry.id } : {}),
+
+   }
+   if(data.filename){
+    if(data.profile && data.logo){
+      console.log(data.filename,657676)
+      let documentUpload=[];
+      if(data.filename[0]?.['files[]']){
+        documentUpload=data.filename[0]?.['files[]']
+        const files = documentUpload.map(documentPath => ({ documentPath }));
+        console.log(files,898989898998)
+      }
+     
+     }
+     else if(data.profile){
+      const datalogo={
+        ...(data.filename[0].logoImg ? { companyLogo: data.filename[0].logoImg } : {}),
+      }
+      await this.companyRepository.update({ id },datalogo);
+      let documentUpload=[];
+      if(data.filename[1]?.['files[]']){
+        documentUpload=data.filename[1]?.['files[]']
+        const files = documentUpload.map(documentPath => ({ documentPath }));
+        console.log(files,898989898998)
+      }
+     
+     }
+     else if(data.logo){
+      const dataprofilpic={
+        ...(data.filename[0].profileImg ? { profilePic: data.filename[0].profileImg } : {}),
+      }
+      await this.userservice.update(data.userId,dataprofilpic);
+      let documentUpload=[]; 
+      if(data.filename[1]?.['files[]']){
+        documentUpload=data.filename[1]?.['files[]']
+        const files = documentUpload.map(documentPath => ({ documentPath }));
+        console.log(files,898989898998)
+      }
+     }
+     else{
+      const dataprofilpic={
+        ...(data.filename[0].profileImg ? { profilePic: data.filename[0].profileImg } : {}),
+      }
+      await this.userservice.update(data.userId,dataprofilpic);
+      const datalogo={
+        ...(data.filename[1].logoImg ? { companyLogo: data.filename[1].logoImg } : {}),
+      }
+      await this.companyRepository.update({ id },datalogo);
+      let documentUpload=[]; 
+      if(data.filename[2]?.['files[]']){ 
+        documentUpload=data.filename[2]?.['files[]']
+        const files = documentUpload.map(documentPath => ({ documentPath }));
+        console.log(files,898989898998)
+      }
+     }
+   }
+  
+   
+   if(data.users){
+    const passuserData={
+      ...(data.users[0].firstName ? { firstName: data.users[0].firstName } : {}),
+      ...(data.users[0].lastName ? { lastName: data.users[0].lastName} : {}),
+      ...(data.users[0].email ? { email: data.users[0].email } : {}),
+      ...(data.users[0].phone ? { phone: data.users[0].phone} : {}),
+     }
+     const userResponse= await this.userservice.update(data.userId,passuserData);
+   }
+  
   //  console.log(data['updatedFields'],5555555555)
   //  console.log(JSON.stringify(data['updatedFields']),9900909)
-  //   await this.companyRepository.update({ id },data);
-  //   return await this.companyRepository.findOne({ id });
+  console.log(passcompanyData,787878787)
+  if(Object.keys(passcompanyData).length>0){
+    await this.companyRepository.update({ id },passcompanyData);
+  }
+  
+    return await this.companyRepository.findOne(
+      id, 
+      { relations: ['mainCompany','users','documents','country','regAddressCountry'] },
+    );
   }
 
   async updateCompanyStatus(id: number) {
@@ -226,7 +323,7 @@ export class CompaniesService {
     const existingPages = company.pages.map((page) => page.id);
     const pagesToRemove = existingPages.filter((pageId) => !pageIds.includes(pageId));
     const pagesToAdd = pageIds.filter((pageId) => !existingPages.includes(pageId));
-  
+    
     if (pagesToRemove.length) {
       company.pages = company.pages.filter((page) => !pagesToRemove.includes(page.id));
       await this.companyRepository.save(company);
@@ -241,5 +338,11 @@ export class CompaniesService {
   
     await this.companyRepository.save(company);
   }
-  
+  async testemail(){
+    const password= "nuwan@gmail.com";
+    const name= "nuwan";
+    const toemail= "nuwanpriyamal@gmail.com";
+    const username= "dfdfd";
+    await this.mailservice.sendcompanyCreate(password,name,toemail,username);
+  }
 }

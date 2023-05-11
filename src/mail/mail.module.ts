@@ -14,16 +14,16 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         // transport: config.get("MAIL_TRANSPORT"),
         // or
         transport: {
-          host: 'email-smtp.us-east-1.amazonaws.com',
+          host: 'smtp.gmail.com',
           port: 587,
           secure: false,
           auth: {
-            user: "AKIARMWQHECTYSDU3FCU",
-            pass: "BOGuWBuCSxa4AgWhezfcJEsoN+GFkl+tuXygVjcMETO5",
+            user: "nuwan@intaap.com",
+            pass: "gcfcfzgbroiemcxz",
           },
         },
         defaults: {
-          from: `"No Reply" <no-reply@kidsactivitiesaustralia.com.au>`,
+          from: `"No Reply" <nuwan@intaap.com>`,
         },
         template: {
           dir: join(__dirname, 'templates'),
