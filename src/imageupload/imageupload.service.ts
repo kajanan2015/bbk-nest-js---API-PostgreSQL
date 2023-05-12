@@ -44,7 +44,7 @@ export class ImageUploadService {
 async deletedoc(data){
    const s3 = this.getS3();
    // Extract the object key from the document URL
-   const objectKey = data.documentUrl.split('/').pop();
+   const objectKey = data.split('/').pop();
 
    // Create the delete object parameters
    const params = {

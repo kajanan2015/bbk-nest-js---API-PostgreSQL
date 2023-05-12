@@ -256,8 +256,9 @@ export class CompaniesService {
       deletedocuments = await this.companyDocumentRepository.find({ 
         where: { documentPath: documentUrl}, 
       }); 
+      console.log(documentUrl,89898989898)
+      await this.imageUploadService.deletedoc(documentUrl)
     }
-    console.log(deletedocuments,78787878787)
     await this.companyDocumentRepository.remove(deletedocuments)
    }
    if(data.filename){

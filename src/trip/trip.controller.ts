@@ -52,7 +52,7 @@ import { AuthGuard } from '@nestjs/passport';
       await this.service.update(id, data);
       return {
         statusCode: HttpStatus.OK,
-        message: 'Company updated successfully',
+        message: 'trip updated successfully',
       };
     }
   }
