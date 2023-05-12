@@ -94,6 +94,15 @@ export class CompaniesController {
     };
   }
 
+  @Get('getmatchsubcompany/:id')
+  async getmatchsubcompany(@Param('id') id: number) {
+    const subcompany = await this.service.getmatchsubcompany(id);
+    return {
+      statusCode: HttpStatus.OK,
+      subcompany,
+    };
+  }
+
   @Get(':id')
   async read(@Param('id') id: number) {
     const company = await this.service.read(id);

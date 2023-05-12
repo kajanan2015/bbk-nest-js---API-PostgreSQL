@@ -203,6 +203,16 @@ export class CompaniesService {
     return await this.companyRepository.findOne({ id });
   }
 
+  async getmatchsubcompany(id: number) {
+    return await this.companyRepository.find(
+      {
+        where: { status: 1 ,mainCompany :id},
+        // relations: ['mainCompany','users']
+      }
+    );
+  }
+
+
   async read(id: number): Promise<CompaniesEntity> {
     return await this.companyRepository.findOne(
       id, 
