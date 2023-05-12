@@ -10,7 +10,7 @@ export class CompanyDocumentService {
     @InjectRepository(CompanyDocument)
     private companyDocumentRepository: Repository<CompanyDocument>
   ) {}
- async create(createCompanyDocumentDto: CreateCompanyDocumentDto) {
+ async create(createCompanyDocumentDto) {
     const response=this.companyDocumentRepository.create(createCompanyDocumentDto);
     return await this.companyDocumentRepository.save(response);
   }

@@ -17,9 +17,11 @@ import { UserModule } from 'src/user/user.module';
 import { country } from './country.entity';
 import { MailModule } from 'src/mail/mail.module';
 import { MailService } from 'src/mail/mail.service';
+import { CompanyDocumentModule } from 'src/company-document/company-document.module';
+import { CompanyDocumentService } from 'src/company-document/company-document.service';
 @Module({
-  imports: [TypeOrmModule.forFeature([CompaniesEntity, PagePermissionEntity, SystemCode,CompanyDocument,User,country]), PagePermissionModule,SystemCodeModule, UserModule, MailModule],
+  imports: [TypeOrmModule.forFeature([CompaniesEntity, PagePermissionEntity, SystemCode,CompanyDocument,User,country]), PagePermissionModule,SystemCodeModule, UserModule, MailModule, CompanyDocumentModule],
   controllers: [CompaniesController],
-  providers: [CompaniesService, ImageUploadService, PagePermissionService,SystemCodeService, UserService,MailService],
+  providers: [CompaniesService, ImageUploadService, PagePermissionService,SystemCodeService, UserService,MailService, CompanyDocumentService],
 })
 export class CompaniesModule {}

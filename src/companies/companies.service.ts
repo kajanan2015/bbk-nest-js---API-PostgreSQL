@@ -9,6 +9,8 @@ import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/user.entity';
 import { Connection, QueryRunner } from 'typeorm';
 import { MailService } from 'src/mail/mail.service';
+import { CompanyDocument } from 'src/company-document/company-document.entity';
+import { CompanyDocumentService } from 'src/company-document/company-document.service';
 @Injectable()
 export class CompaniesService {
   constructor(
@@ -16,8 +18,11 @@ export class CompaniesService {
     private companyRepository: Repository<CompaniesEntity>,
     @InjectRepository(PagePermissionEntity)
     private pagePermissionRepository: Repository<PagePermissionEntity>,
+    @InjectRepository(CompanyDocument)
+    private companyDocumentRepository: Repository<CompanyDocument>,
     private readonly systemcodeService:SystemCodeService,
     private readonly userservice:UserService,
+    private readonly companydocumentservice:CompanyDocumentService,
     private readonly mailservice:MailService,
     private readonly connection: Connection,
     @InjectRepository(User)
@@ -120,7 +125,7 @@ export class CompaniesService {
       const userData={
           firstName:companyData.firstName,
           lastName:companyData.lastName,
-          uType:"CADMIN",
+          uType:"SADMIN",
           profilePic:companyData.filename[0].profileImg[0],
           password:companyData.password,
           phone:companyData.phone,
@@ -201,7 +206,7 @@ export class CompaniesService {
   async read(id: number): Promise<CompaniesEntity> {
     return await this.companyRepository.findOne(
       id, 
-      { relations: ['mainCompany','users','documents','regAddressCountry'] },
+      { relations: ['mainCompany','users','documents','country','regAddressCountry'] },
     );
   }
 
@@ -238,9 +243,11 @@ export class CompaniesService {
       let documentUpload=[];
       if(data.filename[0]?.['files[]']){
         documentUpload=data.filename[0]?.['files[]']
-        const files = documentUpload.map(documentPath => ({ documentPath }));
+        const files = documentUpload.map(documentPath => ({ documentPath, company:id }));
         console.log(files,898989898998)
+        await this.companydocumentservice.create(files)
       }
+      
      
      }
      else if(data.profile){
@@ -251,8 +258,9 @@ export class CompaniesService {
       let documentUpload=[];
       if(data.filename[1]?.['files[]']){
         documentUpload=data.filename[1]?.['files[]']
-        const files = documentUpload.map(documentPath => ({ documentPath }));
-        console.log(files,898989898998)
+        const files = documentUpload.map(documentPath => ({ documentPath, company:id }));
+        console.log(files)
+        await this.companydocumentservice.create(files)
       }
      
      }
@@ -264,8 +272,9 @@ export class CompaniesService {
       let documentUpload=[]; 
       if(data.filename[1]?.['files[]']){
         documentUpload=data.filename[1]?.['files[]']
-        const files = documentUpload.map(documentPath => ({ documentPath }));
+        const files = documentUpload.map(documentPath => ({ documentPath, company:id }));
         console.log(files,898989898998)
+        await this.companydocumentservice.create(files)
       }
      }
      else{
@@ -280,8 +289,9 @@ export class CompaniesService {
       let documentUpload=[]; 
       if(data.filename[2]?.['files[]']){ 
         documentUpload=data.filename[2]?.['files[]']
-        const files = documentUpload.map(documentPath => ({ documentPath }));
+        const files = documentUpload.map(documentPath => ({ documentPath, company:id }));
         console.log(files,898989898998)
+        await this.companydocumentservice.create(files)
       }
      }
    }
