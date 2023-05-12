@@ -8,6 +8,8 @@ import {
   In,
   getManager,
 } from "typeorm";
+import sharp = require("sharp");
+import fetch from 'node-fetch';
 
 @Injectable()
 export class ImageUploadService {
@@ -206,4 +208,20 @@ console.log(fileInfo,99999)
       secretAccessKey: "xKl+/ALr/1JwyrNuGt+mittjnfPs+ia6MLC3+I06",
     });
   }
+
+  async  uploadThumbnailToS3(body){
+    const imageUrl=body.url;
+    const s3 = this.getS3();
+    const image = await sharp(await fetch(imageUrl).then(res => res.buffer()));
+    const thumbnail = await image.resize({ width: 200, height: 200, fit: 'fill' }).toBuffer();
+    const objectKey = imageUrl.split('/').pop();
+    const uploadParams = {
+      Bucket: 'intaap/thumb',
+      Key: objectKey,
+      Body: thumbnail,
+    };
+    const { Location } = await s3.upload(uploadParams).promise();
+    return Location;
+  }
+  
 }

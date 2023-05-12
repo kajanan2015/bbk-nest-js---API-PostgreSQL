@@ -30,5 +30,10 @@ import {
   async deleteDoc(@Body() body){
       return await this.imageUploadService.deletedoc(body)
   }
-    
+   
+  
+  @Post('compress')
+  async uploadThumbnailToS3(@Body() body){
+      return await this.imageUploadService.uploadThumbnailToS3(body)
+  }
   }
