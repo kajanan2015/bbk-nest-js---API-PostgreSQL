@@ -45,7 +45,7 @@ export class CompaniesController {
   }
 
 
-  @Get('/showonlyActivemainCompany/:value')
+  @Get('/showonlyActiveSubCompany/:value')
   async showonlyActivesubCompany(@Param('value') value: number) {
     const companies = await this.service.showonlyActivesubCompany(value);
     return {

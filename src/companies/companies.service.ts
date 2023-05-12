@@ -11,7 +11,8 @@ import { Connection, QueryRunner } from 'typeorm';
 import { MailService } from 'src/mail/mail.service';
 import { CompanyDocument } from 'src/company-document/company-document.entity';
 import { CompanyDocumentService } from 'src/company-document/company-document.service';
-@Injectable()
+import { ImageUploadService } from 'src/imageupload/imageupload.service';@Injectable()
+
 export class CompaniesService {
   constructor(
     @InjectRepository(CompaniesEntity)
@@ -24,6 +25,7 @@ export class CompaniesService {
     private readonly userservice:UserService,
     private readonly companydocumentservice:CompanyDocumentService,
     private readonly mailservice:MailService,
+    private readonly imageUploadService: ImageUploadService,
     private readonly connection: Connection,
     @InjectRepository(User)
     private readonly userRepository: Repository<User> 
@@ -246,6 +248,17 @@ export class CompaniesService {
     ...(data.companyType ? { companyType: data.companyType } : {}),
     ...(data.regAddressCountry ? { regAddressCountry: data.regAddressCountry.id } : {}),
 
+   }
+
+   if(data.deletedDocument){
+    let deletedocuments=[];
+    for (const documentUrl of data.deletedDocument) {
+      deletedocuments = await this.companyDocumentRepository.find({ 
+        where: { documentPath: documentUrl}, 
+      }); 
+    }
+    console.log(deletedocuments,78787878787)
+    await this.companyDocumentRepository.remove(deletedocuments)
    }
    if(data.filename){
     if(data.profile && data.logo){

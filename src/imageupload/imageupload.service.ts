@@ -14,6 +14,9 @@ export class ImageUploadService {
   constructor(private connection: Connection) {}
 
 
+
+
+  
   async uploadS3Add(file, bucket, name) {
     const s3 = this.getS3();
 
@@ -38,6 +41,21 @@ export class ImageUploadService {
       });
     });
   }
+async deletedoc(data){
+   const s3 = this.getS3();
+   // Extract the object key from the document URL
+   const objectKey = data.documentUrl.split('/').pop();
+
+   // Create the delete object parameters
+   const params = {
+     Bucket: 'intaap',
+     Key: objectKey,
+   };
+ console.log(params,232323)
+   // Call the deleteObject method to delete the file
+   await s3.deleteObject(params).promise();
+}
+  
 
   async uploadmobiledefect(files, name) {
     const bucketS3 = "intaap/mobile";
@@ -154,6 +172,12 @@ console.log(fileInfo,99999)
 
     return obj;
   }
+
+
+
+
+
+
 
   async uploadS3(file, bucket, name) {
     const s3 = this.getS3();

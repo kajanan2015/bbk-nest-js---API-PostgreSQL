@@ -26,6 +26,9 @@ import {
       return await this.imageUploadService.uploadimage(body);
     }
   
-  
+  @Post('deletedoc')
+  async deleteDoc(@Body() body){
+      return await this.imageUploadService.deletedoc(body)
+  }
     
   }
