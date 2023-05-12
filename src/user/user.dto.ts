@@ -15,6 +15,7 @@ export class CreateUserDto {
     nationality: string;
     country: string;
     profilePic: string;
+    profilePicThumb: string;
     password:string;
     uType:string;
     status: Boolean;

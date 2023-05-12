@@ -41,6 +41,9 @@ export class User  {
   @Column("varchar", { nullable: true , length: 250, default: () => null })
   profilePic: string|null;
 
+  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  profilePicThumb: string|null;
+
   @Column({ nullable: true , length: 250, default: () => null })
   password: string|null;
 

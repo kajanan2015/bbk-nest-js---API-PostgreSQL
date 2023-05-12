@@ -11,7 +11,9 @@ import { Connection, QueryRunner } from 'typeorm';
 import { MailService } from 'src/mail/mail.service';
 import { CompanyDocument } from 'src/company-document/company-document.entity';
 import { CompanyDocumentService } from 'src/company-document/company-document.service';
-import { ImageUploadService } from 'src/imageupload/imageupload.service';@Injectable()
+import { ImageUploadService } from 'src/imageupload/imageupload.service';
+
+@Injectable()
 
 export class CompaniesService {
   constructor(
@@ -124,24 +126,33 @@ export class CompaniesService {
         throw new BadRequestException('auth/account-exists');
       }
       console.log(companyData.users,889898)
+ 
+      let profilethumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[0]?.profileImg[0]);
       const userData={
           firstName:companyData.firstName,
           lastName:companyData.lastName,
           uType:"SADMIN",
-          profilePic:companyData.filename[0].profileImg[0],
+          profilePic:companyData.filename[0]?.profileImg[0],
+          profilePicThumb:profilethumbUrl,
           password:companyData.password,
           phone:companyData.phone,
-          email:companyData.email
+          email:companyData.email,
+
       }
        const userResponse= await this.userservice.create(userData);
+       await this.mailservice.sendcompanyCreate(companyData.password,companyData.companyName,companyData.companyEmail,companyData.email);
        const useraccount = userResponse.id.toString();   
        userIds.push(useraccount);
        console.log(userIds,5555)
+    }else{
+      await this.mailservice.sendcompanyCreate("password is your main comapny password",companyData.companyName,companyData.companyEmail,"username is your main comapny username");
     }
     const users = await this.userRepository.findByIds(userIds);
+    let companythumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[1]?.logoImg[0]);
     dataCompany={
       ...companyData,
-      companyLogo:companyData.filename[1].logoImg[0],
+      companyLogo:companyData.filename[1]?.logoImg[0],
+      companyLogoThumb:companythumbUrl,
       companyCode:companyCode,
       users:users,
       mainCompany:companyData.parentCompany,
@@ -153,21 +164,26 @@ export class CompaniesService {
       throw new BadRequestException('auth/account-exists');
     }
     console.log(companyData.users,889898)
+    let profilethumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[0]?.profileImg[0]);
     const userData={
      firstName:companyData.firstName,
      lastName:companyData.lastName,
      uType:"CADMIN",
      profilePic:companyData.filename[0].profileImg[0],
+     profilePicThumb:profilethumbUrl,
      password:companyData.password,
      phone:companyData.phone,
      email:companyData.email
     }
      const userResponse= await this.userservice.create(userData);
+     await this.mailservice.sendcompanyCreate(companyData.password,companyData.companyName,companyData.companyEmail,companyData.email);
      const userIds = userResponse.id.toString();   
+    let companythumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[1]?.logoImg[0]);
      const users = await this.userRepository.findByIds(userIds);
       dataCompany={
       ...companyData,
-      companyLogo:companyData.filename[1].logoImg[0],
+      companyLogo:companyData.filename[1]?.logoImg[0],
+      companyLogoThumb:companythumbUrl,
       companyCode:companyCode,
       users:users,
       documents:files
@@ -276,7 +292,7 @@ export class CompaniesService {
      }
      else if(data.profile){
       const datalogo={
-        ...(data.filename[0].logoImg ? { companyLogo: data.filename[0].logoImg } : {}),
+        ...(data.filename[0].logoImg ? {   companyLogo: data.filename[0].logoImg, companyLogoThumb:await this.imageUploadService.uploadThumbnailToS3(data.filename[0].logoImg) } : {}),
       }
       await this.companyRepository.update({ id },datalogo);
       let documentUpload=[];
@@ -290,7 +306,7 @@ export class CompaniesService {
      }
      else if(data.logo){
       const dataprofilpic={
-        ...(data.filename[0].profileImg ? { profilePic: data.filename[0].profileImg } : {}),
+        ...(data.filename[0].profileImg ? { profilePic: data.filename[0].profileImg, profilePicThumb:await this.imageUploadService.uploadThumbnailToS3(data.filename[0].profileImg) } : {}),
       }
       await this.userservice.update(data.userId,dataprofilpic);
       let documentUpload=[]; 
@@ -303,11 +319,11 @@ export class CompaniesService {
      }
      else{
       const dataprofilpic={
-        ...(data.filename[0].profileImg ? { profilePic: data.filename[0].profileImg } : {}),
+        ...(data.filename[0].profileImg ? { profilePic: data.filename[0].profileImg, profilePicThumb:await this.imageUploadService.uploadThumbnailToS3(data.filename[0].profileImg) } : {}),
       }
       await this.userservice.update(data.userId,dataprofilpic);
       const datalogo={
-        ...(data.filename[1].logoImg ? { companyLogo: data.filename[1].logoImg } : {}),
+        ...(data.filename[1].logoImg ? { companyLogo: data.filename[1].logoImg, companyLogoThumb: await this.imageUploadService.uploadThumbnailToS3(data.filename[1].logoImg)  } : {}),
       }
       await this.companyRepository.update({ id },datalogo);
       let documentUpload=[]; 
@@ -327,7 +343,9 @@ export class CompaniesService {
       ...(data.users[0].lastName ? { lastName: data.users[0].lastName} : {}),
       ...(data.users[0].email ? { email: data.users[0].email } : {}),
       ...(data.users[0].phone ? { phone: data.users[0].phone} : {}),
+      ...(data.users[0].password ? { password: data.users[0].password} : {}),
      }
+     
      const userResponse= await this.userservice.update(data.userId,passuserData);
    }
   

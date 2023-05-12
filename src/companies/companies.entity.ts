@@ -67,6 +67,9 @@ export class CompaniesEntity {
   @Column("varchar", {  length: 300,nullable:true,default: () => null })
   companyLogo: string;
 
+  @Column("varchar", {  length: 300,nullable:true,default: () => null })
+  companyLogoThumb: string;
+
   @Column("varchar", {  length: 100,nullable:true,default: () => null })
   companyCode: string;
 

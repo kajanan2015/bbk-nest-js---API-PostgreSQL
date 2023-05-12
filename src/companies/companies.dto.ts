@@ -26,6 +26,7 @@ regAddressCity: string;
 regAddressPostalCode: string;
 status: boolean;
 companyLogo: string;
+companyLogoThumb: string;
 companyCode: string;
 createdBy: number;
 createdat: Date;

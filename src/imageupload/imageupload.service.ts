@@ -209,8 +209,7 @@ console.log(fileInfo,99999)
     });
   }
 
-  async  uploadThumbnailToS3(body){
-    const imageUrl=body.url;
+  async  uploadThumbnailToS3(imageUrl){
     const s3 = this.getS3();
     const image = await sharp(await fetch(imageUrl).then(res => res.buffer()));
     const thumbnail = await image.resize({ width: 200, height: 200, fit: 'fill' }).toBuffer();

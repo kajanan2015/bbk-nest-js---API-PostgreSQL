@@ -19,7 +19,7 @@ export class MailService {
       to: toemail.trim(),
       from: "noreply@hexagonasia.com", // override default from
       subject: `Company succefully created`,
-      template: "./confirmation", // `.hbs` extension is appended automatically
+      template: "./companyconfirmation", // `.hbs` extension is appended automatically
       context: {
         name,
         username,
