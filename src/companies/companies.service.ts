@@ -347,6 +347,20 @@ export class CompaniesService {
      }
      
      const userResponse= await this.userservice.update(data.userId,passuserData);
+
+     if(data.existingCompanyEmail){
+      if(data.users[0].password && data.users[0].email ){
+        await this.mailservice.sendcompanyCreate(data.users[0].password,"user",data.existingCompanyEmail,data.users[0].email);
+      }
+      else if(data.users[0].email){
+        await this.mailservice.sendcompanyCreate("password is not change","user",data.existingCompanyEmail,data.users[0].email);
+      }else if(data.users[0].password){
+        await this.mailservice.sendcompanyCreate(data.users[0].password,"user",data.existingCompanyEmail,"your username is not change");
+      }else{
+        await this.mailservice.sendcompanyCreate("password is not change. But user profile details are change","user",data.existingCompanyEmail,"your username is not change");
+      }
+      
+    }
    }
   
   //  console.log(data['updatedFields'],5555555555)
