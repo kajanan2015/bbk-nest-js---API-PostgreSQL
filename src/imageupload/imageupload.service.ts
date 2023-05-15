@@ -210,6 +210,7 @@ console.log(fileInfo,99999)
   }
 
   async  uploadThumbnailToS3(imageUrl){
+    console.log(imageUrl,9090)
     const s3 = this.getS3();
     const image = await sharp(await fetch(imageUrl).then(res => res.buffer()));
     const thumbnail = await image.resize({ width: 200, height: 200, fit: 'fill' }).toBuffer();
@@ -220,6 +221,7 @@ console.log(fileInfo,99999)
       Body: thumbnail,
     };
     const { Location } = await s3.upload(uploadParams).promise();
+    console.log(Location,9090)
     return Location;
   }
   

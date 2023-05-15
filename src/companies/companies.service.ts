@@ -292,7 +292,7 @@ export class CompaniesService {
      }
      else if(data.profile){
       const datalogo={
-        ...(data.filename[0].logoImg ? {   companyLogo: data.filename[0].logoImg, companyLogoThumb:await this.imageUploadService.uploadThumbnailToS3(data.filename[0].logoImg) } : {}),
+        ...(data.filename[0].logoImg ? {   companyLogo: data.filename[0].logoImg, companyLogoThumb:await this.imageUploadService.uploadThumbnailToS3(data.filename[0].logoImg[0]) } : {}),
       }
       await this.companyRepository.update({ id },datalogo);
       let documentUpload=[];
@@ -306,7 +306,7 @@ export class CompaniesService {
      }
      else if(data.logo){
       const dataprofilpic={
-        ...(data.filename[0].profileImg ? { profilePic: data.filename[0].profileImg, profilePicThumb:await this.imageUploadService.uploadThumbnailToS3(data.filename[0].profileImg) } : {}),
+        ...(data.filename[0].profileImg ? { profilePic: data.filename[0].profileImg, profilePicThumb:await this.imageUploadService.uploadThumbnailToS3(data.filename[0].profileImg[0]) } : {}),
       }
       await this.userservice.update(data.userId,dataprofilpic);
       let documentUpload=[]; 
@@ -319,11 +319,11 @@ export class CompaniesService {
      }
      else{
       const dataprofilpic={
-        ...(data.filename[0].profileImg ? { profilePic: data.filename[0].profileImg, profilePicThumb:await this.imageUploadService.uploadThumbnailToS3(data.filename[0].profileImg) } : {}),
+        ...(data.filename[0].profileImg ? { profilePic: data.filename[0].profileImg, profilePicThumb:await this.imageUploadService.uploadThumbnailToS3(data.filename[0].profileImg[0]) } : {}),
       }
       await this.userservice.update(data.userId,dataprofilpic);
       const datalogo={
-        ...(data.filename[1].logoImg ? { companyLogo: data.filename[1].logoImg, companyLogoThumb: await this.imageUploadService.uploadThumbnailToS3(data.filename[1].logoImg)  } : {}),
+        ...(data.filename[1].logoImg ? { companyLogo: data.filename[1].logoImg, companyLogoThumb: await this.imageUploadService.uploadThumbnailToS3(data.filename[1].logoImg[0])  } : {}),
       }
       await this.companyRepository.update({ id },datalogo);
       let documentUpload=[]; 
