@@ -57,14 +57,16 @@ export class UserService {
   }
 
   async update(id: number, data: Partial<User>) {
+    console.log(data,877878787878787878)
+   let user=data; 
     if(data.password){
       const newhashpassword = await this.hashPassword(data.password);
-      const user = {
+       user = {
         ...data,
         password: newhashpassword,
       };
     }
-    await this.userRepository.update({ id : id }, data);
+    await this.userRepository.update({ id : id }, user);
     return await this.userRepository.findOne({ where: {  id : id } });
   }
 
