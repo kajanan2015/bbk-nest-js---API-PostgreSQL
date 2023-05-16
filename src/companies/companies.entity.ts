@@ -88,6 +88,9 @@ export class CompaniesEntity {
   @Column("varchar", {  length: 100,nullable:true,default: () => null })
   billing: string;
   
+  @Column("varchar", {  length: 100,nullable:true,default:"maincompany"})
+  companyIdentifier: string;
+
   @OneToMany(() => CompanyDocument, companyDocuments => companyDocuments.company,{ cascade: true })
   documents: CompanyDocument[];
   

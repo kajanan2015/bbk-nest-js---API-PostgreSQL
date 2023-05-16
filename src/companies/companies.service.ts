@@ -54,8 +54,11 @@ export class CompaniesService {
   async showonlyActivemainCompany(value) {
     return await this.companyRepository.find(
       {
-        where: { status: 1 , mainCompany: null,compstatus:value },
-        relations: ['mainCompany','users']
+        where: { status: 1 ,compstatus:value },
+        relations: ['mainCompany','users'],
+        order:{
+          mainCompany:'ASC'
+        }
       }
     );
   }
@@ -64,7 +67,7 @@ export class CompaniesService {
   async showonlyActivesubCompany(value) {
     return await this.companyRepository.find(
       {
-        where: { status: 1 , mainCompany:  Not(IsNull()),compstatus:value },
+        where: { status: 1 , companyIdentifier:"subcompany",compstatus:value },
         relations: ['mainCompany','users']
       }
     );
@@ -107,8 +110,9 @@ export class CompaniesService {
     documentUpload=companyData.filename[2]?.['files[]']
    }
    const files = documentUpload.map(documentPath => ({ documentPath }));
-   console.log(files,666)
+ 
    let dataCompany;
+   let newCompany;
    if(companyData.parentCompany&&companyData.parentCompany!=""){
     const company = await this.companyRepository.findOne(companyData.parentCompany, {
       relations: ['users']
@@ -117,15 +121,14 @@ export class CompaniesService {
       throw new NotFoundException(`Company with ID ${companyData.parentCompany} not found`);
     }
     const userIds = company.users.map(user => user.id);
-    console.log(companyData.sameParentCompanyAdmin)
+ 
     if(companyData.sameParentCompanyAdmin=="false"){
-      console.log(companyData.parentCompany,88787)
+      
       const existing = await this.userservice.findByEmail(companyData.email);
       if (existing) {
-        console.log('dsdsd',4454)
         throw new BadRequestException('auth/account-exists');
       }
-      console.log(companyData.users,889898)
+     
  
       let profilethumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[0]?.profileImg[0]);
       const userData={
@@ -137,13 +140,11 @@ export class CompaniesService {
           password:companyData.password,
           phone:companyData.phone,
           email:companyData.email,
-
       }
        const userResponse= await this.userservice.create(userData);
        await this.mailservice.sendcompanyCreate(companyData.password,companyData.companyName,companyData.companyEmail,companyData.email);
        const useraccount = userResponse.id.toString();   
        userIds.push(useraccount);
-       console.log(userIds,5555)
     }else{
       await this.mailservice.sendcompanyCreate("password is your main comapny password",companyData.companyName,companyData.companyEmail,"username is your main comapny username");
     }
@@ -156,14 +157,16 @@ export class CompaniesService {
       companyCode:companyCode,
       users:users,
       mainCompany:companyData.parentCompany,
-      documents:files
+      documents:files,
+      companyIdentifier:"subcompany"
    }
+    newCompany = await this.companyRepository.create(dataCompany);
+ 
    }else{
     const existing = await this.userservice.findByEmail(companyData.email);
     if (existing) {
       throw new BadRequestException('auth/account-exists');
     }
-    console.log(companyData.users,889898)
     let profilethumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[0]?.profileImg[0]);
     const userData={
      firstName:companyData.firstName,
@@ -173,28 +176,35 @@ export class CompaniesService {
      profilePicThumb:profilethumbUrl,
      password:companyData.password,
      phone:companyData.phone,
-     email:companyData.email
+     email:companyData.email,
     }
      const userResponse= await this.userservice.create(userData);
      await this.mailservice.sendcompanyCreate(companyData.password,companyData.companyName,companyData.companyEmail,companyData.email);
      const userIds = userResponse.id.toString();   
     let companythumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[1]?.logoImg[0]);
      const users = await this.userRepository.findByIds(userIds);
-      dataCompany={
+  
+     dataCompany={
       ...companyData,
       companyLogo:companyData.filename[1]?.logoImg[0],
       companyLogoThumb:companythumbUrl,
       companyCode:companyCode,
       users:users,
-      documents:files
+      documents:files,
+      companyIdentifier:"maincompany"
    }
+    newCompany = await this.companyRepository.create(dataCompany);
+   newCompany[0].parentCompanyId=newCompany[0].id; 
     }
    
    
     await this.systemcodeService.update(response.id,newstartvalue)
-    const newCompany = this.companyRepository.create(dataCompany);
-    return await this.companyRepository.save(newCompany);
-  
+
+    const responsesave= await this.companyRepository.save(newCompany);
+    // const id=responsesave[0].id
+    
+    // await this.companyRepository.update({ id}, { mainCompany: () => newCompany[0].id.toString() });
+    return responsesave;
 
 // retrieve the user entities based on the array of IDsconsole.log(users)
  
@@ -239,9 +249,7 @@ export class CompaniesService {
   }
 
   async update(id: number, data) {
-   
-   console.log(id);
-   console.log(data,9990009)
+
   //  console.log(data.users[0].firstName,9990009)
 
    
