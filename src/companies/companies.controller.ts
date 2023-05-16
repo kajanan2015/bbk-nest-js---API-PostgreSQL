@@ -167,7 +167,7 @@ console.log(file,89898989)
 
   @Put('/status/:id')
   async updateCompanyStatus(
-    @Param('id') id: number,  @Body('status') status,): Promise<CompaniesEntity> {
+    @Param('id') id: number,  @Body('compstatus') status,): Promise<CompaniesEntity> {
     return await this.service.updateCompanyStatus(id,status);
   }
 
