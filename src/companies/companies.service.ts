@@ -376,8 +376,9 @@ export class CompaniesService {
     );
   }
 
-  async updateCompanyStatus(id: number) {
-    await this.companyRepository.update({ id }, { compstatus: () => '0' });
+  async updateCompanyStatus(id: number,status) {
+    console.log(status,888)
+    await this.companyRepository.update({ id }, { compstatus: () => status });
     return await this.companyRepository.findOne({ id });
   }
   
