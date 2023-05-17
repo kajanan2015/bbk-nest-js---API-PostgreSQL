@@ -142,11 +142,11 @@ async create(companyData) {
          email:companyData.email,
      }
       const userResponse= await this.userservice.create(userData);
-     //  await this.mailservice.sendcompanyCreate(companyData.password,companyData.companyName,companyData.companyEmail,companyData.email);
+      await this.mailservice.sendcompanyCreate(companyData.password,companyData.companyName,companyData.companyEmail,companyData.email);
       const useraccount = userResponse.id.toString();   
       userIds.push(useraccount);
    }else{
-     // await this.mailservice.sendcompanyCreate("password is your main comapny password",companyData.companyName,companyData.companyEmail,"username is your main comapny username");
+     await this.mailservice.sendcompanyCreate("",companyData.companyName,companyData.companyEmail,"");
    }
    const users = await this.userRepository.findByIds(userIds);
    let companythumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[1]?.logoImg[0]);
@@ -179,7 +179,7 @@ async create(companyData) {
     email:companyData.email,
    }
     const userResponse= await this.userservice.create(userData);
-   //  await this.mailservice.sendcompanyCreate(companyData.password,companyData.companyName,companyData.companyEmail,companyData.email);
+    await this.mailservice.sendcompanyCreate(companyData.password,companyData.companyName,companyData.companyEmail,companyData.email);
     const userIds = userResponse.id.toString();   
    let companythumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[1]?.logoImg[0]);
     const users = await this.userRepository.findByIds(userIds);

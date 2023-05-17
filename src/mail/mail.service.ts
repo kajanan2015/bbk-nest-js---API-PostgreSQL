@@ -15,17 +15,32 @@ export class MailService {
     toemail: string,
     username: string
   ) {
-    await this.mailerService.sendMail({
-      to: toemail.trim(),
-      from: "noreply@hexagonasia.com", // override default from
-      subject: `Company succefully created`,
-      template: "./companyconfirmation", // `.hbs` extension is appended automatically
-      context: {
-        name,
-        username,
-        password,
-      },
-    });
+    if(password==""||username==""){
+      await this.mailerService.sendMail({
+        to: toemail.trim(),
+        from: "noreply@hexagonasia.com", // override default from
+        subject: `Login Credentials for BBK Application`,
+        template: "./companysameadmin", // `.hbs` extension is appended automatically
+        context: {
+          name,
+          username,
+          password,
+        },
+      });
+    }else{
+      await this.mailerService.sendMail({
+        to: toemail.trim(),
+        from: "noreply@hexagonasia.com", // override default from
+        subject: `Login Credentials for BBK Application`,
+        template: "./companyconfirmation", // `.hbs` extension is appended automatically
+        context: {
+          name,
+          username,
+          password,
+        },
+      });
+    }
+    
   }
 
   async sendCustomerConfirmation() {
