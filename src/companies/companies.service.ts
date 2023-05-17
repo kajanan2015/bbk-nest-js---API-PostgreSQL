@@ -98,112 +98,121 @@ export class CompaniesService {
 //   }
 
 
-  async create(companyData) {
+async create(companyData) {
   
-   const response=await this.systemcodeService.findOne('company')
-   const companyCode=response.code+''+response.startValue   
-   const newstartvalue={
-     startValue:response.startValue+1
-   }
-   let documentUpload=[];
-   if( companyData.filename[2]){
-    documentUpload=companyData.filename[2]?.['files[]']
-   }
-   const files = documentUpload.map(documentPath => ({ documentPath }));
- 
-   let dataCompany;
+  const response=await this.systemcodeService.findOne('company')
+  const companyCode=response.code+''+response.startValue   
+  const newstartvalue={
+    startValue:response.startValue+1
+  }
+  let documentUpload=[];
+  if( companyData.filename[2]){
+   documentUpload=companyData.filename[2]?.['files[]']
+  }
+  const files = documentUpload.map(documentPath => ({ documentPath }));
 
-   if(companyData.parentCompany&&companyData.parentCompany!=""){
-    const company = await this.companyRepository.findOne(companyData.parentCompany, {
-      relations: ['users']
-    });
-    if (!company) {
-      throw new NotFoundException(`Company with ID ${companyData.parentCompany} not found`);
-    }
-    const userIds = company.users.map(user => user.id);
- 
-    if(companyData.sameParentCompanyAdmin=="false"){
-      
-      const existing = await this.userservice.findByEmail(companyData.email);
-      if (existing) {
-        throw new BadRequestException('auth/account-exists');
-      }
+  let dataCompany;
+ //  let newCompany;
+  if(companyData.parentCompany&&companyData.parentCompany!=""){
+   const company = await this.companyRepository.findOne(companyData.parentCompany, {
+     relations: ['users']
+   });
+   if (!company) {
+     throw new NotFoundException(`Company with ID ${companyData.parentCompany} not found`);
+   }
+   const userIds = company.users.map(user => user.id);
+
+   if(companyData.sameParentCompanyAdmin=="false"){
      
- 
-      let profilethumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[0]?.profileImg[0]);
-      const userData={
-          firstName:companyData.firstName,
-          lastName:companyData.lastName,
-          uType:"SADMIN",
-          profilePic:companyData.filename[0]?.profileImg[0],
-          profilePicThumb:profilethumbUrl,
-          password:companyData.password,
-          phone:companyData.phone,
-          email:companyData.email,
-      }
-       const userResponse= await this.userservice.create(userData);
-       await this.mailservice.sendcompanyCreate(companyData.password,companyData.companyName,companyData.companyEmail,companyData.email);
-       const useraccount = userResponse.id.toString();   
-       userIds.push(useraccount);
-    }else{
-      await this.mailservice.sendcompanyCreate("password is your main comapny password",companyData.companyName,companyData.companyEmail,"username is your main comapny username");
-    }
-    const users = await this.userRepository.findByIds(userIds);
-    let companythumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[1]?.logoImg[0]);
-    dataCompany={
-      ...companyData,
-      companyLogo:companyData.filename[1]?.logoImg[0],
-      companyLogoThumb:companythumbUrl,
-      companyCode:companyCode,
-      users:users,
-      mainCompany:companyData.parentCompany,
-      documents:files,
-      companyIdentifier:"subcompany"
-   }
-   
- 
-   }else{
-    const existing = await this.userservice.findByEmail(companyData.email);
-    if (existing) {
-      throw new BadRequestException('auth/account-exists');
-    }
-    let profilethumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[0]?.profileImg[0]);
-    const userData={
-     firstName:companyData.firstName,
-     lastName:companyData.lastName,
-     uType:"CADMIN",
-     profilePic:companyData.filename[0].profileImg[0],
-     profilePicThumb:profilethumbUrl,
-     password:companyData.password,
-     phone:companyData.phone,
-     email:companyData.email,
-    }
-     const userResponse= await this.userservice.create(userData);
-     await this.mailservice.sendcompanyCreate(companyData.password,companyData.companyName,companyData.companyEmail,companyData.email);
-     const userIds = userResponse.id.toString();   
-    let companythumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[1]?.logoImg[0]);
-     const users = await this.userRepository.findByIds(userIds);
-  
-     dataCompany={
-      ...companyData,
-      companyLogo:companyData.filename[1]?.logoImg[0],
-      companyLogoThumb:companythumbUrl,
-      companyCode:companyCode,
-      users:users,
-      documents:files,
-      companyIdentifier:"maincompany"
-   }
-   
-    }
-   
-   
-    await this.systemcodeService.update(response.id,newstartvalue)
-const  newCompany = await this.companyRepository.create(dataCompany);
-    const responsesave= await this.companyRepository.save(newCompany);
-    // const id=responsesave[0].id
+     const existing = await this.userservice.findByEmail(companyData.email);
+     if (existing) {
+       throw new BadRequestException('auth/account-exists');
+     }
     
-    // await this.companyRepository.update({ id}, { mainCompany: () => newCompany[0].id.toString() });
-    return responsesave;
+
+     let profilethumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[0]?.profileImg[0]);
+     const userData={
+         firstName:companyData.firstName,
+         lastName:companyData.lastName,
+         uType:"SADMIN",
+         profilePic:companyData.filename[0]?.profileImg[0],
+         profilePicThumb:profilethumbUrl,
+         password:companyData.password,
+         phone:companyData.phone,
+         email:companyData.email,
+     }
+      const userResponse= await this.userservice.create(userData);
+     //  await this.mailservice.sendcompanyCreate(companyData.password,companyData.companyName,companyData.companyEmail,companyData.email);
+      const useraccount = userResponse.id.toString();   
+      userIds.push(useraccount);
+   }else{
+     // await this.mailservice.sendcompanyCreate("password is your main comapny password",companyData.companyName,companyData.companyEmail,"username is your main comapny username");
+   }
+   const users = await this.userRepository.findByIds(userIds);
+   let companythumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[1]?.logoImg[0]);
+   dataCompany={
+     ...companyData,
+     companyLogo:companyData.filename[1]?.logoImg[0],
+     companyLogoThumb:companythumbUrl,
+     companyCode:companyCode,
+     users:users,
+     mainCompany:companyData.parentCompany,
+     documents:files,
+     companyIdentifier:"subcompany"
+  }
+   
+
+  }else{
+   const existing = await this.userservice.findByEmail(companyData.email);
+   if (existing) {
+     throw new BadRequestException('auth/account-exists');
+   }
+   let profilethumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[0]?.profileImg[0]);
+   const userData={
+    firstName:companyData.firstName,
+    lastName:companyData.lastName,
+    uType:"CADMIN",
+    profilePic:companyData.filename[0].profileImg[0],
+    profilePicThumb:profilethumbUrl,
+    password:companyData.password,
+    phone:companyData.phone,
+    email:companyData.email,
+   }
+    const userResponse= await this.userservice.create(userData);
+   //  await this.mailservice.sendcompanyCreate(companyData.password,companyData.companyName,companyData.companyEmail,companyData.email);
+    const userIds = userResponse.id.toString();   
+   let companythumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[1]?.logoImg[0]);
+    const users = await this.userRepository.findByIds(userIds);
+ 
+    dataCompany={
+     ...companyData,
+     companyLogo:companyData.filename[1]?.logoImg[0],
+     companyLogoThumb:companythumbUrl,
+     companyCode:companyCode,
+     users:users,
+     documents:files,
+     companyIdentifier:"maincompany"
+  }
+   
+   }
+  
+   await this.systemcodeService.update(response.id,newstartvalue)
+  const newCompany = await this.companyRepository.create(dataCompany);
+
+   const responsesave= await this.companyRepository.save(newCompany);
+   if(dataCompany.companyIdentifier=='maincompany'){
+   const query = `
+   UPDATE company
+   SET parentCompanyId = '${responsesave['id']}'
+   WHERE id = '${responsesave['id']}'
+ `;
+   const hi=  await this.connection.query(query);
+   }
+   
+   // const id=responsesave[0].id
+   
+   // await this.companyRepository.update({ id}, { mainCompany: () => newCompany[0].id.toString() });
+   return responsesave;
 
 // retrieve the user entities based on the array of IDsconsole.log(users)
  
