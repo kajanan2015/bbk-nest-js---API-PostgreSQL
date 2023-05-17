@@ -4,7 +4,7 @@ import { UpdateDefectTripDto } from './update-defect-trip.dto';
 import { DefectTrip } from './defect-trip.entity';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { TripService } from 'src/trip/trip.service';
 @Injectable()
 export class DefectTripService {
@@ -36,11 +36,26 @@ export class DefectTripService {
   async findDefectOne(id: number) {
     const defecttrip = await this.defectrip.findOne({ where:{tripId:id},relations: ['defectCaseResults','defectCaseResults.question'] });
     if (!defecttrip) {
-      throw new NotFoundException(` ID '${id}' not found`);
+      throw new NotFoundException(` Trip ID '${id}' not found`);
     }
     return defecttrip;
     }
   
+    async findDefectDriver(id: number) {
+      const defectdriver = await this.defectrip.findOne({ where:{driverId:id},relations: ['defectCaseResults','defectCaseResults.question'] });
+      if (!defectdriver) {
+        throw new NotFoundException(`Driver ID '${id}' not found`);
+      }
+      return defectdriver;
+      }
+
+      async findDefectDriverDateRange(id: number,fromDate,toDate) {
+        const defectdriver = await this.defectrip.find({ where:{driverId:id, submitdate: Between(fromDate, toDate),},relations: ['defectCaseResults','defectCaseResults.question'] });
+        if (!defectdriver) {
+          throw new NotFoundException(`Driver ID '${id}' not found`);
+        }
+        return defectdriver;
+        }
 
 
  async findOne(id: number) {

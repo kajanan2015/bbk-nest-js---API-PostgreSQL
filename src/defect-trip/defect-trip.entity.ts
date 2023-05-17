@@ -9,25 +9,28 @@ export class DefectTrip {
     @Column("timestamp", { name: "submitDate", default: () => "CURRENT_TIMESTAMP" })
     submitdate: Date;
 
-    @Column("int",{nullable:true})
+    @Column("int",{nullable:true,default:null})
     tripId:number;
 
-    @Column("varchar",{nullable:true})
+    @Column("int",{nullable:true,default:null})
+    driverId:number;
+
+    @Column("varchar",{nullable:true,default:null})
     vehicleRegNo:string;
     
-    @Column("varchar",{nullable:true})
+    @Column("varchar",{nullable:true,default:null})
     vehicleRegPhoto:string;
 
-    @Column("varchar",{nullable:true})
+    @Column("varchar",{nullable:true,default:null})
     odometerReading:string;
     
-    @Column("varchar",{nullable:true})
+    @Column("varchar",{nullable:true,default:null})
     place:string;
 
-    @Column("varchar",{nullable:true})
+    @Column("varchar",{nullable:true,default:null})
     defectNote:string;
     
-    @Column("int",{nullable:true})
+    @Column("int",{nullable:true,default:null})
     nilDefect:number;
 
     @Column({ type: 'boolean', default:true})

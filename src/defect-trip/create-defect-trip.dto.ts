@@ -3,6 +3,7 @@ export class CreateDefectTripDto {
     id:number;
     submitdate: Date;
     tripId:number;
+    driverId:number;
     vehicleRegNo:string;
     odometerReading:string;
     place:string;
