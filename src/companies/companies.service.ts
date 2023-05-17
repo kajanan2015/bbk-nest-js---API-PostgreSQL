@@ -36,7 +36,7 @@ export class CompaniesService {
   async showAll() {
     return await this.companyRepository.find(
       {
-        where: { status: 1 , mainCompany: null },
+        where: { status: 1 , companyIdentifier: 'maincompany' },
         relations: ['mainCompany','users']
       }
     );
@@ -112,7 +112,7 @@ export class CompaniesService {
    const files = documentUpload.map(documentPath => ({ documentPath }));
  
    let dataCompany;
-   let newCompany;
+
    if(companyData.parentCompany&&companyData.parentCompany!=""){
     const company = await this.companyRepository.findOne(companyData.parentCompany, {
       relations: ['users']
@@ -160,7 +160,7 @@ export class CompaniesService {
       documents:files,
       companyIdentifier:"subcompany"
    }
-    newCompany = await this.companyRepository.create(dataCompany);
+   
  
    }else{
     const existing = await this.userservice.findByEmail(companyData.email);
@@ -193,13 +193,12 @@ export class CompaniesService {
       documents:files,
       companyIdentifier:"maincompany"
    }
-    newCompany = await this.companyRepository.create(dataCompany);
-   newCompany[0].parentCompanyId=newCompany[0].id; 
+   
     }
    
    
     await this.systemcodeService.update(response.id,newstartvalue)
-
+const  newCompany = await this.companyRepository.create(dataCompany);
     const responsesave= await this.companyRepository.save(newCompany);
     // const id=responsesave[0].id
     
