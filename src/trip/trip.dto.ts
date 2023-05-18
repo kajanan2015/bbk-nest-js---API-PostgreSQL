@@ -12,5 +12,6 @@ export interface TripDTO {
   status: Boolean;
   completedTime: Date;
   startedTime: Date;
-
+  startMileage:string;
+  endMileage:string;
   }

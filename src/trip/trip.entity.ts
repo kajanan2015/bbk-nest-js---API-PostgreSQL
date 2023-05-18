@@ -13,17 +13,17 @@ export class TripEntity {
   @Column("varchar", { name: "code", nullable: true, length: 20 })
   code: string | null;
 
-  @Column("int")
+  @Column("int",{nullable:true,default:null})
   movementId: number;
 
-  @Column("varchar")
+  @Column("varchar",{nullable:true,default:null})
   frameLayout: string;
 
   
-  @Column("varchar")
+  @Column("varchar",{nullable:true,default:null})
   defectStatus: string;
 
-  @Column("varchar")
+  @Column("varchar",{nullable:true,default:null})
   previousMileage: string;
 
   @Column("timestamp", { name: "date", default: () => "CURRENT_TIMESTAMP" })
@@ -43,6 +43,12 @@ export class TripEntity {
 
   @Column("timestamp", { name: "completedTime",nullable:true, default: null })
   completedTime: Date;
+
+  @Column("varchar",{nullable:true,default:null})
+  startMileage:string;
+
+  @Column("varchar",{nullable:true,default:null})
+  endMileage:string;
 
   @ManyToOne(() => User, user => user.jobdata)
   @JoinColumn()

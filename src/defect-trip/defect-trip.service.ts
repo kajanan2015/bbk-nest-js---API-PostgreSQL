@@ -19,7 +19,9 @@ export class DefectTripService {
   async create(createDefectTripDto: CreateDefectTripDto) {
     const response=await this.defectrip.create(createDefectTripDto);
     const data={
-      res:'DEFECT'
+      res:'DEFECT',
+      startMileage:createDefectTripDto.odometerReading,
+      startedTime:createDefectTripDto.submitdate
     }
     await this.tripservice.update(createDefectTripDto.tripId,data);
     return await this.defectrip.save(response);
@@ -42,7 +44,7 @@ export class DefectTripService {
     }
   
     async findDefectDriver(id: number) {
-      const defectdriver = await this.defectrip.findOne({ where:{driverId:id},relations: ['defectCaseResults','defectCaseResults.question'] });
+      const defectdriver = await this.defectrip.find({ where:{driverId:id},relations: ['defectCaseResults','defectCaseResults.question'] });
       if (!defectdriver) {
         throw new NotFoundException(`Driver ID '${id}' not found`);
       }
