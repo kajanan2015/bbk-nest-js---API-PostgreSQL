@@ -85,6 +85,16 @@ export class CompaniesController {
  
   }
 
+  @Get('/companyType')
+  async getcompanyType(){
+    const companyType = await this.service.getcompanyType();
+    return {
+      statusCode: HttpStatus.OK,
+      companyType
+    };
+  }
+
+
   @Get('/country')
   async getcountry(){
     const countries = await this.service.getcountry();

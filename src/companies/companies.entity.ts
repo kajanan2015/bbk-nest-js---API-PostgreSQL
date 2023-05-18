@@ -4,14 +4,14 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinColu
 import { CompanyDocument } from 'src/company-document/company-document.entity';
 import { User } from 'src/user/user.entity';
 import { country } from './country.entity';
-
+import { companytype } from './companytype.entity';
 @Entity('company')
 export class CompaniesEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
   id: number;
 
-  @Column("int",{ nullable: true ,  default: () => null })
-  companyType: number | null;
+  // @Column("int",{ nullable: true ,  default: () => null })
+  // companyType: number | null;
 
   @Column("varchar", { nullable: true , length: 250, default: () => null })
   companyName: string | null;
@@ -121,5 +121,9 @@ country: country;
 @ManyToOne(() => country, countryreg => countryreg.companyRegAddressCountry)
 @JoinColumn({ name: 'regAddressCountry' })
 regAddressCountry: country;
+
+@ManyToOne(() => companytype, companytype => companytype.companyType)
+@JoinColumn({ name: 'companyType' })
+companyType: companytype;
 
 }

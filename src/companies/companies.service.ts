@@ -73,9 +73,14 @@ export class CompaniesService {
     );
   }
 
+  async getcompanyType(){
+    const query = 'SELECT * FROM `companyType`';
+    const companyTypeList = await this.connection.query(query);
+    return companyTypeList;
+  }
+
   async getcountry(){
     const query = 'SELECT * FROM `country`';
-    console.log(query,99999)
     const countryList = await this.connection.query(query);
     return countryList;
   }
@@ -252,7 +257,7 @@ async create(companyData) {
   async read(id: number): Promise<CompaniesEntity> {
     return await this.companyRepository.findOne(
       id, 
-      { relations: ['mainCompany','users','documents','country','regAddressCountry'] },
+      { relations: ['mainCompany','users','documents','country','regAddressCountry','companyType'] },
     );
   }
 
