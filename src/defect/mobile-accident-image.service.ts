@@ -26,13 +26,11 @@ export class MobileAccidentImageService {
     if(createMobileAccidentImage.inOut==0){
       data={
         res:'STARTED',
-        startedTime:currentDate
       }
     }
     else if(createMobileAccidentImage.inOut==1){
       data={
         res:'COMPLETED',
-        completedTime:currentDate
       }
     }
     else{
