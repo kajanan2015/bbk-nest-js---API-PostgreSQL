@@ -111,9 +111,23 @@ async create(companyData) {
     startValue:response.startValue+1
   }
   let documentUpload=[];
-  if( companyData.filename[2]){
-   documentUpload=companyData.filename[2]?.['files[]']
+  let profileImg, logoImg,profilethumbUrl,companythumbUrl=null;
+
+  // Iterate over the array and assign values to variables
+  for (const item of companyData.filename) {
+    if (item.hasOwnProperty('profileImg')) {
+      profileImg = item.profileImg[0];
+      profilethumbUrl=await this.imageUploadService.uploadThumbnailToS3(item.profileImg[0]);
+    }
+    if (item.hasOwnProperty('logoImg')) {
+      logoImg = item.logoImg[0];
+      companythumbUrl=await this.imageUploadService.uploadThumbnailToS3(item.logoImg[0]);
+    }
+    if (item.hasOwnProperty('files[]')) {
+      documentUpload = item['files[]'];
+    }
   }
+
   const files = documentUpload.map(documentPath => ({ documentPath }));
 
   let dataCompany;
@@ -134,30 +148,27 @@ async create(companyData) {
        throw new BadRequestException('auth/account-exists');
      }
     
-
-     let profilethumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[0]?.profileImg[0]);
      const userData={
          firstName:companyData.firstName,
          lastName:companyData.lastName,
          uType:"SADMIN",
-         profilePic:companyData.filename[0]?.profileImg[0],
+         profilePic:profileImg,
          profilePicThumb:profilethumbUrl,
          password:companyData.password,
          phone:companyData.phone,
          email:companyData.email,
      }
       const userResponse= await this.userservice.create(userData);
-      await this.mailservice.sendcompanyCreate(companyData.password,companyData.companyName,companyData.companyEmail,companyData.email);
+      await this.mailservice.sendcompanyCreate(companyData.password,companyData.firstName,companyData.companyEmail,companyData.email);
       const useraccount = userResponse.id.toString();   
       userIds.push(useraccount);
    }else{
      await this.mailservice.sendcompanyCreate("",companyData.companyName,companyData.companyEmail,"");
    }
    const users = await this.userRepository.findByIds(userIds);
-   let companythumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[1]?.logoImg[0]);
    dataCompany={
      ...companyData,
-     companyLogo:companyData.filename[1]?.logoImg[0],
+     companyLogo:logoImg,
      companyLogoThumb:companythumbUrl,
      companyCode:companyCode,
      users:users,
@@ -172,26 +183,24 @@ async create(companyData) {
    if (existing) {
      throw new BadRequestException('auth/account-exists');
    }
-   let profilethumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[0]?.profileImg[0]);
    const userData={
     firstName:companyData.firstName,
     lastName:companyData.lastName,
     uType:"CADMIN",
-    profilePic:companyData.filename[0].profileImg[0],
+    profilePic:profileImg,
     profilePicThumb:profilethumbUrl,
     password:companyData.password,
     phone:companyData.phone,
     email:companyData.email,
    }
     const userResponse= await this.userservice.create(userData);
-    await this.mailservice.sendcompanyCreate(companyData.password,companyData.companyName,companyData.companyEmail,companyData.email);
+    await this.mailservice.sendcompanyCreate(companyData.password,companyData.firstName,companyData.companyEmail,companyData.email);
     const userIds = userResponse.id.toString();   
-   let companythumbUrl=await this.imageUploadService.uploadThumbnailToS3(companyData.filename[1]?.logoImg[0]);
     const users = await this.userRepository.findByIds(userIds);
  
     dataCompany={
      ...companyData,
-     companyLogo:companyData.filename[1]?.logoImg[0],
+     companyLogo:logoImg,
      companyLogoThumb:companythumbUrl,
      companyCode:companyCode,
      users:users,
@@ -200,7 +209,7 @@ async create(companyData) {
   }
    
    }
-  
+  console.log(dataCompany,56565656)
    await this.systemcodeService.update(response.id,newstartvalue)
   const newCompany = await this.companyRepository.create(dataCompany);
 
