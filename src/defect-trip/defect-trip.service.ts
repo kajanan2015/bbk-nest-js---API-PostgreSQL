@@ -48,7 +48,16 @@ export class DefectTripService {
     }
     return defecttrip;
     }
+    
   
+    async findDefectVehicle(id: number) {
+      const defectvehicle = await this.defectrip.find({ where:{vehicleId:id},relations: ['defectCaseResults','defectCaseResults.question'] });
+      if (!defectvehicle) {
+        throw new NotFoundException(`Vehicle ID '${id}' not found`);
+      }
+      return defectvehicle;
+      }
+
     async findDefectDriver(id: number) {
       const defectdriver = await this.defectrip.find({ where:{driverId:id},relations: ['defectCaseResults','defectCaseResults.question'] });
       if (!defectdriver) {
@@ -64,6 +73,15 @@ export class DefectTripService {
         }
         return defectdriver;
         }
+        
+
+        async findDefectVehicleDateRange(id: number,fromDate,toDate) {
+          const defectvehicle = await this.defectrip.find({ where:{vehicleId:id, submitdate: Between(fromDate, toDate),},relations: ['defectCaseResults','defectCaseResults.question'] });
+          if (!defectvehicle) {
+            throw new NotFoundException(`Vehicle ID '${id}' not found`);
+          }
+          return defectvehicle;
+          }
 
 
  async findOne(id: number) {
