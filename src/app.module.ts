@@ -32,6 +32,7 @@ import { CompanyDocumentModule } from './company-document/company-document.modul
 import { AccidentUploadModule } from './accident-upload/accident-upload.module';
 import { AccidentUploadImageModule } from './accident-upload-image/accident-upload-image.module';
 import { AccidentUploadThirdPartyModule } from './accident-upload-third-party/accident-upload-third-party.module';
+import { MovementModule } from './movement/movement.module';
 
 
 
@@ -70,7 +71,8 @@ const settings = require("../ormconfig.js");
     CompanyDocumentModule,
     AccidentUploadModule,
     AccidentUploadImageModule,
-    AccidentUploadThirdPartyModule
+    AccidentUploadThirdPartyModule,
+    MovementModule
   ],
   controllers: [AppController],
   providers: [AppService],
