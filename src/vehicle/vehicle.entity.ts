@@ -16,6 +16,9 @@ export class Vehicle {
     @Column("varchar", { nullable: true , length: 30 ,default: () => null })
     vehicleCompany: string;
 
+    @Column("varchar", { nullable: true , default: () => null })
+    odometer: string;
+
     @Column({ type: 'boolean', default:true})
     status: boolean;
 

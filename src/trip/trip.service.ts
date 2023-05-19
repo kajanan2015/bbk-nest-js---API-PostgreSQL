@@ -3,16 +3,18 @@ import { Injectable, HttpStatus, NotFoundException } from '@nestjs/common';
     import { Repository } from 'typeorm';
 import { TripDTO } from './trip.dto';
 import { TripEntity } from './trip.entity';
+import { VehicleService } from 'src/vehicle/vehicle.service';
 
     @Injectable()
     export class TripService {
       constructor(
         @InjectRepository(TripEntity)
-        private companyRepository: Repository<TripEntity>,
+        private tripRepository: Repository<TripEntity>,
+        private readonly vehicleservice:VehicleService
       ) {}
 
       async showAll() {
-          const trip=await this.companyRepository.find({where:{status:1} ,relations: ['jobuser']});
+          const trip=await this.tripRepository.find({where:{status:1} ,relations: ['jobuser']});
             trip.forEach(trip => {
               delete trip.jobuser.password;
             });
@@ -20,17 +22,17 @@ import { TripEntity } from './trip.entity';
       }
 
       async create(data: TripDTO) {
-        const company = this.companyRepository.create(data);
-        await this.companyRepository.save(data);
+        const company = this.tripRepository.create(data);
+        await this.tripRepository.save(data);
         return company;
       }
 
       async findById(id: number): Promise<TripDTO> {
-        return await this.companyRepository.findOne({ id });
+        return await this.tripRepository.findOne({ id });
       }
 
       async findByName(name: string): Promise<TripEntity> {
-        const company = await this.companyRepository.findOne({ name });
+        const company = await this.tripRepository.findOne({ name });
         if (!company) {
           throw new NotFoundException(`Company with name '${name}' not found`);
         }
@@ -38,16 +40,24 @@ import { TripEntity } from './trip.entity';
       }
       
       async read(id: number) {
-        return await this.companyRepository.findOne({ where: { id: id } });
+        return await this.tripRepository.findOne({ where: { id: id } });
       }
 
       async update(id: number, data: Partial<TripDTO>) {
-        await this.companyRepository.update({ id }, data);
-        return await this.companyRepository.findOne({ id });
+        if(data.endMileage){
+          const updatevehicledata={
+            odometer:data.endMileage
+          }
+          const datavehicle=await this.tripRepository.findOne({where:{id:id},relations: ['vehicle']});
+          await this.vehicleservice.update(datavehicle.vehicle.id,updatevehicledata)
+        }
+       
+        await this.tripRepository.update({ id }, data);
+        return await this.tripRepository.findOne({ id });
       }
 
       async destroy(id: number) {
-        await this.companyRepository.delete({ id });
+        await this.tripRepository.delete({ id });
         return { deleted: true };
       }
     

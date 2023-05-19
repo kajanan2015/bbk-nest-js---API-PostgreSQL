@@ -10,5 +10,6 @@ export class CreateDefectTripDto {
     defectNote:string;
     nilDefect:number;
     status: Boolean;
+    vehicleId:number;
     defectCaseResults: DefectCasesResult[];
 }

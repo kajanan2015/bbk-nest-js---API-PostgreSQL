@@ -15,6 +15,9 @@ export class DefectTrip {
     @Column("int",{nullable:true,default:null})
     driverId:number;
 
+    @Column("int",{nullable:true,default:null})
+    vehicleId:number;
+
     @Column("varchar",{nullable:true,default:null})
     vehicleRegNo:string;
     

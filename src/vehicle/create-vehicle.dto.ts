@@ -10,4 +10,6 @@ export class CreateVehicleDto {
     vehicletrip:TripEntity[];
     vehicletype: VehicleTypeEntity;
     vehicleaccident:AccidentUpload[];
+    odometer: string;
+
 }

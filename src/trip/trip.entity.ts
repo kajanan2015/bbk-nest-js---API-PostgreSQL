@@ -50,6 +50,18 @@ export class TripEntity {
   @Column("varchar",{nullable:true,default:null})
   endMileage:string;
 
+  @Column("varchar", { name: "assignStartedTime",nullable:true, default: null })
+  assignStartedTime: string;
+
+  @Column("varchar", { name: "assignCompletedTime",nullable:true, default: null })
+  assignCompletedTime: string;
+
+  @Column("varchar", { name: "pickupLocation",nullable:true, default: null })
+  pickupLocation: string;
+
+  @Column("varchar", { name: "dropLocation",nullable:true, default: null })
+  dropLocation: string;
+
   @ManyToOne(() => User, user => user.jobdata)
   @JoinColumn()
   jobuser: User;

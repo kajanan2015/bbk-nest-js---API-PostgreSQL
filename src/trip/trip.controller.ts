@@ -30,19 +30,19 @@ import { AuthGuard } from '@nestjs/passport';
 
     @Post()
     async create(@Body() data: TripDTO) {
-       const company = await this.service.create(data);
+       const trip = await this.service.create(data);
       return {
         statusCode: HttpStatus.OK,
-        company
+        trip
       };
     }
 
     @Get(':id')
     async read(@Param('id') id: number) {
-      const company =  await this.service.read(id);
+      const trip =  await this.service.read(id);
       return {
         statusCode: HttpStatus.OK,
-        company,
+        trip,
       };
     }
 

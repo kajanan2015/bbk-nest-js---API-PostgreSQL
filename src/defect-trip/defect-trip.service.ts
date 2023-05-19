@@ -6,6 +6,7 @@ import { ImageUploadService } from 'src/imageupload/imageupload.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, Repository } from 'typeorm';
 import { TripService } from 'src/trip/trip.service';
+import { VehicleService } from 'src/vehicle/vehicle.service';
 @Injectable()
 export class DefectTripService {
 
@@ -13,7 +14,8 @@ export class DefectTripService {
     @InjectRepository(DefectTrip)
     private defectrip: Repository<DefectTrip>,
     private   readonly imageUploadServiceRepository: ImageUploadService,
-    private readonly tripservice:TripService
+    private readonly tripservice:TripService,
+    private readonly vehicleservice:VehicleService
     ) {}
 
   async create(createDefectTripDto: CreateDefectTripDto) {
@@ -23,7 +25,11 @@ export class DefectTripService {
       startMileage:createDefectTripDto.odometerReading,
       startedTime:createDefectTripDto.submitdate
     }
+    const vehicledata={
+      odometer:createDefectTripDto.odometerReading
+    }
     await this.tripservice.update(createDefectTripDto.tripId,data);
+    await this.vehicleservice.update(createDefectTripDto.vehicleId,vehicledata)
     return await this.defectrip.save(response);
   }
 
