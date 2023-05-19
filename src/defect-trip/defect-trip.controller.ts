@@ -37,13 +37,13 @@ export class DefectTripController {
      return this.defectTripService.findDefectOne(+tripid);
    }
 
-   @Get('/finddefectbyvehicledaterange/:id')
+   @Post('/finddefectbyvehicledaterange/:id')
    async  findDefectvehicleDateRange(@Param('id') vehicleid: string, @Body('fromDate') fromDate: Date,
    @Body('toDate') toDate: Date) {
       return this.defectTripService.findDefectVehicleDateRange(+vehicleid,fromDate,toDate);
     }
 
-    @Get('/finddefectbydriverdaterange/:id')
+    @Post('/finddefectbydriverdaterange/:id')
     async  findDefectDriverDateRange(@Param('id') driverId: string, @Body('fromDate') fromDate: Date,
     @Body('toDate') toDate: Date) {
        return this.defectTripService.findDefectDriverDateRange(+driverId,fromDate,toDate);
