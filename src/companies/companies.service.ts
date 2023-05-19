@@ -105,6 +105,12 @@ export class CompaniesService {
 
 async create(companyData) {
   
+
+  const existingcompanyname = await this.companyRepository.findOne({where:{companyName:companyData.companyName,registrationNumber:companyData.registrationNumber,country:companyData.country}});
+     if (existingcompanyname) {
+       throw new BadRequestException('company name exist');
+     }
+
   const response=await this.systemcodeService.findOne('company')
   const companyCode=response.code+''+response.startValue   
   const newstartvalue={
