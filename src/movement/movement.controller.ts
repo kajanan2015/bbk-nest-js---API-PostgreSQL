@@ -1,34 +1,58 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  HttpStatus,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
 import { MovementService } from './movement.service';
 import { CreateMovementDto } from './create-movement.dto';
 import { UpdateMovementDto } from './update-movement.dto';
 
+import { AuthGuard } from '@nestjs/passport';
+@UseGuards(AuthGuard('jwt'))
 @Controller('movement')
 export class MovementController {
   constructor(private readonly movementService: MovementService) {}
-
-  @Post()
-  create(@Body() createMovementDto: CreateMovementDto) {
-    return this.movementService.create(createMovementDto);
+  @Get()
+  async showAll() {
+    const Trip =  await this.movementService.showAll();
+    return {
+      statusCode: HttpStatus.OK,
+      Trip
+    };
   }
 
-  @Get()
-  findAll() {
-    return this.movementService.findAll();
+  @Post()
+  async create(@Body() data: CreateMovementDto) {
+     const trip = await this.movementService.create(data);
+    return {
+      statusCode: HttpStatus.OK,
+      trip
+    };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.movementService.findOne(+id);
+  async read(@Param('id') id: number) {
+    const trip =  await this.movementService.read(id);
+    return {
+      statusCode: HttpStatus.OK,
+      trip,
+    };
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMovementDto: UpdateMovementDto) {
-    return this.movementService.update(+id, updateMovementDto);
-  }
+  @Put('/edit/:id')
+  async uppdate(@Param('id') id: number, @Body() data: Partial<CreateMovementDto>) {
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.movementService.remove(+id);
+    await this.movementService.update(id, data);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'trip updated successfully',
+    };
   }
 }
