@@ -108,7 +108,7 @@ async create(companyData) {
 
   const existingcompanyname = await this.companyRepository.findOne({where:{companyName:companyData.companyName,registrationNumber:companyData.registrationNumber,country:companyData.country,regAddressCountry:companyData.regAddressCountry}});
      if (existingcompanyname) {
-       throw new BadRequestException('company name exist');
+      return 'company name exist';
      }
 
   const response=await this.systemcodeService.findOne('company')
@@ -151,7 +151,7 @@ async create(companyData) {
      
      const existing = await this.userservice.findByEmail(companyData.email);
      if (existing) {
-       throw new BadRequestException('auth/account-exists');
+      return "account exist";
      }
     
      const userData={
@@ -187,7 +187,7 @@ async create(companyData) {
   }else{
    const existing = await this.userservice.findByEmail(companyData.email);
    if (existing) {
-     throw new BadRequestException('auth/account-exists');
+     return "account exist";
    }
    const userData={
     firstName:companyData.firstName,
