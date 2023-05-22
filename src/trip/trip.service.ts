@@ -1,6 +1,6 @@
 import { Injectable, HttpStatus, NotFoundException } from '@nestjs/common';
     import { InjectRepository } from '@nestjs/typeorm';
-    import { Repository } from 'typeorm';
+    import { Between, Repository } from 'typeorm';
 import { TripDTO } from './trip.dto';
 import { TripEntity } from './trip.entity';
 import { VehicleService } from 'src/vehicle/vehicle.service';
@@ -43,6 +43,18 @@ import { VehicleService } from 'src/vehicle/vehicle.service';
         return await this.tripRepository.findOne({ where: { id: id } });
       }
 
+
+      async jobdatabyuser(id: number) {
+        return await this.tripRepository.findOne({ where: { jobuser: id },relations: ['vehicle'] });
+      }
+      
+
+
+      async jobdatabyuserdaterange(id: number,fromDate,toDate,sortColumn) {
+       
+        return await this.tripRepository.findOne({ where: { jobuser: id,[sortColumn]: Between(fromDate, toDate)},relations: ['vehicle'] });
+      }
+      
       async update(id: number, data: Partial<TripDTO>) {
         if(data.endMileage){
           const updatevehicledata={

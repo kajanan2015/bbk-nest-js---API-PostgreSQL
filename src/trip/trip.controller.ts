@@ -37,6 +37,25 @@ import { AuthGuard } from '@nestjs/passport';
       };
     }
 
+    @Get('jobdatabyuser/:id')
+    async jobdatabyuser(@Param('id') id: number) {
+      const trip =  await this.service.jobdatabyuser(+id);
+      return {
+        statusCode: HttpStatus.OK,
+        trip,
+      };
+    }
+
+    @Post('jobdatabyuserdaterange/:id')
+    async jobdatabyuserdaterange(@Param('id') id: number, @Body('fromDate') fromDate: Date,
+    @Body('toDate') toDate: Date, @Body('sortColumn') sortColumn: string) {
+      const trip =  await this.service.jobdatabyuserdaterange(+id,fromDate,toDate,sortColumn);
+      return {
+        statusCode: HttpStatus.OK,
+        trip,
+      };
+    }
+
     @Get(':id')
     async read(@Param('id') id: number) {
       const trip =  await this.service.read(id);
