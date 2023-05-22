@@ -1,26 +1,43 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpStatus, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateFramelayoutDto } from './create-framelayout.dto';
 import { UpdateFramelayoutDto } from './update-framelayout.dto';
-
+import { Framelayout } from './framelayout.entity';
 @Injectable()
 export class FramelayoutService {
-  create(createFramelayoutDto: CreateFramelayoutDto) {
-    return 'This action adds a new framelayout';
+  constructor(
+    @InjectRepository(Framelayout)
+    private framelayoutRepository: Repository<Framelayout>,
+  ) {}
+  
+  async showAll() {
+    return await this.framelayoutRepository.find();
   }
 
-  findAll() {
-    return `This action returns all framelayout`;
+  async create(data) {
+    const company = this.framelayoutRepository.create(data);
+    await this.framelayoutRepository.save(data);
+    return company;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} framelayout`;
+  async findById(id: number): Promise<CreateFramelayoutDto> {
+    return await this.framelayoutRepository.findOne({ id });
   }
 
-  update(id: number, updateFramelayoutDto: UpdateFramelayoutDto) {
-    return `This action updates a #${id} framelayout`;
+  
+  
+  async read(type: string) {
+    return await this.framelayoutRepository.findOne({ where: { vtype: type } });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} framelayout`;
+  async update(id: number, data: Partial<CreateFramelayoutDto>) {
+    await this.framelayoutRepository.update({ id }, data);
+    return await this.framelayoutRepository.findOne({ id });
+  }
+
+  async destroy(id: number) {
+    await this.framelayoutRepository.delete({ id });
+    return { deleted: true };
   }
 }
