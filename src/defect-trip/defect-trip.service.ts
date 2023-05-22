@@ -6,6 +6,7 @@ import { ImageUploadService } from 'src/imageupload/imageupload.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, Repository } from 'typeorm';
 import { TripService } from 'src/trip/trip.service';
+import { MovementService } from 'src/movement/movement.service';
 import { VehicleService } from 'src/vehicle/vehicle.service';
 @Injectable()
 export class DefectTripService {
@@ -13,12 +14,16 @@ export class DefectTripService {
   constructor(
     @InjectRepository(DefectTrip)
     private defectrip: Repository<DefectTrip>,
-    private   readonly imageUploadServiceRepository: ImageUploadService,
+    private readonly imageUploadServiceRepository: ImageUploadService,
     private readonly tripservice:TripService,
     private readonly vehicleservice:VehicleService
     ) {}
 
   async create(createDefectTripDto: CreateDefectTripDto) {
+    const defectdata={
+      ...createDefectTripDto,
+      vehicle:createDefectTripDto.vehicleId
+    }
     const response=await this.defectrip.create(createDefectTripDto);
     const data={
       res:'DEFECT',
@@ -48,10 +53,19 @@ export class DefectTripService {
     return defecttrip;
     }
 
+    async findDefectOneDateRange(id: number,fromDate,toDate) {
+      const defectdriver = await this.defectrip.find({ where:{tripId:id, submitdate: Between(fromDate, toDate),},relations: ['defectCaseResults','defectCaseResults.question','vehicle'] });
+      if (!defectdriver) {
+        throw new NotFoundException(`Driver ID '${id}' not found`);
+      }
+      return defectdriver;
+      }
+    
+
  
   
     async findDefectVehicle(id: number) {
-      const defectvehicle = await this.defectrip.find({ where:{vehicleId:id},relations: ['defectCaseResults','defectCaseResults.question'] });
+      const defectvehicle = await this.defectrip.find({ where:{vehicle:id},relations: ['defectCaseResults','defectCaseResults.question'] });
       if (!defectvehicle) {
         throw new NotFoundException(`Vehicle ID '${id}' not found`);
       }
@@ -59,7 +73,7 @@ export class DefectTripService {
       }
 
     async findDefectDriver(id: number) {
-      const defectdriver = await this.defectrip.find({ where:{driverId:id},relations: ['defectCaseResults','defectCaseResults.question'] });
+      const defectdriver = await this.defectrip.find({ where:{driverId:id},relations: ['defectCaseResults','defectCaseResults.question','vehicle'] });
       if (!defectdriver) {
         throw new NotFoundException(`Driver ID '${id}' not found`);
       }
@@ -67,7 +81,7 @@ export class DefectTripService {
       }
 
       async findDefectDriverDateRange(id: number,fromDate,toDate) {
-        const defectdriver = await this.defectrip.find({ where:{driverId:id, submitdate: Between(fromDate, toDate),},relations: ['defectCaseResults','defectCaseResults.question'] });
+        const defectdriver = await this.defectrip.find({ where:{driverId:id, submitdate: Between(fromDate, toDate),},relations: ['defectCaseResults','defectCaseResults.question','vehicle'] });
         if (!defectdriver) {
           throw new NotFoundException(`Driver ID '${id}' not found`);
         }
@@ -76,7 +90,7 @@ export class DefectTripService {
         
 
         async findDefectVehicleDateRange(id: number,fromDate,toDate) {
-          const defectvehicle = await this.defectrip.find({ where:{vehicleId:id, submitdate: Between(fromDate, toDate),},relations: ['defectCaseResults','defectCaseResults.question'] });
+          const defectvehicle = await this.defectrip.find({ where:{vehicle:id, submitdate: Between(fromDate, toDate),},relations: ['defectCaseResults','defectCaseResults.question'] });
           if (!defectvehicle) {
             throw new NotFoundException(`Vehicle ID '${id}' not found`);
           }
