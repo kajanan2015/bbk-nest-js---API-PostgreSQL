@@ -37,7 +37,7 @@ export class DefectTripController {
      return this.defectTripService.findDefectOne(+tripid);
    }
 
-   @Get('/finddefectbytripbydaterange/:id')
+   @Post('/finddefectbytripbydaterange/:id')
    async  findDefectOneDateRange(@Param('id') tripid: string, @Body('fromDate') fromDate: Date,
    @Body('toDate') toDate: Date) {
       return this.defectTripService.findDefectOneDateRange(+tripid,fromDate,toDate);
