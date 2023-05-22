@@ -33,6 +33,7 @@ import { AccidentUploadModule } from './accident-upload/accident-upload.module';
 import { AccidentUploadImageModule } from './accident-upload-image/accident-upload-image.module';
 import { AccidentUploadThirdPartyModule } from './accident-upload-third-party/accident-upload-third-party.module';
 import { MovementModule } from './movement/movement.module';
+import { FramelayoutModule } from './framelayout/framelayout.module';
 
 
 
@@ -72,7 +73,8 @@ const settings = require("../ormconfig.js");
     AccidentUploadModule,
     AccidentUploadImageModule,
     AccidentUploadThirdPartyModule,
-    MovementModule
+    MovementModule,
+    FramelayoutModule
   ],
   controllers: [AppController],
   providers: [AppService],
