@@ -296,7 +296,7 @@ async create(companyData) {
 
   //  console.log(data.users[0].firstName,9990009)
 
-   
+   console.log(data,56565656565656)
    const passcompanyData={
     ...(data.companyName ? { companyName: data.companyName } : {}),
     ...(data.companyEmail ? { companyEmail: data.companyEmail } : {}),
@@ -329,7 +329,7 @@ async create(companyData) {
     }
     await this.companyDocumentRepository.remove(deletedocuments)
    }
-   if(data.filename){
+   if(data.filename&&data.filename.length>0){
     if(data.profile && data.logo){
       console.log(data.filename,657676)
       let documentUpload=[];
@@ -339,10 +339,10 @@ async create(companyData) {
         console.log(files,898989898998)
         await this.companydocumentservice.create(files)
       }
-      
-     
+      console.log('abx',56565)
      }
      else if(data.profile){
+      console.log('dfdf',56565)
       const datalogo={
         ...(data.filename[0].logoImg ? {   companyLogo: data.filename[0].logoImg, companyLogoThumb:await this.imageUploadService.uploadThumbnailToS3(data.filename[0].logoImg[0]) } : {}),
       }
@@ -354,7 +354,7 @@ async create(companyData) {
         console.log(files)
         await this.companydocumentservice.create(files)
       }
-     
+      console.log('dfdf',56565)
      }
      else if(data.logo){
       const dataprofilpic={
@@ -368,6 +368,7 @@ async create(companyData) {
         console.log(files,898989898998)
         await this.companydocumentservice.create(files)
       }
+      console.log(';fdghffdh',56565)
      }
      else{
       const dataprofilpic={
@@ -385,6 +386,7 @@ async create(companyData) {
         console.log(files,898989898998)
         await this.companydocumentservice.create(files)
       }
+      console.log('fdg',56565)
      }
    }
   
