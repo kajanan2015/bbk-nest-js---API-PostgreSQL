@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColum
 import { VehicleTypeEntity } from "src/vehicle-type/vehicle-type.entity";
 import { TripEntity } from "src/trip/trip.entity";
 import { AccidentUpload } from "src/accident-upload/accident-upload.entity";
+import { DefectTrip } from "src/defect-trip/defect-trip.entity";
 @Entity()
 export class Vehicle {
     @PrimaryGeneratedColumn()
@@ -28,6 +29,9 @@ export class Vehicle {
 
     @OneToMany(()=>TripEntity, trip => trip.vehicle,{cascade:true})
     vehicletrip:TripEntity[]
+
+    @OneToMany(()=>DefectTrip, defecttrip => defecttrip.vehicle,{cascade:true})
+    vehicledefecttrip:DefectTrip[]
 
     @OneToMany(()=>AccidentUpload, accident => accident.vehicle,{cascade:true})
     vehicleaccident:AccidentUpload[]
