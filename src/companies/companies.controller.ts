@@ -18,6 +18,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
 import { CompaniesEntity } from './companies.entity';
+import { companytype } from './companytype.entity';
 @UseGuards(AuthGuard('jwt'))
 @Controller('companies')
 export class CompaniesController {
@@ -34,7 +35,15 @@ export class CompaniesController {
     };
   }
 
-
+@Get('showcompanylist/:id')
+async showcompanylist(@Param('id') value:number)
+{
+  const showcompanylist= await this.service.showcompanylist(value)
+  return {
+    statusCode: HttpStatus.OK,
+    showcompanylist
+  };
+}
   @Get('/showonlyActivemainCompany/:value')
   async showonlyActivemainCompany(@Param('value') value: number) {
     const companies = await this.service.showonlyActivemainCompany(value);

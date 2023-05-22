@@ -42,6 +42,22 @@ export class CompaniesService {
     );
   }
 
+  async showcompanylist(value){
+    const companylist= await this.companyRepository.findOne({
+      where:{
+        id:value
+      },  relations: ['mainCompany']
+    })
+    console.log(companylist,989898)
+    return await this.companyRepository.find(
+      {
+        where:{
+          mainCompany:companylist.mainCompany.id
+        }
+      }
+    )
+  }
+
   async showonlySubCompany() {
     return await this.companyRepository.find(
       {
