@@ -1,6 +1,7 @@
 import { BeforeInsert, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { DefectCasesResult } from 'src/defect-cases-result/defect-cases-result.entity';
+import { Vehicle } from 'src/vehicle/vehicle.entity';
 @Entity()
 export class DefectTrip {
     @PrimaryGeneratedColumn()
@@ -15,8 +16,8 @@ export class DefectTrip {
     @Column("int",{nullable:true,default:null})
     driverId:number;
 
-    @Column("int",{nullable:true,default:null})
-    vehicleId:number;
+    // @Column("int",{nullable:true,default:null})
+    // vehicleId:number;
 
     @Column("varchar",{nullable:true,default:null})
     vehicleRegNo:string;
@@ -42,6 +43,10 @@ export class DefectTrip {
 
     @OneToMany(() => DefectCasesResult, defectcaseresult => defectcaseresult.defecttrip, { cascade: true })
     defectCaseResults: DefectCasesResult[];
+
+    @ManyToOne(() => Vehicle, vehicle => vehicle.vehicledefecttrip)
+    @JoinColumn()
+    vehicle: Vehicle;
 
 
 }

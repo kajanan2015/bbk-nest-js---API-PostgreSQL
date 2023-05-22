@@ -1,4 +1,5 @@
 import { DefectCasesResult } from "src/defect-cases-result/defect-cases-result.entity";
+import { Vehicle } from "src/vehicle/vehicle.entity";
 export class CreateDefectTripDto {
     id:number;
     submitdate: Date;
@@ -11,5 +12,6 @@ export class CreateDefectTripDto {
     nilDefect:number;
     status: Boolean;
     vehicleId:number;
+    vehicle:Vehicle;
     defectCaseResults: DefectCasesResult[];
 }

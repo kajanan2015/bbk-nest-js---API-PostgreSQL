@@ -40,15 +40,15 @@ export class DefectTripService {
     } );
   }
 
-
   async findDefectOne(id: number) {
-    const defecttrip = await this.defectrip.findOne({ where:{tripId:id},relations: ['defectCaseResults','defectCaseResults.question'] });
+    const defecttrip = await this.defectrip.findOne({ where:{tripId:id},relations: ['defectCaseResults','defectCaseResults.question','vehicle'] });
     if (!defecttrip) {
       throw new NotFoundException(` Trip ID '${id}' not found`);
     }
     return defecttrip;
     }
-    
+
+ 
   
     async findDefectVehicle(id: number) {
       const defectvehicle = await this.defectrip.find({ where:{vehicleId:id},relations: ['defectCaseResults','defectCaseResults.question'] });
