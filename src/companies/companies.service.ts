@@ -330,64 +330,34 @@ async create(companyData) {
     await this.companyDocumentRepository.remove(deletedocuments)
    }
    if(data.filename&&data.filename.length>0){
-    if(data.profile && data.logo){
-      console.log(data.filename,657676)
-      let documentUpload=[];
-      if(data.filename[0]?.['files[]']){
-        documentUpload=data.filename[0]?.['files[]']
+    let documentUpload=[];
+    let profileImg, logoImg,profilethumbUrl,companythumbUrl=null;
+    for (const item of data.filename) {
+      if (item.hasOwnProperty('profileImg')) {
+        profileImg = item.profileImg[0];
+        profilethumbUrl=await this.imageUploadService.uploadThumbnailToS3(item.profileImg[0]);
+        const dataprofilpic={
+          profilePic: profileImg, 
+          profilePicThumb:profilethumbUrl
+        }
+        await this.userservice.update(data.userId,dataprofilpic);
+      }
+      if (item.hasOwnProperty('logoImg')) {
+        logoImg = item.logoImg[0];
+        companythumbUrl=await this.imageUploadService.uploadThumbnailToS3(item.logoImg[0]);
+        const datalogo={
+          companyLogo: logoImg, 
+          companyLogoThumb:companythumbUrl,
+        }
+         await this.companyRepository.update({ id },datalogo);
+      }
+      if (item.hasOwnProperty('files[]')) {
+        documentUpload = item['files[]'];
         const files = documentUpload.map(documentPath => ({ documentPath, company:id }));
         console.log(files,898989898998)
         await this.companydocumentservice.create(files)
       }
-      console.log('abx',56565)
-     }
-     else if(data.profile){
-      console.log('dfdf',56565)
-      const datalogo={
-        ...(data.filename[0].logoImg ? {   companyLogo: data.filename[0].logoImg, companyLogoThumb:await this.imageUploadService.uploadThumbnailToS3(data.filename[0].logoImg[0]) } : {}),
-      }
-      await this.companyRepository.update({ id },datalogo);
-      let documentUpload=[];
-      if(data.filename[1]?.['files[]']){
-        documentUpload=data.filename[1]?.['files[]']
-        const files = documentUpload.map(documentPath => ({ documentPath, company:id }));
-        console.log(files)
-        await this.companydocumentservice.create(files)
-      }
-      console.log('dfdf',56565)
-     }
-     else if(data.logo){
-      const dataprofilpic={
-        ...(data.filename[0].profileImg ? { profilePic: data.filename[0].profileImg, profilePicThumb:await this.imageUploadService.uploadThumbnailToS3(data.filename[0].profileImg[0]) } : {}),
-      }
-      await this.userservice.update(data.userId,dataprofilpic);
-      let documentUpload=[]; 
-      if(data.filename[1]?.['files[]']){
-        documentUpload=data.filename[1]?.['files[]']
-        const files = documentUpload.map(documentPath => ({ documentPath, company:id }));
-        console.log(files,898989898998)
-        await this.companydocumentservice.create(files)
-      }
-      console.log(';fdghffdh',56565)
-     }
-     else{
-      const dataprofilpic={
-        ...(data.filename[0].profileImg ? { profilePic: data.filename[0].profileImg, profilePicThumb:await this.imageUploadService.uploadThumbnailToS3(data.filename[0].profileImg[0]) } : {}),
-      }
-      await this.userservice.update(data.userId,dataprofilpic);
-      const datalogo={
-        ...(data.filename[1].logoImg ? { companyLogo: data.filename[1].logoImg, companyLogoThumb: await this.imageUploadService.uploadThumbnailToS3(data.filename[1].logoImg[0])  } : {}),
-      }
-      await this.companyRepository.update({ id },datalogo);
-      let documentUpload=[]; 
-      if(data.filename[2]?.['files[]']){ 
-        documentUpload=data.filename[2]?.['files[]']
-        const files = documentUpload.map(documentPath => ({ documentPath, company:id }));
-        console.log(files,898989898998)
-        await this.companydocumentservice.create(files)
-      }
-      console.log('fdg',56565)
-     }
+    }
    }
   
    
