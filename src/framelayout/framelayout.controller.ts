@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, UseInterceptors, UploadedFiles, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, UseInterceptors, UploadedFiles, Put, UseGuards } from '@nestjs/common';
 import { FramelayoutService } from './framelayout.service';
 import { CreateFramelayoutDto } from './create-framelayout.dto';
 import { UpdateFramelayoutDto } from './update-framelayout.dto';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
-
+import { AuthGuard } from '@nestjs/passport';
+@UseGuards(AuthGuard('jwt'))
 @Controller('framelayout')
 export class FramelayoutController {
   constructor(private readonly service: FramelayoutService, private imageUploadService: ImageUploadService) {}
