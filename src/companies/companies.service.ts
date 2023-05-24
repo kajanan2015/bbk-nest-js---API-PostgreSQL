@@ -288,7 +288,7 @@ async create(companyData) {
   async read(id: number): Promise<CompaniesEntity> {
     return await this.companyRepository.findOne(
       id, 
-      { relations: ['mainCompany','users','documents','country','regAddressCountry','companyType'] },
+      { relations: ['mainCompany','mainCompany.users','users','documents','country','regAddressCountry','companyType'] },
     );
   }
 
