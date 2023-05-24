@@ -20,8 +20,9 @@ import { MailService } from 'src/mail/mail.service';
 import { CompanyDocumentModule } from 'src/company-document/company-document.module';
 import { CompanyDocumentService } from 'src/company-document/company-document.service';
 import { companytype } from './companytype.entity';
+import { EmployeeModule } from 'src/employee-module/employee-module.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([CompaniesEntity, PagePermissionEntity, SystemCode,CompanyDocument,User,country, companytype]), PagePermissionModule,SystemCodeModule, UserModule, MailModule, CompanyDocumentModule],
+  imports: [TypeOrmModule.forFeature([CompaniesEntity, PagePermissionEntity, SystemCode,CompanyDocument,User,country, companytype, EmployeeModule]), PagePermissionModule,SystemCodeModule, UserModule, MailModule, CompanyDocumentModule],
   controllers: [CompaniesController],
   providers: [CompaniesService, ImageUploadService, PagePermissionService,SystemCodeService, UserService,MailService, CompanyDocumentService],
 })
