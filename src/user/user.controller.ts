@@ -45,13 +45,6 @@ export class UserController {
 
   @Get(':id')
   async read(@Param('id') id: number) {
-    const customer = await stripe.customers.create({
-      description: new Date(),
-      email :'itranga@gmail.com',
-      name :'Ranga'
-    });
-
-
     const user = await this.service.find(id);
     return {
       statusCode: HttpStatus.OK,
