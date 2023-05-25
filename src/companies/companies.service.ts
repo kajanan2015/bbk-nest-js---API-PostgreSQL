@@ -48,7 +48,6 @@ export class CompaniesService {
         id: value
       }, relations: ['mainCompany']
     })
-    console.log(companylist, 989898)
     return await this.companyRepository.find(
       {
         where: {
@@ -78,7 +77,6 @@ export class CompaniesService {
       }
     );
   }
-
 
   async showonlyActivesubCompany(value) {
     return await this.companyRepository.find(
@@ -114,16 +112,7 @@ export class CompaniesService {
     );
   }
 
-  //   async create(companyData) {
-
-  //     const usersjj = await this.userservice.findUsingId("26");
-  //  console.log(usersjj,333) 
-  //   }
-
-
   async create(companyData) {
-
-
     const existingcompanyname = await this.companyRepository.findOne({ where: { companyName: companyData.companyName, registrationNumber: companyData.registrationNumber, country: companyData.country, regAddressCountry: companyData.regAddressCountry } });
     if (existingcompanyname) {
       return 'company name exist';
@@ -329,29 +318,48 @@ export class CompaniesService {
   }
 
   async update(id: number, data) {
-
-    //  console.log(data.users[0].firstName,9990009)
-
-    console.log(data, 56565656565656)
-    const passcompanyData = {
-      ...(data.companyName ? { companyName: data.companyName } : {}),
-      ...(data.companyEmail ? { companyEmail: data.companyEmail } : {}),
-      ...(data.website ? { website: data.website } : {}),
-      ...(data.companyPhone ? { companyPhone: data.companyPhone } : {}),
-      ...(data.number ? { number: data.number } : {}),
-      ...(data.street ? { street: data.street } : {}),
-      ...(data.city ? { city: data.city } : {}),
-      ...(data.postalCode ? { postalCode: data.postalCode } : {}),
-      ...(data.vat ? { vat: data.vat } : {}),
-      ...(data.registrationNumber ? { registrationNumber: data.registrationNumber } : {}),
-      ...(data.regAddressNo ? { regAddressNo: data.regAddressNo } : {}),
-      ...(data.regAddressStreet ? { regAddressStreet: data.regAddressStreet } : {}),
-      ...(data.regAddressCity ? { regAddressCity: data.regAddressCity } : {}),
-      ...(data.regAddressPostalCode ? { regAddressPostalCode: data.regAddressPostalCode } : {}),
-      ...(data.country ? { country: data.country.id } : {}),
-      ...(data.companyType ? { companyType: data.companyType } : {}),
-      ...(data.regAddressCountry ? { regAddressCountry: data.regAddressCountry.id } : {}),
-
+    console.log(id,66666)
+    let passcompanyData;
+    if (data.sameTradingAddress !== false) {
+      passcompanyData = {
+        ...(data.companyName ? { companyName: data.companyName } : {}),
+        ...(data.companyEmail ? { companyEmail: data.companyEmail } : {}),
+        ...(data.website ? { website: data.website } : {}),
+        ...(data.companyPhone ? { companyPhone: data.companyPhone } : {}),
+        ...(data.number ? { number: data.number } : {}),
+        ...(data.street ? { street: data.street } : {}),
+        ...(data.city ? { city: data.city } : {}),
+        ...(data.postalCode ? { postalCode: data.postalCode } : {}),
+        ...(data.vat ? { vat: data.vat } : {}),
+        ...(data.registrationNumber ? { registrationNumber: data.registrationNumber } : {}),
+        ...(data.regAddressNo ? { regAddressNo: data.regAddressNo } : {}),
+        ...(data.regAddressStreet ? { regAddressStreet: data.regAddressStreet } : {}),
+        ...(data.regAddressCity ? { regAddressCity: data.regAddressCity } : {}),
+        ...(data.regAddressPostalCode ? { regAddressPostalCode: data.regAddressPostalCode } : {}),
+        ...(data.country ? { country: data.country.id } : {}),
+        ...(data.companyType ? { companyType: data.companyType } : {}),
+        ...(data.regAddressCountry ? { regAddressCountry: data.regAddressCountry.id } : {}),
+      }
+    } else {
+      passcompanyData = {
+        ...(data.companyName ? { companyName: data.companyName } : {}),
+        ...(data.companyEmail ? { companyEmail: data.companyEmail } : {}),
+        ...(data.website ? { website: data.website } : {}),
+        ...(data.companyPhone ? { companyPhone: data.companyPhone } : {}),
+        ...(data.number ? { number: data.number } : {}),
+        ...(data.street ? { street: data.street } : {}),
+        ...(data.city ? { city: data.city } : {}),
+        ...(data.postalCode ? { postalCode: data.postalCode } : {}),
+        ...(data.vat ? { vat: data.vat } : {}),
+        ...(data.registrationNumber ? { registrationNumber: data.registrationNumber } : {}),
+        ...({ regAddressNo: data.regAddressNo }),
+        ...({ regAddressStreet: data.regAddressStreet }),
+        ...({ regAddressCity: data.regAddressCity }),
+        ...({ regAddressPostalCode: data.regAddressPostalCode }),
+        ...(data.country ? { country: data.country.id } : {}),
+        ...(data.companyType ? { companyType: data.companyType } : {}),
+        ...({ regAddressCountry: data.regAddressCountry.id }),
+      }
     }
 
     if (data.deletedDocument) {
@@ -360,7 +368,6 @@ export class CompaniesService {
         deletedocuments = await this.companyDocumentRepository.find({
           where: { documentPath: documentUrl },
         });
-        console.log(documentUrl, 89898989898)
         await this.imageUploadService.deletedoc(documentUrl)
       }
       await this.companyDocumentRepository.remove(deletedocuments)
@@ -390,7 +397,6 @@ export class CompaniesService {
         if (item.hasOwnProperty('files[]')) {
           documentUpload = item['files[]'];
           const files = documentUpload.map(documentPath => ({ documentPath, company: id }));
-          console.log(files, 898989898998)
           await this.companydocumentservice.create(files)
         }
       }
@@ -423,9 +429,6 @@ export class CompaniesService {
       }
     }
 
-    //  console.log(data['updatedFields'],5555555555)
-    //  console.log(JSON.stringify(data['updatedFields']),9900909)
-    console.log(passcompanyData, 787878787)
     if (Object.keys(passcompanyData).length > 0) {
       await this.companyRepository.update({ id }, passcompanyData);
     }
@@ -437,7 +440,6 @@ export class CompaniesService {
   }
 
   async updateCompanyStatus(id: number, status) {
-    console.log(status, 888)
     await this.companyRepository.update({ id }, { compstatus: () => status });
     return await this.companyRepository.findOne({ id });
   }
