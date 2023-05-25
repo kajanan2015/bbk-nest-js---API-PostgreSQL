@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateEmployeeModuleDto } from './create-employee-module.dto';
 import { UpdateEmployeeModuleDto } from './update-employee-module.dto';
-import { Repository } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmployeeModule } from './employee-module.entity';
 
@@ -9,7 +9,8 @@ import { EmployeeModule } from './employee-module.entity';
 export class EmployeeModuleService {
   constructor(
     @InjectRepository(EmployeeModule)
-    private employeeModuleRepository: Repository<EmployeeModule>
+    private employeeModuleRepository: Repository<EmployeeModule>,
+    private readonly connection: Connection,
   ) {}
 
   async create(createEmployeeModuleDto ) {
@@ -18,8 +19,16 @@ export class EmployeeModuleService {
     return response;
   }
 
- async findAll() {
-    return await this.employeeModuleRepository.find();
+  async getGender(){
+    const query = 'SELECT * FROM `gender`';
+    const genderList = await this.connection.query(query);
+    return genderList;
+  }
+
+  async getMaritalStatus(){
+    const query = 'SELECT * FROM `marital_status`';
+    const maritalStatusList = await this.connection.query(query);
+    return maritalStatusList;
   }
 
  async findById(id: number) {
@@ -37,5 +46,9 @@ export class EmployeeModuleService {
 
   remove(id: number) {
     return `This action removes a #${id} employeeModule`;
+  }
+  
+  async findAll() {
+    return await this.employeeModuleRepository.find();
   }
 }
