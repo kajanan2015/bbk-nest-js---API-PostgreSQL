@@ -21,6 +21,4 @@ export class EmployeeModule {
     @ManyToOne(() => CompaniesEntity, company => company.employedetails)
     @JoinColumn({ name: 'companyId' })
     company:CompaniesEntity;
-  
-
 }

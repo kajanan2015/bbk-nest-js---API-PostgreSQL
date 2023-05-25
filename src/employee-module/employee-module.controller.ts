@@ -4,7 +4,6 @@ import { CreateEmployeeModuleDto } from './create-employee-module.dto';
 import { UpdateEmployeeModuleDto } from './update-employee-module.dto';
 import { AuthGuard } from '@nestjs/passport';
 @UseGuards(AuthGuard('jwt'))
-@Controller('framelayout')
 @Controller('employee-module')
 export class EmployeeModuleController {
   constructor(private readonly employeeModuleService: EmployeeModuleService) {}

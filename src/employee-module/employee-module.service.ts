@@ -11,9 +11,11 @@ export class EmployeeModuleService {
     @InjectRepository(EmployeeModule)
     private employeeModuleRepository: Repository<EmployeeModule>
   ) {}
-  async create(createEmployeeModuleDto) {
+
+  async create(createEmployeeModuleDto ) {
     const response=this.employeeModuleRepository.create(createEmployeeModuleDto);
-    return await this.employeeModuleRepository.save(response);
+    await this.employeeModuleRepository.save(response);
+    return response;
   }
 
  async findAll() {
