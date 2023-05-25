@@ -1,5 +1,5 @@
-import { EmpDesignation } from "./employee-designation.entity";
-import { EmployeeType } from "./employee-type.entity";
+import { EmpDesignation } from "./designation/employee-designation.entity";
+import { EmployeeType } from "./employee_type/employee-type.entity";
 import { CompaniesEntity } from "src/companies/companies.entity";
 import { Gender } from "./gender/gender.entity";
 
