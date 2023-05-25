@@ -16,12 +16,18 @@ const stripe = require('stripe')('sk_test_51LfvAGChovVblxJg8YUMSd7MefCrw6DieaPiE
 
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
+import { CompaniesEntity } from 'src/companies/companies.entity';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('user')
 export class UserController {
   constructor(private service: UserService) {}
 
+  @Get('/usercompany/:id')
+  async getUserCompanies(@Param('id') id: number): Promise<CompaniesEntity[]> {
+    return this.service.getCompaniesByUserId(id);
+  }
+  
   @Put('/edit/:id')
   async uppdate(@Param('id') id: number, @Body() data: any) {
 

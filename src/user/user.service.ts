@@ -6,6 +6,7 @@ import { User } from './user.entity';
 import * as bcrypt from 'bcryptjs';
 import { CreateUserDto } from './user.dto';
 import { PermissionRoleEntity } from 'src/permission-role/permission-role.entity';
+import { CompaniesEntity } from 'src/companies/companies.entity';
 @Injectable()
 export class UserService {
   constructor(
@@ -14,6 +15,13 @@ export class UserService {
     @InjectRepository(PermissionRoleEntity)
     private readonly permissionRoleRepository: Repository<PermissionRoleEntity>,
   ) { }
+
+  async getCompaniesByUserId(userId: number): Promise<CompaniesEntity[]> {
+    const user = await this.userRepository.findOne(userId, {
+      relations: ['companies'],
+    });
+    return user.companies;
+  }
 
   async findAll(): Promise<User[]> {
     return await this.userRepository.find({ 
@@ -32,6 +40,7 @@ export class UserService {
     const users= await this.userRepository.findByIds(id);
     return users
   }
+
   async find(id: number): Promise<User> {
     return await this.userRepository.findOne({ where: { id:id, status: 1 },relations:['jobdata']  });
   }
