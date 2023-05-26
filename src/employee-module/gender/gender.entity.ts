@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { EmployeeModule } from "../employee-module.entity";
 
 @Entity('gender')
@@ -12,6 +12,6 @@ export class Gender {
     @Column({ type: 'boolean', default:true})
     status: boolean;
 
-    @OneToOne(()=>EmployeeModule,employeemodule=>employeemodule.gender)
-    employee: EmployeeModule;  
+    @OneToMany(()=>EmployeeModule,employeemodule=>employeemodule.gender, ({cascade:true}))
+    employee: EmployeeModule;
 }

@@ -12,6 +12,6 @@ export class MaritalStatus {
     @Column({ type: 'boolean', default:true})
     status: boolean;
 
-    @OneToOne(()=>EmployeeModule,employeemodule=>employeemodule.maritalStatus)
+    @OneToMany(()=>EmployeeModule,employeemodule=>employeemodule.maritalStatus, ({cascade:true}))
     employee: EmployeeModule;  
 }

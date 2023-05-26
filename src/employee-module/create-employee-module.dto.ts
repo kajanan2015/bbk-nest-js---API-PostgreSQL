@@ -2,6 +2,7 @@ import { EmpDesignation } from "./employee-designation.entity";
 import { EmployeeType } from "./employee-type.entity";
 import { CompaniesEntity } from "src/companies/companies.entity";
 import { Gender } from "./gender/gender.entity";
+import { MaritalStatus } from "./marital_status/maritalStatus.entity";
 
 export class CreateEmployeeModuleDto {
     id: number;
@@ -11,5 +12,20 @@ export class CreateEmployeeModuleDto {
     company:CompaniesEntity[];
     firstName: string;
     lastName: string;
-    gender: Gender[]
+    dob: Date;
+    gender: Gender[];
+    maritalStatus: MaritalStatus[];
+    profilePic: string;
+    profilePicThumb: string;
+    mobilePhone: string;
+    homePhone: string;
+    email: string;
+    emergContactName: string;
+    emergeContactNo: string;
+    addressName: string;
+    addressStreet: string;
+    addressCity: string;
+    addressState: string;
+    addressPostal: string;
+    addressCountry: string;
 }

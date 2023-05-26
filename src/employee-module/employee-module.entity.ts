@@ -24,11 +24,59 @@ export class EmployeeModule {
     @JoinColumn({ name: 'companyId' })
     company:CompaniesEntity;
 
-    @OneToOne(() => Gender,gender => gender.employee)
+    @Column("varchar",{nullable:true, default: () => null})
+    firstName: string|null;
+
+    @Column("varchar",{nullable:true, default: () => null})
+    lastName: string|null;
+
+    @Column({ nullable: true , default: () => null })
+    dob: Date|null;
+
+    @ManyToOne(() => Gender,gender => gender.employee)
     @JoinColumn({name:'gender'})
     gender:Gender;
 
-    @OneToOne(() => MaritalStatus, maritalStatus => maritalStatus.employee)
+    @ManyToOne(() => MaritalStatus, maritalStatus => maritalStatus.employee)
     @JoinColumn({name:'maritalStatus'})
     maritalStatus:MaritalStatus;
+
+    @Column("varchar", { nullable: true , length: 250, default: () => null })
+    profilePic: string|null;
+
+    @Column("varchar", { nullable: true , length: 250, default: () => null })
+    profilePicThumb: string|null;
+
+    @Column("varchar", { nullable: true , length: 250, default: () => null })
+    mobilePhone: string|null;
+
+    @Column("varchar", { nullable: true , length: 250, default: () => null })
+    homePhone: string|null;
+
+    @Column("varchar", { nullable: true , length: 250, default: () => null })
+    email: string|null;
+
+    @Column("varchar", { nullable: true , length: 250, default: () => null })
+    emergContactName: string|null;
+
+    @Column("varchar", { nullable: true , length: 250, default: () => null })
+    emergeContactNo: string|null;
+
+    @Column("varchar", { nullable: true , length: 250, default: () => null })
+    addressName: string|null;
+
+    @Column("varchar", { nullable: true , length: 250, default: () => null })
+    addressStreet: string|null;
+
+    @Column("varchar", { nullable: true , length: 250, default: () => null })
+    addressCity: string|null;
+
+    @Column("varchar", { nullable: true , length: 250, default: () => null })
+    addressState: string|null;
+
+    @Column("varchar", { nullable: true , length: 250, default: () => null })
+    addressPostal: string|null;
+
+    @Column("varchar", { nullable: true , length: 250, default: () => null })
+    addressCountry: string|null;
 }
