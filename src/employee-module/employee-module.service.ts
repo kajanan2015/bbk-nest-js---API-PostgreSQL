@@ -28,6 +28,21 @@ export class EmployeeModuleService {
     const genderList = await this.connection.query(query);
     return genderList;
   }
+  async getEmployeeType(){
+    const query = 'SELECT * FROM `EmployeeType`';
+    const employeeTypeList = await this.connection.query(query);
+    return employeeTypeList;
+  }
+  async getDesignation(){
+    const query = 'SELECT * FROM `employeeDesignation`';
+    const designationList = await this.connection.query(query);
+    return designationList;
+  }
+  async getCompany(){
+    const query = 'SELECT * FROM `company`';
+    const companyList = await this.connection.query(query);
+    return companyList;
+  }
 
   async getMaritalStatus(){
     const query = 'SELECT * FROM `marital_status`';

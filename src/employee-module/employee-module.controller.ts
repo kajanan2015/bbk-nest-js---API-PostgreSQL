@@ -29,6 +29,30 @@ export class EmployeeModuleController {
     };
   }
 
+  @Get('/employee-type')
+  async getEmployeeType(){
+    const employeeTypeList = await this.employeeModuleService.getEmployeeType();
+    return {
+      statusCode: HttpStatus.OK,
+      employeeTypeList
+    };
+  }
+  @Get('/employee-designation')
+  async getDesignation(){
+    const designationList = await this.employeeModuleService.getDesignation();
+    return {
+      statusCode: HttpStatus.OK,
+      designationList
+    };
+  }
+  @Get('/company-name')
+  async getCompany(){
+    const companyList = await this.employeeModuleService.getCompany();
+    return {
+      statusCode: HttpStatus.OK,
+      companyList
+    };
+  }
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   async create(@UploadedFiles() file, @Body() createEmployeeModuleDto: CreateEmployeeModuleDto) {
