@@ -37,7 +37,7 @@ export class CompaniesService {
     return await this.companyRepository.find(
       {
         where: { status: 1, companyIdentifier: 'maincompany' },
-        relations: ['mainCompany', 'users']
+        relations: ['mainCompany', 'mainCompany.users', 'users', 'documents', 'country', 'regAddressCountry', 'companyType']
       }
     );
   }
@@ -61,7 +61,7 @@ export class CompaniesService {
     return await this.companyRepository.find(
       {
         where: { status: 1, mainCompany: Not(IsNull()) },
-        relations: ['mainCompany', 'users']
+        relations: ['mainCompany', 'mainCompany.users', 'users', 'documents', 'country', 'regAddressCountry', 'companyType']
       }
     );
   }
@@ -70,7 +70,7 @@ export class CompaniesService {
     return await this.companyRepository.find(
       {
         where: { status: 1, compstatus: value },
-        relations: ['mainCompany', 'users'],
+        relations: ['mainCompany', 'mainCompany.users', 'users', 'documents', 'country', 'regAddressCountry', 'companyType'],
         order: {
           mainCompany: 'ASC'
         }
@@ -82,7 +82,7 @@ export class CompaniesService {
     return await this.companyRepository.find(
       {
         where: { status: 1, companyIdentifier: "subcompany", compstatus: value },
-        relations: ['mainCompany', 'users']
+        relations: ['mainCompany', 'mainCompany.users', 'users', 'documents', 'country', 'regAddressCountry', 'companyType']
       }
     );
   }
@@ -107,7 +107,7 @@ export class CompaniesService {
             id: mainCompanyId
           }
         },
-        relations: ['mainCompany', 'users']
+        relations:['mainCompany', 'mainCompany.users', 'users', 'documents', 'country', 'regAddressCountry', 'companyType']
       }
     );
   }
@@ -435,7 +435,7 @@ export class CompaniesService {
 
     return await this.companyRepository.findOne(
       id,
-      { relations: ['mainCompany', 'users', 'documents', 'country', 'regAddressCountry'] },
+      { relations: ['mainCompany', 'users', 'documents', 'country', 'regAddressCountry','companyType'] },
     );
   }
 
