@@ -31,7 +31,7 @@ export class EmployeeModule {
     lastName: string|null;
 
     @Column({ nullable: true , default: () => null })
-    dob: Date|null;
+    dob: string|null;
 
     @ManyToOne(() => Gender,gender => gender.employee)
     @JoinColumn({name:'gender'})
