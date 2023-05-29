@@ -11,14 +11,11 @@ import {
   UseInterceptors,
   UploadedFiles,
 } from '@nestjs/common';
-import { CompaniesDTO } from './companies.dto';
-
 import { CompaniesService } from './companies.service';
 import { AuthGuard } from '@nestjs/passport';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
 import { CompaniesEntity } from './companies.entity';
-import { companytype } from './companytype.entity';
 @UseGuards(AuthGuard('jwt'))
 @Controller('companies')
 export class CompaniesController {

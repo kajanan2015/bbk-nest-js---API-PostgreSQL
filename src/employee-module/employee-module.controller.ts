@@ -75,7 +75,9 @@ export class EmployeeModuleController {
   @UseInterceptors(AnyFilesInterceptor())
   async update(@UploadedFiles() file, @Param('id') id: string,  @Body() updateEmployeeModuleDto) {
     const filename = await this.imageUploadService.uploadcompany(file, "empProvidedCopy");    
-    updateEmployeeModuleDto.empProvidedCopy = filename[0]['empProvidedCopy'][0];
+    if(filename.length>0){
+      updateEmployeeModuleDto.empProvidedCopy = filename[0]['providedCopy[]'][0];
+    }
     return this.employeeModuleService.update(id, updateEmployeeModuleDto);
   }
 
