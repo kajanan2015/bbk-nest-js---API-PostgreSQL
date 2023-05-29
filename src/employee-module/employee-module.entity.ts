@@ -79,4 +79,22 @@ export class EmployeeModule {
 
     @Column("varchar", { nullable: true , length: 250, default: () => null })
     addressCountry: string|null;
+
+    @Column("varchar",{ nullable: true, default: null })
+    empProvidedForm: string | null;
+
+    @Column("varchar", { nullable: true , length: 250, default: () => null })
+    dateofJoined: string|null;
+
+    @Column("varchar", { nullable: true , length: 250, default: () => null })
+    niNo: string|null;
+
+    @Column("varchar", { nullable: true , length: 250, default: () => null })
+    totalHolidays: string|null;
+
+    @Column("varchar", { nullable: true , length: 250, default: () => null })
+    empProvidedCopy: string|null;
+
+    @Column("varchar", { nullable: true , length: 250, default: () => null })
+    empProvidedCopyThumb: string|null;
 }
