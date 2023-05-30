@@ -14,13 +14,19 @@ export class EmployeeModuleService {
   ) {}
 
   async create(createEmployeeModuleDto ) {
-    const existingEmployeeId = await this.employeeModuleRepository.findOne({where:{employeeId:createEmployeeModuleDto.employeeId}});
-     if (existingEmployeeId) {
-      return 'Employee ID exist';
+    const existingEmployee = await this.employeeModuleRepository.findOne({where:{employeeId:createEmployeeModuleDto.employeeId}});
+     if (existingEmployee) {
+      const data={
+        ...existingEmployee
+      }
+      const response=this.employeeModuleRepository.update({id:existingEmployee.id}, data);
+      return await this.employeeModuleRepository.findOne({id:existingEmployee.id});;
+     }else {
+      const response=this.employeeModuleRepository.create(createEmployeeModuleDto);
+      await this.employeeModuleRepository.save(response);
+      return response;
      }
-    const response=this.employeeModuleRepository.create(createEmployeeModuleDto);
-    await this.employeeModuleRepository.save(response);
-    return response;
+    
   }
 
   async getGender(){
