@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpStatus, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpStatus, UseInterceptors, UploadedFiles, Put } from '@nestjs/common';
 import { EmployeeModuleService } from './employee-module.service';
 import { CreateEmployeeModuleDto } from './create-employee-module.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -58,7 +58,6 @@ export class EmployeeModuleController {
   async create(@UploadedFiles() file, @Body() createEmployeeModuleDto: CreateEmployeeModuleDto) {
     const filename = await this.imageUploadService.uploadcompany(file, "body");
     createEmployeeModuleDto.profilePic = filename[0]['profilePic[]'];
-    console.log(filename);
     return this.employeeModuleService.create(createEmployeeModuleDto);
   }
 
@@ -72,9 +71,14 @@ export class EmployeeModuleController {
     return this.employeeModuleService.findById(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEmployeeModuleDto) {
-    return this.employeeModuleService.update(+id, updateEmployeeModuleDto);
+  @Put(':id')
+  @UseInterceptors(AnyFilesInterceptor())
+  async update(@UploadedFiles() file, @Param('id') id: string,  @Body() updateEmployeeModuleDto) {
+    const filename = await this.imageUploadService.uploadcompany(file, "empProvidedCopy");    
+    if(filename.length>0){
+      updateEmployeeModuleDto.empProvidedCopy = filename[0]['providedCopy[]'][0];
+    }
+    return this.employeeModuleService.update(id, updateEmployeeModuleDto);
   }
 
   @Delete(':id')

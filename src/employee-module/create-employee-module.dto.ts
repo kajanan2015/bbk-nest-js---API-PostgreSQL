@@ -28,4 +28,10 @@ export class CreateEmployeeModuleDto {
     addressState: string;
     addressPostal: string;
     addressCountry: string;
+    empProvidedForm: string;
+    dateofJoined: string;
+    niNo: string;
+    totalHolidays: string;
+    empProvidedCopy: string;
+    empProvidedCopyThumb: string
 }

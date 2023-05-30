@@ -58,9 +58,13 @@ export class EmployeeModuleService {
   //   await this.employeeModuleRepository.update({ id }, UpdateEmployeeModuleDto);
   //   return await this.employeeModuleRepository.findOne({ id });
   // }
-  async update(id: number, UpdateEmployeeModuleDto: Partial<EmployeeModule>) {
-    await this.employeeModuleRepository.update({ id }, UpdateEmployeeModuleDto);
-    return await this.employeeModuleRepository.findOne({ id });
+  async update(id:string, UpdateEmployeeModuleDto: Partial<EmployeeModule>) {
+    const data={
+      ...UpdateEmployeeModuleDto
+    }
+    const employeerowid=await this.employeeModuleRepository.findOne({where:{employeeId:id}});
+    await this.employeeModuleRepository.update({id:employeerowid.id}, data);
+    return await this.employeeModuleRepository.findOne({id:employeerowid.id});
   }
 
   remove(id: number) {
