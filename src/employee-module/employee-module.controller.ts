@@ -58,6 +58,8 @@ export class EmployeeModuleController {
   async create(@UploadedFiles() file, @Body() createEmployeeModuleDto: CreateEmployeeModuleDto) {
     const filename = await this.imageUploadService.uploadcompany(file, "body");
     createEmployeeModuleDto.profilePic = filename[0]['profilePic[]'];
+    createEmployeeModuleDto.profilePicThumb=await this.imageUploadService.uploadThumbnailToS3(filename[0]['profilePic[]'][0]);
+    // console.log(await this.imageUploadService.uploadThumbnailToS3(filename[0]['profilePic[]'][0]))
     return this.employeeModuleService.create(createEmployeeModuleDto);
   }
 
@@ -77,6 +79,7 @@ export class EmployeeModuleController {
     const filename = await this.imageUploadService.uploadcompany(file, "empProvidedCopy");    
     if(filename.length>0){
       updateEmployeeModuleDto.empProvidedCopy = filename[0]['providedCopy[]'][0];
+      updateEmployeeModuleDto.empProvidedCopyThumb=await this.imageUploadService.uploadThumbnailToS3(filename[0]['providedCopy[]'][0]);
     }
     return this.employeeModuleService.update(id, updateEmployeeModuleDto);
   }
