@@ -84,19 +84,19 @@ export class CompaniesEntity {
   @Column("timestamp", { name: "updatedat", default: () => "CURRENT_TIMESTAMP" })
   updatedat: Date;
 
-  @Column("timestamp", { name: "scheduleddeactivation", default: () => null })
+  @Column("timestamp", { name: "scheduleddeactivation", default: null })
   scheduleddeactivation: Date;
 
-  @Column("varchar", { name: "deactivationreason", default: () => null })
+  @Column("varchar", { name: "deactivationreason", default:  null })
   deactivationreason: string;
 
-  @Column("varchar", { name: "deactivationmethod", default: () => null, comment: 'scheduled/immediate' })
+  @Column("varchar", { name: "deactivationmethod", default:  null, comment: 'scheduled/immediate' })
   deactivationmethod: string;
 
-  @Column("timestamp", { name: "deactivatedtime", default: () => null })
+  @Column("timestamp", { name: "deactivatedtime", default: null })
   deactivatedtime: Date;
 
-  @Column("int", { name: "deactivatedby", default: () => null })
+  @Column("int", { name: "deactivatedby", default:null })
   deactivatedby: number;
 
   @Column("bigint",{default:0,comment:' 0-pending, 1-active, 2-deactivate'})
