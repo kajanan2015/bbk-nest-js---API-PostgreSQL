@@ -212,9 +212,9 @@ console.log(file,89898989)
     return await this.service.deactivatecustomerupdate(id,data);
   }
 
-  @Get("scheduledeactivate/:date")
-  async scheduledeactivatecustomer(@Param('date') date: Date,){
-      return await this.service.scheduledeactivate(date)
+  @Post("scheduledeactivate")
+  async scheduledeactivatecustomer(){
+      return await this.service.scheduledeactivate()
   }
   
 }
