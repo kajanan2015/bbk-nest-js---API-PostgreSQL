@@ -30,8 +30,8 @@ export class EmployeeModule {
     @Column("varchar",{nullable:true, default: () => null})
     lastName: string|null;
 
-    @Column({ nullable: true , default: () => null })
-    dob: string|null;
+    @Column({ nullable: true, default: () => null })
+    dob: Date | null;
 
     @ManyToOne(() => Gender,gender => gender.employee)
     @JoinColumn({name:'gender'})
@@ -83,8 +83,8 @@ export class EmployeeModule {
     @Column("varchar",{ nullable: true, default: null })
     empProvidedForm: string | null;
 
-    @Column("varchar", { nullable: true , length: 250, default: () => null })
-    dateofJoined: string|null;
+    @Column({ nullable: true, default: () => null })
+    dateofJoined: Date | null;
 
     @Column("varchar", { nullable: true , length: 250, default: () => null })
     niNo: string|null;

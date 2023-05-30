@@ -4,13 +4,14 @@ import { UpdateEmployeeModuleDto } from './update-employee-module.dto';
 import { Connection, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmployeeModule } from './employee-module.entity';
-
+import { ImageUploadService } from 'src/imageupload/imageupload.service';
 @Injectable()
 export class EmployeeModuleService {
   constructor(
     @InjectRepository(EmployeeModule)
     private employeeModuleRepository: Repository<EmployeeModule>,
     private readonly connection: Connection,
+    private readonly imageuploadservice: ImageUploadService
   ) {}
 
   async create(createEmployeeModuleDto ) {
