@@ -445,13 +445,13 @@ export class CompaniesService {
   }
 
   async deactivatecustomerupdate(id:number,data){
-    await this.companyRepository.update({id},{scheduleddeactivation:data.datetime,deactivationreason:data.reason,deactivationmethod:'scheduled',deactivatedby:data.user.id});
+    await this.companyRepository.update({id},{scheduleddeactivation:data.scheduledatatime,deactivationreason:data.reason,deactivationmethod:'scheduled',deactivatedby:data.userId});
     return await this.companyRepository.findOne({ id });
   }
 
   async deactivatecustomerupdateimmediate(id:number,data){
     const currentDateTime = new Date();
-    await this.companyRepository.update({id},{ compstatus:2,deactivationreason:data.reason,deactivatedtime:currentDateTime,deactivationmethod:'immediate',deactivatedby:data.user.id });
+    await this.companyRepository.update({id},{ compstatus:2,deactivationreason:data.reason,deactivatedtime:currentDateTime,deactivationmethod:'immediate',deactivatedby:data.userId });
     return await this.companyRepository.findOne({ id });
   }
 

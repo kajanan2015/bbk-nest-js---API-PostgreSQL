@@ -202,13 +202,13 @@ console.log(file,89898989)
   }
   @UseGuards(AuthGuard('jwt'))
   @Put('deactivatecustomerimmediate/:id')
-  async deactivatecustomerimmediate( @Param('id') id:number,@Body('data') data){
+  async deactivatecustomerimmediate( @Param('id') id:number, @Body() data){
     return await this.service.deactivatecustomerupdateimmediate(id,data);
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Post('deactivatecustomer/:id')
-  async deactivatecustomer( @Param('id') id:number,@Body('data') data){
+  @Put('deactivatecustomer/:id')
+  async deactivatecustomer( @Param('id') id:number,@Body() data){
     return await this.service.deactivatecustomerupdate(id,data);
   }
 
