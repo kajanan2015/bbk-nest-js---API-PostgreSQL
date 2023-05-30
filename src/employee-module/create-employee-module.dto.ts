@@ -12,7 +12,7 @@ export class CreateEmployeeModuleDto {
     company:CompaniesEntity[];
     firstName: string;
     lastName: string;
-    dob: string;
+    dob: Date;
     gender: Gender[];
     maritalStatus: MaritalStatus[];
     profilePic: string;
@@ -29,7 +29,7 @@ export class CreateEmployeeModuleDto {
     addressPostal: string;
     addressCountry: string;
     empProvidedForm: string;
-    dateofJoined: string;
+    dateofJoined: Date;
     niNo: string;
     totalHolidays: string;
     empProvidedCopy: string;
