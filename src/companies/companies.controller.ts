@@ -19,13 +19,13 @@ import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
 import { CompaniesEntity } from './companies.entity';
 import { companytype } from './companytype.entity';
-@UseGuards(AuthGuard('jwt'))
+
 @Controller('companies')
 export class CompaniesController {
   constructor(
     private service: CompaniesService,
     private readonly imageUploadService: ImageUploadService) { }
-
+    @UseGuards(AuthGuard('jwt'))
   @Get()
   async showAll() {
     const companies = await this.service.showAll();
@@ -34,7 +34,7 @@ export class CompaniesController {
       companies
     };
   }
-
+  @UseGuards(AuthGuard('jwt'))
 @Get('showcompanylist/:id')
 async showcompanylist(@Param('id') value:number)
 {
@@ -44,6 +44,7 @@ async showcompanylist(@Param('id') value:number)
     showcompanylist
   };
 }
+@UseGuards(AuthGuard('jwt'))
   @Get('/showonlyActivemainCompany/:value')
   async showonlyActivemainCompany(@Param('value') value: number) {
     const companies = await this.service.showonlyActivemainCompany(value);
@@ -53,7 +54,7 @@ async showcompanylist(@Param('id') value:number)
     };
   }
 
-
+  @UseGuards(AuthGuard('jwt'))
   @Get('/showonlyActiveSubCompany/:value')
   async showonlyActivesubCompany(@Param('value') value: number) {
     const companies = await this.service.showonlyActivesubCompany(value);
@@ -62,7 +63,7 @@ async showcompanylist(@Param('id') value:number)
       companies
     };
   }
-
+  @UseGuards(AuthGuard('jwt'))
   @Get('/subcompanies/:mainCompanyId')
   async showSubAll(@Param('mainCompanyId') mainCompanyId: number) {
     const companies = await this.service.showSubAll(mainCompanyId);
@@ -71,7 +72,7 @@ async showcompanylist(@Param('id') value:number)
       companies
     };
   }
-
+  @UseGuards(AuthGuard('jwt'))
   @Get('/showsubcompaniesonly')
   async showSubonlyCompanies() {
     const companies = await this.service.showonlySubCompany();
@@ -80,7 +81,7 @@ async showcompanylist(@Param('id') value:number)
       companies
     };
   }
-
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   async create(@UploadedFiles() file, @Body() companyData) {
@@ -93,7 +94,7 @@ async showcompanylist(@Param('id') value:number)
   //  return filename
  
   }
-
+  @UseGuards(AuthGuard('jwt'))
   @Get('/companyType')
   async getcompanyType(){
     const companyType = await this.service.getcompanyType();
@@ -103,7 +104,7 @@ async showcompanylist(@Param('id') value:number)
     };
   }
 
-
+  @UseGuards(AuthGuard('jwt'))
   @Get('/country')
   async getcountry(){
     const countries = await this.service.getcountry();
@@ -112,7 +113,7 @@ async showcompanylist(@Param('id') value:number)
       countries
     };
   }
-
+  @UseGuards(AuthGuard('jwt'))
   @Get('getmatchsubcompany/:id')
   async getmatchsubcompany(@Param('id') id: number) {
     const subcompany = await this.service.getmatchsubcompany(id);
@@ -121,7 +122,7 @@ async showcompanylist(@Param('id') value:number)
       subcompany,
     };
   }
-
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   async read(@Param('id') id: number) {
     const company = await this.service.read(id);
@@ -132,7 +133,7 @@ async showcompanylist(@Param('id') value:number)
   }
 
   
-
+  @UseGuards(AuthGuard('jwt'))
   @Patch('/edit/:id')
   @UseInterceptors(AnyFilesInterceptor())
   async update(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
@@ -183,23 +184,40 @@ console.log(file,89898989)
   //   }
   //   return await this.service.update(id, data);
   // }
-
+  @UseGuards(AuthGuard('jwt'))
   @Put('/status/:id')
   async updateCompanyStatus(
     @Param('id') id: number,  @Body('compstatus') status,): Promise<CompaniesEntity> {
     return await this.service.updateCompanyStatus(id,status);
   }
-
+  @UseGuards(AuthGuard('jwt'))
   @Post('pages/:companyId')
   async addPageToCompany(
     @Param('companyId') companyId: number,
     @Body('pageIds') pageIds,
   ) {
-    await this.service.addPageToCompany(companyId, pageIds);
+    return await this.service.addPageToCompany(companyId, pageIds);
   }
-
+  @UseGuards(AuthGuard('jwt'))
   @Post('sendemail')
   async sendemail() {
-    await this.service.testemail();
+   return await this.service.testemail();
   }
+  @UseGuards(AuthGuard('jwt'))
+  @Put('deactivatecustomerimmediate/:id')
+  async deactivatecustomerimmediate( @Param('id') id:number,@Body('data') data){
+    return await this.service.deactivatecustomerupdateimmediate(id,data);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('deactivatecustomer/:id')
+  async deactivatecustomer( @Param('id') id:number,@Body('data') data){
+    return await this.service.deactivatecustomerupdate(id,data);
+  }
+
+  @Get("scheduledeactivate/:date")
+  async scheduledeactivatecustomer(@Param('date') date: Date,){
+      return await this.service.scheduledeactivate(date)
+  }
+  
 }

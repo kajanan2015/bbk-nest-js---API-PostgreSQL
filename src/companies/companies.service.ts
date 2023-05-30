@@ -1,6 +1,6 @@
 import { Injectable, HttpStatus, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Not, Repository } from 'typeorm';
+import { IsNull, MoreThanOrEqual, Not, Repository } from 'typeorm';
 import { CompaniesDTO } from './companies.dto';
 import { CompaniesEntity } from './companies.entity';
 import { PagePermissionEntity } from 'src/pagepermission/pagepermission.entity';
@@ -443,6 +443,41 @@ export class CompaniesService {
     await this.companyRepository.update({ id }, { compstatus: () => status });
     return await this.companyRepository.findOne({ id });
   }
+
+  async deactivatecustomerupdate(id:number,data){
+    await this.companyRepository.update({id},{scheduleddeactivation:data.datetime,deactivationreason:data.reason,deactivationmethod:'scheduled',deactivatedby:data.user.id});
+    return await this.companyRepository.findOne({ id });
+  }
+
+  async deactivatecustomerupdateimmediate(id:number,data){
+    const currentDateTime = new Date();
+    await this.companyRepository.update({id},{ compstatus:2,deactivationreason:data.reason,deactivatedtime:currentDateTime,deactivationmethod:'immediate',deactivatedby:data.user.id });
+    return await this.companyRepository.findOne({ id });
+  }
+
+async scheduledeactivate(date:Date){
+  
+  const scheduledeactivate = await this.companyRepository.find({ 
+    where: {scheduleddeactivation:MoreThanOrEqual(date) }, 
+  });
+  if (!scheduledeactivate) {
+    throw new NotFoundException(` date '${date}' not found`);
+  }
+  const currentDateTime = new Date();
+  for (const item of scheduledeactivate) {
+    
+    item.compstatus = 2; 
+    item.scheduleddeactivation=null;
+    item.deactivatedtime=currentDateTime;
+  }
+
+  // Save the updated entities back to the database
+  await this.companyRepository.save(scheduledeactivate);
+
+  // Return or use the updated entities as needed
+  return scheduledeactivate;
+ 
+}
 
   async addPageToCompany(companyId: number, pageIds: number[]): Promise<void> {
     const company = await this.companyRepository.findOne(companyId, {

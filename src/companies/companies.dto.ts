@@ -31,6 +31,13 @@ companyCode: string;
 createdBy: number;
 createdat: Date;
 updatedat: Date;
+
+scheduleddeactivation: Date;
+deactivationreason: string;
+deactivatedtime: Date;
+deactivationmethod: string;
+deactivatedby: number;
+
 compstatus: number;
 billing: string;  
 parentCompanyId: number;
