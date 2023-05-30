@@ -1,6 +1,6 @@
 import { Injectable, HttpStatus, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, LessThanOrEqual, MoreThanOrEqual, Not, Repository } from 'typeorm';
+import { IsNull, LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual, Not, Repository } from 'typeorm';
 import { CompaniesDTO } from './companies.dto';
 import { CompaniesEntity } from './companies.entity';
 import { PagePermissionEntity } from 'src/pagepermission/pagepermission.entity';
@@ -457,10 +457,20 @@ export class CompaniesService {
 
 async scheduledeactivate(){
   const currentDateTime = new Date();
-  const scheduledeactivate = await this.companyRepository.find({ 
-    where: {scheduleddeactivation:(MoreThanOrEqual(currentDateTime) &&  Not(IsNull())) }, 
+  const currentdate = currentDateTime.toLocaleString('en-US', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
   });
-
+  
+  console.log(currentDateTime.toISOString(),888);
+  const scheduledeactivate = await this.companyRepository.find({ 
+    where: {scheduleddeactivation:(LessThanOrEqual(currentDateTime.toISOString()) ) }, 
+  });
+console.log(scheduledeactivate,4343434)
   if (!scheduledeactivate) {
     throw new NotFoundException(` date '${currentDateTime}' not found`);
   }
