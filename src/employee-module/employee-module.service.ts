@@ -17,7 +17,7 @@ export class EmployeeModuleService {
   async create(createEmployeeModuleDto ) {
     const existingEmployee = await this.employeeModuleRepository.findOne({where:{employeeId:createEmployeeModuleDto.employeeId}});
      if (existingEmployee) {
-      const { profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
+      const {providedCopyUrl, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
       const data={
         ...dataWithouturl
       }
