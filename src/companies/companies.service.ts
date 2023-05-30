@@ -457,15 +457,7 @@ export class CompaniesService {
 
 async scheduledeactivate(){
   const currentDateTime = new Date();
-  const currentdate = currentDateTime.toLocaleString('en-US', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
-  
+
   console.log(currentDateTime.toISOString(),888);
   const scheduledeactivate = await this.companyRepository.find({ 
     where: {scheduleddeactivation:(LessThanOrEqual(currentDateTime.toISOString()) ) }, 

@@ -22,6 +22,17 @@ export class CompaniesController {
   constructor(
     private service: CompaniesService,
     private readonly imageUploadService: ImageUploadService) { }
+   
+   
+  @Post("scheduledeactivate")
+  async scheduledeactivatecustomer(){
+    const currentDateTime = new Date();
+
+  console.log(currentDateTime.toISOString(),343434);
+      return await this.service.scheduledeactivate()
+  }
+   
+   
     @UseGuards(AuthGuard('jwt'))
   @Get()
   async showAll() {
@@ -212,9 +223,5 @@ console.log(file,89898989)
     return await this.service.deactivatecustomerupdate(id,data);
   }
 
-  @Post("scheduledeactivate")
-  async scheduledeactivatecustomer(){
-      return await this.service.scheduledeactivate()
-  }
   
 }
