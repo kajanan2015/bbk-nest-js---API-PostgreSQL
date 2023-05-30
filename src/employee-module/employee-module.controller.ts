@@ -57,8 +57,10 @@ export class EmployeeModuleController {
   @UseInterceptors(AnyFilesInterceptor())
   async create(@UploadedFiles() file, @Body() createEmployeeModuleDto: CreateEmployeeModuleDto) {
     const filename = await this.imageUploadService.uploadcompany(file, "body");
-    createEmployeeModuleDto.profilePic = filename[0]['profilePic[]'];
-    createEmployeeModuleDto.profilePicThumb=await this.imageUploadService.uploadThumbnailToS3(filename[0]['profilePic[]'][0]);
+    if(filename.length>0){
+      createEmployeeModuleDto.profilePic = filename[0]['profilePic[]'];
+      createEmployeeModuleDto.profilePicThumb=await this.imageUploadService.uploadThumbnailToS3(filename[0]['profilePic[]'][0]);
+    }    
     // console.log(await this.imageUploadService.uploadThumbnailToS3(filename[0]['profilePic[]'][0]))
     return this.employeeModuleService.create(createEmployeeModuleDto);
   }
