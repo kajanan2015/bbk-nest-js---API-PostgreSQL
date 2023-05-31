@@ -117,7 +117,7 @@ export class CompaniesService {
     if (existingcompanyname) {
       return 'company name exist';
     }
-
+    console.log(companyData,7878787878787)
     const response = await this.systemcodeService.findOne('company')
     const companyCode = response.code + '' + response.startValue
     const newstartvalue = {
@@ -152,10 +152,10 @@ export class CompaniesService {
       if (!company) {
         throw new NotFoundException(`Company with ID ${companyData.parentCompany} not found`);
       }
-      const userIds = company.users.map(user => user.id);
+     const userIds=[];
 
       if (companyData.sameParentCompanyAdmin == "false") {
-
+        userIds.push(company.users.map(user => user.id));
         const existing = await this.userservice.findByEmail(companyData.email);
         if (existing) {
           return "account exist";
@@ -176,6 +176,35 @@ export class CompaniesService {
         const useraccount = userResponse.id.toString();
         userIds.push(useraccount);
       } else {
+        if(companyData.parentCompanyAdmin){
+          for (const value of companyData.parentCompanyAdmin) {
+            userIds.push(value);
+          }
+          
+        }
+        if(companyData.firstName!='' && companyData.lastName!='' && companyData.uType!='' && companyData.profilePic!='' && companyData.profilePicThumb!='' && companyData.password!='' && companyData.phone!='' && companyData.email!=''){
+          console.log(companyData,989898989);
+          const existing = await this.userservice.findByEmail(companyData.email);
+          if (existing) {
+            return "account exist";
+          }
+  
+          const userData = {
+            firstName: companyData.firstName,
+            lastName: companyData.lastName,
+            uType: "SADMIN",
+            profilePic: profileImg,
+            profilePicThumb: profilethumbUrl,
+            password: companyData.password,
+            phone: companyData.phone,
+            email: companyData.email,
+          }
+          const userResponse = await this.userservice.create(userData);
+          await this.mailservice.sendcompanyCreate(companyData.password, companyData.firstName, companyData.companyEmail, companyData.email);
+          const useraccount = userResponse.id.toString();
+          console.log(useraccount,5656536534872)
+          userIds.push(useraccount);
+        }
         await this.mailservice.sendcompanyCreate("", companyData.companyName, companyData.companyEmail, "");
       }
       const users = await this.userRepository.findByIds(userIds);
