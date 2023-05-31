@@ -9,6 +9,54 @@ import { Injectable } from "@nestjs/common";
 export class MailService {
   constructor(private mailerService: MailerService) {}
 
+  async sendcompanyCreateNew(email,companyname){
+  await this.mailerService.sendMail({
+        to: email.trim(),
+        from: "noreply@hexagonasia.com", // override default from
+        subject: `Login Credentials for BBK Application`,
+        template: "./companyconfirmationnew", // `.hbs` extension is appended automatically
+        context: {
+          companyname
+        }});
+  }
+
+
+  async senduserCreate(
+    password: string,
+    name: string,
+    toemail: string,
+    username: string
+  ) {
+    if(password==""||username==""){
+      await this.mailerService.sendMail({
+        to: toemail.trim(),
+        from: "noreply@hexagonasia.com", // override default from
+        subject: `Login Credentials for BBK Application`,
+        template: "./companysameadmin", // `.hbs` extension is appended automatically
+        context: {
+          name,
+          username,
+          password,
+        },
+      });
+    }else{
+      await this.mailerService.sendMail({
+        to: toemail.trim(),
+        from: "noreply@hexagonasia.com", // override default from
+        subject: `Login Credentials for BBK Application`,
+        template: "./userconfirmation", // `.hbs` extension is appended automatically
+        context: {
+          name,
+          username,
+          password,
+        },
+      });
+    }
+    
+  }
+
+
+
   async sendcompanyCreate(
     password: string,
     name: string,

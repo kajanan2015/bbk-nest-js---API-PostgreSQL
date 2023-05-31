@@ -172,7 +172,7 @@ export class CompaniesService {
           email: companyData.email,
         }
         const userResponse = await this.userservice.create(userData);
-        await this.mailservice.sendcompanyCreate(companyData.password, companyData.firstName, companyData.companyEmail, companyData.email);
+        await this.mailservice.senduserCreate(companyData.password, companyData.firstName, companyData.email, companyData.email);
         const useraccount = userResponse.id.toString();
         userIds.push(useraccount);
       } else {
@@ -200,12 +200,14 @@ export class CompaniesService {
             email: companyData.email,
           }
           const userResponse = await this.userservice.create(userData);
-          await this.mailservice.sendcompanyCreate(companyData.password, companyData.firstName, companyData.companyEmail, companyData.email);
+          await this.mailservice.senduserCreate(companyData.password, companyData.firstName, companyData.email, companyData.email);
           const useraccount = userResponse.id.toString();
           console.log(useraccount,5656536534872)
           userIds.push(useraccount);
+        }else{
+          // await this.mailservice.sendcompanyCreate("", companyData.companyName, companyData.companyEmail, "");
         }
-        await this.mailservice.sendcompanyCreate("", companyData.companyName, companyData.companyEmail, "");
+        
       }
       const users = await this.userRepository.findByIds(userIds);
       if (!companyData.sameTradingAddress) {
@@ -254,7 +256,7 @@ export class CompaniesService {
         email: companyData.email,
       }
       const userResponse = await this.userservice.create(userData);
-      await this.mailservice.sendcompanyCreate(companyData.password, companyData.firstName, companyData.companyEmail, companyData.email);
+      await this.mailservice.senduserCreate(companyData.password, companyData.firstName, companyData.email, companyData.email);
       const userIds = userResponse.id.toString();
       const users = await this.userRepository.findByIds(userIds);
 
@@ -285,7 +287,7 @@ export class CompaniesService {
         }
       }
     }
-
+    
     await this.systemcodeService.update(response.id, newstartvalue)
     const newCompany = await this.companyRepository.create(dataCompany);
 
@@ -300,7 +302,7 @@ export class CompaniesService {
     }
 
     // const id=responsesave[0].id
-
+    await this.mailservice.sendcompanyCreateNew(companyData.email, companyData.companyName);
     // await this.companyRepository.update({ id}, { mainCompany: () => newCompany[0].id.toString() });
     return responsesave;
 
