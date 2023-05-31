@@ -63,12 +63,12 @@ export class EmployeeModuleService {
 
   async generateemployeeid(){
     let randomId = randomstring.generate(10);
-    // let response = await this.employeeModuleRepository.find({ where: { employeeId: randomId } });
+    let response = await this.employeeModuleRepository.find({ where: { employeeId: randomId } });
 
-    // while (response.length > 0) {
-    //   randomId = randomstring.generate(10);
-    //   response = await this.employeeModuleRepository.find({ where: { employeeId: randomId } });
-    // }
+    while (response.length > 0) {
+      randomId = randomstring.generate(10);
+      response = await this.employeeModuleRepository.find({ where: { employeeId: randomId } });
+    }
 
     return randomId;
 
