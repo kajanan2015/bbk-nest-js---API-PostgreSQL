@@ -20,6 +20,10 @@ export class EmployeeModuleController {
     };
   }
 
+  @Get('/getemployeecode')
+  async getemployeecode(){
+    return await this.employeeModuleService.generateemployeeid();
+  }
   @Get('/marital-status')
   async getMaritalStatus(){
     const maritalStatusList = await this.employeeModuleService.getMaritalStatus();

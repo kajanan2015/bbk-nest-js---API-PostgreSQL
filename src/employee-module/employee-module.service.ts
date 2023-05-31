@@ -5,6 +5,9 @@ import { Connection, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmployeeModule } from './employee-module.entity';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
+// import randomstring from 'randomstring';
+import * as randomstring from 'randomstring';
+
 @Injectable()
 export class EmployeeModuleService {
   constructor(
@@ -56,6 +59,20 @@ export class EmployeeModuleService {
     const query = 'SELECT * FROM `marital_status`';
     const maritalStatusList = await this.connection.query(query);
     return maritalStatusList;
+  }
+
+  async generateemployeeid(){
+    let randomId = randomstring.generate(10);
+    let response = await this.employeeModuleRepository.find({ where: { employeeId: randomId } });
+
+    while (response.length > 0) {
+      randomId = randomstring.generate(10);
+      response = await this.employeeModuleRepository.find({ where: { employeeId: randomId } });
+    }
+
+    return randomId;
+
+
   }
 
  async findById(id: number) {
