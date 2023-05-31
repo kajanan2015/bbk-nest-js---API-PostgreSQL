@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EmployeeModule } from './employee-module.entity';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
 // import randomstring from 'randomstring';
-import * as randomstring from 'randomstring';
+const randomstring = require("randomstring");
 
 @Injectable()
 export class EmployeeModuleService {
@@ -63,12 +63,12 @@ export class EmployeeModuleService {
 
   async generateemployeeid(){
     let randomId = randomstring.generate(10);
-    let response = await this.employeeModuleRepository.find({ where: { employeeId: randomId } });
+    // let response = await this.employeeModuleRepository.find({ where: { employeeId: randomId } });
 
-    while (response.length > 0) {
-      randomId = randomstring.generate(10);
-      response = await this.employeeModuleRepository.find({ where: { employeeId: randomId } });
-    }
+    // while (response.length > 0) {
+    //   randomId = randomstring.generate(10);
+    //   response = await this.employeeModuleRepository.find({ where: { employeeId: randomId } });
+    // }
 
     return randomId;
 
