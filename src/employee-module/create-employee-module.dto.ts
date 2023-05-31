@@ -33,5 +33,25 @@ export class CreateEmployeeModuleDto {
     niNo: string;
     totalHolidays: string;
     empProvidedCopy: string;
-    empProvidedCopyThumb: string
+    empProvidedCopyThumb: string;
+    isNative: boolean;
+    docType: string;
+    passNo: string;
+    passIssueDate: Date;
+    passExpireDate: Date;
+    officialDocFile: string;
+    officialDocFileThumb: string;
+    visaType: string;
+    visaNo: string;
+    visaIssueDate: Date;
+    visaExpireDate: Date;
+    visaCopy: string;
+    visaCopyThumb: string;
+    passImg: string;
+    passImgThumb: string;
+    bcNo: string;
+    bcIssueDate: Date;
+    bcExpireDate: Date;
+    bcImg: string;
+    bcImgThumb: string
 }
