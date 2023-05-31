@@ -21,7 +21,8 @@ export class EmployeeModuleService {
       const data={
         ...dataWithouturl
       }
-      const response=this.employeeModuleRepository.update({id:existingEmployee.id}, data);
+      const response = await this.employeeModuleRepository.update({id:existingEmployee.id}, data);
+
       return await this.employeeModuleRepository.findOne({id:existingEmployee.id});
      }else {
       const response=this.employeeModuleRepository.create(createEmployeeModuleDto);
