@@ -93,16 +93,21 @@ export class EmployeeModuleService {
       //     data.empProvidedCopyThumb=await this.imageUploadService.uploadThumbnailToS3(filename[0]['empProvidedCopy[]'][0]);
       //   }
       // }
-      
- 
-    
+
     const employeerowid=await this.employeeModuleRepository.findOne({where:{employeeId:id}});
     
-      const documentUpload = data['filenames'];
-      const files = documentUpload.map(documentPath => ({ documentPath, empid: +employeerowid.id }));
-      await this.employeedocumentservice.create(files)
-      delete data['filenames'];
+    const documents = data['filenames'];
     
+    documents.map((document:{}) => {
+      Object.entries(document).map(async ([docType, docUrls]:[string,[]])=>{
+        const empdocs = docUrls.map(url => ({ docType: docType, docPath:url, empid: +employeerowid.id }));
+        if(docType == "empProvidedCopy"){
+          await this.employeedocumentservice.create(empdocs)
+        }
+      })        
+    });    
+    
+    delete data['filenames'];    
     await this.employeeModuleRepository.update({id:+employeerowid.id}, data);
     return await this.employeeModuleRepository.findOne({id:employeerowid.id});
   }
