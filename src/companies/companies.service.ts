@@ -107,7 +107,7 @@ export class CompaniesService {
             id: mainCompanyId
           }
         },
-        relations:['mainCompany', 'mainCompany.users', 'users', 'documents', 'country', 'regAddressCountry', 'companyType']
+        relations: ['mainCompany', 'mainCompany.users', 'users', 'documents', 'country', 'regAddressCountry', 'companyType']
       }
     );
   }
@@ -151,61 +151,129 @@ export class CompaniesService {
       if (!company) {
         throw new NotFoundException(`Company with ID ${companyData.parentCompany} not found`);
       }
-     const userIds=[];
+      const userIds = [];
 
       if (companyData.sameParentCompanyAdmin == "false") {
         userIds.push(company.users.map(user => user.id));
-        const existing = await this.userservice.findByEmail(companyData.email);
-        if (existing) {
-          return "account exist";
-        }
 
-        const userData = {
-          firstName: companyData.firstName,
-          lastName: companyData.lastName,
-          uType: "SADMIN",
-          profilePic: profileImg,
-          profilePicThumb: profilethumbUrl,
-          password: companyData.password,
-          phone: companyData.phone,
-          email: companyData.email,
-        }
-        const userResponse = await this.userservice.create(userData);
-        await this.mailservice.senduserCreate(companyData.password, companyData.firstName, companyData.email, companyData.email);
-        const useraccount = userResponse.id.toString();
-        userIds.push(useraccount);
-      } else {
-        if(companyData.parentCompanyAdmin){
-          for (const value of companyData.parentCompanyAdmin) {
-            userIds.push(value);
-          }
-          
-        }
-        if(companyData.firstName!='' && companyData.lastName!='' && companyData.uType!='' && companyData.profilePic!='' && companyData.profilePicThumb!='' && companyData.password!='' && companyData.phone!='' && companyData.email!=''){
-          const existing = await this.userservice.findByEmail(companyData.email);
+        const adminUsers = companyData.admins;
+
+        for (const admin of adminUsers) {
+          const existing = await this.userservice.findByEmail(admin.email);
           if (existing) {
             return "account exist";
           }
-  
-          const userData = {
-            firstName: companyData.firstName,
-            lastName: companyData.lastName,
+
+          const adminData = {
+            firstName: admin.firstName,
+            lastName: admin.lastName,
             uType: "SADMIN",
             profilePic: profileImg,
             profilePicThumb: profilethumbUrl,
-            password: companyData.password,
-            phone: companyData.phone,
-            email: companyData.email,
+            password: admin.password,
+            phone: admin.phone,
+            email: admin.email,
+          };
+
+          const adminResponse = await this.userservice.create(adminData);
+
+          await this.mailservice.senduserCreate(admin.password, admin.firstName, admin.email, admin.email);
+
+          const userId = adminResponse.id.toString();
+          const adminUser = await this.userRepository.findByIds([userId]);
+
+          if (!companyData.sameTradingAddress) {
+            dataCompany = {
+              ...companyData,
+              companyLogo: logoImg,
+              companyLogoThumb: companythumbUrl,
+              companyCode: companyCode,
+              users: adminUser,
+              documents: files,
+              companyIdentifier: "maincompany"
+            }
+          } else {
+            dataCompany = {
+              ...companyData,
+              regAddressNo: companyData.number,
+              regAddressStreet: companyData.street,
+              regAddressCity: companyData.city,
+              regAddressPostalCode: companyData.postalCode,
+              regAddressCountry: companyData.country,
+              companyLogo: logoImg,
+              companyLogoThumb: companythumbUrl,
+              companyCode: companyCode,
+              users: adminUser,
+              documents: files,
+              companyIdentifier: "maincompany"
+            }
           }
-          const userResponse = await this.userservice.create(userData);
-          await this.mailservice.senduserCreate(companyData.password, companyData.firstName, companyData.email, companyData.email);
-          const useraccount = userResponse.id.toString();
-          console.log(useraccount,5656536534872)
-          userIds.push(useraccount);
-        }else{
+        }
+      } else {
+        if (companyData.parentCompanyAdmin) {
+          for (const value of companyData.parentCompanyAdmin) {
+            userIds.push(value);
+          }
+        }
+        if (companyData.firstName != '' && companyData.lastName != '' && companyData.uType != '' && companyData.profilePic != '' && companyData.profilePicThumb != '' && companyData.password != '' && companyData.phone != '' && companyData.email != '') {
+          const adminUsers = companyData.admins;
+
+          for (const admin of adminUsers) {
+            const existing = await this.userservice.findByEmail(admin.email);
+            if (existing) {
+              return "account exist";
+            }
+
+            const adminData = {
+              firstName: admin.firstName,
+              lastName: admin.lastName,
+              uType: "SADMIN",
+              profilePic: admin.profileImg,
+              profilePicThumb: profilethumbUrl,
+              password: admin.password,
+              phone: admin.phone,
+              email: admin.email,
+            };
+
+            const adminResponse = await this.userservice.create(adminData);
+
+            await this.mailservice.senduserCreate(admin.password, admin.firstName, admin.email, admin.email);
+
+            const userId = adminResponse.id.toString();
+            const adminUser = await this.userRepository.findByIds([userId]);
+            userIds.push(adminUser[0]);
+
+            if (!companyData.sameTradingAddress) {
+              dataCompany = {
+                ...companyData,
+                companyLogo: logoImg,
+                companyLogoThumb: companythumbUrl,
+                companyCode: companyCode,
+                users: adminUser,
+                documents: files,
+                companyIdentifier: "maincompany"
+              }
+            } else {
+              dataCompany = {
+                ...companyData,
+                regAddressNo: companyData.number,
+                regAddressStreet: companyData.street,
+                regAddressCity: companyData.city,
+                regAddressPostalCode: companyData.postalCode,
+                regAddressCountry: companyData.country,
+                companyLogo: logoImg,
+                companyLogoThumb: companythumbUrl,
+                companyCode: companyCode,
+                users: adminUser,
+                documents: files,
+                companyIdentifier: "maincompany"
+              }
+            }
+          }
+        } else {
           // await this.mailservice.sendcompanyCreate("", companyData.companyName, companyData.companyEmail, "");
         }
-        
+
       }
       const users = await this.userRepository.findByIds(userIds);
       if (!companyData.sameTradingAddress) {
@@ -239,57 +307,68 @@ export class CompaniesService {
 
 
     } else {
-      const existing = await this.userservice.findByEmail(companyData.email);
-      if (existing) {
-        return "account exist";
-      }
-      const userData = {
-        firstName: companyData.firstName,
-        lastName: companyData.lastName,
-        uType: "CADMIN",
-        profilePic: profileImg,
-        profilePicThumb: profilethumbUrl,
-        password: companyData.password,
-        phone: companyData.phone,
-        email: companyData.email,
-      }
-      const userResponse = await this.userservice.create(userData);
-      await this.mailservice.senduserCreate(companyData.password, companyData.firstName, companyData.email, companyData.email);
-      const userIds = userResponse.id.toString();
-      const users = await this.userRepository.findByIds(userIds);
+      const adminUsers = companyData.admins;
 
-      if (!companyData.sameTradingAddress) {
-        dataCompany = {
-          ...companyData,
-          companyLogo: logoImg,
-          companyLogoThumb: companythumbUrl,
-          companyCode: companyCode,
-          users: users,
-          documents: files,
-          companyIdentifier: "maincompany"
+      const users = [];
+      for (const admin of adminUsers) {
+        const existing = await this.userservice.findByEmail(admin.email);
+        if (existing) {
+          return "account exist";
         }
-      } else {
-        dataCompany = {
-          ...companyData,
-          regAddressNo: companyData.number,
-          regAddressStreet: companyData.street,
-          regAddressCity: companyData.city,
-          regAddressPostalCode: companyData.postalCode,
-          regAddressCountry: companyData.country,
-          companyLogo: logoImg,
-          companyLogoThumb: companythumbUrl,
-          companyCode: companyCode,
-          users: users,
-          documents: files,
-          companyIdentifier: "maincompany"
+
+        const adminData = {
+          firstName: admin.firstName,
+          lastName: admin.lastName,
+          uType: "CADMIN",
+          profilePic: profileImg,
+          profilePicThumb: profilethumbUrl,
+          password: admin.password,
+          phone: admin.phone,
+          email: admin.email,
+        };
+
+        const adminResponse = await this.userservice.create(adminData);
+
+        await this.mailservice.senduserCreate(admin.password, admin.firstName, admin.email, admin.email);
+
+        const userId = adminResponse.id.toString();
+        const adminUser = await this.userRepository.findByIds([userId]);
+        users.push(adminUser[0]);
+
+        if (!companyData.sameTradingAddress) {
+          dataCompany = {
+            ...companyData,
+            companyLogo: logoImg,
+            companyLogoThumb: companythumbUrl,
+            companyCode: companyCode,
+            users: users,
+            documents: files,
+            companyIdentifier: "maincompany"
+          }
+        } else {
+          dataCompany = {
+            ...companyData,
+            regAddressNo: companyData.number,
+            regAddressStreet: companyData.street,
+            regAddressCity: companyData.city,
+            regAddressPostalCode: companyData.postalCode,
+            regAddressCountry: companyData.country,
+            companyLogo: logoImg,
+            companyLogoThumb: companythumbUrl,
+            companyCode: companyCode,
+            users: users,
+            documents: files,
+            companyIdentifier: "maincompany"
+          }
         }
       }
     }
-    
+
     await this.systemcodeService.update(response.id, newstartvalue)
     const newCompany = await this.companyRepository.create(dataCompany);
-
+    console.log(newCompany, 666666666666)
     const responsesave = await this.companyRepository.save(newCompany);
+    console.log(responsesave, 777777777777777)
     if (dataCompany.companyIdentifier == 'maincompany') {
       const query = `
    UPDATE company
@@ -300,7 +379,7 @@ export class CompaniesService {
     }
 
     // const id=responsesave[0].id
-    await this.mailservice.sendcompanyCreateNew(companyData.email, companyData.companyName);
+    //await this.mailservice.sendcompanyCreateNew(companyData.email, companyData.companyName);
     // await this.companyRepository.update({ id}, { mainCompany: () => newCompany[0].id.toString() });
     return responsesave;
 
@@ -347,7 +426,7 @@ export class CompaniesService {
   }
 
   async update(id: number, data) {
-    console.log(id,66666)
+
     let passcompanyData;
     if (data.sameTradingAddress !== false) {
       passcompanyData = {
@@ -466,7 +545,7 @@ export class CompaniesService {
 
     return await this.companyRepository.findOne(
       id,
-      { relations: ['mainCompany', 'users', 'documents', 'country', 'regAddressCountry','companyType'] },
+      { relations: ['mainCompany', 'users', 'documents', 'country', 'regAddressCountry', 'companyType'] },
     );
   }
 
@@ -475,37 +554,37 @@ export class CompaniesService {
     return await this.companyRepository.findOne({ id });
   }
 
-  async deactivatecustomerupdate(id:number,data){
-    await this.companyRepository.update({id},{scheduleddeactivation:data.scheduledatatime,deactivationreason:data.reason,deactivationmethod:'scheduled',deactivatedby:data.userId});
+  async deactivatecustomerupdate(id: number, data) {
+    await this.companyRepository.update({ id }, { scheduleddeactivation: data.scheduledatatime, deactivationreason: data.reason, deactivationmethod: 'scheduled', deactivatedby: data.userId });
     return await this.companyRepository.findOne({ id });
   }
 
-  async deactivatecustomerupdateimmediate(id:number,data){
+  async deactivatecustomerupdateimmediate(id: number, data) {
     const currentDateTime = new Date();
-    await this.companyRepository.update({id},{ compstatus:2,deactivationreason:data.reason,deactivatedtime:currentDateTime,deactivationmethod:'immediate',deactivatedby:data.userId });
+    await this.companyRepository.update({ id }, { compstatus: 2, deactivationreason: data.reason, deactivatedtime: currentDateTime, deactivationmethod: 'immediate', deactivatedby: data.userId });
     return await this.companyRepository.findOne({ id });
   }
 
-async scheduledeactivate(){
-  const currentDateTime = new Date();
+  async scheduledeactivate() {
+    const currentDateTime = new Date();
 
-  console.log(currentDateTime.toISOString(),888);
-  const scheduledeactivate = await this.companyRepository.find({ 
-    where: {scheduleddeactivation:(LessThanOrEqual(currentDateTime.toISOString()) ) }, 
-  });
-console.log(scheduledeactivate,4343434)
-  if (!scheduledeactivate) {
-    throw new NotFoundException(` date '${currentDateTime}' not found`);
-  }
-  
-  for (const item of scheduledeactivate) {
-    await this.companyRepository.update(item.id,{ compstatus:2, scheduleddeactivation:null,deactivatedtime:currentDateTime});   
-   
-  }
+    console.log(currentDateTime.toISOString(), 888);
+    const scheduledeactivate = await this.companyRepository.find({
+      where: { scheduleddeactivation: (LessThanOrEqual(currentDateTime.toISOString())) },
+    });
+    console.log(scheduledeactivate, 4343434)
+    if (!scheduledeactivate) {
+      throw new NotFoundException(` date '${currentDateTime}' not found`);
+    }
 
-  return scheduledeactivate;
- 
-}
+    for (const item of scheduledeactivate) {
+      await this.companyRepository.update(item.id, { compstatus: 2, scheduleddeactivation: null, deactivatedtime: currentDateTime });
+
+    }
+
+    return scheduledeactivate;
+
+  }
 
   async addPageToCompany(companyId: number, pageIds: number[]): Promise<void> {
     const company = await this.companyRepository.findOne(companyId, {
