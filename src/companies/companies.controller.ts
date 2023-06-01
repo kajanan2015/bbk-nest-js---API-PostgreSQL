@@ -22,18 +22,18 @@ export class CompaniesController {
   constructor(
     private service: CompaniesService,
     private readonly imageUploadService: ImageUploadService) { }
-   
-   
+
+
   @Post("scheduledeactivate")
-  async scheduledeactivatecustomer(){
+  async scheduledeactivatecustomer() {
     const currentDateTime = new Date();
 
-  console.log(currentDateTime.toISOString(),343434);
-      return await this.service.scheduledeactivate()
+    console.log(currentDateTime.toISOString(), 343434);
+    return await this.service.scheduledeactivate()
   }
-   
-   
-    @UseGuards(AuthGuard('jwt'))
+
+
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   async showAll() {
     const companies = await this.service.showAll();
@@ -43,16 +43,15 @@ export class CompaniesController {
     };
   }
   @UseGuards(AuthGuard('jwt'))
-@Get('showcompanylist/:id')
-async showcompanylist(@Param('id') value:number)
-{
-  const showcompanylist= await this.service.showcompanylist(value)
-  return {
-    statusCode: HttpStatus.OK,
-    showcompanylist
-  };
-}
-@UseGuards(AuthGuard('jwt'))
+  @Get('showcompanylist/:id')
+  async showcompanylist(@Param('id') value: number) {
+    const showcompanylist = await this.service.showcompanylist(value)
+    return {
+      statusCode: HttpStatus.OK,
+      showcompanylist
+    };
+  }
+  @UseGuards(AuthGuard('jwt'))
   @Get('/showonlyActivemainCompany/:value')
   async showonlyActivemainCompany(@Param('value') value: number) {
     const companies = await this.service.showonlyActivemainCompany(value);
@@ -94,17 +93,36 @@ async showcompanylist(@Param('id') value:number)
   @UseInterceptors(AnyFilesInterceptor())
   async create(@UploadedFiles() file, @Body() companyData) {
     const filename = await this.imageUploadService.uploadcompany(file, "body");
+
+    const img = filename.find((file) => file.hasOwnProperty(`logoImg`));
+    const logoImg = img ? img['logoImg'][0] : null;
+
+    const document = filename.find((file) => file[`files[]`]);
+    const filesArray = document ? document[`files[]`] : null;
+
     const data = {
       ...companyData,
-      "filename": filename
+      admins: companyData.admins.map((admin, index) => {
+        const imageKey = `admins[${index}][image]`;
+        const file = filename.find((file) => file[imageKey]);
+        const filesname = file ? file[imageKey][0] : null;
+
+        return {
+          ...admin,
+          image: filesname
+        };
+      }),
+      logoImg: logoImg,
+      file: filesArray,
     }
+    console.log(data, 1111111111111111)
     return await this.service.create(data);
-  //  return filename
- 
+    //  return filename
+
   }
   @UseGuards(AuthGuard('jwt'))
   @Get('/companyType')
-  async getcompanyType(){
+  async getcompanyType() {
     const companyType = await this.service.getcompanyType();
     return {
       statusCode: HttpStatus.OK,
@@ -114,7 +132,7 @@ async showcompanylist(@Param('id') value:number)
 
   @UseGuards(AuthGuard('jwt'))
   @Get('/country')
-  async getcountry(){
+  async getcountry() {
     const countries = await this.service.getcountry();
     return {
       statusCode: HttpStatus.OK,
@@ -140,19 +158,17 @@ async showcompanylist(@Param('id') value:number)
     };
   }
 
-  
+
   @UseGuards(AuthGuard('jwt'))
   @Patch('/edit/:id')
   @UseInterceptors(AnyFilesInterceptor())
   async update(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
 
-console.log(companyData,787878)
-console.log(id,909099090)
-console.log(file,89898989)    
+    console.log(companyData, 787878)
     const filename = await this.imageUploadService.uploadcompany(file, "body");
     const data = {
       ...companyData,
-       filename
+      filename
     }
     // console.log(data,8090909)
     // let data = { ...companyData };
@@ -195,8 +211,8 @@ console.log(file,89898989)
   @UseGuards(AuthGuard('jwt'))
   @Put('/status/:id')
   async updateCompanyStatus(
-    @Param('id') id: number,  @Body('compstatus') status,): Promise<CompaniesEntity> {
-    return await this.service.updateCompanyStatus(id,status);
+    @Param('id') id: number, @Body('compstatus') status,): Promise<CompaniesEntity> {
+    return await this.service.updateCompanyStatus(id, status);
   }
   @UseGuards(AuthGuard('jwt'))
   @Post('pages/:companyId')
@@ -209,19 +225,19 @@ console.log(file,89898989)
   @UseGuards(AuthGuard('jwt'))
   @Post('sendemail')
   async sendemail() {
-   return await this.service.testemail();
+    return await this.service.testemail();
   }
   @UseGuards(AuthGuard('jwt'))
   @Put('deactivatecustomerimmediate/:id')
-  async deactivatecustomerimmediate( @Param('id') id:number, @Body() data){
-    return await this.service.deactivatecustomerupdateimmediate(id,data);
+  async deactivatecustomerimmediate(@Param('id') id: number, @Body() data) {
+    return await this.service.deactivatecustomerupdateimmediate(id, data);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Put('deactivatecustomer/:id')
-  async deactivatecustomer( @Param('id') id:number,@Body() data){
-    return await this.service.deactivatecustomerupdate(id,data);
+  async deactivatecustomer(@Param('id') id: number, @Body() data) {
+    return await this.service.deactivatecustomerupdate(id, data);
   }
 
-  
+
 }
