@@ -125,22 +125,9 @@ export class CompaniesService {
     let documentUpload = [];
     let profileImg, logoImg, profilethumbUrl, companythumbUrl = null;
 
-    // Iterate over the array and assign values to variables
-    for (const item of companyData.filename) {
-      if (item.hasOwnProperty('profileImg')) {
-        profileImg = item.profileImg[0];
-        profilethumbUrl = await this.imageUploadService.uploadThumbnailToS3(item.profileImg[0]);
-      }
-      if (item.hasOwnProperty('logoImg')) {
-        logoImg = item.logoImg[0];
-        companythumbUrl = await this.imageUploadService.uploadThumbnailToS3(item.logoImg[0]);
-      }
-      if (item.hasOwnProperty('files[]')) {
-        documentUpload = item['files[]'];
-      }
-    }
-
-    const files = documentUpload.map(documentPath => ({ documentPath }));
+    companythumbUrl = companyData.logoImg ? await this.imageUploadService.uploadThumbnailToS3(companyData.logoImg) : null;
+          
+    const files = companyData.file ? companyData.file.map(documentPath => ({ documentPath })) : null;
 
     let dataCompany;
     //  let newCompany;
@@ -163,12 +150,12 @@ export class CompaniesService {
           if (existing) {
             return "account exist";
           }
-
+          profilethumbUrl = admin.image ? await this.imageUploadService.uploadThumbnailToS3(admin.image) : null;
           const adminData = {
             firstName: admin.firstName,
             lastName: admin.lastName,
             uType: "SADMIN",
-            profilePic: profileImg,
+            profilePic: admin.image,
             profilePicThumb: profilethumbUrl,
             password: admin.password,
             phone: admin.phone,
@@ -181,11 +168,10 @@ export class CompaniesService {
 
           const userId = adminResponse.id.toString();
           const adminUser = await this.userRepository.findByIds([userId]);
-
           if (!companyData.sameTradingAddress) {
             dataCompany = {
               ...companyData,
-              companyLogo: logoImg,
+              companyLogo: companyData.logoImg,
               companyLogoThumb: companythumbUrl,
               companyCode: companyCode,
               users: adminUser,
@@ -200,7 +186,7 @@ export class CompaniesService {
               regAddressCity: companyData.city,
               regAddressPostalCode: companyData.postalCode,
               regAddressCountry: companyData.country,
-              companyLogo: logoImg,
+              companyLogo: companyData.logoImg,
               companyLogoThumb: companythumbUrl,
               companyCode: companyCode,
               users: adminUser,
@@ -223,12 +209,12 @@ export class CompaniesService {
             if (existing) {
               return "account exist";
             }
-
+            profilethumbUrl = admin.image ? await this.imageUploadService.uploadThumbnailToS3(admin.image) : null;
             const adminData = {
               firstName: admin.firstName,
               lastName: admin.lastName,
               uType: "SADMIN",
-              profilePic: admin.profileImg,
+              profilePic: admin.image,
               profilePicThumb: profilethumbUrl,
               password: admin.password,
               phone: admin.phone,
@@ -246,7 +232,7 @@ export class CompaniesService {
             if (!companyData.sameTradingAddress) {
               dataCompany = {
                 ...companyData,
-                companyLogo: logoImg,
+                companyLogo: companyData.logoImg,
                 companyLogoThumb: companythumbUrl,
                 companyCode: companyCode,
                 users: adminUser,
@@ -261,7 +247,7 @@ export class CompaniesService {
                 regAddressCity: companyData.city,
                 regAddressPostalCode: companyData.postalCode,
                 regAddressCountry: companyData.country,
-                companyLogo: logoImg,
+                companyLogo: companyData.logoImg,
                 companyLogoThumb: companythumbUrl,
                 companyCode: companyCode,
                 users: adminUser,
@@ -279,7 +265,7 @@ export class CompaniesService {
       if (!companyData.sameTradingAddress) {
         dataCompany = {
           ...companyData,
-          companyLogo: logoImg,
+          companyLogo: companyData.logoImg,
           companyLogoThumb: companythumbUrl,
           companyCode: companyCode,
           users: users,
@@ -295,7 +281,7 @@ export class CompaniesService {
           regAddressCity: companyData.city,
           regAddressPostalCode: companyData.postalCode,
           regAddressCountry: companyData.country,
-          companyLogo: logoImg,
+          companyLogo: companyData.logoImg,
           companyLogoThumb: companythumbUrl,
           companyCode: companyCode,
           users: users,
@@ -315,12 +301,12 @@ export class CompaniesService {
         if (existing) {
           return "account exist";
         }
-
+        profilethumbUrl = admin.image ? await this.imageUploadService.uploadThumbnailToS3(admin.image) : null;
         const adminData = {
           firstName: admin.firstName,
           lastName: admin.lastName,
           uType: "CADMIN",
-          profilePic: profileImg,
+          profilePic: admin.image,
           profilePicThumb: profilethumbUrl,
           password: admin.password,
           phone: admin.phone,
@@ -338,7 +324,7 @@ export class CompaniesService {
         if (!companyData.sameTradingAddress) {
           dataCompany = {
             ...companyData,
-            companyLogo: logoImg,
+            companyLogo: companyData.logoImg,
             companyLogoThumb: companythumbUrl,
             companyCode: companyCode,
             users: users,
@@ -353,7 +339,7 @@ export class CompaniesService {
             regAddressCity: companyData.city,
             regAddressPostalCode: companyData.postalCode,
             regAddressCountry: companyData.country,
-            companyLogo: logoImg,
+            companyLogo: companyData.logoImg,
             companyLogoThumb: companythumbUrl,
             companyCode: companyCode,
             users: users,
@@ -366,9 +352,8 @@ export class CompaniesService {
 
     await this.systemcodeService.update(response.id, newstartvalue)
     const newCompany = await this.companyRepository.create(dataCompany);
-    console.log(newCompany, 666666666666)
     const responsesave = await this.companyRepository.save(newCompany);
-    console.log(responsesave, 777777777777777)
+
     if (dataCompany.companyIdentifier == 'maincompany') {
       const query = `
    UPDATE company

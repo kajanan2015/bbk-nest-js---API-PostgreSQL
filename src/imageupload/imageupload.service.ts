@@ -124,8 +124,6 @@ async deletedoc(data){
           fileInfo.push(newObj);
         }
         }
-
-console.log(fileInfo,99999)
    return fileInfo;
   }
 
