@@ -15,67 +15,67 @@ export class CompaniesEntity {
   // @Column("int",{ nullable: true ,  default: () => null })
   // companyType: number | null;
 
-  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
   companyName: string | null;
 
-  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
   companyEmail: string | null;
 
-  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
   companyPhone: string | null;
 
-  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
   website: string | null;
 
-  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
   number: string | null;
 
-  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
   street: string | null;
 
-  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
   city: string | null;
 
   // @Column("int",{ nullable: true , default: () => null })
   // country: number | null;
 
-  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
   postalCode: string | null;
 
-  @Column("varchar",{ nullable: true , length: 250, default: () => null })
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
   vat: string | null;
 
-  @Column("varchar",{ nullable: true , length: 250, default: () => null })
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
   registrationNumber: string | null;
 
-  @Column("varchar",{ nullable: true , length: 250, default: () => null })
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
   regAddressNo: string | null;
 
-  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
   regAddressStreet: string | null;
 
-  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
   regAddressCity: string | null;
 
   // @Column("int",{ nullable: true , default: () => null })
   // regAddressCountry: number;
 
-  @Column("varchar", { nullable: true , length: 250, default: () => null })
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
   regAddressPostalCode: string | null;
 
-  @Column({ type: 'boolean', default:true})
+  @Column({ type: 'boolean', default: true })
   status: boolean;
 
-  @Column("varchar", {  length: 300,nullable:true,default: () => null })
+  @Column("varchar", { length: 300, nullable: true, default: () => null })
   companyLogo: string;
 
-  @Column("varchar", {  length: 300,nullable:true,default: () => null })
+  @Column("varchar", { length: 300, nullable: true, default: () => null })
   companyLogoThumb: string;
 
-  @Column("varchar", {  length: 100,nullable:true,default: () => null })
+  @Column("varchar", { length: 100, nullable: true, default: () => null })
   companyCode: string;
 
-  @Column("int",{nullable:true, default: () => null})
+  @Column("int", { nullable: true, default: () => null })
   createdBy: number;
 
   @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
@@ -87,30 +87,33 @@ export class CompaniesEntity {
   @Column("timestamp", { name: "scheduleddeactivation", default: null })
   scheduleddeactivation: Date;
 
-  @Column("varchar", { name: "deactivationreason", default:null })
+  @Column("varchar", { name: "deactivationreason", default: null })
   deactivationreason: string;
 
-  @Column("varchar", { name: "deactivationmethod", default:null, comment: 'scheduled/immediate' })
+  @Column("varchar", { name: "deactivationmethod", default: null, comment: 'scheduled/immediate' })
   deactivationmethod: string;
 
-  @Column("timestamp", { name: "deactivatedtime", default:null })
+  @Column("timestamp", { name: "deactivatedtime", default: null })
   deactivatedtime: Date;
 
-  @Column("int", { name: "deactivatedby", default:null })
+  @Column("int", { name: "deactivatedby", default: null })
   deactivatedby: number;
 
-  @Column("bigint",{default:0,comment:' 0-pending, 1-active, 2-deactivate'})
+  @Column("bigint", { default: 0, comment: ' 0-pending, 1-active, 2-deactivate' })
   compstatus: number;
 
-  @Column("varchar", {  length: 100,nullable:true,default: () => null })
+  @Column("varchar", { length: 100, nullable: true, default: () => null })
   billing: string;
-  
-  @Column("varchar", {  length: 100,nullable:true,default:"maincompany"})
+
+  @Column("varchar", { length: 100, nullable: true, default: "maincompany" })
   companyIdentifier: string;
 
-  @OneToMany(() => CompanyDocument, companyDocuments => companyDocuments.company,{ cascade: true })
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
+  code: string;
+
+  @OneToMany(() => CompanyDocument, companyDocuments => companyDocuments.company, { cascade: true })
   documents: CompanyDocument[];
-  
+
   @ManyToOne(() => CompaniesEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'parentCompanyId' })
   mainCompany: CompaniesEntity;
@@ -132,17 +135,17 @@ export class CompaniesEntity {
   users: User[];
 
   @ManyToOne(() => country, country => country.companyCountry)
-@JoinColumn({ name: 'country' })
-country: country;
+  @JoinColumn({ name: 'country' })
+  country: country;
 
-@ManyToOne(() => country, countryreg => countryreg.companyRegAddressCountry)
-@JoinColumn({ name: 'regAddressCountry' })
-regAddressCountry: country;
+  @ManyToOne(() => country, countryreg => countryreg.companyRegAddressCountry)
+  @JoinColumn({ name: 'regAddressCountry' })
+  regAddressCountry: country;
 
-@ManyToOne(() => companytype, companytype => companytype.companyType)
-@JoinColumn({ name: 'companyType' })
-companyType: companytype;
+  @ManyToOne(() => companytype, companytype => companytype.companyType)
+  @JoinColumn({ name: 'companyType' })
+  companyType: companytype;
 
-@OneToMany(()=>EmployeeModule,employeemodule=>employeemodule.company,({cascade:true}))
-employedetails:EmployeeModule[];
+  @OneToMany(() => EmployeeModule, employeemodule => employeemodule.company, ({ cascade: true }))
+  employedetails: EmployeeModule[];
 }

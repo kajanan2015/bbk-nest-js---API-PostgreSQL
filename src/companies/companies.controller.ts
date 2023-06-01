@@ -146,9 +146,7 @@ async showcompanylist(@Param('id') value:number)
   @UseInterceptors(AnyFilesInterceptor())
   async update(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
 
-console.log(companyData,787878)
-console.log(id,909099090)
-console.log(file,89898989)    
+console.log(companyData,787878) 
     const filename = await this.imageUploadService.uploadcompany(file, "body");
     const data = {
       ...companyData,

@@ -117,7 +117,6 @@ export class CompaniesService {
     if (existingcompanyname) {
       return 'company name exist';
     }
-    console.log(companyData,7878787878787)
     const response = await this.systemcodeService.findOne('company')
     const companyCode = response.code + '' + response.startValue
     const newstartvalue = {
@@ -183,7 +182,6 @@ export class CompaniesService {
           
         }
         if(companyData.firstName!='' && companyData.lastName!='' && companyData.uType!='' && companyData.profilePic!='' && companyData.profilePicThumb!='' && companyData.password!='' && companyData.phone!='' && companyData.email!=''){
-          console.log(companyData,989898989);
           const existing = await this.userservice.findByEmail(companyData.email);
           if (existing) {
             return "account exist";
@@ -362,6 +360,7 @@ export class CompaniesService {
         ...(data.city ? { city: data.city } : {}),
         ...(data.postalCode ? { postalCode: data.postalCode } : {}),
         ...(data.vat ? { vat: data.vat } : {}),
+        ...(data.code ? { code: data.code } : {}),
         ...(data.registrationNumber ? { registrationNumber: data.registrationNumber } : {}),
         ...(data.regAddressNo ? { regAddressNo: data.regAddressNo } : {}),
         ...(data.regAddressStreet ? { regAddressStreet: data.regAddressStreet } : {}),
@@ -382,6 +381,7 @@ export class CompaniesService {
         ...(data.city ? { city: data.city } : {}),
         ...(data.postalCode ? { postalCode: data.postalCode } : {}),
         ...(data.vat ? { vat: data.vat } : {}),
+        ...(data.code ? { code: data.code } : {}),
         ...(data.registrationNumber ? { registrationNumber: data.registrationNumber } : {}),
         ...({ regAddressNo: data.regAddressNo }),
         ...({ regAddressStreet: data.regAddressStreet }),
