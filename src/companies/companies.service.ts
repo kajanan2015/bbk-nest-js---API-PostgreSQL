@@ -122,15 +122,15 @@ export class CompaniesService {
     const newstartvalue = {
       startValue: response.startValue + 1
     }
-    let documentUpload = [];
-    let profileImg, logoImg, profilethumbUrl, companythumbUrl = null;
+
+    let profilethumbUrl, companythumbUrl = null;
 
     companythumbUrl = companyData.logoImg ? await this.imageUploadService.uploadThumbnailToS3(companyData.logoImg) : null;
-          
+
     const files = companyData.file ? companyData.file.map(documentPath => ({ documentPath })) : null;
 
     let dataCompany;
-    //  let newCompany;
+
     if (companyData.parentCompany && companyData.parentCompany != "") {
       const company = await this.companyRepository.findOne(companyData.parentCompany, {
         relations: ['users']
@@ -290,8 +290,6 @@ export class CompaniesService {
           companyIdentifier: "subcompany"
         }
       }
-
-
     } else {
       const adminUsers = companyData.admins;
 
@@ -411,7 +409,7 @@ export class CompaniesService {
   }
 
   async update(id: number, data) {
-
+    console.log(data, 11111111111)
     let passcompanyData;
     if (data.sameTradingAddress !== false) {
       passcompanyData = {
@@ -497,32 +495,32 @@ export class CompaniesService {
       }
     }
 
-
     if (data.users) {
-      const passuserData = {
-        ...(data.users[0].firstName ? { firstName: data.users[0].firstName } : {}),
-        ...(data.users[0].lastName ? { lastName: data.users[0].lastName } : {}),
-        ...(data.users[0].email ? { email: data.users[0].email } : {}),
-        ...(data.users[0].phone ? { phone: data.users[0].phone } : {}),
-        ...(data.users[0].password ? { password: data.users[0].password } : {}),
-      }
+      const passuserData = data.users.map((user) => ({
+        ...(user.firstName ? { firstName: user.firstName } : {}),
+        ...(user.lastName ? { lastName: user.lastName } : {}),
+        ...(user.email ? { email: user.email } : {}),
+        ...(user.phone ? { phone: user.phone } : {}),
+        ...(user.password ? { password: user.password } : {}),
+      }));
 
-      const userResponse = await this.userservice.update(data.userId, passuserData);
+      const userResponse = await Promise.all(passuserData.map((user) => this.userservice.update(data.userId, user)));
 
       if (data.existingCompanyEmail) {
-        if (data.users[0].password && data.users[0].email) {
-          await this.mailservice.sendcompanyCreate(data.users[0].password, "user", data.users[0].email, data.users[0].email);
+        for (const user of data.users) {
+          if (user.password && user.email) {
+            await this.mailservice.sendcompanyCreate(user.password, "user", user.email, user.email);
+          } else if (user.email) {
+            await this.mailservice.sendcompanyCreate("password is not changed", "user", user.email, user.email);
+          } else if (user.password) {
+            // await this.mailservice.sendcompanyCreate(user.password, "user", data.existingCompanyEmail, "your username is not changed");
+          } else {
+            await this.mailservice.sendcompanyCreate("password is not changed. But user profile details are changed", "user", data.existingCompanyEmail, "your username is not changed");
+          }
         }
-        else if (data.users[0].email) {
-          await this.mailservice.sendcompanyCreate("password is not change", "user", data.users[0].email, data.users[0].email);
-        } else if (data.users[0].password) {
-          // await this.mailservice.sendcompanyCreate(data.users[0].password, "user", data.existingCompanyEmail, "your username is not change");
-        } else {
-          await this.mailservice.sendcompanyCreate("password is not change. But user profile details are change", "user", data.existingCompanyEmail, "your username is not change");
-        }
-
       }
     }
+
 
     if (Object.keys(passcompanyData).length > 0) {
       await this.companyRepository.update({ id }, passcompanyData);
