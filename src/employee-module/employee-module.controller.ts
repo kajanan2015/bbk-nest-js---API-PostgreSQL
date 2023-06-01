@@ -83,12 +83,12 @@ export class EmployeeModuleController {
   @Put(':id')
   @UseInterceptors(AnyFilesInterceptor())
   async update(@UploadedFiles() file, @Param('id') id: string,  @Body() updateEmployeeModuleDto) {
-    const filename = await this.imageUploadService.uploadcompany(file, "empProvidedCopy");    
-    if(filename.length>0){
-      updateEmployeeModuleDto.empProvidedCopy = filename[0]['empProvidedCopy[]'][0];
-      updateEmployeeModuleDto.empProvidedCopyThumb=await this.imageUploadService.uploadThumbnailToS3(filename[0]['empProvidedCopy[]'][0]);
-    }
-    return this.employeeModuleService.update(id, updateEmployeeModuleDto);
+    const filenames = await this.imageUploadService.uploadcompany(file, "body");
+    const data = {
+      ...updateEmployeeModuleDto,
+      filenames
+    }    
+    return this.employeeModuleService.update(id, data);
   }
 
   @Delete(':id')

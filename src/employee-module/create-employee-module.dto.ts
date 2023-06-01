@@ -3,6 +3,7 @@ import { EmployeeType } from "./employee_type/employee-type.entity";
 import { CompaniesEntity } from "src/companies/companies.entity";
 import { Gender } from "./gender/gender.entity";
 import { MaritalStatus } from "./marital_status/maritalStatus.entity";
+import { EmployeeDocument } from "src/employee-document/employee-document.entity";
 
 export class CreateEmployeeModuleDto {
     id: number;
@@ -34,11 +35,12 @@ export class CreateEmployeeModuleDto {
     totalHolidays: string;
     empProvidedCopy: string;
     empProvidedCopyThumb: string;
-    isNative: boolean;
-    docType: string;
-    passNo: string;
-    passIssueDate: Date;
-    passExpireDate: Date;
+    isNonNative: boolean;
+    documents: EmployeeDocument[];
+    officialDocType: string;
+    officialDocNo: string;
+    officialDocIssueDate: Date;
+    officialDocExpireDate: Date;
     officialDocFile: string;
     officialDocFileThumb: string;
     visaType: string;
@@ -47,11 +49,4 @@ export class CreateEmployeeModuleDto {
     visaExpireDate: Date;
     visaCopy: string;
     visaCopyThumb: string;
-    passImg: string;
-    passImgThumb: string;
-    bcNo: string;
-    bcIssueDate: Date;
-    bcExpireDate: Date;
-    bcImg: string;
-    bcImgThumb: string
 }

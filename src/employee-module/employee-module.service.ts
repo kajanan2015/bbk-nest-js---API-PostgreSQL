@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateEmployeeModuleDto } from './create-employee-module.dto';
-import { UpdateEmployeeModuleDto } from './update-employee-module.dto';
 import { Connection, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmployeeModule } from './employee-module.entity';
-import { ImageUploadService } from 'src/imageupload/imageupload.service';
+import { EmployeeDocumentService } from 'src/employee-document/employee-document.service';
+
 // import randomstring from 'randomstring';
 const randomstring = require("randomstring");
 
@@ -14,8 +13,8 @@ export class EmployeeModuleService {
     @InjectRepository(EmployeeModule)
     private employeeModuleRepository: Repository<EmployeeModule>,
     private readonly connection: Connection,
-    private readonly imageuploadservice: ImageUploadService
-  ) {}
+    private readonly employeedocumentservice: EmployeeDocumentService,
+    ) {}
 
   async create(createEmployeeModuleDto ) {
     const existingEmployee = await this.employeeModuleRepository.findOne({where:{employeeId:createEmployeeModuleDto.employeeId}});
@@ -87,8 +86,24 @@ export class EmployeeModuleService {
     const data={
       ...UpdateEmployeeModuleDto
     }
+   
+      // for (const filename of data['filenames']) {
+      //   if (filename['empProvidedCopy[]']) {
+      //     data.empProvidedCopy = filename[0]['empProvidedCopy[]'][0];
+      //     data.empProvidedCopyThumb=await this.imageUploadService.uploadThumbnailToS3(filename[0]['empProvidedCopy[]'][0]);
+      //   }
+      // }
+      
+ 
+    
     const employeerowid=await this.employeeModuleRepository.findOne({where:{employeeId:id}});
-    await this.employeeModuleRepository.update({id:employeerowid.id}, data);
+    
+      const documentUpload = data['filenames'];
+      const files = documentUpload.map(documentPath => ({ documentPath, empid: +employeerowid.id }));
+      await this.employeedocumentservice.create(files)
+      delete data['filenames'];
+    
+    await this.employeeModuleRepository.update({id:+employeerowid.id}, data);
     return await this.employeeModuleRepository.findOne({id:employeerowid.id});
   }
 

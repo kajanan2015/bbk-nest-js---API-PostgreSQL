@@ -4,6 +4,7 @@ import { EmpDesignation } from './designation/employee-designation.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
 import { Gender } from './gender/gender.entity';
 import { MaritalStatus } from './marital_status/maritalStatus.entity';
+import { EmployeeDocument } from 'src/employee-document/employee-document.entity';
 @Entity()
 export class EmployeeModule {
     @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
@@ -92,70 +93,13 @@ export class EmployeeModule {
     @Column("varchar", { nullable: true, length: 250, default: () => null })
     totalHolidays: string | null;
 
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    empProvidedCopy: string | null;
+    // @Column("varchar", { nullable: true, length: 250, default: () => null })
+    // empProvidedCopy: string | null;
 
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    empProvidedCopyThumb: string | null;
+    // @Column("varchar", { nullable: true, length: 250, default: () => null })
+    // empProvidedCopyThumb: string | null;
 
-    @Column({ nullable: true, default: null })
-    isNative: boolean | null;
-
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    docType: string | null;
-
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    passNo: string | null;
-
-    @Column({ nullable: true, default: () => null })
-    passIssueDate: Date | null;
-
-    @Column({ nullable: true, default: () => null })
-    passExpireDate: Date | null;
-
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    officialDocFile: string | null;
-
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    officialDocFileThumb: string | null;
-
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    visaType: string | null;
-
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    visaNo: string | null;
-
-    @Column({ nullable: true, default: () => null })
-    visaIssueDate: Date | null;
-
-    @Column({ nullable: true, default: () => null })
-    visaExpireDate: Date | null;
-
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    visaCopy: string | null;
-
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    visaCopyThumb: string | null;
-
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    passImg: string | null;
-
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    passImgThumb: string | null;
-
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    bcNo: string | null;
-
-    @Column({ nullable: true, default: () => null })
-    bcIssueDate: Date | null;
-
-    @Column({ nullable: true, default: () => null })
-    bcExpireDate: Date | null;
-
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    bcImg: string | null;
-
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    bcImgThumb: string | null;
+    @OneToMany(() => EmployeeDocument, empDocuments => empDocuments.empid,{ cascade: true })
+    documents: EmployeeDocument[];
 
 }

@@ -9,7 +9,6 @@ export class CompanyDocument {
   @Column("varchar", {  length: 250 })
   documentPath: string;
 
-
   @ManyToOne(() => CompaniesEntity, company => company.documents )
   @JoinColumn({ name: 'companyId' })
   company: CompaniesEntity;

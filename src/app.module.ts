@@ -35,6 +35,7 @@ import { AccidentUploadThirdPartyModule } from './accident-upload-third-party/ac
 import { MovementModule } from './movement/movement.module';
 import { FramelayoutModule } from './framelayout/framelayout.module';
 import { EmployeeModuleModule } from './employee-module/employee-module.module';
+import { EmployeeDocumentModule } from './employee-document/employee-document.module';
 
 
 
@@ -76,7 +77,8 @@ const settings = require("../ormconfig.js");
     AccidentUploadThirdPartyModule,
     MovementModule,
     FramelayoutModule,
-    EmployeeModuleModule
+    EmployeeModuleModule,
+    EmployeeDocumentModule
   ],
   controllers: [AppController],
   providers: [AppService],
