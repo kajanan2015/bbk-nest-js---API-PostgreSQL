@@ -20,9 +20,9 @@ export class EmployeeModuleController {
     };
   }
 
-  @Get('/getemployeecode')
-  async getemployeecode(){
-    return await this.employeeModuleService.generateemployeeid();
+  @Get('/getemployeecode/:id')
+  async getemployeecode(@Param('id') id: number){
+    return await this.employeeModuleService.generateemployeeid(id);
   }
   @Get('/marital-status')
   async getMaritalStatus(){

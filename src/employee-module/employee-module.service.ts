@@ -3,7 +3,7 @@ import { Connection, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmployeeModule } from './employee-module.entity';
 import { EmployeeDocumentService } from 'src/employee-document/employee-document.service';
-
+import { CompaniesService } from 'src/companies/companies.service';
 // import randomstring from 'randomstring';
 const randomstring = require("randomstring");
 
@@ -14,6 +14,7 @@ export class EmployeeModuleService {
     private employeeModuleRepository: Repository<EmployeeModule>,
     private readonly connection: Connection,
     private readonly employeedocumentservice: EmployeeDocumentService,
+    private  companyservice:CompaniesService,
     ) {}
 
   async create(createEmployeeModuleDto ) {
@@ -60,18 +61,18 @@ export class EmployeeModuleService {
     return maritalStatusList;
   }
 
-  async generateemployeeid(){
-    let randomId = randomstring.generate(10);
-    let response = await this.employeeModuleRepository.find({ where: { employeeId: randomId } });
+  async generateemployeeid(id){
+    const individualcompany=await this.companyservice.read(id)
+    let randomId = randomstring.generate(7);
+    let newrandomId=individualcompany.code+'-'+randomId;;
+    let response = await this.employeeModuleRepository.find({ where: { employeeId: newrandomId } });
 
     while (response.length > 0) {
-      randomId = randomstring.generate(10);
-      response = await this.employeeModuleRepository.find({ where: { employeeId: randomId } });
+      randomId = randomstring.generate(7);
+      newrandomId=individualcompany.code+'-'+randomId;
+      response = await this.employeeModuleRepository.find({ where: { employeeId: newrandomId } });
     }
-
-    return randomId;
-
-
+    return newrandomId;
   }
 
  async findById(id: number) {

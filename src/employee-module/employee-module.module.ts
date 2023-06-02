@@ -6,6 +6,8 @@ import { EmployeeModule } from './employee-module.entity';
 import { EmployeeType } from './employee_type/employee-type.entity';
 import { EmpDesignation } from './designation/employee-designation.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
+import { CompaniesService } from 'src/companies/companies.service';
+import { CompaniesModule } from 'src/companies/companies.module';
 import { Gender} from './gender/gender.entity';
 import { MaritalStatus } from './marital_status/maritalStatus.entity';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
@@ -13,9 +15,17 @@ import { ImageUploadController } from 'src/imageupload/imageupload.controller';
 import { EmployeeDocument } from 'src/employee-document/employee-document.entity';
 import { EmployeeDocumentService } from 'src/employee-document/employee-document.service';
 import { EmployeeDocumentModule } from 'src/employee-document/employee-document.module';
+import { PagePermissionEntity } from 'src/pagepermission/pagepermission.entity';
+import { CompanyDocument } from 'src/company-document/company-document.entity';
+import { SystemCode } from 'src/system-code/system-code.entity';
+import { SystemCodeService } from 'src/system-code/system-code.service';
+import { UserService } from 'src/user/user.service';
+import { CompanyDocumentService } from 'src/company-document/company-document.service';
+import { User } from 'src/user/user.entity';
+import { PermissionRoleEntity } from 'src/permission-role/permission-role.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([EmployeeType,EmployeeModule,EmpDesignation,CompaniesEntity, Gender, MaritalStatus,EmployeeDocument]), EmployeeDocumentModule],
+  imports: [TypeOrmModule.forFeature([EmployeeType,EmployeeModule,EmpDesignation,CompaniesEntity, Gender, MaritalStatus,EmployeeDocument, PagePermissionEntity, CompanyDocument , SystemCode , User,PermissionRoleEntity]),EmployeeDocumentModule,CompaniesModule],
   controllers: [EmployeeModuleController, ImageUploadController],
-  providers: [EmployeeModuleService, ImageUploadService, EmployeeModuleService, EmployeeDocumentService]
+  providers: [EmployeeModuleService, ImageUploadService, EmployeeDocumentService, CompaniesService, SystemCodeService, UserService,CompanyDocumentService ]
 })
 export class EmployeeModuleModule {}
