@@ -238,6 +238,12 @@ export class CompaniesController {
   async deactivatecustomer(@Param('id') id: number, @Body() data) {
     return await this.service.deactivatecustomerupdate(id, data);
   }
-
+  
+  @UseGuards(AuthGuard('jwt'))
+  @Post('checkcompanycode/:code')
+  async checkcompanycode(@Param('code') code: string) {
+    console.log(code)
+    return await this.service.checkcompanycode(code);
+  }
 
 }

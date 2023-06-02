@@ -599,4 +599,14 @@ export class CompaniesService {
     const username = "dfdfd";
     await this.mailservice.sendcompanyCreate(password, name, toemail, username);
   }
+
+  async checkcompanycode(code){
+    const checkcodeexist=await this.companyRepository.find({where:{code}})
+    if(checkcodeexist.length>0){
+      return 1;
+    }else{
+      return 0;
+    }
+
+  }
 }
