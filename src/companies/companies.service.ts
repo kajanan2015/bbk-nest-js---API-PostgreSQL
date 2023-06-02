@@ -319,31 +319,22 @@ export class CompaniesService {
         const adminUser = await this.userRepository.findByIds([userId]);
         users.push(adminUser[0]);
 
+        const dataCompany = {
+          ...companyData,
+          companyLogo: companyData.logoImg,
+          companyLogoThumb: companythumbUrl,
+          companyCode: companyCode,
+          users: users,
+          documents: files,
+          companyIdentifier: "maincompany",
+        };
+        
         if (!companyData.sameTradingAddress) {
-          dataCompany = {
-            ...companyData,
-            companyLogo: companyData.logoImg,
-            companyLogoThumb: companythumbUrl,
-            companyCode: companyCode,
-            users: users,
-            documents: files,
-            companyIdentifier: "maincompany"
-          }
-        } else {
-          dataCompany = {
-            ...companyData,
-            regAddressNo: companyData.number,
-            regAddressStreet: companyData.street,
-            regAddressCity: companyData.city,
-            regAddressPostalCode: companyData.postalCode,
-            regAddressCountry: companyData.country,
-            companyLogo: companyData.logoImg,
-            companyLogoThumb: companythumbUrl,
-            companyCode: companyCode,
-            users: users,
-            documents: files,
-            companyIdentifier: "maincompany"
-          }
+          dataCompany.regAddressNo = companyData.number;
+          dataCompany.regAddressStreet = companyData.street;
+          dataCompany.regAddressCity = companyData.city;
+          dataCompany.regAddressPostalCode = companyData.postalCode;
+          dataCompany.regAddressCountry = companyData.country;
         }
       }
     }
@@ -411,50 +402,51 @@ export class CompaniesService {
   async update(id: number, data) {
     console.log(data, 11111111111)
     let passcompanyData;
-    if (data.sameTradingAddress !== false) {
-      passcompanyData = {
-        ...(data.companyName ? { companyName: data.companyName } : {}),
-        ...(data.companyEmail ? { companyEmail: data.companyEmail } : {}),
-        ...(data.website ? { website: data.website } : {}),
-        ...(data.companyPhone ? { companyPhone: data.companyPhone } : {}),
-        ...(data.number ? { number: data.number } : {}),
-        ...(data.street ? { street: data.street } : {}),
-        ...(data.city ? { city: data.city } : {}),
-        ...(data.postalCode ? { postalCode: data.postalCode } : {}),
-        ...(data.vat ? { vat: data.vat } : {}),
-        ...(data.code ? { code: data.code } : {}),
-        ...(data.registrationNumber ? { registrationNumber: data.registrationNumber } : {}),
-        ...(data.regAddressNo ? { regAddressNo: data.regAddressNo } : {}),
-        ...(data.regAddressStreet ? { regAddressStreet: data.regAddressStreet } : {}),
-        ...(data.regAddressCity ? { regAddressCity: data.regAddressCity } : {}),
-        ...(data.regAddressPostalCode ? { regAddressPostalCode: data.regAddressPostalCode } : {}),
-        ...(data.country ? { country: data.country.id } : {}),
-        ...(data.companyType ? { companyType: data.companyType } : {}),
-        ...(data.regAddressCountry ? { regAddressCountry: data.regAddressCountry.id } : {}),
-      }
-    } else {
-      passcompanyData = {
-        ...(data.companyName ? { companyName: data.companyName } : {}),
-        ...(data.companyEmail ? { companyEmail: data.companyEmail } : {}),
-        ...(data.website ? { website: data.website } : {}),
-        ...(data.companyPhone ? { companyPhone: data.companyPhone } : {}),
-        ...(data.number ? { number: data.number } : {}),
-        ...(data.street ? { street: data.street } : {}),
-        ...(data.city ? { city: data.city } : {}),
-        ...(data.postalCode ? { postalCode: data.postalCode } : {}),
-        ...(data.vat ? { vat: data.vat } : {}),
-        ...(data.code ? { code: data.code } : {}),
-        ...(data.registrationNumber ? { registrationNumber: data.registrationNumber } : {}),
-        ...({ regAddressNo: data.regAddressNo }),
-        ...({ regAddressStreet: data.regAddressStreet }),
-        ...({ regAddressCity: data.regAddressCity }),
-        ...({ regAddressPostalCode: data.regAddressPostalCode }),
-        ...(data.country ? { country: data.country.id } : {}),
-        ...(data.companyType ? { companyType: data.companyType } : {}),
-        ...({ regAddressCountry: data.regAddressCountry.id }),
-      }
+     passcompanyData = {
+      ...(data.companyName ? { companyName: data.companyName } : {}),
+      ...(data.companyEmail ? { companyEmail: data.companyEmail } : {}),
+      ...(data.website ? { website: data.website } : {}),
+      ...(data.companyPhone ? { companyPhone: data.companyPhone } : {}),
+      ...(data.number ? { number: data.number } : {}),
+      ...(data.street ? { street: data.street } : {}),
+      ...(data.city ? { city: data.city } : {}),
+      ...(data.postalCode ? { postalCode: data.postalCode } : {}),
+      ...(data.vat ? { vat: data.vat } : {}),
+      ...(data.code ? { code: data.code } : {}),
+      ...(data.registrationNumber ? { registrationNumber: data.registrationNumber } : {}),
+      ...(data.country ? { country: data.country.id } : {}),
+      ...(data.companyType ? { companyType: data.companyType } : {}),
+      ...(data.sameTradingAddress !== false
+        ? {
+            regAddressNo: data.regAddressNo,
+            regAddressStreet: data.regAddressStreet,
+            regAddressCity: data.regAddressCity,
+            regAddressPostalCode: data.regAddressPostalCode,
+            regAddressCountry: data.regAddressCountry.id,
+          }
+        : {}),
+    };
+    console.log(data.parentCompanyAdmin,5623435453)
+    let untickid=[];
+    let tickedid=[];
+    if(data.untikId){
+      untickid=data.untikId
     }
-
+    if(data.parentCompanyAdmin){
+      tickedid=data.parentCompanyAdmin
+    }
+      const companyfind = await this.companyRepository.findOne(id,{ relations: [ 'users'] });
+      console.log(companyfind,6576868)
+      if(companyfind){
+        const addedUserEntities = await this.userRepository.findByIds(tickedid);
+        console.log(addedUserEntities,5623435453)
+        const removedUserEntities = await this.userRepository.findByIds(untickid);  
+        companyfind.users = [...companyfind.users, ...addedUserEntities].filter(user => !removedUserEntities.includes(user));
+        const r1=await this.companyRepository.save(companyfind);
+        console.log(r1,78565)
+      }
+      
+    
     if (data.deletedDocument) {
       let deletedocuments = [];
       for (const documentUrl of data.deletedDocument) {
@@ -496,15 +488,20 @@ export class CompaniesService {
     }
 
     if (data.users) {
-      const passuserData = data.users.map((user) => ({
+    data.users.map((user) => {     
+      const passuserData =({
         ...(user.firstName ? { firstName: user.firstName } : {}),
         ...(user.lastName ? { lastName: user.lastName } : {}),
         ...(user.email ? { email: user.email } : {}),
         ...(user.phone ? { phone: user.phone } : {}),
         ...(user.password ? { password: user.password } : {}),
-      }));
+      });
+      console.log(passuserData,99909675)
+      
+      // this.userservice.update(data.userId,passuserData)
+    });
 
-      const userResponse = await Promise.all(passuserData.map((user) => this.userservice.update(data.userId, user)));
+      //  = await Promise.all(passuserData.map((user) => this.userservice.update(data.userId, user)));
 
       if (data.existingCompanyEmail) {
         for (const user of data.users) {
