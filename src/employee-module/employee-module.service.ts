@@ -19,7 +19,7 @@ export class EmployeeModuleService {
   async create(createEmployeeModuleDto ) {
     const existingEmployee = await this.employeeModuleRepository.findOne({where:{employeeId:createEmployeeModuleDto.employeeId}});
      if (existingEmployee) {
-      const {providedCopyUrl, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
+      const {providedCopyUrl, empProvidedCopyUrl, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
       const data={
         ...dataWithouturl
       }
@@ -94,26 +94,63 @@ export class EmployeeModuleService {
       //   }
       // }
 
-    const employeerowid=await this.employeeModuleRepository.findOne({where:{employeeId:id}});
+    const employeerowid = await this.employeeModuleRepository.findOne({where:{employeeId:id}});
     
     const documents = data['filenames'];
-    
-    documents.map((document:{}) => {
-      Object.entries(document).map(async ([docType, docUrls]:[string,[]])=>{
-        const empdocs = docUrls.map(url => ({ docType: docType, docPath:url, empid: +employeerowid.id }));
-        if(docType == "empProvidedCopy"){
-          await this.employeedocumentservice.create(empdocs)
-        }
-      })        
-    });    
+    if(documents.length>0){
+      documents.map((document:{}) => {
+        Object.entries(document).map(async ([docType, docUrls]:[string,[]])=>{          
+          if(docType == "empProvidedCopy[]"){
+            const empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'empProvidedCopy' )
+            if(empExsistDocRow){
+              const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), docPath:url, empid: +employeerowid.id }));
+              await this.employeedocumentservice.update(+empExsistDocRow.id, empdocs[0])
+            }else{
+              const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), docPath:url, empid: +employeerowid.id }));
+              await this.employeedocumentservice.create(empdocs)
+            }            
+          }
+          if(docType == "officialDoc[]"){
+            const empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'officialDoc' )
+            if(empExsistDocRow){
+              const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), docPath:url, empid: +employeerowid.id }));
+              await this.employeedocumentservice.update(+empExsistDocRow.id, empdocs[0])
+            }else{
+              const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), docPath:url, empid: +employeerowid.id }));
+              await this.employeedocumentservice.create(empdocs)
+            }            
+          }
+          if(docType == "visaDoc[]"){
+            const empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'visaDoc' )
+            if(empExsistDocRow){
+              const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), docPath:url, empid: +employeerowid.id }));
+              await this.employeedocumentservice.update(+empExsistDocRow.id, empdocs[0])
+            }else{
+              const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), docPath:url, empid: +employeerowid.id }));
+              await this.employeedocumentservice.create(empdocs)
+            }            
+          }
+        })        
+      });
+    }  
     
     delete data['filenames'];    
     await this.employeeModuleRepository.update({id:+employeerowid.id}, data);
-    return await this.employeeModuleRepository.findOne({id:employeerowid.id});
+    return await this.employeeModuleRepository.findOne({
+      where: {id:employeerowid.id},
+      relations: ['documents']
+    });
   }
 
   remove(id: number) {
     return `This action removes a #${id} employeeModule`;
+  }
+
+  async find(){
+    return await this.employeeModuleRepository.find({
+      where: { },
+      relations: ['documents']
+    });
   }
   
   async findAll() {

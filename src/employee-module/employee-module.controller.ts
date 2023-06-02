@@ -72,7 +72,7 @@ export class EmployeeModuleController {
 
   @Get()
   findAll() {
-    return this.employeeModuleService.findAll();
+    return this.employeeModuleService.find();
   }
 
   @Get(':id')

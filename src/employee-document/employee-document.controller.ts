@@ -19,7 +19,7 @@ export class EmployeeDocumentController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.employeeDocumentService.findOne(+id);
+    //return this.employeeDocumentService.findOne(+id);
   }
 
   @Patch(':id')

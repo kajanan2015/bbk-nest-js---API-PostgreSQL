@@ -33,20 +33,14 @@ export class CreateEmployeeModuleDto {
     dateofJoined: Date;
     niNo: string;
     totalHolidays: string;
-    empProvidedCopy: string;
-    empProvidedCopyThumb: string;
     isNonNative: boolean;
     documents: EmployeeDocument[];
     officialDocType: string;
     officialDocNo: string;
     officialDocIssueDate: Date;
     officialDocExpireDate: Date;
-    officialDocFile: string;
-    officialDocFileThumb: string;
     visaType: string;
     visaNo: string;
     visaIssueDate: Date;
     visaExpireDate: Date;
-    visaCopy: string;
-    visaCopyThumb: string;
 }

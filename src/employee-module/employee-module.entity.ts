@@ -93,11 +93,35 @@ export class EmployeeModule {
     @Column("varchar", { nullable: true, length: 250, default: () => null })
     totalHolidays: string | null;
 
-    // @Column("varchar", { nullable: true, length: 250, default: () => null })
-    // empProvidedCopy: string | null;
+    @Column({ type: 'boolean', default: true })
+    isNonNative: boolean;
 
-    // @Column("varchar", { nullable: true, length: 250, default: () => null })
-    // empProvidedCopyThumb: string | null;
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    officialDocType: string | null;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    officialDocNo: string | null;
+
+    @Column({ nullable: true, default: () => null })
+    officialDocIssueDate: Date | null;
+
+    @Column({ nullable: true, default: () => null })
+    officialDocExpireDate: Date | null;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    visaType: string | null;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    visaNo: string | null;
+
+    @Column({ nullable: true, default: () => null })
+    visaIssueDate: Date | null;
+
+    @Column({ nullable: true, default: () => null })
+    visaExpireDate: Date | null;
+
+    @Column({ type: 'boolean', default: true })
+    status: boolean;
 
     @OneToMany(() => EmployeeDocument, empDocuments => empDocuments.empid,{ cascade: true })
     documents: EmployeeDocument[];

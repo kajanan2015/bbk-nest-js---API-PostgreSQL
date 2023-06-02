@@ -20,8 +20,12 @@ export class EmployeeDocumentService {
     return await this.employeeDocumentRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} employeeDocument`;
+  async find(){
+    return await this.employeeDocumentRepository.find();
+  }
+
+  async findOne(id: number, docType: string) {
+    return await this.employeeDocumentRepository.findOne({where:{empid:id, docType: docType}});
   }
 
   async update(id: number, updateEmployeeDocumentDto) {
