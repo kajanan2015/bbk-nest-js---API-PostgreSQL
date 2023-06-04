@@ -5,7 +5,8 @@ export class CreateEmployeeDocumentDto {
     id: number
     empid: EmployeeModule
     docPath: string
-    docType: string    
+    docType: string
+    description:string   
     status: Boolean
     createdat: Date;
 }

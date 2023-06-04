@@ -17,6 +17,9 @@ export class EmployeeDocument {
     @Column("varchar",{nullable:true})
     docType:String;
 
+    @Column("varchar",{nullable:true})
+    description:String;
+
     @Column({ type: 'boolean', default:true})
     status: Boolean;
 

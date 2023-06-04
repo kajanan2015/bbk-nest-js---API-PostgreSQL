@@ -110,7 +110,7 @@ export class EmployeeModuleService {
               const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), docPath:url, empid: +employeerowid.id }));
               await this.employeedocumentservice.create(empdocs)
             }            
-          }
+          }else
           if(docType == "officialDoc[]"){
             const empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'officialDoc' )
             if(empExsistDocRow){
@@ -120,7 +120,7 @@ export class EmployeeModuleService {
               const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), docPath:url, empid: +employeerowid.id }));
               await this.employeedocumentservice.create(empdocs)
             }            
-          }
+          }else
           if(docType == "visaDoc[]"){
             const empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'visaDoc' )
             if(empExsistDocRow){
@@ -130,6 +130,9 @@ export class EmployeeModuleService {
               const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), docPath:url, empid: +employeerowid.id }));
               await this.employeedocumentservice.create(empdocs)
             }            
+          }else{
+            const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), description:'additional', docPath:url, empid: +employeerowid.id }));
+            await this.employeedocumentservice.create(empdocs)
           }
         })        
       });
