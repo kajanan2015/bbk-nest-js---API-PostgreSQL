@@ -1,15 +1,15 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { EmployeeModule } from '../employee-module.entity';
 
-@Entity('bank_name')
-export class BankName {
+@Entity('payment_frequency')
+export class PaymentFrequency {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column("varchar", { nullable: true, length: 250, default: () => null })
-    bank_Name: string;
+    paymentFrequencyType: string;
 
-    @OneToMany(() => EmployeeModule, employeemodule => employeemodule.bankName, ({ cascade: true }))
-    bank_name: EmployeeModule[];
+    @OneToMany(() => EmployeeModule, employeemodule => employeemodule.paymentFrequency, ({ cascade: true }))
+    employee: EmployeeModule[];
 
 }

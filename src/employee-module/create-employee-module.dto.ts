@@ -4,7 +4,8 @@ import { CompaniesEntity } from "src/companies/companies.entity";
 import { Gender } from "./gender/gender.entity";
 import { MaritalStatus } from "./marital_status/maritalStatus.entity";
 import { EmployeeDocument } from "src/employee-document/employee-document.entity";
-
+import { DrivingLicenceType } from "./driving_licence_type/driving_licence_type.entity";
+import { PaymentFrequency } from "./payment_frequency/payment_frequency.entity";
 export class CreateEmployeeModuleDto {
     id: number;
     employeeId: string;
@@ -58,7 +59,6 @@ export class CreateEmployeeModuleDto {
     refCompAddressPostal: string;
     refCompAddressCountry: string;
     drivingLicence: string;
-    drivingLicenceType: string;
     drivingLicenceNo: string;
     drivingLicenceCategory: string;
     drivingLicenceIssue: Date;
@@ -78,4 +78,6 @@ export class CreateEmployeeModuleDto {
     crbCardIssueDate: Date;
     crbCardExpireDate: Date;
     additionalDocs: boolean;
+    drivingLicenceType: DrivingLicenceType[];
+    paymentFrequency: PaymentFrequency[];
 }
