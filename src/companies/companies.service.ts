@@ -176,7 +176,7 @@ export class CompaniesService {
               companyCode: companyCode,
               users: adminUser,
               documents: files,
-              companyIdentifier: "maincompany"
+              companyIdentifier:"maincompany"
             }
           } else {
             dataCompany = {
@@ -318,31 +318,41 @@ export class CompaniesService {
         const userId = adminResponse.id.toString();
         const adminUser = await this.userRepository.findByIds([userId]);
         users.push(adminUser[0]);
-
-        const dataCompany = {
+      }
+      if (!companyData.sameTradingAddress) {
+        dataCompany = {
           ...companyData,
           companyLogo: companyData.logoImg,
           companyLogoThumb: companythumbUrl,
           companyCode: companyCode,
           users: users,
           documents: files,
-          companyIdentifier: "maincompany",
-        };
-        
-        if (!companyData.sameTradingAddress) {
-          dataCompany.regAddressNo = companyData.number;
-          dataCompany.regAddressStreet = companyData.street;
-          dataCompany.regAddressCity = companyData.city;
-          dataCompany.regAddressPostalCode = companyData.postalCode;
-          dataCompany.regAddressCountry = companyData.country;
+          companyIdentifier: "maincompany"
+        }
+      } else {
+        dataCompany = {
+          ...companyData,
+          regAddressNo: companyData.number,
+          regAddressStreet: companyData.street,
+          regAddressCity: companyData.city,
+          regAddressPostalCode: companyData.postalCode,
+          regAddressCountry: companyData.country,
+          companyLogo: companyData.logoImg,
+          companyLogoThumb: companythumbUrl,
+          companyCode: companyCode,
+          users: users,
+          documents: files,
+          companyIdentifier: "maincompany"
         }
       }
+      
     }
 
     await this.systemcodeService.update(response.id, newstartvalue)
     const newCompany = await this.companyRepository.create(dataCompany);
     const responsesave = await this.companyRepository.save(newCompany);
-
+    console.log(responsesave,344343433344343)
+    console.log(dataCompany.companyIdentifier,323456)
     if (dataCompany.companyIdentifier == 'maincompany') {
       const query = `
    UPDATE company
