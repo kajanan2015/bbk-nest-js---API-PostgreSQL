@@ -92,6 +92,7 @@ export class CompaniesController {
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   async create(@UploadedFiles() file, @Body() companyData) {
+    console.log(companyData,1234567890)
     const filename = await this.imageUploadService.uploadcompany(file, "body");
 
     const img = filename.find((file) => file.hasOwnProperty(`logoImg`));

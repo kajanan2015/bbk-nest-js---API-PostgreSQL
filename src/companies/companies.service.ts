@@ -436,7 +436,7 @@ export class CompaniesService {
           }
         : {}),
     };
-    console.log(data.parentCompanyAdmin,5623435453)
+
     let untickid=[];
     let tickedid=[];
     if(data.untikId){
@@ -446,17 +446,13 @@ export class CompaniesService {
       tickedid=data.parentCompanyAdmin
     }
       const companyfind = await this.companyRepository.findOne(id,{ relations: [ 'users'] });
-      console.log(companyfind,6576868)
+     
       if(companyfind){
         const addedUserEntities = await this.userRepository.findByIds(tickedid);
-        console.log(addedUserEntities,5623435453)
         const removedUserEntities = await this.userRepository.findByIds(untickid);  
-        console.log(removedUserEntities,56234354531)
         const newArray = [...companyfind.users, ...addedUserEntities];
         companyfind.users = newArray.filter(user => !removedUserEntities.some(removedUser => removedUser.id === user.id));
-        console.log(companyfind.users,785651)
         const r1=await this.companyRepository.save(companyfind);
-        console.log(r1,78565)
       }
       
     
