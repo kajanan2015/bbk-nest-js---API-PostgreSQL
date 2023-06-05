@@ -10,6 +10,7 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFiles,
+  Req,
 } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -88,6 +89,19 @@ export class CompaniesController {
       companies
     };
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('uploadprofileimage')
+  @UseInterceptors(AnyFilesInterceptor())
+  async uploadprofileimage(@UploadedFiles() file) {
+   console.log(file,45678)
+   const filename = await this.imageUploadService.upload(file, "body");
+  console.log(filename,89989)
+   return filename;
+  }
+
+
+
   @UseGuards(AuthGuard('jwt'))
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
@@ -103,16 +117,6 @@ export class CompaniesController {
 
     const data = {
       ...companyData,
-      admins: companyData.admins.map((admin, index) => {
-        const imageKey = `admins[${index}][image]`;
-        const file = filename.find((file) => file[imageKey]);
-        const filesname = file ? file[imageKey][0] : null;
-
-        return {
-          ...admin,
-          image: filesname
-        };
-      }),
       logoImg: logoImg,
       file: filesArray,
     }
@@ -163,9 +167,9 @@ export class CompaniesController {
   @UseGuards(AuthGuard('jwt'))
   @Patch('/edit/:id')
   @UseInterceptors(AnyFilesInterceptor())
-  async update(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
+  async update(@Param('id') id: number, @UploadedFiles() file, @Body() companyData, @Req() master) {
 
-    console.log(companyData, 787878)
+    console.log(master.body.users, 787878)
     const filename = await this.imageUploadService.uploadcompany(file, "body");
     const data = {
       ...companyData,
