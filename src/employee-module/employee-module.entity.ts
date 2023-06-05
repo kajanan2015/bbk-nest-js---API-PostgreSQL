@@ -121,6 +121,111 @@ export class EmployeeModule {
     visaExpireDate: Date | null;
 
     @Column({ type: 'boolean', default: true })
+    contract: boolean;
+
+    @Column({ type: 'boolean', default: true })
+    offerLetter: boolean;
+
+    @Column({ type: 'boolean', default: true })
+    referenceCheck: boolean;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    refName: string | null;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    refCompanyName: string | null;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    refContact: string | null;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    refEmail: string | null;
+
+    @Column({ nullable: true, default: () => null })
+    refGivenDate: Date | null;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    refCompAddressName: string | null;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    refCompAddressStreet: string | null;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    refCompAddressCity: string | null;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    refCompAddressState: string | null;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    refCompAddressPostal: string | null;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    refCompAddressCountry: string | null;
+
+    @Column({ type: 'boolean', default: true })
+    drivingLicence: boolean;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    drivingLicenceType: string | null;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    drivingLicenceNo: string | null;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    drivingLicenceCategory: string | null;
+
+    @Column({ nullable: true, default: () => null })
+    drivingLicenceIssue: Date | null;
+
+    @Column({ nullable: true, default: () => null })
+    drivingLicenceExpire: Date | null;
+
+    @Column({ nullable: true, default: () => null })
+    drivingLicenceCatDIssue: Date | null;
+
+    @Column({ nullable: true, default: () => null })
+    drivingLicenceCatDExpire: Date | null;
+    
+    @Column({ type: 'boolean', default: true })
+    tachoCard: boolean;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    tachoNo: string | null;
+
+    @Column({ nullable: true, default: () => null })
+    tachoIssueDate: Date | null;
+
+    @Column({ nullable: true, default: () => null })
+    tachoExpireDate: Date | null;
+
+    @Column({ type: 'boolean', default: true })
+    cpcCard: boolean;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    cpcCardNo: string | null;
+
+    @Column({ nullable: true, default: () => null })
+    cpcCardIssueDate: Date | null;
+
+    @Column({ nullable: true, default: () => null })
+    cpcCardExpireDate: Date | null;
+
+    @Column({ type: 'boolean', default: true })
+    crbCheckCard: boolean;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    crbCardNo: string | null;
+
+    @Column({ nullable: true, default: () => null })
+    crbCardIssueDate: Date | null;
+
+    @Column({ nullable: true, default: () => null })
+    crbCardExpireDate: Date | null;
+
+    @Column({ type: 'boolean', default: true })
+    additionalDocs: boolean;
+
+    @Column({ type: 'boolean', default: true })
     status: boolean;
 
     @OneToMany(() => EmployeeDocument, empDocuments => empDocuments.empid,{ cascade: true })

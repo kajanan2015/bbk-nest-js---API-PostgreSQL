@@ -57,7 +57,7 @@ export class CreateEmployeeModuleDto {
     refCompAddressState: string;
     refCompAddressPostal: string;
     refCompAddressCountry: string;
-    drivingLicence: string;
+    drivingLicence: boolean;
     drivingLicenceType: string;
     drivingLicenceNo: string;
     drivingLicenceCategory: string;

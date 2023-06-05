@@ -99,10 +99,19 @@ export class EmployeeModuleService {
     
     const documents = data['filenames'];
     if(documents.length>0){
-      documents.map((document:{}) => {
-        Object.entries(document).map(async ([docType, docUrls]:[string,[]])=>{          
-          if(docType == "empProvidedCopy[]"){
-            const empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'empProvidedCopy' )
+     for(let document in documents){
+      const docEntry = Object.entries(document);
+      for(const doc in docEntry  ){
+          const [docType, docUrls]:[string,[]] = doc as ; 
+          if(docType == "visaDoc[]" || docType == "empProvidedCopy[]" || docType == "officialDoc[]"){
+            let empExsistDocRow;
+            if(docType == "empProvidedCopy[]"){
+              empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'empProvidedCopy' )        
+            }else if(docType == "officialDoc[]"){
+              empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'officialDoc' )          
+            }else if(docType == "visaDoc[]"){
+              empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'visaDoc' )           
+            }
             if(empExsistDocRow){
               const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), docPath:url, empid: +employeerowid.id }));
               await this.employeedocumentservice.update(+empExsistDocRow.id, empdocs[0])
@@ -110,32 +119,17 @@ export class EmployeeModuleService {
               const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), docPath:url, empid: +employeerowid.id }));
               await this.employeedocumentservice.create(empdocs)
             }            
-          }else
-          if(docType == "officialDoc[]"){
-            const empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'officialDoc' )
-            if(empExsistDocRow){
+          }else if(docType == "contractDoc[]" || docType == "offerLetterDoc[]" || 
+              docType == "refdoc[]" || docType == "drivingLicenceDoc[]" || docType == "tachoDoc[]" 
+              || docType == "cpcCardDoc[]" || docType == "crbCardDoc[]"){
               const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), docPath:url, empid: +employeerowid.id }));
-              await this.employeedocumentservice.update(+empExsistDocRow.id, empdocs[0])
-            }else{
-              const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), docPath:url, empid: +employeerowid.id }));
-              await this.employeedocumentservice.create(empdocs)
-            }            
-          }else
-          if(docType == "visaDoc[]"){
-            const empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'visaDoc' )
-            if(empExsistDocRow){
-              const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), docPath:url, empid: +employeerowid.id }));
-              await this.employeedocumentservice.update(+empExsistDocRow.id, empdocs[0])
-            }else{
-              const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), docPath:url, empid: +employeerowid.id }));
-              await this.employeedocumentservice.create(empdocs)
-            }            
+              await this.employeedocumentservice.create(empdocs)       
           }else{
             const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), description:'additional', docPath:url, empid: +employeerowid.id }));
             await this.employeedocumentservice.create(empdocs)
           }
-        })        
-      });
+        }       
+      }
     }  
     
     delete data['filenames'];    
