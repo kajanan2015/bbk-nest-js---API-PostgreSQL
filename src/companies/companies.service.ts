@@ -150,12 +150,12 @@ export class CompaniesService {
           if (existing) {
             return "account exist";
           }
-          profilethumbUrl = admin.image ? await this.imageUploadService.uploadThumbnailToS3(admin.image) : null;
+          profilethumbUrl = admin.profileImage ? await this.imageUploadService.uploadThumbnailToS3(admin.profileImage) : null;
           const adminData = {
             firstName: admin.firstName,
             lastName: admin.lastName,
             uType: "SADMIN",
-            profilePic: admin.image,
+            profilePic: admin.profileImage,
             profilePicThumb: profilethumbUrl,
             password: admin.password,
             phone: admin.phone,
@@ -209,12 +209,12 @@ export class CompaniesService {
             if (existing) {
               return "account exist";
             }
-            profilethumbUrl = admin.image ? await this.imageUploadService.uploadThumbnailToS3(admin.image) : null;
+            profilethumbUrl = admin.profileImage ? await this.imageUploadService.uploadThumbnailToS3(admin.profileImage) : null;
             const adminData = {
               firstName: admin.firstName,
               lastName: admin.lastName,
               uType: "SADMIN",
-              profilePic: admin.image,
+              profilePic: admin.profileImage,
               profilePicThumb: profilethumbUrl,
               password: admin.password,
               phone: admin.phone,
@@ -299,12 +299,12 @@ export class CompaniesService {
         if (existing) {
           return "account exist";
         }
-        profilethumbUrl = admin.image ? await this.imageUploadService.uploadThumbnailToS3(admin.image) : null;
+        profilethumbUrl = admin.profileImage ? await this.imageUploadService.uploadThumbnailToS3(admin.profileImage) : null;
         const adminData = {
           firstName: admin.firstName,
           lastName: admin.lastName,
           uType: "CADMIN",
-          profilePic: admin.image,
+          profilePic: admin.profileImage,
           profilePicThumb: profilethumbUrl,
           password: admin.password,
           phone: admin.phone,
