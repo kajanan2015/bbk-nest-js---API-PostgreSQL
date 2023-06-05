@@ -99,10 +99,11 @@ export class EmployeeModuleService {
     
     const documents = data['filenames'];
     if(documents.length>0){
-     for(let document in documents){
-      const docEntry = Object.entries(document);
-      for(const doc in docEntry  ){
-          const [docType, docUrls]:[string,[]] = doc as ; 
+     for(let document in documents){      
+      const docEntry = documents[document];
+      for(const doc in docEntry as {}){
+          const docType  = doc;
+          const docUrls = docEntry[doc]
           if(docType == "visaDoc[]" || docType == "empProvidedCopy[]" || docType == "officialDoc[]"){
             let empExsistDocRow;
             if(docType == "empProvidedCopy[]"){
@@ -113,19 +114,32 @@ export class EmployeeModuleService {
               empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'visaDoc' )           
             }
             if(empExsistDocRow){
-              const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), docPath:url, empid: +employeerowid.id }));
+              const empdocs = [] 
+              for(const url in docUrls as {}){
+                empdocs.push({ docType: docType.replace('[]',''), docPath:docUrls[url], empid: +employeerowid.id })
+              };
               await this.employeedocumentservice.update(+empExsistDocRow.id, empdocs[0])
             }else{
-              const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), docPath:url, empid: +employeerowid.id }));
+              const empdocs = [] 
+              for(const url in docUrls as {}){
+                empdocs.push({ docType: docType.replace('[]',''), docPath:docUrls[url], empid: +employeerowid.id })
+              };
               await this.employeedocumentservice.create(empdocs)
             }            
           }else if(docType == "contractDoc[]" || docType == "offerLetterDoc[]" || 
               docType == "refdoc[]" || docType == "drivingLicenceDoc[]" || docType == "tachoDoc[]" 
               || docType == "cpcCardDoc[]" || docType == "crbCardDoc[]"){
-              const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), docPath:url, empid: +employeerowid.id }));
+                console.log(docType)
+              const empdocs = []
+              for(const url in docUrls as {}){
+                empdocs.push({ docType: docType.replace('[]',''), docPath:docUrls[url], empid: +employeerowid.id })
+              };
               await this.employeedocumentservice.create(empdocs)       
           }else{
-            const empdocs = docUrls.map(url => ({ docType: docType.replace('[]',''), description:'additional', docPath:url, empid: +employeerowid.id }));
+            const empdocs = []
+              for(const url in docUrls as {}){
+                empdocs.push({ docType: docType.replace('[]',''), description:'additional', docPath:docUrls[url], empid: +employeerowid.id })
+              };
             await this.employeedocumentservice.create(empdocs)
           }
         }       
