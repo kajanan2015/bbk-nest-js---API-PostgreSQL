@@ -451,7 +451,9 @@ export class CompaniesService {
         const addedUserEntities = await this.userRepository.findByIds(tickedid);
         console.log(addedUserEntities,5623435453)
         const removedUserEntities = await this.userRepository.findByIds(untickid);  
-        companyfind.users = [...companyfind.users, ...addedUserEntities].filter(user => !removedUserEntities.includes(user));
+        console.log(removedUserEntities,56234354531)
+        companyfind.users = [...companyfind.users, ...addedUserEntities].filter(user => removedUserEntities.includes(user));
+        console.log(companyfind.users,785651)
         const r1=await this.companyRepository.save(companyfind);
         console.log(r1,78565)
       }
@@ -508,7 +510,7 @@ export class CompaniesService {
       });
       console.log(passuserData,99909675)
       
-      // this.userservice.update(data.userId,passuserData)
+      this.userservice.update(user.userId,passuserData)
     });
 
       //  = await Promise.all(passuserData.map((user) => this.userservice.update(data.userId, user)));
