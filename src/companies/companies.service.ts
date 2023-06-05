@@ -150,12 +150,12 @@ export class CompaniesService {
           if (existing) {
             return "account exist";
           }
-          profilethumbUrl = admin.image ? await this.imageUploadService.uploadThumbnailToS3(admin.image) : null;
+          profilethumbUrl = admin.profileImage ? await this.imageUploadService.uploadThumbnailToS3(admin.profileImage) : null;
           const adminData = {
             firstName: admin.firstName,
             lastName: admin.lastName,
             uType: "SADMIN",
-            profilePic: admin.image,
+            profilePic: admin.profileImage,
             profilePicThumb: profilethumbUrl,
             password: admin.password,
             phone: admin.phone,
@@ -176,7 +176,7 @@ export class CompaniesService {
               companyCode: companyCode,
               users: adminUser,
               documents: files,
-              companyIdentifier: "maincompany"
+              companyIdentifier:"maincompany"
             }
           } else {
             dataCompany = {
@@ -209,12 +209,12 @@ export class CompaniesService {
             if (existing) {
               return "account exist";
             }
-            profilethumbUrl = admin.image ? await this.imageUploadService.uploadThumbnailToS3(admin.image) : null;
+            profilethumbUrl = admin.profileImage ? await this.imageUploadService.uploadThumbnailToS3(admin.profileImage) : null;
             const adminData = {
               firstName: admin.firstName,
               lastName: admin.lastName,
               uType: "SADMIN",
-              profilePic: admin.image,
+              profilePic: admin.profileImage,
               profilePicThumb: profilethumbUrl,
               password: admin.password,
               phone: admin.phone,
@@ -299,12 +299,12 @@ export class CompaniesService {
         if (existing) {
           return "account exist";
         }
-        profilethumbUrl = admin.image ? await this.imageUploadService.uploadThumbnailToS3(admin.image) : null;
+        profilethumbUrl = admin.profileImage ? await this.imageUploadService.uploadThumbnailToS3(admin.profileImage) : null;
         const adminData = {
           firstName: admin.firstName,
           lastName: admin.lastName,
           uType: "CADMIN",
-          profilePic: admin.image,
+          profilePic: admin.profileImage,
           profilePicThumb: profilethumbUrl,
           password: admin.password,
           phone: admin.phone,
@@ -318,31 +318,41 @@ export class CompaniesService {
         const userId = adminResponse.id.toString();
         const adminUser = await this.userRepository.findByIds([userId]);
         users.push(adminUser[0]);
-
-        const dataCompany = {
+      }
+      if (!companyData.sameTradingAddress) {
+        dataCompany = {
           ...companyData,
           companyLogo: companyData.logoImg,
           companyLogoThumb: companythumbUrl,
           companyCode: companyCode,
           users: users,
           documents: files,
-          companyIdentifier: "maincompany",
-        };
-        
-        if (!companyData.sameTradingAddress) {
-          dataCompany.regAddressNo = companyData.number;
-          dataCompany.regAddressStreet = companyData.street;
-          dataCompany.regAddressCity = companyData.city;
-          dataCompany.regAddressPostalCode = companyData.postalCode;
-          dataCompany.regAddressCountry = companyData.country;
+          companyIdentifier: "maincompany"
+        }
+      } else {
+        dataCompany = {
+          ...companyData,
+          regAddressNo: companyData.number,
+          regAddressStreet: companyData.street,
+          regAddressCity: companyData.city,
+          regAddressPostalCode: companyData.postalCode,
+          regAddressCountry: companyData.country,
+          companyLogo: companyData.logoImg,
+          companyLogoThumb: companythumbUrl,
+          companyCode: companyCode,
+          users: users,
+          documents: files,
+          companyIdentifier: "maincompany"
         }
       }
+      
     }
 
     await this.systemcodeService.update(response.id, newstartvalue)
     const newCompany = await this.companyRepository.create(dataCompany);
     const responsesave = await this.companyRepository.save(newCompany);
-
+    console.log(responsesave,344343433344343)
+    console.log(dataCompany.companyIdentifier,323456)
     if (dataCompany.companyIdentifier == 'maincompany') {
       const query = `
    UPDATE company
@@ -426,7 +436,7 @@ export class CompaniesService {
           }
         : {}),
     };
-    console.log(data.parentCompanyAdmin,5623435453)
+
     let untickid=[];
     let tickedid=[];
     if(data.untikId){
@@ -436,14 +446,13 @@ export class CompaniesService {
       tickedid=data.parentCompanyAdmin
     }
       const companyfind = await this.companyRepository.findOne(id,{ relations: [ 'users'] });
-      console.log(companyfind,6576868)
+     
       if(companyfind){
         const addedUserEntities = await this.userRepository.findByIds(tickedid);
-        console.log(addedUserEntities,5623435453)
         const removedUserEntities = await this.userRepository.findByIds(untickid);  
-        companyfind.users = [...companyfind.users, ...addedUserEntities].filter(user => !removedUserEntities.includes(user));
+        const newArray = [...companyfind.users, ...addedUserEntities];
+        companyfind.users = newArray.filter(user => !removedUserEntities.some(removedUser => removedUser.id === user.id));
         const r1=await this.companyRepository.save(companyfind);
-        console.log(r1,78565)
       }
       
     
@@ -498,7 +507,7 @@ export class CompaniesService {
       });
       console.log(passuserData,99909675)
       
-      // this.userservice.update(data.userId,passuserData)
+      this.userservice.update(user.userId,passuserData)
     });
 
       //  = await Promise.all(passuserData.map((user) => this.userservice.update(data.userId, user)));
