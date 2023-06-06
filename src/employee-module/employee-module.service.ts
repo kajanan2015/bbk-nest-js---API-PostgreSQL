@@ -4,6 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EmployeeModule } from './employee-module.entity';
 import { EmployeeDocumentService } from 'src/employee-document/employee-document.service';
 import { CompaniesService } from 'src/companies/companies.service';
+import { EmployeeDocument } from 'src/employee-document/employee-document.entity';
+import { ImageUploadService } from 'src/imageupload/imageupload.service';
 // import randomstring from 'randomstring';
 const randomstring = require("randomstring");
 
@@ -13,8 +15,11 @@ export class EmployeeModuleService {
     @InjectRepository(EmployeeModule)
     private employeeModuleRepository: Repository<EmployeeModule>,
     private readonly connection: Connection,
-    private readonly employeedocumentservice: EmployeeDocumentService,
+    private readonly employeedocumentservice: EmployeeDocumentService,    
     private  companyservice:CompaniesService,
+    private readonly imageUploadService: ImageUploadService,
+    @InjectRepository(EmployeeDocument)
+    private employeeDocumentRepository: Repository<EmployeeDocument>,
     ) {}
 
   async create(createEmployeeModuleDto ) {
@@ -162,8 +167,21 @@ export class EmployeeModuleService {
           }
         }       
       }
-    }  
-    
+    }
+
+    if (data["deletedDocs"]) {      
+      let deletedocuments = data["deletedDocs"];
+      for (const doc in data["deletedDocs"]) {
+        const deletedocument = await this.employeeDocumentRepository.find({
+          where: { docPath: deletedocuments[doc] },
+        });
+        await this.imageUploadService.deletedoc(deletedocuments[doc])
+        await this.employeeDocumentRepository.remove(deletedocument)
+      }
+      
+    }
+
+    delete data['deletedDocs']; 
     delete data['filenames'];    
     await this.employeeModuleRepository.update({id:+employeerowid.id}, data);
     return await this.employeeModuleRepository.findOne({

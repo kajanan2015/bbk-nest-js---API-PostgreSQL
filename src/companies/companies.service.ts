@@ -462,9 +462,15 @@ console.log(passcompanyData,4567890)
         deletedocuments = await this.companyDocumentRepository.find({
           where: { documentPath: documentUrl },
         });
+        console.log(deletedocuments,4567)
+        deletedocuments.push(deletedocuments)
+        console.log(deletedocuments,4569)
+     
         await this.imageUploadService.deletedoc(documentUrl)
+        await this.companyDocumentRepository.remove(deletedocuments)
       }
-      await this.companyDocumentRepository.remove(deletedocuments)
+      console.log(deletedocuments,56789)
+     
     }
     if (data.filename && data.filename.length > 0) {
       let documentUpload = [];
@@ -501,7 +507,7 @@ console.log(passcompanyData,4567890)
      let profilePic
       for (const user of data.users) {
         if (user.profileImage) {
-          if(user.profileImage=="undefined"){
+          if(user.profileImage=="deleted"){
             profilethumbUrl=null;
             profilePic=null
           }else{

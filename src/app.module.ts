@@ -36,6 +36,7 @@ import { MovementModule } from './movement/movement.module';
 import { FramelayoutModule } from './framelayout/framelayout.module';
 import { EmployeeModuleModule } from './employee-module/employee-module.module';
 import { EmployeeDocumentModule } from './employee-document/employee-document.module';
+import { CreatemoduleModule } from './createmodule/createmodule.module';
 
 
 
@@ -78,7 +79,8 @@ const settings = require("../ormconfig.js");
     MovementModule,
     FramelayoutModule,
     EmployeeModuleModule,
-    EmployeeDocumentModule
+    EmployeeDocumentModule,
+    CreatemoduleModule
   ],
   controllers: [AppController],
   providers: [AppService],
