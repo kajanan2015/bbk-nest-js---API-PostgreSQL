@@ -66,6 +66,24 @@ export class EmployeeModuleService {
     return maritalStatusList;
   }
 
+  async getDrivingLicenceType() {
+    const query = 'SELECT * FROM `driving_licence_type`';
+    const drivingLicenceTypeList = await this.connection.query(query);
+    return drivingLicenceTypeList;
+  }
+
+  async getPaymentFrequency() {
+    const query = 'SELECT * FROM `payment_frequency`';
+    const paymentFrequencyTypeList = await this.connection.query(query);
+    return paymentFrequencyTypeList;
+  }
+
+  async getBank() {
+    const query = 'SELECT * FROM `bank`';
+    const bankTypeList = await this.connection.query(query);
+    return bankTypeList;
+  }
+
   async generateemployeeid(id){
     const individualcompany=await this.companyservice.read(id)
     let randomId = randomstring.generate(7);

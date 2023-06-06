@@ -7,7 +7,7 @@ import { MaritalStatus } from './marital_status/maritalStatus.entity';
 import { EmployeeDocument } from 'src/employee-document/employee-document.entity';
 import { DrivingLicenceType } from './driving_licence_type/driving_licence_type.entity';
 import { PaymentFrequency } from './payment_frequency/payment_frequency.entity';
-import { BankName } from './bank_name/bank_name.entity';
+import { Bank } from './bank/bank.entity';
 @Entity()
 export class EmployeeModule {
     @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
@@ -236,14 +236,13 @@ export class EmployeeModule {
 
     @ManyToOne(() => DrivingLicenceType, drivingLicenceType => drivingLicenceType.employee)
     @JoinColumn({ name: 'drivingLicenceType' })
-    driverLicenceType: DrivingLicenceType;
+    drivingLicenceType: DrivingLicenceType;
 
     @ManyToOne(() => PaymentFrequency, paymentFrequency => paymentFrequency.employee)
     @JoinColumn({ name: 'paymentFrequency' })
     paymentFrequency: PaymentFrequency;
 
-    @ManyToOne(() => BankName, bankName => bankName.employee)
+    @ManyToOne(() => Bank, bankName => bankName.employee)
     @JoinColumn({ name: 'bankName' })
-    bankName: BankName
-    ;
+    bankName: Bank;
 }
