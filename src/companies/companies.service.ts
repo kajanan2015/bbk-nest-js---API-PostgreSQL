@@ -507,7 +507,7 @@ console.log(passcompanyData,4567890)
      let profilePic
       for (const user of data.users) {
         if (user.profileImage) {
-          if(user.profileImage=="undefined"){
+          if(user.profileImage=="deleted"){
             profilethumbUrl=null;
             profilePic=null
           }else{
