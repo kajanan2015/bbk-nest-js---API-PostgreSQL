@@ -245,4 +245,16 @@ export class EmployeeModule {
     @ManyToOne(() => Bank, bankName => bankName.employee)
     @JoinColumn({ name: 'bankName' })
     bankName: Bank;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    bankAccountName: string | null;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    bankAccountNo: string | null;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    bankSortCode: string | null;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    additionalDetails: string | null;
 }

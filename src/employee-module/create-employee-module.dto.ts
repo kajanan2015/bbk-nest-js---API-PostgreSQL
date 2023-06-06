@@ -81,5 +81,9 @@ export class CreateEmployeeModuleDto {
     additionalDocs: boolean;
     drivingLicenceType: DrivingLicenceType[];
     paymentFrequency: PaymentFrequency[];
-    bank: Bank[];
+    bankName: Bank[];
+    bankAccountName: string;
+    bankAccountNo: string;
+    bankSortCode: string;
+    additionalDetails: string;
 }
