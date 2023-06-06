@@ -23,8 +23,11 @@ import { UserService } from 'src/user/user.service';
 import { CompanyDocumentService } from 'src/company-document/company-document.service';
 import { User } from 'src/user/user.entity';
 import { PermissionRoleEntity } from 'src/permission-role/permission-role.entity';
+import { DrivingLicenceType } from './driving_licence_type/driving_licence_type.entity';
+import { PaymentFrequency } from './payment_frequency/payment_frequency.entity';
+import { Bank } from './bank/bank.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([EmployeeType,EmployeeModule,EmpDesignation,CompaniesEntity, Gender, MaritalStatus,EmployeeDocument, PagePermissionEntity, CompanyDocument , SystemCode , User,PermissionRoleEntity]),EmployeeDocumentModule,CompaniesModule],
+  imports: [TypeOrmModule.forFeature([EmployeeType, EmployeeModule, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency]), EmployeeDocumentModule, CompaniesModule],
   controllers: [EmployeeModuleController, ImageUploadController],
   providers: [EmployeeModuleService, ImageUploadService, EmployeeDocumentService, CompaniesService, SystemCodeService, UserService,CompanyDocumentService ]
 })

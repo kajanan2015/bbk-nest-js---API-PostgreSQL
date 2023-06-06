@@ -19,7 +19,6 @@ export class EmployeeModuleController {
       genderList
     };
   }
-
   @Get('/getemployeecode/:id')
   async getemployeecode(@Param('id') id: number){
     return await this.employeeModuleService.generateemployeeid(id);
@@ -32,7 +31,6 @@ export class EmployeeModuleController {
       maritalStatusList
     };
   }
-
   @Get('/employee-type')
   async getEmployeeType(){
     const employeeTypeList = await this.employeeModuleService.getEmployeeType();
@@ -57,6 +55,31 @@ export class EmployeeModuleController {
       companyList
     };
   }
+  @Get('/driving-licence-type')
+  async getDrivingLicenceType() {
+    const drivingLicenceTypeList = await this.employeeModuleService.getDrivingLicenceType();
+    return {
+      statusCode: HttpStatus.OK,
+      drivingLicenceTypeList
+    };
+  }
+  @Get('/payment_frequency')
+  async getPaymentFrequency() {
+    const paymentFrequencyTypeList = await this.employeeModuleService.getPaymentFrequency();
+    return {
+      statusCode: HttpStatus.OK,
+      paymentFrequencyTypeList
+    };
+  }
+  @Get('/bank')
+  async getBank() {
+    const bankTypeList = await this.employeeModuleService.getBank();
+    return {
+      statusCode: HttpStatus.OK,
+      bankTypeList
+    };
+  }
+
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   async create(@UploadedFiles() file, @Body() createEmployeeModuleDto: CreateEmployeeModuleDto) {
