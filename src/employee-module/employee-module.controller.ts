@@ -63,7 +63,7 @@ export class EmployeeModuleController {
       drivingLicenceTypeList
     };
   }
-  @Get('/payment_frequency')
+  @Get('/payment-frequency')
   async getPaymentFrequency() {
     const paymentFrequencyTypeList = await this.employeeModuleService.getPaymentFrequency();
     return {

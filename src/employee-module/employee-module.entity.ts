@@ -236,7 +236,7 @@ export class EmployeeModule {
 
     @ManyToOne(() => DrivingLicenceType, drivingLicenceType => drivingLicenceType.employee)
     @JoinColumn({ name: 'drivingLicenceType' })
-    driverLicenceType: DrivingLicenceType;
+    drivingLicenceType: DrivingLicenceType;
 
     @ManyToOne(() => PaymentFrequency, paymentFrequency => paymentFrequency.employee)
     @JoinColumn({ name: 'paymentFrequency' })
