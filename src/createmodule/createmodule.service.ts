@@ -16,9 +16,7 @@ export class CreatemoduleService {
   }
 
   async findAll() {
-    return await this.createmoduleRepository.find({ 
-      where: { status: 1 }, 
-    });
+    return await this.createmoduleRepository.find();
   }
 
   async findOne(id: number) {
