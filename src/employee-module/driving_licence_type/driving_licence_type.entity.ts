@@ -9,7 +9,7 @@ export class DrivingLicenceType {
     @Column("varchar", { nullable: true, length: 250, default: () => null })
     driverLicenceType: string;
 
-    @OneToMany(() => EmployeeModule, employeemodule => employeemodule.drivingLicenceType, ({ cascade: true }))
+    @OneToMany(() => EmployeeModule, employeemodule => employeemodule.driverLicenceType, ({ cascade: true }))
     employee: EmployeeModule;
 
 }

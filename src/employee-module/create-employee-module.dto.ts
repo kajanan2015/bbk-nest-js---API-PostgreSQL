@@ -6,6 +6,7 @@ import { MaritalStatus } from "./marital_status/maritalStatus.entity";
 import { EmployeeDocument } from "src/employee-document/employee-document.entity";
 import { DrivingLicenceType } from "./driving_licence_type/driving_licence_type.entity";
 import { PaymentFrequency } from "./payment_frequency/payment_frequency.entity";
+import { BankName } from "./bank_name/bank_name.entity";
 export class CreateEmployeeModuleDto {
     id: number;
     employeeId: string;
@@ -80,4 +81,5 @@ export class CreateEmployeeModuleDto {
     additionalDocs: boolean;
     drivingLicenceType: DrivingLicenceType[];
     paymentFrequency: PaymentFrequency[];
+    bankName: BankName[];
 }

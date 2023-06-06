@@ -168,8 +168,8 @@ export class EmployeeModule {
     @Column({ type: 'boolean', default: true })
     drivingLicence: boolean;
 
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    drivingLicenceType: string | null;
+    // @Column("varchar", { nullable: true, length: 250, default: () => null })
+    // drivingLicenceType: string | null;
 
     @Column("varchar", { nullable: true, length: 250, default: () => null })
     drivingLicenceNo: string | null;
@@ -236,7 +236,7 @@ export class EmployeeModule {
 
     @ManyToOne(() => DrivingLicenceType, drivingLicenceType => drivingLicenceType.employee)
     @JoinColumn({ name: 'drivingLicenceType' })
-    drivingLicenceType: DrivingLicenceType;
+    driverLicenceType: DrivingLicenceType;
 
     @ManyToOne(() => PaymentFrequency, paymentFrequency => paymentFrequency.employee)
     @JoinColumn({ name: 'paymentFrequency' })
