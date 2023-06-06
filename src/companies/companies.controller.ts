@@ -167,9 +167,9 @@ export class CompaniesController {
   @UseGuards(AuthGuard('jwt'))
   @Patch('/edit/:id')
   @UseInterceptors(AnyFilesInterceptor())
-  async update(@Param('id') id: number, @UploadedFiles() file, @Body() companyData, @Req() master) {
+  async update(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
 
-    console.log(master.body.users, 787878)
+    console.log(companyData, 787878)
     const filename = await this.imageUploadService.uploadcompany(file, "body");
     const data = {
       ...companyData,

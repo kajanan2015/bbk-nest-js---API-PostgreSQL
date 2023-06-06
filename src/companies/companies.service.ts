@@ -436,7 +436,7 @@ export class CompaniesService {
           }
         : {}),
     };
-
+console.log(passcompanyData,4567890)
     let untickid=[];
     let tickedid=[];
     if(data.untikId){
@@ -470,15 +470,15 @@ export class CompaniesService {
       let documentUpload = [];
       let profileImg, logoImg, profilethumbUrl, companythumbUrl = null;
       for (const item of data.filename) {
-        if (item.hasOwnProperty('profileImg')) {
-          profileImg = item.profileImg[0];
-          profilethumbUrl = await this.imageUploadService.uploadThumbnailToS3(item.profileImg[0]);
-          const dataprofilpic = {
-            profilePic: profileImg,
-            profilePicThumb: profilethumbUrl
-          }
-          await this.userservice.update(data.userId, dataprofilpic);
-        }
+        // if (item.hasOwnProperty('profileImg')) {
+        //   profileImg = item.profileImg[0];
+        //   profilethumbUrl = await this.imageUploadService.uploadThumbnailToS3(item.profileImg[0]);
+        //   const dataprofilpic = {
+        //     profilePic: profileImg,
+        //     profilePicThumb: profilethumbUrl
+        //   }
+        //   await this.userservice.update(data.userId, dataprofilpic);
+        // }
         if (item.hasOwnProperty('logoImg')) {
           logoImg = item.logoImg[0];
           companythumbUrl = await this.imageUploadService.uploadThumbnailToS3(item.logoImg[0]);
@@ -497,34 +497,66 @@ export class CompaniesService {
     }
 
     if (data.users) {
-    data.users.map((user) => {     
-      const passuserData =({
-        ...(user.firstName ? { firstName: user.firstName } : {}),
-        ...(user.lastName ? { lastName: user.lastName } : {}),
-        ...(user.email ? { email: user.email } : {}),
-        ...(user.phone ? { phone: user.phone } : {}),
-        ...(user.password ? { password: user.password } : {}),
-      });
-      console.log(passuserData,99909675)
+     let profilethumbUrl;
+     let profilePic
+      for (const user of data.users) {
+        if (user.profileImage) {
+          if(user.profileImage=="undefined"){
+            profilethumbUrl=null;
+            profilePic=null
+          }else{
+            profilethumbUrl = user.profileImage ? await this.imageUploadService.uploadThumbnailToS3(user.profileImage) : null;
+            profilePic=user.profileImage
+          }
+          
+        }
+        
+        const passuserData = {
+          ...(user.firstName ? { firstName: user.firstName } : {}),
+          ...(user.lastName ? { lastName: user.lastName } : {}),
+          ...(user.email ? { email: user.email } : {}),
+          ...(user.phone ? { phone: user.phone } : {}),
+          ...(user.password ? { password: user.password } : {}),
+          ...(user.profileImage ? { profilePic:profilePic , profilePicThumb: profilethumbUrl} : {})
+        };
+        
+        console.log(passuserData, 99909675);
+        
+       await this.userservice.update(user.userId, passuserData);
+      }
+
+    // data.users.map((user) => {
+    //   if(user.profileImage){
+        
+    //   }     
+    //   const passuserData =({
+    //     ...(user.firstName ? { firstName: user.firstName } : {}),
+    //     ...(user.lastName ? { lastName: user.lastName } : {}),
+    //     ...(user.email ? { email: user.email } : {}),
+    //     ...(user.phone ? { phone: user.phone } : {}),
+    //     ...(user.password ? { password: user.password } : {}),
+    //     ...(user.profileImage ? { profilePic: user.profileImage } : {}),
+    //   });
+    //   console.log(passuserData,99909675)
       
-      this.userservice.update(user.userId,passuserData)
-    });
+    //   this.userservice.update(user.userId,passuserData)
+    // });
 
       //  = await Promise.all(passuserData.map((user) => this.userservice.update(data.userId, user)));
 
-      if (data.existingCompanyEmail) {
-        for (const user of data.users) {
-          if (user.password && user.email) {
-            await this.mailservice.sendcompanyCreate(user.password, "user", user.email, user.email);
-          } else if (user.email) {
-            await this.mailservice.sendcompanyCreate("password is not changed", "user", user.email, user.email);
-          } else if (user.password) {
-            // await this.mailservice.sendcompanyCreate(user.password, "user", data.existingCompanyEmail, "your username is not changed");
-          } else {
-            await this.mailservice.sendcompanyCreate("password is not changed. But user profile details are changed", "user", data.existingCompanyEmail, "your username is not changed");
-          }
-        }
-      }
+      // if (data.existingCompanyEmail) {
+      //   for (const user of data.users) {
+      //     if (user.password && user.email) {
+      //       await this.mailservice.sendcompanyCreate(user.password, "user", user.email, user.email);
+      //     } else if (user.email) {
+      //       await this.mailservice.sendcompanyCreate("password is not changed", "user", user.email, user.email);
+      //     } else if (user.password) {
+      //       // await this.mailservice.sendcompanyCreate(user.password, "user", data.existingCompanyEmail, "your username is not changed");
+      //     } else {
+      //       await this.mailservice.sendcompanyCreate("password is not changed. But user profile details are changed", "user", data.existingCompanyEmail, "your username is not changed");
+      //     }
+      //   }
+      // }
     }
 
 
