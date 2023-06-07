@@ -465,9 +465,7 @@ console.log(passcompanyData,4567890)
           where: { documentPath: documentUrl.documentPath },
         });
         console.log(deletedocuments,4567)
-        deletedocuments.push(deletedocuments)
         console.log(deletedocuments,4569)
-     
         await this.imageUploadService.deletedoc(documentUrl.documentPath )
         await this.companyDocumentRepository.remove(deletedocuments)
       }
