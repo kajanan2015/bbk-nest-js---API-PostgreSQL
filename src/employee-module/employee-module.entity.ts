@@ -257,4 +257,43 @@ export class EmployeeModule {
 
     @Column("varchar", { nullable: true, length: 250, default: () => null })
     additionalDetails: string | null;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    salaryType: string | null;
+
+    @Column("int", { nullable: true, default: () => null })
+    slryRatePerHour: number;
+
+    @Column("int", { nullable: true, default: () => null })
+    workHoursPerWeek: number;
+
+    @Column("int", { nullable: true, default: () => null })
+    slryRatePerDay: number;
+
+    @Column("int", { nullable: true, default: () => null })
+    shiftHoursPerDay: number;
+
+    @Column("int", { nullable: true, default: () => null })
+    workDaysPerWeek: number;
+
+    @Column("int", { nullable: true, default: () => null })
+    annualSalary: number;
+
+    @Column("int", { nullable: true, default: () => null })
+    slryWeekly: number;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    slryOtType: string | null;
+
+    @Column("int", { nullable: true, default: () => null })
+    slryOtRate: number;
+
+    @Column("int", { nullable: true, default: () => null })
+    slryHolidayRate: number;
+
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    slrySickType: string | null;
+
+    @Column("int", { nullable: true, default: () => null })
+    slrySickRate: number;
 }

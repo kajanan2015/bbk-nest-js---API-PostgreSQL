@@ -79,11 +79,24 @@ export class CreateEmployeeModuleDto {
     crbCardIssueDate: Date;
     crbCardExpireDate: Date;
     additionalDocs: boolean;
-    drivingLicenceType: DrivingLicenceType[];
-    paymentFrequency: PaymentFrequency[];
+    drivingLicenceType: DrivingLicenceType[];    
     bankName: Bank[];
     bankAccountName: string;
     bankAccountNo: string;
     bankSortCode: string;
     additionalDetails: string;
+    salaryType: string;
+    slryRatePerHour: number;
+    workHoursPerWeek: number;    
+    slryRatePerDay: number;
+    shiftHoursPerDay: number;
+    workDaysPerWeek: number;
+    annualSalary:number;
+    slryWeekly: number;
+    slryOtType: string;
+    slryOtRate: number;
+    slryHolidayRate: number;
+    slrySickType: string;
+    slrySickRate: number;
+    paymentFrequency: PaymentFrequency[];
 }
