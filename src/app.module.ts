@@ -37,6 +37,7 @@ import { FramelayoutModule } from './framelayout/framelayout.module';
 import { EmployeeModuleModule } from './employee-module/employee-module.module';
 import { EmployeeDocumentModule } from './employee-document/employee-document.module';
 import { CreatemoduleModule } from './createmodule/createmodule.module';
+import { CreatepackageModule } from './createpackage/createpackage.module';
 
 
 
@@ -80,7 +81,8 @@ const settings = require("../ormconfig.js");
     FramelayoutModule,
     EmployeeModuleModule,
     EmployeeDocumentModule,
-    CreatemoduleModule
+    CreatemoduleModule,
+    CreatepackageModule
   ],
   controllers: [AppController],
   providers: [AppService],
