@@ -4,20 +4,34 @@ import { UpdateCreatepackageDto } from './update-createpackage.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Createpackage } from './createpackage.entity';
 import { Repository } from 'typeorm';
+import { ModuledetailsofpackageService } from 'src/moduledetailsofpackage/moduledetailsofpackage.service';
 @Injectable()
 export class CreatepackageService {
   constructor(
     @InjectRepository(Createpackage)
     private createpkgRepository: Repository<Createpackage>,
+    private readonly moduledetailspackageservice: ModuledetailsofpackageService,
   ) {}
  async create(data) {
     const response=this.createpkgRepository.create(data);
-    return await this.createpkgRepository.save(response);
+    const packageresponse = await this.createpkgRepository.save(response);
+  let detailsdata;
+    for (const value of data.details) {
+      detailsdata={
+        ...value,
+        package:packageresponse['id']
+      }
+      await this.moduledetailspackageservice.create(detailsdata)  
+    }
+    
+    return await this.createpkgRepository.find({ 
+      where: { status: 1 } 
+    })
   }
 
   async findAll() {
     return await this.createpkgRepository.find({ 
-      where: { status: 1 },relations:['modules','modules.details','modules.details.moduledata'] 
+      where: { status: 1 } 
     });
   }
 

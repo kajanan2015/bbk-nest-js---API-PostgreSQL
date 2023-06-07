@@ -38,6 +38,7 @@ import { EmployeeModuleModule } from './employee-module/employee-module.module';
 import { EmployeeDocumentModule } from './employee-document/employee-document.module';
 import { CreatemoduleModule } from './createmodule/createmodule.module';
 import { CreatepackageModule } from './createpackage/createpackage.module';
+import { ModuledetailsofpackageModule } from './moduledetailsofpackage/moduledetailsofpackage.module';
 
 
 
@@ -82,7 +83,8 @@ const settings = require("../ormconfig.js");
     EmployeeModuleModule,
     EmployeeDocumentModule,
     CreatemoduleModule,
-    CreatepackageModule
+    CreatepackageModule,
+    ModuledetailsofpackageModule
   ],
   controllers: [AppController],
   providers: [AppService],

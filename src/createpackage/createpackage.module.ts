@@ -4,12 +4,14 @@ import { CreatepackageController } from './createpackage.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Createpackage } from './createpackage.entity';
 import { Createmodule } from 'src/createmodule/createmodule.entity';
-import { Modulepackagerelationship } from './modulepackagerelationship.entity';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
-import { ModuleCost } from './modulecost.entity';
+import { ModuledetailsofpackageModule } from 'src/moduledetailsofpackage/moduledetailsofpackage.module';
+import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetailsofpackage.entity';
+import { ModuledetailsofpackageService } from 'src/moduledetailsofpackage/moduledetailsofpackage.service';
+
 @Module({
-  imports:[TypeOrmModule.forFeature([Createpackage,Createmodule,Modulepackagerelationship,ModuleCost])],
+  imports:[TypeOrmModule.forFeature([Createpackage,Createmodule,Moduledetailsofpackage]),ModuledetailsofpackageModule],
   controllers: [CreatepackageController],
-  providers: [CreatepackageService,ImageUploadService]
+  providers: [CreatepackageService,ImageUploadService,ModuledetailsofpackageService]
 })
 export class CreatepackageModule {}
