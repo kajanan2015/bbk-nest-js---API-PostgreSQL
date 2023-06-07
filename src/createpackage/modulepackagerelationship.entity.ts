@@ -10,7 +10,7 @@ export class Modulepackagerelationship{
 
 
   @ManyToOne(() => Createpackage, tableA => tableA.modules)
-  tableA: Createpackage;
+  package: Createpackage;
 
   @ManyToOne(() => ModuleCost, tableC => tableC.relationships)
   details: ModuleCost;

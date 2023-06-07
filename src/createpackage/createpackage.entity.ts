@@ -17,6 +17,6 @@ export class Createpackage {
     status: Boolean;
 
     
-    @OneToMany(() => Modulepackagerelationship, relationship => relationship.tableA)
+    @OneToMany(() => Modulepackagerelationship, relationship => relationship.package)
     modules: Modulepackagerelationship[];
 }
