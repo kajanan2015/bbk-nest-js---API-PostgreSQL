@@ -458,15 +458,17 @@ console.log(passcompanyData,4567890)
     
     if (data.deletedDocument) {
       let deletedocuments = [];
+      console.log(deletedocuments,56789)
       for (const documentUrl of data.deletedDocument) {
+        console.log(documentUrl,6666)
         deletedocuments = await this.companyDocumentRepository.find({
-          where: { documentPath: documentUrl },
+          where: { documentPath: documentUrl.documentPath },
         });
         console.log(deletedocuments,4567)
         deletedocuments.push(deletedocuments)
         console.log(deletedocuments,4569)
      
-        await this.imageUploadService.deletedoc(documentUrl)
+        await this.imageUploadService.deletedoc(documentUrl.documentPath )
         await this.companyDocumentRepository.remove(deletedocuments)
       }
       console.log(deletedocuments,56789)

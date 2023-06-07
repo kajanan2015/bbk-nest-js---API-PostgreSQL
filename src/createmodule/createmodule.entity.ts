@@ -15,7 +15,7 @@ export class Createmodule {
     
     @Column({ type: 'boolean', default:true})
     status: Boolean;
-
+    
     @OneToMany(() => ModuleCost, costs => costs.moduledata)
     costid: ModuleCost[];
 }
