@@ -13,9 +13,9 @@ export class Createmodule {
     @Column("varchar",{ nullable: true, default: () => null})
     modulelogo: string;
     
-    @Column({ type: 'boolean', default:true})
-    status: Boolean;
-    
+    @Column("bigint", { default: 1, comment: ' 0-pending, 1-active, 2-deactivate' })
+    status: number;
+
     @OneToMany(() => ModuleCost, costs => costs.moduledata)
     costid: ModuleCost[];
 }
