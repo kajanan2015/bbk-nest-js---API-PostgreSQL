@@ -20,7 +20,7 @@ export class CreatemoduleService {
   }
 
   async findOne(id: number) {
-    return `This action returns a #${id} createmodule`;
+    return await this.createmoduleRepository.find({where:{id}});
   }
 
   async update(id: number, updateCreatemoduleDto: UpdateCreatemoduleDto) {
