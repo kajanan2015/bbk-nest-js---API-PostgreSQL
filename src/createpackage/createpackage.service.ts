@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCreatepackageDto } from './create-createpackage.dto';
 import { UpdateCreatepackageDto } from './update-createpackage.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,14 +13,22 @@ export class CreatepackageService {
     private readonly moduledetailspackageservice: ModuledetailsofpackageService,
   ) {}
  async create(data) {
+  console.log(data,77)
     const response=this.createpkgRepository.create(data);
+    console.log(response,22)
     const packageresponse = await this.createpkgRepository.save(response);
+    console.log(packageresponse['id'],66)
   let detailsdata;
-    for (const value of data.details) {
+    for (const value of data.modules) {
+      console.log(value.details,66789)
       detailsdata={
-        ...value,
-        package:packageresponse['id']
+        module:value.details.id,
+        packages:packageresponse['id'],
+        NoOfRecords:value.details.noOfRecords,
+        CostPerRecord:value.details.costPerRecord,
+        PackagePrice:value.details.packagePrice,
       }
+      console.log(detailsdata,8998)
       await this.moduledetailspackageservice.create(detailsdata)  
     }
     
@@ -31,12 +39,16 @@ export class CreatepackageService {
 
   async findAll() {
     return await this.createpkgRepository.find({ 
-      where: { status: 1 } 
+      where: { status: 1 },relations:['packagedetails','packagedetails.module'] 
     });
   }
 
  async findOne(id: number) {
-    return `This action returns a #${id} createpackage`;
+  const packagedata = await this.createpkgRepository.findOne(id,{relations:['packagedetails','packagedetails.module']});
+  if (!packagedata) {
+    throw new NotFoundException(` ID '${id}' not found`);
+  }
+  return packagedata;
   }
 
  async update(id: number, updateCreatepackageDto: UpdateCreatepackageDto) {
