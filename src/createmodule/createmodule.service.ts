@@ -24,9 +24,9 @@ export class CreatemoduleService {
   }
 
   async update(id: number, updateCreatemoduleDto: UpdateCreatemoduleDto) {
-    return `This action updates a #${id} createmodule`;
+    await this.createmoduleRepository.update({ id }, updateCreatemoduleDto);
+    return await this.createmoduleRepository.findOne({ id });
   }
-
   async remove(id: number) {
     return `This action removes a #${id} createmodule`;
   }
