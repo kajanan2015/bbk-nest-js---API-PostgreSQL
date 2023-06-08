@@ -7,6 +7,7 @@ import { country } from './country.entity';
 import { companytype } from './companytype.entity';
 import { EmployeeModule } from 'src/employee-module/employee-module.entity';
 import { Createmodule } from 'src/createmodule/createmodule.entity';
+import { Createpackage } from 'src/createpackage/createpackage.entity';
 @Entity('company')
 export class CompaniesEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
@@ -152,4 +153,11 @@ export class CompaniesEntity {
   @ManyToMany(() => Createmodule, module => module.company)
   @JoinTable()
   module: Createmodule[];
+
+  @ManyToOne(() => Createpackage, packages => packages.company)
+  @JoinColumn({ name: 'packageId' })
+  package: Createpackage;
+
+  @Column("tinyint", { default: 3, comment: ' 1-agree, 2-disagree, 3-pending' })
+  contractagreement: number;
 }

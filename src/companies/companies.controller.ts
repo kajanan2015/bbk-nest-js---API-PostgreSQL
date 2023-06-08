@@ -91,6 +91,38 @@ export class CompaniesController {
   }
 
   @UseGuards(AuthGuard('jwt'))
+  @Put('assignpackage')
+  async assignpackage(@Body() passdata){
+    const data={
+      package:passdata.packageId,
+    }
+    return await this.service.assignpackage(passdata.companyId,data)
+  }
+
+  
+
+  @UseGuards(AuthGuard('jwt'))
+  @Put('contractagreement')
+  async contractagreement(@Body() passdata){
+    const data={
+      contractagreement:passdata.contractagreement,
+    }
+    return await this.service.contractagreement(passdata.companyId,data)
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Get('contractagreement/:id')
+  async getcontractagreement(@Param('id') id: number){
+    return await this.service.getcontractagreement(id)
+  }
+  
+  @UseGuards(AuthGuard('jwt'))
+  @Get('assignpackage/:id')
+  async getassignpackage(@Param('id') id: number){
+    return await this.service.getassignpackage(id)
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @Get('assign/:id')
   async getassignmodule(@Param('id') id: number){
     return await this.service.getassignmodule(id)

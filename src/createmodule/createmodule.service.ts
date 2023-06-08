@@ -30,11 +30,11 @@ export class CreatemoduleService {
 
 
   async findAll() {
-    return await this.createmoduleRepository.find({relations:['moduleupdate','modulecreate']});
+    return await this.createmoduleRepository.find({relations:['moduleupdate','modulecreate','company']});
   }
 
   async findOne(id: number) {
-    return await this.createmoduleRepository.find({where:{id},relations:['moduleupdate','modulecreate']});
+    return await this.createmoduleRepository.find({where:{id},relations:['moduleupdate','modulecreate','company']});
   }
 
   async update(id: number, updateCreatemoduleDto) {

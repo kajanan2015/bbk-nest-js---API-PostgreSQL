@@ -1,21 +1,33 @@
-import { Injectable, HttpStatus, NotFoundException, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, LessThan, LessThanOrEqual, MoreThan, MoreThanOrEqual, Not, Repository } from 'typeorm';
-import { CompaniesDTO } from './companies.dto';
-import { CompaniesEntity } from './companies.entity';
-import { PagePermissionEntity } from 'src/pagepermission/pagepermission.entity';
-import { SystemCodeService } from 'src/system-code/system-code.service';
-import { UserService } from 'src/user/user.service';
-import { User } from 'src/user/user.entity';
-import { Connection, QueryRunner } from 'typeorm';
-import { MailService } from 'src/mail/mail.service';
-import { CompanyDocument } from 'src/company-document/company-document.entity';
-import { CompanyDocumentService } from 'src/company-document/company-document.service';
-import { ImageUploadService } from 'src/imageupload/imageupload.service';
-import { CreatemoduleService } from 'src/createmodule/createmodule.service';
-import { Createmodule } from 'src/createmodule/createmodule.entity';
+import {
+  Injectable,
+  HttpStatus,
+  NotFoundException,
+  BadRequestException,
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import {
+  IsNull,
+  LessThan,
+  LessThanOrEqual,
+  MoreThan,
+  MoreThanOrEqual,
+  Not,
+  Repository,
+} from "typeorm";
+import { CompaniesDTO } from "./companies.dto";
+import { CompaniesEntity } from "./companies.entity";
+import { PagePermissionEntity } from "src/pagepermission/pagepermission.entity";
+import { SystemCodeService } from "src/system-code/system-code.service";
+import { UserService } from "src/user/user.service";
+import { User } from "src/user/user.entity";
+import { Connection, QueryRunner } from "typeorm";
+import { MailService } from "src/mail/mail.service";
+import { CompanyDocument } from "src/company-document/company-document.entity";
+import { CompanyDocumentService } from "src/company-document/company-document.service";
+import { ImageUploadService } from "src/imageupload/imageupload.service";
+import { CreatemoduleService } from "src/createmodule/createmodule.service";
+import { Createmodule } from "src/createmodule/createmodule.entity";
 @Injectable()
-
 export class CompaniesService {
   constructor(
     @InjectRepository(CompaniesEntity)
@@ -33,118 +45,165 @@ export class CompaniesService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(Createmodule)
-    private readonly modulerepository: Repository<Createmodule>,
-  ) { }
+    private readonly modulerepository: Repository<Createmodule>
+  ) {}
 
   async showAll() {
-    return await this.companyRepository.find(
-      {
-        where: { status: 1, companyIdentifier: 'maincompany' },
-        relations: ['mainCompany', 'mainCompany.users', 'users', 'documents', 'country', 'regAddressCountry', 'companyType']
-      }
-    );
+    return await this.companyRepository.find({
+      where: { status: 1, companyIdentifier: "maincompany" },
+      relations: [
+        "mainCompany",
+        "mainCompany.users",
+        "users",
+        "documents",
+        "country",
+        "regAddressCountry",
+        "companyType",
+      ],
+    });
   }
 
   async showcompanylist(value) {
     const companylist = await this.companyRepository.findOne({
       where: {
-        id: value
-      }, relations: ['mainCompany']
-    })
-    return await this.companyRepository.find(
-      {
-        where: {
-          mainCompany: companylist.mainCompany.id
-        }
-      }
-    )
+        id: value,
+      },
+      relations: ["mainCompany"],
+    });
+    return await this.companyRepository.find({
+      where: {
+        mainCompany: companylist.mainCompany.id,
+      },
+    });
   }
 
   async showonlySubCompany() {
-    return await this.companyRepository.find(
-      {
-        where: { status: 1, mainCompany: Not(IsNull()) },
-        relations: ['mainCompany', 'mainCompany.users', 'users', 'documents', 'country', 'regAddressCountry', 'companyType']
-      }
-    );
+    return await this.companyRepository.find({
+      where: { status: 1, mainCompany: Not(IsNull()) },
+      relations: [
+        "mainCompany",
+        "mainCompany.users",
+        "users",
+        "documents",
+        "country",
+        "regAddressCountry",
+        "companyType",
+      ],
+    });
   }
 
   async showonlyActivemainCompany(value) {
-    return await this.companyRepository.find(
-      {
-        where: { status: 1, compstatus: value },
-        relations: ['mainCompany', 'mainCompany.users', 'users', 'documents', 'country', 'regAddressCountry', 'companyType'],
-        order: {
-          mainCompany: 'ASC'
-        }
-      }
-    );
+    return await this.companyRepository.find({
+      where: { status: 1, compstatus: value },
+      relations: [
+        "mainCompany",
+        "mainCompany.users",
+        "users",
+        "documents",
+        "country",
+        "regAddressCountry",
+        "companyType",
+      ],
+      order: {
+        mainCompany: "ASC",
+      },
+    });
   }
 
   async showonlyActivesubCompany(value) {
-    return await this.companyRepository.find(
-      {
-        where: { status: 1, companyIdentifier: "subcompany", compstatus: value },
-        relations: ['mainCompany', 'mainCompany.users', 'users', 'documents', 'country', 'regAddressCountry', 'companyType']
-      }
-    );
+    return await this.companyRepository.find({
+      where: { status: 1, companyIdentifier: "subcompany", compstatus: value },
+      relations: [
+        "mainCompany",
+        "mainCompany.users",
+        "users",
+        "documents",
+        "country",
+        "regAddressCountry",
+        "companyType",
+      ],
+    });
   }
 
   async getcompanyType() {
-    const query = 'SELECT * FROM `companyType`';
+    const query = "SELECT * FROM `companyType`";
     const companyTypeList = await this.connection.query(query);
     return companyTypeList;
   }
 
   async getcountry() {
-    const query = 'SELECT * FROM `country`';
+    const query = "SELECT * FROM `country`";
     const countryList = await this.connection.query(query);
     return countryList;
   }
 
   async showSubAll(mainCompanyId: number): Promise<CompaniesEntity[]> {
-    return await this.companyRepository.find(
-      {
-        where: {
-          status: 1, mainCompany: {
-            id: mainCompanyId
-          }
+    return await this.companyRepository.find({
+      where: {
+        status: 1,
+        mainCompany: {
+          id: mainCompanyId,
         },
-        relations: ['mainCompany', 'mainCompany.users', 'users', 'documents', 'country', 'regAddressCountry', 'companyType']
-      }
-    );
+      },
+      relations: [
+        "mainCompany",
+        "mainCompany.users",
+        "users",
+        "documents",
+        "country",
+        "regAddressCountry",
+        "companyType",
+      ],
+    });
   }
 
   async create(companyData) {
-    const existingcompanyname = await this.companyRepository.findOne({ where: { companyName: companyData.companyName, registrationNumber: companyData.registrationNumber, country: companyData.country, regAddressCountry: companyData.regAddressCountry } });
+    const existingcompanyname = await this.companyRepository.findOne({
+      where: {
+        companyName: companyData.companyName,
+        registrationNumber: companyData.registrationNumber,
+        country: companyData.country,
+        regAddressCountry: companyData.regAddressCountry,
+      },
+    });
     if (existingcompanyname) {
-      return 'company name exist';
+      return "company name exist";
     }
-    const response = await this.systemcodeService.findOne('company')
-    const companyCode = response.code + '' + response.startValue
+    const response = await this.systemcodeService.findOne("company");
+    const companyCode = response.code + "" + response.startValue;
     const newstartvalue = {
-      startValue: response.startValue + 1
-    }
+      startValue: response.startValue + 1,
+    };
 
-    let profilethumbUrl, companythumbUrl = null;
+    let profilethumbUrl,
+      companythumbUrl = null;
 
-    companythumbUrl = companyData.logoImg ? await this.imageUploadService.uploadThumbnailToS3(companyData.logoImg) : null;
+    companythumbUrl = companyData.logoImg
+      ? await this.imageUploadService.uploadThumbnailToS3(companyData.logoImg)
+      : null;
 
-    const files = companyData.file ? companyData.file.map(documentPath => ({ documentPath })) : null;
+    const files = companyData.file
+      ? companyData.file.map((documentPath) => ({ documentPath }))
+      : null;
 
     let dataCompany;
 
     if (companyData.parentCompany && companyData.parentCompany != "") {
-      const company = await this.companyRepository.findOne(companyData.parentCompany, {
-        relations: ['users']
-      });
+      const company = await this.companyRepository.findOne(
+        companyData.parentCompany,
+        {
+          relations: ["users"],
+        }
+      );
       if (!company) {
-        throw new NotFoundException(`Company with ID ${companyData.parentCompany} not found`);
+        throw new NotFoundException(
+          `Company with ID ${companyData.parentCompany} not found`
+        );
       }
       const userIds = [];
 
       if (companyData.sameParentCompanyAdmin == "false") {
-        userIds.push(company.users.map(user => user.id));
+        userIds.push(company.users.map((user) => user.id));
 
         const adminUsers = companyData.admins;
 
@@ -153,7 +212,11 @@ export class CompaniesService {
           if (existing) {
             return "account exist";
           }
-          profilethumbUrl = admin.profileImage ? await this.imageUploadService.uploadThumbnailToS3(admin.profileImage) : null;
+          profilethumbUrl = admin.profileImage
+            ? await this.imageUploadService.uploadThumbnailToS3(
+                admin.profileImage
+              )
+            : null;
           const adminData = {
             firstName: admin.firstName,
             lastName: admin.lastName,
@@ -167,7 +230,12 @@ export class CompaniesService {
 
           const adminResponse = await this.userservice.create(adminData);
 
-          await this.mailservice.senduserCreate(admin.password, admin.firstName, admin.email, admin.email);
+          await this.mailservice.senduserCreate(
+            admin.password,
+            admin.firstName,
+            admin.email,
+            admin.email
+          );
 
           const userId = adminResponse.id.toString();
           const adminUser = await this.userRepository.findByIds([userId]);
@@ -179,8 +247,8 @@ export class CompaniesService {
               companyCode: companyCode,
               users: adminUser,
               documents: files,
-              companyIdentifier:"maincompany"
-            }
+              companyIdentifier: "maincompany",
+            };
           } else {
             dataCompany = {
               ...companyData,
@@ -194,8 +262,8 @@ export class CompaniesService {
               companyCode: companyCode,
               users: adminUser,
               documents: files,
-              companyIdentifier: "maincompany"
-            }
+              companyIdentifier: "maincompany",
+            };
           }
         }
       } else {
@@ -204,7 +272,16 @@ export class CompaniesService {
             userIds.push(value);
           }
         }
-        if (companyData.firstName != '' && companyData.lastName != '' && companyData.uType != '' && companyData.profilePic != '' && companyData.profilePicThumb != '' && companyData.password != '' && companyData.phone != '' && companyData.email != '') {
+        if (
+          companyData.firstName != "" &&
+          companyData.lastName != "" &&
+          companyData.uType != "" &&
+          companyData.profilePic != "" &&
+          companyData.profilePicThumb != "" &&
+          companyData.password != "" &&
+          companyData.phone != "" &&
+          companyData.email != ""
+        ) {
           const adminUsers = companyData.admins;
 
           for (const admin of adminUsers) {
@@ -212,7 +289,11 @@ export class CompaniesService {
             if (existing) {
               return "account exist";
             }
-            profilethumbUrl = admin.profileImage ? await this.imageUploadService.uploadThumbnailToS3(admin.profileImage) : null;
+            profilethumbUrl = admin.profileImage
+              ? await this.imageUploadService.uploadThumbnailToS3(
+                  admin.profileImage
+                )
+              : null;
             const adminData = {
               firstName: admin.firstName,
               lastName: admin.lastName,
@@ -226,7 +307,12 @@ export class CompaniesService {
 
             const adminResponse = await this.userservice.create(adminData);
 
-            await this.mailservice.senduserCreate(admin.password, admin.firstName, admin.email, admin.email);
+            await this.mailservice.senduserCreate(
+              admin.password,
+              admin.firstName,
+              admin.email,
+              admin.email
+            );
 
             const userId = adminResponse.id.toString();
             const adminUser = await this.userRepository.findByIds([userId]);
@@ -240,8 +326,8 @@ export class CompaniesService {
                 companyCode: companyCode,
                 users: adminUser,
                 documents: files,
-                companyIdentifier: "maincompany"
-              }
+                companyIdentifier: "maincompany",
+              };
             } else {
               dataCompany = {
                 ...companyData,
@@ -255,14 +341,13 @@ export class CompaniesService {
                 companyCode: companyCode,
                 users: adminUser,
                 documents: files,
-                companyIdentifier: "maincompany"
-              }
+                companyIdentifier: "maincompany",
+              };
             }
           }
         } else {
           // await this.mailservice.sendcompanyCreate("", companyData.companyName, companyData.companyEmail, "");
         }
-
       }
       const users = await this.userRepository.findByIds(userIds);
       if (!companyData.sameTradingAddress) {
@@ -274,8 +359,8 @@ export class CompaniesService {
           users: users,
           mainCompany: companyData.parentCompany,
           documents: files,
-          companyIdentifier: "subcompany"
-        }
+          companyIdentifier: "subcompany",
+        };
       } else {
         dataCompany = {
           ...companyData,
@@ -290,8 +375,8 @@ export class CompaniesService {
           users: users,
           mainCompany: companyData.parentCompany,
           documents: files,
-          companyIdentifier: "subcompany"
-        }
+          companyIdentifier: "subcompany",
+        };
       }
     } else {
       const adminUsers = companyData.admins;
@@ -302,7 +387,11 @@ export class CompaniesService {
         if (existing) {
           return "account exist";
         }
-        profilethumbUrl = admin.profileImage ? await this.imageUploadService.uploadThumbnailToS3(admin.profileImage) : null;
+        profilethumbUrl = admin.profileImage
+          ? await this.imageUploadService.uploadThumbnailToS3(
+              admin.profileImage
+            )
+          : null;
         const adminData = {
           firstName: admin.firstName,
           lastName: admin.lastName,
@@ -316,7 +405,12 @@ export class CompaniesService {
 
         const adminResponse = await this.userservice.create(adminData);
 
-        await this.mailservice.senduserCreate(admin.password, admin.firstName, admin.email, admin.email);
+        await this.mailservice.senduserCreate(
+          admin.password,
+          admin.firstName,
+          admin.email,
+          admin.email
+        );
 
         const userId = adminResponse.id.toString();
         const adminUser = await this.userRepository.findByIds([userId]);
@@ -330,8 +424,8 @@ export class CompaniesService {
           companyCode: companyCode,
           users: users,
           documents: files,
-          companyIdentifier: "maincompany"
-        }
+          companyIdentifier: "maincompany",
+        };
       } else {
         dataCompany = {
           ...companyData,
@@ -345,22 +439,21 @@ export class CompaniesService {
           companyCode: companyCode,
           users: users,
           documents: files,
-          companyIdentifier: "maincompany"
-        }
+          companyIdentifier: "maincompany",
+        };
       }
-      
     }
 
-    await this.systemcodeService.update(response.id, newstartvalue)
+    await this.systemcodeService.update(response.id, newstartvalue);
     const newCompany = await this.companyRepository.create(dataCompany);
     const responsesave = await this.companyRepository.save(newCompany);
-    console.log(responsesave,344343433344343)
-    console.log(dataCompany.companyIdentifier,323456)
-    if (dataCompany.companyIdentifier == 'maincompany') {
+    console.log(responsesave, 344343433344343);
+    console.log(dataCompany.companyIdentifier, 323456);
+    if (dataCompany.companyIdentifier == "maincompany") {
       const query = `
    UPDATE company
-   SET parentCompanyId = '${responsesave['id']}'
-   WHERE id = '${responsesave['id']}'
+   SET parentCompanyId = '${responsesave["id"]}'
+   WHERE id = '${responsesave["id"]}'
  `;
       const hi = await this.connection.query(query);
     }
@@ -371,7 +464,6 @@ export class CompaniesService {
     return responsesave;
 
     // retrieve the user entities based on the array of IDsconsole.log(users)
-
 
     //  console.log(dataCompany,666666)
     // const newcompanyData={
@@ -387,7 +479,6 @@ export class CompaniesService {
     //  profilePic: companyData.filename[1].profilepic[0]
     // }
 
-
     // return ;
   }
 
@@ -396,26 +487,30 @@ export class CompaniesService {
   }
 
   async getmatchsubcompany(id: number) {
-    return await this.companyRepository.find(
-      {
-        where: { status: 1, mainCompany: id },
-        // relations: ['mainCompany','users']
-      }
-    );
+    return await this.companyRepository.find({
+      where: { status: 1, mainCompany: id },
+      // relations: ['mainCompany','users']
+    });
   }
 
-
   async read(id: number): Promise<CompaniesEntity> {
-    return await this.companyRepository.findOne(
-      id,
-      { relations: ['mainCompany', 'mainCompany.users', 'users', 'documents', 'country', 'regAddressCountry', 'companyType'] },
-    );
+    return await this.companyRepository.findOne(id, {
+      relations: [
+        "mainCompany",
+        "mainCompany.users",
+        "users",
+        "documents",
+        "country",
+        "regAddressCountry",
+        "companyType",
+      ],
+    });
   }
 
   async update(id: number, data) {
-    console.log(data, 11111111111)
+    console.log(data, 11111111111);
     let passcompanyData;
-     passcompanyData = {
+    passcompanyData = {
       ...(data.companyName ? { companyName: data.companyName } : {}),
       ...(data.companyEmail ? { companyEmail: data.companyEmail } : {}),
       ...(data.website ? { website: data.website } : {}),
@@ -426,7 +521,9 @@ export class CompaniesService {
       ...(data.postalCode ? { postalCode: data.postalCode } : {}),
       ...(data.vat ? { vat: data.vat } : {}),
       ...(data.code ? { code: data.code } : {}),
-      ...(data.registrationNumber ? { registrationNumber: data.registrationNumber } : {}),
+      ...(data.registrationNumber
+        ? { registrationNumber: data.registrationNumber }
+        : {}),
       ...(data.country ? { country: data.country.id } : {}),
       ...(data.companyType ? { companyType: data.companyType } : {}),
       ...(data.sameTradingAddress !== false
@@ -439,45 +536,51 @@ export class CompaniesService {
           }
         : {}),
     };
-console.log(passcompanyData,4567890)
-    let untickid=[];
-    let tickedid=[];
-    if(data.untikId){
-      untickid=data.untikId
+    console.log(passcompanyData, 4567890);
+    let untickid = [];
+    let tickedid = [];
+    if (data.untikId) {
+      untickid = data.untikId;
     }
-    if(data.parentCompanyAdmin){
-      tickedid=data.parentCompanyAdmin
+    if (data.parentCompanyAdmin) {
+      tickedid = data.parentCompanyAdmin;
     }
-      const companyfind = await this.companyRepository.findOne(id,{ relations: [ 'users'] });
-     
-      if(companyfind){
-        const addedUserEntities = await this.userRepository.findByIds(tickedid);
-        const removedUserEntities = await this.userRepository.findByIds(untickid);  
-        const newArray = [...companyfind.users, ...addedUserEntities];
-        companyfind.users = newArray.filter(user => !removedUserEntities.some(removedUser => removedUser.id === user.id));
-        const r1=await this.companyRepository.save(companyfind);
-      }
-      
-    
+    const companyfind = await this.companyRepository.findOne(id, {
+      relations: ["users"],
+    });
+
+    if (companyfind) {
+      const addedUserEntities = await this.userRepository.findByIds(tickedid);
+      const removedUserEntities = await this.userRepository.findByIds(untickid);
+      const newArray = [...companyfind.users, ...addedUserEntities];
+      companyfind.users = newArray.filter(
+        (user) =>
+          !removedUserEntities.some((removedUser) => removedUser.id === user.id)
+      );
+      const r1 = await this.companyRepository.save(companyfind);
+    }
+
     if (data.deletedDocument) {
       let deletedocuments = [];
-      console.log(deletedocuments,56789)
+      console.log(deletedocuments, 56789);
       for (const documentUrl of data.deletedDocument) {
-        console.log(documentUrl,6666)
+        console.log(documentUrl, 6666);
         deletedocuments = await this.companyDocumentRepository.find({
           where: { documentPath: documentUrl.documentPath },
         });
-        console.log(deletedocuments,4567)
-        console.log(deletedocuments,4569)
-        await this.imageUploadService.deletedoc(documentUrl.documentPath )
-        await this.companyDocumentRepository.remove(deletedocuments)
+        console.log(deletedocuments, 4567);
+        console.log(deletedocuments, 4569);
+        await this.imageUploadService.deletedoc(documentUrl.documentPath);
+        await this.companyDocumentRepository.remove(deletedocuments);
       }
-      console.log(deletedocuments,56789)
-     
+      console.log(deletedocuments, 56789);
     }
     if (data.filename && data.filename.length > 0) {
       let documentUpload = [];
-      let profileImg, logoImg, profilethumbUrl, companythumbUrl = null;
+      let profileImg,
+        logoImg,
+        profilethumbUrl,
+        companythumbUrl = null;
       for (const item of data.filename) {
         // if (item.hasOwnProperty('profileImg')) {
         //   profileImg = item.profileImg[0];
@@ -488,68 +591,78 @@ console.log(passcompanyData,4567890)
         //   }
         //   await this.userservice.update(data.userId, dataprofilpic);
         // }
-        if (item.hasOwnProperty('logoImg')) {
+        if (item.hasOwnProperty("logoImg")) {
           logoImg = item.logoImg[0];
-          companythumbUrl = await this.imageUploadService.uploadThumbnailToS3(item.logoImg[0]);
+          companythumbUrl = await this.imageUploadService.uploadThumbnailToS3(
+            item.logoImg[0]
+          );
           const datalogo = {
             companyLogo: logoImg,
             companyLogoThumb: companythumbUrl,
-          }
+          };
           await this.companyRepository.update({ id }, datalogo);
         }
-        if (item.hasOwnProperty('files[]')) {
-          documentUpload = item['files[]'];
-          const files = documentUpload.map(documentPath => ({ documentPath, company: id }));
-          await this.companydocumentservice.create(files)
+        if (item.hasOwnProperty("files[]")) {
+          documentUpload = item["files[]"];
+          const files = documentUpload.map((documentPath) => ({
+            documentPath,
+            company: id,
+          }));
+          await this.companydocumentservice.create(files);
         }
       }
     }
 
     if (data.users) {
-     let profilethumbUrl;
-     let profilePic
+      let profilethumbUrl;
+      let profilePic;
       for (const user of data.users) {
         if (user.profileImage) {
-          if(user.profileImage=="deleted"){
-            profilethumbUrl=null;
-            profilePic=null
-          }else{
-            profilethumbUrl = user.profileImage ? await this.imageUploadService.uploadThumbnailToS3(user.profileImage) : null;
-            profilePic=user.profileImage
+          if (user.profileImage == "deleted") {
+            profilethumbUrl = null;
+            profilePic = null;
+          } else {
+            profilethumbUrl = user.profileImage
+              ? await this.imageUploadService.uploadThumbnailToS3(
+                  user.profileImage
+                )
+              : null;
+            profilePic = user.profileImage;
           }
-          
         }
-        
+
         const passuserData = {
           ...(user.firstName ? { firstName: user.firstName } : {}),
           ...(user.lastName ? { lastName: user.lastName } : {}),
           ...(user.email ? { email: user.email } : {}),
           ...(user.phone ? { phone: user.phone } : {}),
           ...(user.password ? { password: user.password } : {}),
-          ...(user.profileImage ? { profilePic:profilePic , profilePicThumb: profilethumbUrl} : {})
+          ...(user.profileImage
+            ? { profilePic: profilePic, profilePicThumb: profilethumbUrl }
+            : {}),
         };
-        
+
         console.log(passuserData, 99909675);
-        
-       await this.userservice.update(user.userId, passuserData);
+
+        await this.userservice.update(user.userId, passuserData);
       }
 
-    // data.users.map((user) => {
-    //   if(user.profileImage){
-        
-    //   }     
-    //   const passuserData =({
-    //     ...(user.firstName ? { firstName: user.firstName } : {}),
-    //     ...(user.lastName ? { lastName: user.lastName } : {}),
-    //     ...(user.email ? { email: user.email } : {}),
-    //     ...(user.phone ? { phone: user.phone } : {}),
-    //     ...(user.password ? { password: user.password } : {}),
-    //     ...(user.profileImage ? { profilePic: user.profileImage } : {}),
-    //   });
-    //   console.log(passuserData,99909675)
-      
-    //   this.userservice.update(user.userId,passuserData)
-    // });
+      // data.users.map((user) => {
+      //   if(user.profileImage){
+
+      //   }
+      //   const passuserData =({
+      //     ...(user.firstName ? { firstName: user.firstName } : {}),
+      //     ...(user.lastName ? { lastName: user.lastName } : {}),
+      //     ...(user.email ? { email: user.email } : {}),
+      //     ...(user.phone ? { phone: user.phone } : {}),
+      //     ...(user.password ? { password: user.password } : {}),
+      //     ...(user.profileImage ? { profilePic: user.profileImage } : {}),
+      //   });
+      //   console.log(passuserData,99909675)
+
+      //   this.userservice.update(user.userId,passuserData)
+      // });
 
       //  = await Promise.all(passuserData.map((user) => this.userservice.update(data.userId, user)));
 
@@ -568,15 +681,20 @@ console.log(passcompanyData,4567890)
       // }
     }
 
-
     if (Object.keys(passcompanyData).length > 0) {
       await this.companyRepository.update({ id }, passcompanyData);
     }
 
-    return await this.companyRepository.findOne(
-      id,
-      { relations: ['mainCompany', 'users', 'documents', 'country', 'regAddressCountry', 'companyType'] },
-    );
+    return await this.companyRepository.findOne(id, {
+      relations: [
+        "mainCompany",
+        "users",
+        "documents",
+        "country",
+        "regAddressCountry",
+        "companyType",
+      ],
+    });
   }
 
   async updateCompanyStatus(id: number, status) {
@@ -585,13 +703,30 @@ console.log(passcompanyData,4567890)
   }
 
   async deactivatecustomerupdate(id: number, data) {
-    await this.companyRepository.update({ id }, { scheduleddeactivation: data.scheduledatatime, deactivationreason: data.reason, deactivationmethod: 'scheduled', deactivatedby: data.userId });
+    await this.companyRepository.update(
+      { id },
+      {
+        scheduleddeactivation: data.scheduledatatime,
+        deactivationreason: data.reason,
+        deactivationmethod: "scheduled",
+        deactivatedby: data.userId,
+      }
+    );
     return await this.companyRepository.findOne({ id });
   }
 
   async deactivatecustomerupdateimmediate(id: number, data) {
     const currentDateTime = new Date();
-    await this.companyRepository.update({ id }, { compstatus: 2, deactivationreason: data.reason, deactivatedtime: currentDateTime, deactivationmethod: 'immediate', deactivatedby: data.userId });
+    await this.companyRepository.update(
+      { id },
+      {
+        compstatus: 2,
+        deactivationreason: data.reason,
+        deactivatedtime: currentDateTime,
+        deactivationmethod: "immediate",
+        deactivatedby: data.userId,
+      }
+    );
     return await this.companyRepository.findOne({ id });
   }
 
@@ -600,49 +735,75 @@ console.log(passcompanyData,4567890)
 
     console.log(currentDateTime.toISOString(), 888);
     const scheduledeactivate = await this.companyRepository.find({
-      where: { scheduleddeactivation: (LessThanOrEqual(currentDateTime.toISOString())) },
+      where: {
+        scheduleddeactivation: LessThanOrEqual(currentDateTime.toISOString()),
+      },
     });
-    console.log(scheduledeactivate, 4343434)
+    console.log(scheduledeactivate, 4343434);
     if (!scheduledeactivate) {
       throw new NotFoundException(` date '${currentDateTime}' not found`);
     }
 
     for (const item of scheduledeactivate) {
-      await this.companyRepository.update(item.id, { compstatus: 2, scheduleddeactivation: null, deactivatedtime: currentDateTime });
-
+      await this.companyRepository.update(item.id, {
+        compstatus: 2,
+        scheduleddeactivation: null,
+        deactivatedtime: currentDateTime,
+      });
     }
 
     return scheduledeactivate;
-
   }
-  async getassignmodule(id){
-    return await this.companyRepository.findOne(id,{relations:['module']})
+  async getassignmodule(id) {
+    return await this.companyRepository.findOne(id, { relations: ["module"] });
   }
 
-  async assignmodule(id,data){
-    const entityA = await this.companyRepository.findOne(id, { relations: ['module'] });
+  async getassignpackage(id){
+    return await this.companyRepository.findOne(id, { relations: ["package"] });
+  }
+
+  async getcontractagreement(id){
+    return await this.companyRepository.findOne(id);
+  }
+  async assignpackage(id,data) {
+    return  await this.companyRepository.update(id,data); 
+  }
+
+  async contractagreement(id,data) {
+    return  await this.companyRepository.update(id,data); 
+  }
+  async assignmodule(id, data) {
+    const entityA = await this.companyRepository.findOne(id, {
+      relations: ["module"],
+    });
     if (!entityA) {
-      throw new NotFoundException('module not found');
+      throw new NotFoundException("module not found");
     }
 
     entityA.module = await this.modulerepository.findByIds(data.module);
-    
-  const responese=  await this.companyRepository.save(entityA);
+
+    const responese = await this.companyRepository.save(entityA);
 
     return entityA;
   }
 
   async addPageToCompany(companyId: number, pageIds: number[]): Promise<void> {
     const company = await this.companyRepository.findOne(companyId, {
-      relations: ['pages'],
+      relations: ["pages"],
     });
 
     const existingPages = company.pages.map((page) => page.id);
-    const pagesToRemove = existingPages.filter((pageId) => !pageIds.includes(pageId));
-    const pagesToAdd = pageIds.filter((pageId) => !existingPages.includes(pageId));
+    const pagesToRemove = existingPages.filter(
+      (pageId) => !pageIds.includes(pageId)
+    );
+    const pagesToAdd = pageIds.filter(
+      (pageId) => !existingPages.includes(pageId)
+    );
 
     if (pagesToRemove.length) {
-      company.pages = company.pages.filter((page) => !pagesToRemove.includes(page.id));
+      company.pages = company.pages.filter(
+        (page) => !pagesToRemove.includes(page.id)
+      );
       await this.companyRepository.save(company);
     }
 
@@ -663,13 +824,14 @@ console.log(passcompanyData,4567890)
     await this.mailservice.sendcompanyCreate(password, name, toemail, username);
   }
 
-  async checkcompanycode(code){
-    const checkcodeexist=await this.companyRepository.find({where:{code}})
-    if(checkcodeexist.length>0){
+  async checkcompanycode(code) {
+    const checkcodeexist = await this.companyRepository.find({
+      where: { code },
+    });
+    if (checkcodeexist.length > 0) {
       return 1;
-    }else{
+    } else {
       return 0;
     }
-
   }
 }

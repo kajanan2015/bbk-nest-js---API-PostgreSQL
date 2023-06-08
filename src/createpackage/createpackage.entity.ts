@@ -1,7 +1,7 @@
 import { BeforeInsert, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetailsofpackage.entity';
 import { User } from 'src/user/user.entity';
-
+import { CompaniesEntity } from 'src/companies/companies.entity';
 @Entity()
 export class Createpackage {
     @PrimaryGeneratedColumn()
@@ -34,5 +34,8 @@ export class Createpackage {
     @ManyToOne(() => User, usercretae => usercretae.pkgupdateby)
     @JoinColumn({ name: 'updatedBy' })
     pkgupdate: User;
+
+    @OneToMany(()=>CompaniesEntity, company => company.package,{cascade:true})
+    company:CompaniesEntity[]
 
 }

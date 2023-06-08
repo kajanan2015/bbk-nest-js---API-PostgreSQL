@@ -9,8 +9,9 @@ import { ModuledetailsofpackageModule } from 'src/moduledetailsofpackage/moduled
 import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetailsofpackage.entity';
 import { ModuledetailsofpackageService } from 'src/moduledetailsofpackage/moduledetailsofpackage.service';
 import { User } from 'src/user/user.entity';
+import { CompaniesEntity } from 'src/companies/companies.entity';
 @Module({
-  imports:[TypeOrmModule.forFeature([Createpackage,Createmodule,Moduledetailsofpackage,User]),ModuledetailsofpackageModule],
+  imports:[TypeOrmModule.forFeature([Createpackage,Createmodule,Moduledetailsofpackage,User, CompaniesEntity]),ModuledetailsofpackageModule],
   controllers: [CreatepackageController],
   providers: [CreatepackageService,ImageUploadService,ModuledetailsofpackageService]
 })
