@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCreatemoduleDto } from './create-createmodule.dto';
 import { UpdateCreatemoduleDto } from './update-createmodule.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,22 +10,44 @@ export class CreatemoduleService {
     @InjectRepository(Createmodule)
     private createmoduleRepository: Repository<Createmodule>,
   ) {}
-  async create(createCreatemoduleDto: CreateCreatemoduleDto) {
+  async create(createCreatemoduleDto) {
     const response=this.createmoduleRepository.create(createCreatemoduleDto);
-    return await this.createmoduleRepository.save(response);
+    const saveresponse= await this.createmoduleRepository.save(response);
+  if(saveresponse.length>0){
+    return {
+      statusCode: HttpStatus.OK,
+      message:"successs"
+    };
+  }else{
+    return {
+      statusCode: HttpStatus.BAD_REQUEST,
+      message:"failed"
+    };
+  }
   }
 
   async findAll() {
-    return await this.createmoduleRepository.find();
+    return await this.createmoduleRepository.find({relations:['moduleupdate','modulecreate']});
   }
 
   async findOne(id: number) {
-    return await this.createmoduleRepository.find({where:{id}});
+    return await this.createmoduleRepository.find({where:{id},relations:['moduleupdate','modulecreate']});
   }
 
-  async update(id: number, updateCreatemoduleDto: UpdateCreatemoduleDto) {
-    await this.createmoduleRepository.update({ id }, updateCreatemoduleDto);
-    return await this.createmoduleRepository.findOne({ id });
+  async update(id: number, updateCreatemoduleDto) {
+    const updateresponse=await this.createmoduleRepository.update({ id }, updateCreatemoduleDto);
+    
+    if(updateresponse){
+      return {
+        statusCode: HttpStatus.OK,
+        message:"successs"
+      };
+    }else{
+      return {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message:"failed"
+      };
+    }
   }
   async remove(id: number) {
     return `This action removes a #${id} createmodule`;

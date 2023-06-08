@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCreatepackageDto } from './create-createpackage.dto';
 import { UpdateCreatepackageDto } from './update-createpackage.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -31,10 +31,18 @@ export class CreatepackageService {
       console.log(detailsdata,8998)
       await this.moduledetailspackageservice.create(detailsdata)  
     }
+    if(packageresponse.length>0){
+      return {
+        statusCode: HttpStatus.OK,
+        message:"successs"
+      };
+    }else{
+      return {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message:"failed"
+      };
+    }
     
-    return await this.createpkgRepository.find({ 
-      where: { status: 1 } 
-    })
   }
 
   async findAll() {

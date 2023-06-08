@@ -11,7 +11,7 @@ export class Createpackage {
     @Column("varchar",{ nullable: true, default: () => null})
     packagelogo: string;
     
-    @Column("bigint", { default: 1, comment: ' 0-pending, 1-active, 2-deactivate' })
+    @Column("tinyint", { default: 1, comment: ' 1-active, 2-inactive, 3-deactivate' })
     status: number;
 
     @OneToMany(()=>Moduledetailsofpackage, packagedetails => packagedetails.packages,{cascade:true})

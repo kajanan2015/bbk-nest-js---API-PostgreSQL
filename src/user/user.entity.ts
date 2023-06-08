@@ -3,6 +3,7 @@ import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColum
 import { PermissionRoleEntity } from 'src/permission-role/permission-role.entity';
 import { TripEntity } from 'src/trip/trip.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
+import { Createmodule } from 'src/createmodule/createmodule.entity';
 @Entity()
 export class User  {
   @PrimaryGeneratedColumn()
@@ -68,4 +69,10 @@ export class User  {
 
   @ManyToMany(() => CompaniesEntity, company => company.users)
   companies: CompaniesEntity[];
+
+  @OneToMany(()=>Createmodule, cretedby => cretedby.modulecreate,{cascade:true})
+  modulecreatedby:Createmodule[]
+
+  @OneToMany(()=>Createmodule, updatedby => updatedby.moduleupdate,{cascade:true})
+  moduleupdateby:Createmodule[]
 }
