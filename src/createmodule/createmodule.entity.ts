@@ -2,6 +2,7 @@ import { BeforeInsert, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyTo
 import { Createpackage } from 'src/createpackage/createpackage.entity';
 import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetailsofpackage.entity';
 import { User } from 'src/user/user.entity';
+import { CompaniesEntity } from 'src/companies/companies.entity';
 @Entity()
 export class Createmodule {
     @PrimaryGeneratedColumn()
@@ -35,4 +36,8 @@ export class Createmodule {
     @ManyToOne(() => User, usercretae => usercretae.moduleupdateby)
     @JoinColumn({ name: 'updatedBy' })
     moduleupdate: User;
+
+    @ManyToMany(() => CompaniesEntity, module => module.module)
+    @JoinTable()
+    company: CompaniesEntity[];
 }

@@ -80,6 +80,16 @@ export class CompaniesController {
       companies
     };
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post('assign')
+  async assignmodule(@Body() passdata){
+    const data={
+      module:passdata.module,
+    }
+    return await this.service.assignmodule(passdata.companyId,data)
+  }
+
   @UseGuards(AuthGuard('jwt'))
   @Get('/showsubcompaniesonly')
   async showSubonlyCompanies() {

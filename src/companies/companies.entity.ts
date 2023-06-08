@@ -6,7 +6,7 @@ import { User } from 'src/user/user.entity';
 import { country } from './country.entity';
 import { companytype } from './companytype.entity';
 import { EmployeeModule } from 'src/employee-module/employee-module.entity';
-
+import { Createmodule } from 'src/createmodule/createmodule.entity';
 @Entity('company')
 export class CompaniesEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
@@ -148,4 +148,8 @@ export class CompaniesEntity {
 
   @OneToMany(() => EmployeeModule, employeemodule => employeemodule.company, ({ cascade: true }))
   employedetails: EmployeeModule[];
+
+  @ManyToMany(() => Createmodule, module => module.company)
+  @JoinTable()
+  module: Createmodule[];
 }

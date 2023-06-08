@@ -18,9 +18,12 @@ import { PermissionRoleEntity } from 'src/permission-role/permission-role.entity
 import { CompaniesModule } from 'src/companies/companies.module';
 import { CompaniesEntity } from 'src/companies/companies.entity';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
+import { Createmodule } from 'src/createmodule/createmodule.entity';
+import { CreatemoduleModule } from 'src/createmodule/createmodule.module';
+import { CreatemoduleService } from 'src/createmodule/createmodule.service';
 @Module({
-  imports:[TypeOrmModule.forFeature([EmployeeDocument, PagePermissionEntity,EmployeeModule,CompanyDocument , SystemCode , User,PermissionRoleEntity ,CompaniesEntity]),EmployeeDocumentModule,CompaniesModule],
+  imports:[TypeOrmModule.forFeature([EmployeeDocument, PagePermissionEntity,EmployeeModule,CompanyDocument , SystemCode , User,PermissionRoleEntity ,CompaniesEntity,Createmodule]),EmployeeDocumentModule,CompaniesModule, CreatemoduleModule],
   controllers: [EmployeeDocumentController],
-  providers: [EmployeeDocumentService, EmployeeModuleService, CompaniesService, CompanyDocumentService,UserService,SystemCodeService,ImageUploadService]
+  providers: [EmployeeDocumentService, EmployeeModuleService, CompaniesService, CompanyDocumentService,UserService,SystemCodeService,ImageUploadService,CreatemoduleService]
 })
 export class EmployeeDocumentModule {}

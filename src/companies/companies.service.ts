@@ -12,7 +12,8 @@ import { MailService } from 'src/mail/mail.service';
 import { CompanyDocument } from 'src/company-document/company-document.entity';
 import { CompanyDocumentService } from 'src/company-document/company-document.service';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
-
+import { CreatemoduleService } from 'src/createmodule/createmodule.service';
+import { Createmodule } from 'src/createmodule/createmodule.entity';
 @Injectable()
 
 export class CompaniesService {
@@ -30,7 +31,9 @@ export class CompaniesService {
     private readonly imageUploadService: ImageUploadService,
     private readonly connection: Connection,
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(Createmodule)
+    private readonly modulerepository: Repository<Createmodule>,
   ) { }
 
   async showAll() {
@@ -611,6 +614,20 @@ console.log(passcompanyData,4567890)
 
     return scheduledeactivate;
 
+  }
+
+
+  async assignmodule(id,data){
+    const entityA = await this.companyRepository.findOne(id, { relations: ['module'] });
+    if (!entityA) {
+      throw new NotFoundException('module not found');
+    }
+
+    entityA.module = await this.modulerepository.findByIds(data.module);
+    
+  const responese=  await this.companyRepository.save(entityA);
+
+    return entityA;
   }
 
   async addPageToCompany(companyId: number, pageIds: number[]): Promise<void> {
