@@ -98,6 +98,15 @@ export class EmployeeModuleController {
     return this.employeeModuleService.find();
   }
 
+  @Get('/company-employees/:id')
+  async getTableData(@Param('id') id: string) {
+    const employeeList = await this.employeeModuleService.findCompanyAllEmployees(+id);;
+    return {
+      statusCode: HttpStatus.OK,
+      employeeList: employeeList
+    };
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.employeeModuleService.findById(+id);

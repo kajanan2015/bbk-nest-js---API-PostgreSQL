@@ -195,13 +195,15 @@ export class EmployeeModuleService {
   }
 
   async find(){
-    return await this.employeeModuleRepository.find({
-      where: { },
+    return await this.employeeModuleRepository.find({    
       relations: ['documents']
     });
   }
   
-  async findAll() {
-    return await this.employeeModuleRepository.find();
+  async findCompanyAllEmployees(companyid: number) {
+    return await this.employeeModuleRepository.find({
+      where: {company: companyid},
+      relations: ['employeeType', 'designation', 'company']
+    });
   }
 }

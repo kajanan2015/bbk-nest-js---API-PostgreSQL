@@ -296,4 +296,7 @@ export class EmployeeModule {
 
     @Column("int", { nullable: true, default: () => null })
     slrySickRate: number;
+
+    @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
+    createdat: Date;
 }
