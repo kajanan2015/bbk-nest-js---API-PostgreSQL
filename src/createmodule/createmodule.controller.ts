@@ -9,8 +9,6 @@ import { ImageUploadService } from 'src/imageupload/imageupload.service';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('createmodule')
-
-
 export class CreatemoduleController {
   constructor(private readonly createmoduleService: CreatemoduleService,private   readonly imageUploadService: ImageUploadService,) {}
 
@@ -39,7 +37,20 @@ export class CreatemoduleController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateCreatemoduleDto: UpdateCreatemoduleDto) {
+  @UseInterceptors(AnyFilesInterceptor())
+  async update(@Param('id') id: string, @UploadedFiles() moduleImg, @Body() updateCreatemoduleDto: UpdateCreatemoduleDto) {
+    console.log(updateCreatemoduleDto,8888);
+    let data={
+      ...updateCreatemoduleDto
+    };
+    if(moduleImg){
+      const modulelogo= await this.imageUploadService.upload(moduleImg,'body');
+      data={
+        ...updateCreatemoduleDto,
+        modulelogo:modulelogo[0]
+      }
+    }
+    console.log(data,67890)
     return this.createmoduleService.update(+id, updateCreatemoduleDto);
   }
 

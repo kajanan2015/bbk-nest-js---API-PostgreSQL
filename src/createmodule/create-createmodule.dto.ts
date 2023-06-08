@@ -6,5 +6,6 @@ export class CreateCreatemoduleDto {
     modulename:string;
     modulelogo: string;
     status: number;
-    moduledetails:Moduledetailsofpackage[]
+    moduledetails:Moduledetailsofpackage[];
+    existModule:string
 }
