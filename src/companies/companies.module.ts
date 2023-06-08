@@ -21,9 +21,12 @@ import { CompanyDocumentModule } from 'src/company-document/company-document.mod
 import { CompanyDocumentService } from 'src/company-document/company-document.service';
 import { companytype } from './companytype.entity';
 import { EmployeeModule } from 'src/employee-module/employee-module.entity';
+import { Createmodule } from 'src/createmodule/createmodule.entity';
+import { CreatemoduleService } from 'src/createmodule/createmodule.service';
+import { CreatemoduleModule } from 'src/createmodule/createmodule.module';
 @Module({
-  imports: [TypeOrmModule.forFeature([CompaniesEntity, PagePermissionEntity, SystemCode,CompanyDocument,User,country, companytype, EmployeeModule]), PagePermissionModule,SystemCodeModule, UserModule, MailModule, CompanyDocumentModule],
+  imports: [TypeOrmModule.forFeature([CompaniesEntity, PagePermissionEntity, SystemCode,CompanyDocument,User,country, companytype, EmployeeModule,Createmodule]), PagePermissionModule,SystemCodeModule, UserModule, MailModule, CompanyDocumentModule, CreatemoduleModule],
   controllers: [CompaniesController],
-  providers: [CompaniesService, ImageUploadService, PagePermissionService,SystemCodeService, UserService,MailService, CompanyDocumentService],
+  providers: [CompaniesService, ImageUploadService, PagePermissionService,SystemCodeService, UserService,MailService, CompanyDocumentService,CreatemoduleService],
 })
 export class CompaniesModule {}

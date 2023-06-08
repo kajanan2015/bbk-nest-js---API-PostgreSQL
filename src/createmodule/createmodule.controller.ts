@@ -9,24 +9,26 @@ import { ImageUploadService } from 'src/imageupload/imageupload.service';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('createmodule')
-
-
 export class CreatemoduleController {
   constructor(private readonly createmoduleService: CreatemoduleService,private   readonly imageUploadService: ImageUploadService,) {}
 
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
-  async create(@UploadedFiles() moduleImg ,@Body() createCreatemoduleDto: CreateCreatemoduleDto) {
+  async create(@UploadedFiles() moduleImg ,@Body() createCreatemoduleDto) {
     console.log(moduleImg,345678)
     console.log(createCreatemoduleDto,5678934)
     const modulelogo= await this.imageUploadService.upload(moduleImg,'body')
     const data={
-      ...createCreatemoduleDto,
-      modulelogo:modulelogo[0]
+      modulename:createCreatemoduleDto.moduleName,
+      modulelogo:modulelogo[0],
+      modulecreate:createCreatemoduleDto.userId,
+      status:1
     }
     console.log(data,67890)
     return this.createmoduleService.create(data);
   }
+
+
 
   @Get()
   async findAll() {
@@ -39,8 +41,28 @@ export class CreatemoduleController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateCreatemoduleDto: UpdateCreatemoduleDto) {
-    return this.createmoduleService.update(+id, updateCreatemoduleDto);
+  @UseInterceptors(AnyFilesInterceptor())
+  async update(@Param('id') id: string, @UploadedFiles() moduleImg, @Body() updateCreatemoduleDto: UpdateCreatemoduleDto) {
+    console.log(updateCreatemoduleDto,8888);
+    const currentDateTime = new Date(); // Current date and time
+    let data={
+      ...updateCreatemoduleDto,
+      updatedat:currentDateTime,
+      moduleupdate:updateCreatemoduleDto.userId
+    };
+    delete data.userId;
+    if(updateCreatemoduleDto.existlogo){
+      const modulelogo= await this.imageUploadService.upload(moduleImg,'body');
+      delete data.existlogo;
+     
+      data={
+        ...data,
+        modulelogo:modulelogo[0]
+      }
+      console.log(data,67890)
+    }
+    // console.log(data,67890)
+    return this.createmoduleService.update(+id, data);
   }
 
   @Delete(':id')

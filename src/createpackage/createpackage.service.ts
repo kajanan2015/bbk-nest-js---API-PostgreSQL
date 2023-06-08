@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCreatepackageDto } from './create-createpackage.dto';
 import { UpdateCreatepackageDto } from './update-createpackage.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -31,28 +31,48 @@ export class CreatepackageService {
       console.log(detailsdata,8998)
       await this.moduledetailspackageservice.create(detailsdata)  
     }
+    if(packageresponse.length>0){
+      return {
+        statusCode: HttpStatus.OK,
+        message:"successs"
+      };
+    }else{
+      return {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message:"failed"
+      };
+    }
     
-    return await this.createpkgRepository.find({ 
-      where: { status: 1 } 
-    })
   }
 
   async findAll() {
     return await this.createpkgRepository.find({ 
-      where: { status: 1 },relations:['packagedetails','packagedetails.module'] 
+      where: { status: 1 },relations:['packagedetails','packagedetails.module','pkgcreate','pkgupdate'] 
     });
   }
 
  async findOne(id: number) {
-  const packagedata = await this.createpkgRepository.findOne(id,{relations:['packagedetails','packagedetails.module']});
+  const packagedata = await this.createpkgRepository.findOne(id,{relations:['packagedetails','packagedetails.module','pkgcreate','pkgupdate']});
   if (!packagedata) {
     throw new NotFoundException(` ID '${id}' not found`);
   }
   return packagedata;
   }
 
- async update(id: number, updateCreatepackageDto: UpdateCreatepackageDto) {
-    return `This action updates a #${id} createpackage`;
+ async update(id: number, updateCreatepackageDto) {
+  const updateresponse=await this.createpkgRepository.update({ id }, updateCreatepackageDto);
+    
+  if(updateresponse){
+    return {
+      statusCode: HttpStatus.OK,
+      message:"successs"
+    };
+  }else{
+    return {
+      statusCode: HttpStatus.BAD_REQUEST,
+      message:"failed"
+    };
+  }
   }
 
  async remove(id: number) {
