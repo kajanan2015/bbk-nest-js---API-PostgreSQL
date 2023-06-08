@@ -615,7 +615,9 @@ console.log(passcompanyData,4567890)
     return scheduledeactivate;
 
   }
-
+  async getassignmodule(id){
+    return await this.companyRepository.findOne(id,{relations:['module']})
+  }
 
   async assignmodule(id,data){
     const entityA = await this.companyRepository.findOne(id, { relations: ['module'] });

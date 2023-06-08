@@ -91,6 +91,12 @@ export class CompaniesController {
   }
 
   @UseGuards(AuthGuard('jwt'))
+  @Get('assign/:id')
+  async getassignmodule(@Param('id') id: number){
+    return await this.service.getassignmodule(id)
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @Get('/showsubcompaniesonly')
   async showSubonlyCompanies() {
     const companies = await this.service.showonlySubCompany();
