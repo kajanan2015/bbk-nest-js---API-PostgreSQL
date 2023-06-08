@@ -59,8 +59,20 @@ export class CreatepackageService {
   return packagedata;
   }
 
- async update(id: number, updateCreatepackageDto: UpdateCreatepackageDto) {
-    return `This action updates a #${id} createpackage`;
+ async update(id: number, updateCreatepackageDto) {
+  const updateresponse=await this.createpkgRepository.update({ id }, updateCreatepackageDto);
+    
+  if(updateresponse){
+    return {
+      statusCode: HttpStatus.OK,
+      message:"successs"
+    };
+  }else{
+    return {
+      statusCode: HttpStatus.BAD_REQUEST,
+      message:"failed"
+    };
+  }
   }
 
  async remove(id: number) {

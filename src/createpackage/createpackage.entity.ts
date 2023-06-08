@@ -1,5 +1,7 @@
-import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetailsofpackage.entity';
+import { User } from 'src/user/user.entity';
+
 @Entity()
 export class Createpackage {
     @PrimaryGeneratedColumn()
@@ -16,5 +18,21 @@ export class Createpackage {
 
     @OneToMany(()=>Moduledetailsofpackage, packagedetails => packagedetails.packages,{cascade:true})
     packagedetails:Moduledetailsofpackage[]
+
+    @ManyToOne(() => User, usercretae => usercretae.pkgcreatedby)
+    @JoinColumn({ name: 'createdBy' })
+    pkgcreate: User;
+
+  
+    @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
+    createdat: Date;
+  
+    @Column("timestamp", { name: "updatedat", default: () => null })
+    updatedat: Date;
+
+
+    @ManyToOne(() => User, usercretae => usercretae.pkgupdateby)
+    @JoinColumn({ name: 'updatedBy' })
+    pkgupdate: User;
 
 }

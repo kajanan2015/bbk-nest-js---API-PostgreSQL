@@ -4,6 +4,7 @@ import { PermissionRoleEntity } from 'src/permission-role/permission-role.entity
 import { TripEntity } from 'src/trip/trip.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
 import { Createmodule } from 'src/createmodule/createmodule.entity';
+import { Createpackage } from 'src/createpackage/createpackage.entity';
 @Entity()
 export class User  {
   @PrimaryGeneratedColumn()
@@ -75,4 +76,10 @@ export class User  {
 
   @OneToMany(()=>Createmodule, updatedby => updatedby.moduleupdate,{cascade:true})
   moduleupdateby:Createmodule[]
+
+  @OneToMany(()=>Createpackage, cretedby => cretedby.pkgcreate,{cascade:true})
+  pkgcreatedby:Createpackage[]
+
+  @OneToMany(()=>Createpackage, updatedby => updatedby.pkgupdate,{cascade:true})
+  pkgupdateby:Createpackage[]
 }
