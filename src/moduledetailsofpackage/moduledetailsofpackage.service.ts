@@ -19,8 +19,8 @@ async  create(createModuledetailsofpackageDto: CreateModuledetailsofpackageDto) 
     return await this.createpkgmoduledetailsRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} moduledetailsofpackage`;
+  async findOne(id: number) {
+    return await this.createpkgmoduledetailsRepository.find({where:{module:id},relations:['packages']});
   }
 
   update(id: number, updateModuledetailsofpackageDto: UpdateModuledetailsofpackageDto) {
