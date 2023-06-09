@@ -8,6 +8,8 @@ import {
   Param,
   HttpStatus,
   UseGuards,
+  UseInterceptors,
+  UploadedFiles,
 } from '@nestjs/common';
 
 
@@ -17,6 +19,8 @@ const stripe = require('stripe')('sk_test_51LfvAGChovVblxJg8YUMSd7MefCrw6DieaPiE
 import { UserService } from './user.service';
 import { AuthGuard } from '@nestjs/passport';
 import { CompaniesEntity } from 'src/companies/companies.entity';
+import { create } from 'domain';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('user')
@@ -30,8 +34,6 @@ export class UserController {
   
   @Put('/edit/:id')
   async uppdate(@Param('id') id: number, @Body() data: any) {
-
-    console.log(id, 'ranga')
     await this.service.update(id, data);
     return {
       statusCode: HttpStatus.OK,
@@ -120,5 +122,30 @@ export class UserController {
     };
   }
 
-  
+  @Post('createuser')
+  @UseInterceptors(AnyFilesInterceptor())
+  async createuser(@UploadedFiles() peofileImg, @Body() data:any){
+
+    const createuser=await this.service.create(data);
+    return createuser;
+  }
+  @Get('oneuserdata/:id')
+  async oneuserdata(@Param('id') id: number) {
+    const user = await this.service.findoneuserdata(id);
+    return {
+      statusCode: HttpStatus.OK,
+      user,
+    };
+  }
+
+
+  @Put('/updateuserdataone/:id')
+  @UseInterceptors(AnyFilesInterceptor())
+  async updateeditdata(@Param('id') id: number, @UploadedFiles() peofileImg, @Body() data: any) {
+    await this.service.update(id, data);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'User updated successfully',
+    };
+  }
 }

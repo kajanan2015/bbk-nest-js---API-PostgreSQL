@@ -144,6 +144,11 @@ export class UserService {
     console.log(roleIds,5555)
     return roleIds;
   }
-  
+
+  async findoneuserdata(id){
+    const users= await this.userRepository.findOne(id);
+    return users
+  }
+
   
 }
