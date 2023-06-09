@@ -6,8 +6,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Createmodule } from 'src/createmodule/createmodule.entity';
 import { Createpackage } from 'src/createpackage/createpackage.entity';
 import { CreatepackageModule } from 'src/createpackage/createpackage.module';
+import { CompaniesEntity } from 'src/companies/companies.entity';
 @Module({
-  imports:[TypeOrmModule.forFeature([Moduledetailsofpackage,Createmodule, Createpackage])],
+  imports:[TypeOrmModule.forFeature([Moduledetailsofpackage,Createmodule, Createpackage, CompaniesEntity])],
   controllers: [ModuledetailsofpackageController],
   providers: [ModuledetailsofpackageService]
 })

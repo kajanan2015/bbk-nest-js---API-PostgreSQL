@@ -35,7 +35,6 @@ export class Createpackage {
     @JoinColumn({ name: 'updatedBy' })
     pkgupdate: User;
 
-    @OneToMany(()=>CompaniesEntity, company => company.package,{cascade:true})
-    company:CompaniesEntity[]
+    
 
 }

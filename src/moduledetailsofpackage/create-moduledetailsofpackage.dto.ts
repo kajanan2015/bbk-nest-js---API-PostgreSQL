@@ -1,3 +1,4 @@
+import { CompaniesEntity } from "src/companies/companies.entity";
 import { Createmodule } from "src/createmodule/createmodule.entity";
 import { Createpackage } from "src/createpackage/createpackage.entity";
 export class CreateModuledetailsofpackageDto {
@@ -8,4 +9,5 @@ export class CreateModuledetailsofpackageDto {
     PackagePrice: number;
     module: Createmodule;
     packages: Createpackage;
+    company: CompaniesEntity[];
 }

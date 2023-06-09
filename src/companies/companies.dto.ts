@@ -5,6 +5,7 @@ import { User } from "src/user/user.entity";
 import { country } from "./country.entity";
 import { Createpackage } from "src/createpackage/createpackage.entity";
 import { Createmodule } from "src/createmodule/createmodule.entity";
+import { Moduledetailsofpackage } from "src/moduledetailsofpackage/moduledetailsofpackage.entity";
 export interface CompaniesDTO {
   
 id: number;
@@ -53,6 +54,6 @@ regAddressCountry:country,
 userId:number
 
 module: Createmodule[];
-package:Createpackage;
+package:Moduledetailsofpackage[];
 contractagreement: number;
 }
