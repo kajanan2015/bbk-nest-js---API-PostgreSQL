@@ -47,12 +47,12 @@ export class CreatepackageService {
 
   async findAll() {
     return await this.createpkgRepository.find({ 
-      where: { status: 1 },relations:['packagedetails','packagedetails.module','pkgcreate','pkgupdate','company'] 
+      where: { status: 1 },relations:['packagedetails','packagedetails.module','pkgcreate','pkgupdate'] 
     });
   }
 
  async findOne(id: number) {
-  const packagedata = await this.createpkgRepository.findOne(id,{relations:['packagedetails','packagedetails.module','pkgcreate','pkgupdate','company']});
+  const packagedata = await this.createpkgRepository.findOne(id,{relations:['packagedetails','packagedetails.module','pkgcreate','pkgupdate']});
   if (!packagedata) {
     throw new NotFoundException(` ID '${id}' not found`);
   }
