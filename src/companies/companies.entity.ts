@@ -161,7 +161,7 @@ export class CompaniesEntity {
   @JoinTable()
   package: Moduledetailsofpackage[];
 
-  @Column("tinyint", { default: 3, comment: ' 1-agree, 2-disagree, 3-pending' })
+  @Column("tinyint", { default: 1, comment: ' 1-12 month, 2-36 month' })
   contractagreement: number;
 
 
