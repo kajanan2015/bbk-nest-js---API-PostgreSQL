@@ -122,12 +122,15 @@ export class UserController {
     };
   }
 
+  // use t6hese below api to create new admin according to compnay wise
+
   @Post('createuser')
   @UseInterceptors(AnyFilesInterceptor())
-  async createuser(@UploadedFiles() peofileImg, @Body() data:any){
-
-    const createuser=await this.service.create(data);
-    return createuser;
+  async createuser(@UploadedFiles() profileImg, @Body() data:any){
+    console.log(profileImg,1234)
+    console.log(data,456)
+    // const createuser=await this.service.create(data);
+    // return createuser;
   }
   @Get('oneuserdata/:id')
   async oneuserdata(@Param('id') id: number) {
@@ -138,14 +141,17 @@ export class UserController {
     };
   }
 
-
+// update one by one admin
   @Put('/updateuserdataone/:id')
   @UseInterceptors(AnyFilesInterceptor())
-  async updateeditdata(@Param('id') id: number, @UploadedFiles() peofileImg, @Body() data: any) {
-    await this.service.update(id, data);
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'User updated successfully',
-    };
+  async updateeditdata(@Param('id') id: number, @UploadedFiles() profileImg, @Body() data: any) {
+   console.log(profileImg,1234)
+   console.log(data,456)
+   
+    // await this.service.update(id, data);
+    // return {
+    //   statusCode: HttpStatus.OK,
+    //   message: 'User updated successfully',
+    // };
   }
 }
