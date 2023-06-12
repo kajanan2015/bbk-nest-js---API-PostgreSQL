@@ -34,7 +34,7 @@ export class CreatepackageController {
   }
  
   @Get('paymenttype')
-  async findAldl() {
+  async findpayment() {
     return this.createpackageService.getpayementtype();
   }
   @Get(':id')

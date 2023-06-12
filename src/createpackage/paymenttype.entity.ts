@@ -1,5 +1,5 @@
 import { BeforeInsert, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-
+import { CompaniesEntity } from 'src/companies/companies.entity';
 @Entity()
 export class Paymenttype {
     @PrimaryGeneratedColumn()
@@ -13,5 +13,8 @@ export class Paymenttype {
 
     @Column({ type: 'boolean', default:true})
     status: Boolean;
+
+    @OneToMany(() => CompaniesEntity, paymenttype => paymenttype.billing,{ cascade: true })
+    paymentType: CompaniesEntity[];
 
 }

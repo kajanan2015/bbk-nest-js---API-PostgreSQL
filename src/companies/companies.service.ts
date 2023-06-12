@@ -768,8 +768,11 @@ export class CompaniesService {
   async assignpackage(id,data) {
     return  await this.companyRepository.update(id,data); 
   }
-
   async contractagreement(id,data) {
+    return  await this.companyRepository.update(id,data); 
+  }
+  async assignpaymentmethod(id,data) {
+    console.log(data,88)
     return  await this.companyRepository.update(id,data); 
   }
   async assignmodule(id, data) {
