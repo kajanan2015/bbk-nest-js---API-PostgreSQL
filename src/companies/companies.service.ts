@@ -68,6 +68,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
+        "billing"
       ],
     });
   }
@@ -97,6 +98,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
+        "billing"
       ],
     });
   }
@@ -112,6 +114,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
+        "billing"
       ],
       order: {
         mainCompany: "ASC",
@@ -130,6 +133,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
+        "billing"
       ],
     });
   }
@@ -162,6 +166,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
+        "billing"
       ],
     });
   }
@@ -512,6 +517,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
+        "billing"
       ],
     });
   }
@@ -702,6 +708,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
+        "billing"
       ],
     });
   }
