@@ -206,4 +206,15 @@ export class EmployeeModuleService {
       relations: ['employeeType', 'designation', 'company']
     });
   }
+
+  async generateTemporaryNumber(gender,birthday){
+    const year = birthday.getFullYear().toString().slice(-2);
+    const month = (birthday.getMonth() + 1).toString().padStart(2, '0');
+    const day = birthday.getDate().toString().padStart(2, '0');
+
+    // Format the temporary number
+    const temporaryNumber = `TN${day}${month}${year}${gender.toUpperCase()}`;
+
+    return temporaryNumber;
+  }
 }

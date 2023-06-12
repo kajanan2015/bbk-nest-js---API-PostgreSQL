@@ -94,7 +94,7 @@ export class CompaniesController {
   @Put('assignpackage')
   async assignpackage(@Body() passdata){
     const data={
-      package:passdata.packageId,
+      package:passdata.packages,
     }
     return await this.service.assignpackage(passdata.companyId,data)
   }
