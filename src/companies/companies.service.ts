@@ -27,6 +27,8 @@ import { CompanyDocumentService } from "src/company-document/company-document.se
 import { ImageUploadService } from "src/imageupload/imageupload.service";
 import { CreatemoduleService } from "src/createmodule/createmodule.service";
 import { Createmodule } from "src/createmodule/createmodule.entity";
+import { Createpackage } from "src/createpackage/createpackage.entity";
+import { Moduledetailsofpackage } from "src/moduledetailsofpackage/moduledetailsofpackage.entity";
 @Injectable()
 export class CompaniesService {
   constructor(
@@ -45,7 +47,14 @@ export class CompaniesService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(Createmodule)
-    private readonly modulerepository: Repository<Createmodule>
+    private readonly modulerepository: Repository<Createmodule>,
+    @InjectRepository(Createpackage)
+    private readonly pkgrepository: Repository<Createpackage>,
+    @InjectRepository(Moduledetailsofpackage)
+    private readonly detailsrepository: Repository<Moduledetailsofpackage>
+  
+
+
   ) {}
 
   async showAll() {
@@ -59,6 +68,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
+        "billing"
       ],
     });
   }
@@ -88,6 +98,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
+        "billing"
       ],
     });
   }
@@ -103,6 +114,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
+        "billing"
       ],
       order: {
         mainCompany: "ASC",
@@ -121,6 +133,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
+        "billing"
       ],
     });
   }
@@ -153,6 +166,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
+        "billing"
       ],
     });
   }
@@ -503,6 +517,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
+        "billing"
       ],
     });
   }
@@ -693,6 +708,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
+        "billing"
       ],
     });
   }
@@ -766,10 +782,31 @@ export class CompaniesService {
     return await this.companyRepository.findOne(id);
   }
   async assignpackage(id,data) {
+console.log(id,77)
+console.log(data.package,88)
+
+const entityA = await this.companyRepository.findOne(id, {
+  relations: ["package"],
+});
+if (!entityA) {
+  throw new NotFoundException("package not found");
+}
+console.log(entityA)
+entityA.package= await this.detailsrepository.findByIds(data.package);
+console.log(entityA)
+const responese = await this.companyRepository.save(entityA);
+console.log(responese)
+
+return entityA;
+
+
+    // return  await this.companyRepository.update(id,data); 
+  }
+  async contractagreement(id,data) {
     return  await this.companyRepository.update(id,data); 
   }
-
-  async contractagreement(id,data) {
+  async assignpaymentmethod(id,data) {
+    console.log(data,88)
     return  await this.companyRepository.update(id,data); 
   }
   async assignmodule(id, data) {

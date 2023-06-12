@@ -93,13 +93,21 @@ export class CompaniesController {
   @UseGuards(AuthGuard('jwt'))
   @Put('assignpackage')
   async assignpackage(@Body() passdata){
+    console.log(passdata,88)
     const data={
-      package:passdata.packageId,
+      package:passdata.packages,
     }
     return await this.service.assignpackage(passdata.companyId,data)
   }
 
-  
+  @UseGuards(AuthGuard('jwt'))
+  @Put('assignpaymentmethod')
+  async assignpaymentmethod(@Body() passdata){
+    const data={
+      billing:passdata.paymentMethod,
+    }
+    return await this.service.assignpaymentmethod(passdata.companyId,data)
+  }
 
   @UseGuards(AuthGuard('jwt'))
   @Put('contractagreement')

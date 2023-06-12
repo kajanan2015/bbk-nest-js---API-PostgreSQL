@@ -6,6 +6,7 @@ export class CreateCreatepackageDto {
     packagelogo: string;
     status: number;
     packagedetails:Moduledetailsofpackage[];
-    company:CompaniesEntity[]
+    company:CompaniesEntity[];
+    paymentType: CompaniesEntity[];
  
 }

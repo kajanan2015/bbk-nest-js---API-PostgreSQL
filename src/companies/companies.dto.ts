@@ -6,6 +6,7 @@ import { country } from "./country.entity";
 import { Createpackage } from "src/createpackage/createpackage.entity";
 import { Createmodule } from "src/createmodule/createmodule.entity";
 import { Moduledetailsofpackage } from "src/moduledetailsofpackage/moduledetailsofpackage.entity";
+import { Paymenttype } from "src/createpackage/paymenttype.entity";
 export interface CompaniesDTO {
   
 id: number;
@@ -42,7 +43,7 @@ deactivationmethod: string;
 deactivatedby: number;
 
 compstatus: number;
-billing: string;  
+billing: Paymenttype;
 parentCompanyId: number;
 file: File;
 mainCompany: CompaniesEntity;

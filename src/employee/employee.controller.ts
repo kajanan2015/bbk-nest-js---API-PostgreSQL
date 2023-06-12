@@ -47,12 +47,15 @@ export class EmployeeController {
   //   return this.employeeService.findAllsubadmin(+comid);
   // }
 
-  @Get()
-  async findAll() {
-    const response=await this.userService.findAll()
-    return response;
-  }
+  // @Get()
+  // async findAll() {
+  //   const response=await this.userService.findAll()
+  //   return response;
+  // }
 
   //get employee by id
  
+
+  // ni number generate temporary-by nuwan
+  
 }

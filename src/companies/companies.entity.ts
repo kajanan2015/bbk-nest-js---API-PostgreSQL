@@ -9,6 +9,10 @@ import { EmployeeModule } from 'src/employee-module/employee-module.entity';
 import { Createmodule } from 'src/createmodule/createmodule.entity';
 import { Createpackage } from 'src/createpackage/createpackage.entity';
 import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetailsofpackage.entity';
+import { Paymenttype } from 'src/createpackage/paymenttype.entity';
+
+
+
 @Entity('company')
 export class CompaniesEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
@@ -104,8 +108,6 @@ export class CompaniesEntity {
   @Column("bigint", { default: 0, comment: ' 0-pending, 1-active, 2-deactivate' })
   compstatus: number;
 
-  @Column("varchar", { length: 100, nullable: true, default: () => null })
-  billing: string;
 
   @Column("varchar", { length: 100, nullable: true, default: "maincompany" })
   companyIdentifier: string;
@@ -159,6 +161,12 @@ export class CompaniesEntity {
   @JoinTable()
   package: Moduledetailsofpackage[];
 
-  @Column("tinyint", { default: 3, comment: ' 1-agree, 2-disagree, 3-pending' })
+  @Column("tinyint", { default: 1, comment: ' 1-12 month, 2-36 month' })
   contractagreement: number;
+
+
+  @ManyToOne(() => Paymenttype, paymenttype => paymenttype.paymentType)
+  @JoinColumn({ name: 'billing' })
+  billing: Paymenttype;
+  
 }

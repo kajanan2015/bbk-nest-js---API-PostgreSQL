@@ -80,6 +80,8 @@ export class EmployeeModuleController {
     };
   }
 
+
+
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   async create(@UploadedFiles() file, @Body() createEmployeeModuleDto: CreateEmployeeModuleDto) {
@@ -126,5 +128,14 @@ export class EmployeeModuleController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.employeeModuleService.remove(+id);
+  }
+  // generate temporary ni number -by nuwan
+  @Post('generatetempninumber')
+  async tempcreateninumber(@Body() data){
+    const birthday = new Date(data.birthday);
+    const gender=data.gender;
+    const genderCode = gender === 'male' ? 'M' : 'F';
+    const temporaryNumber = this.employeeModuleService.generateTemporaryNumber(genderCode, birthday);
+    return temporaryNumber;
   }
 }

@@ -5,11 +5,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Createpackage } from './createpackage.entity';
 import { Repository } from 'typeorm';
 import { ModuledetailsofpackageService } from 'src/moduledetailsofpackage/moduledetailsofpackage.service';
+import { Paymenttype } from './paymenttype.entity';
 @Injectable()
 export class CreatepackageService {
   constructor(
     @InjectRepository(Createpackage)
     private createpkgRepository: Repository<Createpackage>,
+    @InjectRepository(Paymenttype)
+    private paymenttyperepository: Repository<Paymenttype>,
     private readonly moduledetailspackageservice: ModuledetailsofpackageService,
   ) {}
  async create(data) {
@@ -77,5 +80,9 @@ export class CreatepackageService {
 
  async remove(id: number) {
     return `This action removes a #${id} createpackage`;
+  }
+
+  async getpayementtype(){
+    return await this.paymenttyperepository.find()
   }
 }
