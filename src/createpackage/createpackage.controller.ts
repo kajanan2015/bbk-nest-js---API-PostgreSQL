@@ -32,7 +32,11 @@ export class CreatepackageController {
   async findAll() {
     return this.createpackageService.findAll();
   }
-
+ 
+  @Get('paymenttype')
+  async findAldl() {
+    return this.createpackageService.getpayementtype();
+  }
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.createpackageService.findOne(+id);
@@ -61,9 +65,12 @@ export class CreatepackageController {
     }
     return this.createpackageService.update(+id, updateCreatepackageDto);
   }
-
+  
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return this.createpackageService.remove(+id);
   }
+
+
+  
 }
