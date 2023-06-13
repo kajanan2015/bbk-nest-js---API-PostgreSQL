@@ -24,7 +24,7 @@ export class CompaniesController {
     private service: CompaniesService,
     private readonly imageUploadService: ImageUploadService) { }
 
-
+// decativate schedule-this call from lamda function-no need auth
   @Post("scheduledeactivate")
   async scheduledeactivatecustomer() {
     const currentDateTime = new Date();
@@ -33,7 +33,7 @@ export class CompaniesController {
     return await this.service.scheduledeactivate()
   }
 
-
+// show all companies
   @UseGuards(AuthGuard('jwt'))
   @Get()
   async showAll() {
@@ -43,6 +43,7 @@ export class CompaniesController {
       companies
     };
   }
+  // return companies related sub comapny when pass main company id
   @UseGuards(AuthGuard('jwt'))
   @Get('showcompanylist/:id')
   async showcompanylist(@Param('id') value: number) {
@@ -52,6 +53,8 @@ export class CompaniesController {
       showcompanylist
     };
   }
+
+    // show only active/inactive/deactivate main company 
   @UseGuards(AuthGuard('jwt'))
   @Get('/showonlyActivemainCompany/:value')
   async showonlyActivemainCompany(@Param('value') value: number) {
@@ -201,7 +204,7 @@ export class CompaniesController {
       companyType
     };
   }
-
+// get country and their currency
   @UseGuards(AuthGuard('jwt'))
   @Get('/country')
   async getcountry() {
@@ -211,6 +214,8 @@ export class CompaniesController {
       countries
     };
   }
+
+  // when pass parent company id return sub company
   @UseGuards(AuthGuard('jwt'))
   @Get('getmatchsubcompany/:id')
   async getmatchsubcompany(@Param('id') id: number) {
@@ -220,6 +225,7 @@ export class CompaniesController {
       subcompany,
     };
   }
+  // individual company data
   @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   async read(@Param('id') id: number) {
@@ -230,7 +236,7 @@ export class CompaniesController {
     };
   }
 
-
+// update company
   @UseGuards(AuthGuard('jwt'))
   @Patch('/edit/:id')
   @UseInterceptors(AnyFilesInterceptor())
@@ -280,12 +286,16 @@ export class CompaniesController {
   //   }
   //   return await this.service.update(id, data);
   // }
+
+  // change company status
   @UseGuards(AuthGuard('jwt'))
   @Put('/status/:id')
   async updateCompanyStatus(
     @Param('id') id: number, @Body('compstatus') status,): Promise<CompaniesEntity> {
     return await this.service.updateCompanyStatus(id, status);
   }
+
+  // company assign pageid-not currently used
   @UseGuards(AuthGuard('jwt'))
   @Post('pages/:companyId')
   async addPageToCompany(
@@ -294,23 +304,29 @@ export class CompaniesController {
   ) {
     return await this.service.addPageToCompany(companyId, pageIds);
   }
+
+  // mail testing
   @UseGuards(AuthGuard('jwt'))
   @Post('sendemail')
   async sendemail() {
     return await this.service.testemail();
   }
+
+  // deactivate compnay immediately
   @UseGuards(AuthGuard('jwt'))
   @Put('deactivatecustomerimmediate/:id')
   async deactivatecustomerimmediate(@Param('id') id: number, @Body() data) {
     return await this.service.deactivatecustomerupdateimmediate(id, data);
   }
 
+  // schedule deactivate
   @UseGuards(AuthGuard('jwt'))
   @Put('deactivatecustomer/:id')
   async deactivatecustomer(@Param('id') id: number, @Body() data) {
     return await this.service.deactivatecustomerupdate(id, data);
   }
 
+  // check company code exist or not
   @UseGuards(AuthGuard('jwt'))
   @Post('checkcompanycode/:code')
   async checkcompanycode(@Param('code') code: string) {

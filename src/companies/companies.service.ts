@@ -812,7 +812,7 @@ export class CompaniesService {
 
 
   async getassignpaymentmethod(id) {
-    return await this.companyRepository.findOne(id);
+    return await this.companyRepository.findOne(id,{relations:['billing']});
   }
   async assignmodule(id, data) {
     const entityA = await this.companyRepository.findOne(id, {
