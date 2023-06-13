@@ -235,12 +235,12 @@ export class CompaniesService {
 
           const adminResponse = await this.userservice.create(adminData);
 
-          await this.mailservice.senduserCreate(
-            admin.password,
-            admin.firstName,
-            admin.email,
-            admin.email
-          );
+          // await this.mailservice.senduserCreate(
+          //   admin.password,
+          //   admin.firstName,
+          //   admin.email,
+          //   admin.email
+          // );
 
           const userId = adminResponse.id.toString();
           const adminUser = await this.userRepository.findByIds([userId]);
@@ -312,12 +312,12 @@ export class CompaniesService {
 
             const adminResponse = await this.userservice.create(adminData);
 
-            await this.mailservice.senduserCreate(
-              admin.password,
-              admin.firstName,
-              admin.email,
-              admin.email
-            );
+            // await this.mailservice.senduserCreate(
+            //   admin.password,
+            //   admin.firstName,
+            //   admin.email,
+            //   admin.email
+            // );
 
             const userId = adminResponse.id.toString();
             const adminUser = await this.userRepository.findByIds([userId]);
@@ -410,12 +410,12 @@ export class CompaniesService {
 
         const adminResponse = await this.userservice.create(adminData);
 
-        await this.mailservice.senduserCreate(
-          admin.password,
-          admin.firstName,
-          admin.email,
-          admin.email
-        );
+        // await this.mailservice.senduserCreate(
+        //   admin.password,
+        //   admin.firstName,
+        //   admin.email,
+        //   admin.email
+        // );
 
         const userId = adminResponse.id.toString();
         const adminUser = await this.userRepository.findByIds([userId]);
@@ -831,7 +831,7 @@ export class CompaniesService {
     const name = "nuwan";
     const toemail = "nuwanpriyamal@gmail.com";
     const username = "dfdfd";
-    await this.mailservice.sendcompanyCreate(password, name, toemail, username);
+    // await this.mailservice.sendcompanyCreate(password, name, toemail, username);
   }
 
   async checkcompanycode(code) {
