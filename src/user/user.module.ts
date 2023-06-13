@@ -10,8 +10,9 @@ import { TripEntity } from 'src/trip/trip.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
 import { Createmodule } from 'src/createmodule/createmodule.entity';
 import { Createpackage } from 'src/createpackage/createpackage.entity';
+import { CompanyPayment } from 'src/company-payment/company-payment.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([User, PermissionRoleEntity,TripEntity, CompaniesEntity,Createmodule,Createpackage]), PermissionRoleModule],
+  imports: [TypeOrmModule.forFeature([User, PermissionRoleEntity,TripEntity, CompaniesEntity,Createmodule,Createpackage,CompanyPayment]), PermissionRoleModule],
   controllers: [UserController],
   exports: [TypeOrmModule, UserService],
   providers: [UserService],
