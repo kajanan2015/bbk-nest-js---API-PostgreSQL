@@ -52,10 +52,10 @@ export class CompaniesService {
     private readonly pkgrepository: Repository<Createpackage>,
     @InjectRepository(Moduledetailsofpackage)
     private readonly detailsrepository: Repository<Moduledetailsofpackage>
-  
 
 
-  ) {}
+
+  ) { }
 
   async showAll() {
     return await this.companyRepository.find({
@@ -228,8 +228,8 @@ export class CompaniesService {
           }
           profilethumbUrl = admin.profileImage
             ? await this.imageUploadService.uploadThumbnailToS3(
-                admin.profileImage
-              )
+              admin.profileImage
+            )
             : null;
           const adminData = {
             firstName: admin.firstName,
@@ -305,8 +305,8 @@ export class CompaniesService {
             }
             profilethumbUrl = admin.profileImage
               ? await this.imageUploadService.uploadThumbnailToS3(
-                  admin.profileImage
-                )
+                admin.profileImage
+              )
               : null;
             const adminData = {
               firstName: admin.firstName,
@@ -403,8 +403,8 @@ export class CompaniesService {
         }
         profilethumbUrl = admin.profileImage
           ? await this.imageUploadService.uploadThumbnailToS3(
-              admin.profileImage
-            )
+            admin.profileImage
+          )
           : null;
         const adminData = {
           firstName: admin.firstName,
@@ -543,12 +543,12 @@ export class CompaniesService {
       ...(data.companyType ? { companyType: data.companyType } : {}),
       ...(data.sameTradingAddress !== false
         ? {
-            regAddressNo: data.regAddressNo,
-            regAddressStreet: data.regAddressStreet,
-            regAddressCity: data.regAddressCity,
-            regAddressPostalCode: data.regAddressPostalCode,
-            regAddressCountry: data.regAddressCountry.id,
-          }
+          regAddressNo: data.regAddressNo,
+          regAddressStreet: data.regAddressStreet,
+          regAddressCity: data.regAddressCity,
+          regAddressPostalCode: data.regAddressPostalCode,
+          regAddressCountry: data.regAddressCountry.id,
+        }
         : {}),
     };
     console.log(passcompanyData, 4567890);
@@ -639,8 +639,8 @@ export class CompaniesService {
           } else {
             profilethumbUrl = user.profileImage
               ? await this.imageUploadService.uploadThumbnailToS3(
-                  user.profileImage
-                )
+                user.profileImage
+              )
               : null;
             profilePic = user.profileImage;
           }
@@ -774,52 +774,57 @@ export class CompaniesService {
     return await this.companyRepository.findOne(id, { relations: ["module"] });
   }
 
-  async getassignpackage(id){
-    return await this.companyRepository.findOne(id, { relations: ["package","package.packages"] });
+  async getassignpackage(id) {
+    return await this.companyRepository.findOne(id, { relations: ["package", "package.packages"] });
   }
 
-  async getcontractagreement(id){
+  async getcontractagreement(id) {
     return await this.companyRepository.findOne(id);
   }
-  async assignpackage(id,data) {
-console.log(id,77)
-console.log(data.package,88)
+  async assignpackage(id, data) {
+    console.log(id, 77)
+    console.log(data.package, 88)
 
-const entityA = await this.companyRepository.findOne(id, {
-  relations: ["package"],
-});
-if (!entityA) {
-  throw new NotFoundException("package not found");
-}
-console.log(entityA)
-entityA.package= await this.detailsrepository.findByIds(data.package);
-console.log(entityA)
-const responese = await this.companyRepository.save(entityA);
-console.log(responese)
+    const entityA = await this.companyRepository.findOne(id, {
+      relations: ["package"],
+    });
+    if (!entityA) {
+      throw new NotFoundException("package not found");
+    }
+    console.log(entityA)
+    entityA.package = await this.detailsrepository.findByIds(data.package);
+    console.log(entityA)
+    const responese = await this.companyRepository.save(entityA);
+    console.log(responese)
 
-return entityA;
+    return entityA;
 
 
     // return  await this.companyRepository.update(id,data); 
   }
-  async contractagreement(id,data) {
-    return  await this.companyRepository.update(id,data); 
+  async contractagreement(id, data) {
+    return await this.companyRepository.update(id, data);
   }
-  async assignpaymentmethod(id,data) {
-    console.log(data,88)
-    return  await this.companyRepository.update(id,data); 
+  async assignpaymentmethod(id, data) {
+    console.log(data, 88)
+    return await this.companyRepository.update(id, data);
+  }
+
+
+  async getassignpaymentmethod(id) {
+    return await this.companyRepository.findOne(id);
   }
   async assignmodule(id, data) {
     const entityA = await this.companyRepository.findOne(id, {
-      relations: ["module","package"],
+      relations: ["module", "package"],
     });
     if (!entityA) {
       throw new NotFoundException("module not found");
     }
 
     entityA.module = await this.modulerepository.findByIds(data.module);
-entityA.package=[]
-console.log(entityA,999)
+    entityA.package = []
+    console.log(entityA, 999)
     const responese = await this.companyRepository.save(entityA);
 
     return entityA;

@@ -61,7 +61,7 @@ export class CompaniesController {
       companies
     };
   }
-
+  // show only active/inactive/deactivate sub company 
   @UseGuards(AuthGuard('jwt'))
   @Get('/showonlyActiveSubCompany/:value')
   async showonlyActivesubCompany(@Param('value') value: number) {
@@ -71,6 +71,7 @@ export class CompaniesController {
       companies
     };
   }
+  // show subcompany when pass main company
   @UseGuards(AuthGuard('jwt'))
   @Get('/subcompanies/:mainCompanyId')
   async showSubAll(@Param('mainCompanyId') mainCompanyId: number) {
@@ -80,62 +81,70 @@ export class CompaniesController {
       companies
     };
   }
-
+  // module assign
   @UseGuards(AuthGuard('jwt'))
   @Post('assign')
-  async assignmodule(@Body() passdata){
-    const data={
-      module:passdata.module,
+  async assignmodule(@Body() passdata) {
+    const data = {
+      module: passdata.module,
     }
-    return await this.service.assignmodule(passdata.companyId,data)
+    return await this.service.assignmodule(passdata.companyId, data)
   }
-
+  // assign package
   @UseGuards(AuthGuard('jwt'))
   @Put('assignpackage')
-  async assignpackage(@Body() passdata){
-    console.log(passdata,88)
-    const data={
-      package:passdata.packages,
+  async assignpackage(@Body() passdata) {
+    console.log(passdata, 88)
+    const data = {
+      package: passdata.packages,
     }
-    return await this.service.assignpackage(passdata.companyId,data)
+    return await this.service.assignpackage(passdata.companyId, data)
   }
-
+  // assign payment method
   @UseGuards(AuthGuard('jwt'))
   @Put('assignpaymentmethod')
-  async assignpaymentmethod(@Body() passdata){
-    const data={
-      billing:passdata.paymentMethod,
+  async assignpaymentmethod(@Body() passdata) {
+    const data = {
+      billing: passdata.paymentMethod,
     }
-    return await this.service.assignpaymentmethod(passdata.companyId,data)
+    return await this.service.assignpaymentmethod(passdata.companyId, data)
   }
 
+  //get assign payment method
+  @UseGuards(AuthGuard('jwt'))
+  @Get('assignpaymentmethod/:id')
+  async getassignpaymentmethod(@Param('id') id: number) {
+    return await this.service.getassignpaymentmethod(id)
+  }
+
+  // add contract agreement
   @UseGuards(AuthGuard('jwt'))
   @Put('contractagreement')
-  async contractagreement(@Body() passdata){
-    const data={
-      contractagreement:passdata.contractagreement,
+  async contractagreement(@Body() passdata) {
+    const data = {
+      contractagreement: passdata.contractagreement,
     }
-    return await this.service.contractagreement(passdata.companyId,data)
+    return await this.service.contractagreement(passdata.companyId, data)
   }
-
+  // get selected agreement type
   @UseGuards(AuthGuard('jwt'))
   @Get('contractagreement/:id')
-  async getcontractagreement(@Param('id') id: number){
+  async getcontractagreement(@Param('id') id: number) {
     return await this.service.getcontractagreement(id)
   }
-  
+  // get assign package for company
   @UseGuards(AuthGuard('jwt'))
   @Get('assignpackage/:id')
-  async getassignpackage(@Param('id') id: number){
+  async getassignpackage(@Param('id') id: number) {
     return await this.service.getassignpackage(id)
   }
-
+// get assign module to the company
   @UseGuards(AuthGuard('jwt'))
   @Get('assign/:id')
-  async getassignmodule(@Param('id') id: number){
+  async getassignmodule(@Param('id') id: number) {
     return await this.service.getassignmodule(id)
   }
-
+// show all sub companuies
   @UseGuards(AuthGuard('jwt'))
   @Get('/showsubcompaniesonly')
   async showSubonlyCompanies() {
@@ -145,24 +154,24 @@ export class CompaniesController {
       companies
     };
   }
-
+// return only upload profile image name
   @UseGuards(AuthGuard('jwt'))
   @Post('uploadprofileimage')
   @UseInterceptors(AnyFilesInterceptor())
   async uploadprofileimage(@UploadedFiles() file) {
-   console.log(file,45678)
-   const filename = await this.imageUploadService.upload(file, "body");
-  console.log(filename,89989)
-   return filename;
+    console.log(file, 45678)
+    const filename = await this.imageUploadService.upload(file, "body");
+    console.log(filename, 89989)
+    return filename;
   }
 
 
-
+// create company
   @UseGuards(AuthGuard('jwt'))
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   async create(@UploadedFiles() file, @Body() companyData) {
-    console.log(companyData,1234567890)
+    console.log(companyData, 1234567890)
     const filename = await this.imageUploadService.uploadcompany(file, "body");
 
     const img = filename.find((file) => file.hasOwnProperty(`logoImg`));
@@ -181,6 +190,8 @@ export class CompaniesController {
     //  return filename
 
   }
+
+  // get company type
   @UseGuards(AuthGuard('jwt'))
   @Get('/companyType')
   async getcompanyType() {
@@ -299,7 +310,7 @@ export class CompaniesController {
   async deactivatecustomer(@Param('id') id: number, @Body() data) {
     return await this.service.deactivatecustomerupdate(id, data);
   }
-  
+
   @UseGuards(AuthGuard('jwt'))
   @Post('checkcompanycode/:code')
   async checkcompanycode(@Param('code') code: string) {
