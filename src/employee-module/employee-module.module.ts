@@ -29,9 +29,15 @@ import { Bank } from './bank/bank.entity';
 import { Createmodule } from 'src/createmodule/createmodule.entity';
 import { CreatemoduleService } from 'src/createmodule/createmodule.service';
 import { CreatemoduleModule } from 'src/createmodule/createmodule.module';
+import { Createpackage } from 'src/createpackage/createpackage.entity';
+import { CreatepackageService } from 'src/createpackage/createpackage.service';
+import { CreatepackageModule } from 'src/createpackage/createpackage.module';
+import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetailsofpackage.entity';
+import { ModuledetailsofpackageService } from 'src/moduledetailsofpackage/moduledetailsofpackage.service';
+import { Paymenttype } from 'src/createpackage/paymenttype.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([EmployeeType, EmployeeModule, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency,Createmodule]), EmployeeDocumentModule, CompaniesModule,CreatemoduleModule],
+  imports: [TypeOrmModule.forFeature([EmployeeType, EmployeeModule, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency,Createmodule,Createpackage,Paymenttype,Moduledetailsofpackage]), EmployeeDocumentModule, CompaniesModule,CreatemoduleModule],
   controllers: [EmployeeModuleController, ImageUploadController],
-  providers: [EmployeeModuleService, ImageUploadService, EmployeeDocumentService, CompaniesService, SystemCodeService, UserService,CompanyDocumentService,CreatemoduleService ]
+  providers: [EmployeeModuleService, ImageUploadService, EmployeeDocumentService, CompaniesService, SystemCodeService, UserService,CompanyDocumentService,CreatemoduleService,CreatepackageService,ModuledetailsofpackageService ]
 })
 export class EmployeeModuleModule {}

@@ -21,8 +21,11 @@ import { ImageUploadService } from 'src/imageupload/imageupload.service';
 import { Createmodule } from 'src/createmodule/createmodule.entity';
 import { CreatemoduleModule } from 'src/createmodule/createmodule.module';
 import { CreatemoduleService } from 'src/createmodule/createmodule.service';
+import { Createpackage } from 'src/createpackage/createpackage.entity';
+import { CreatepackageService } from 'src/createpackage/createpackage.service';
+import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetailsofpackage.entity';
 @Module({
-  imports:[TypeOrmModule.forFeature([EmployeeDocument, PagePermissionEntity,EmployeeModule,CompanyDocument , SystemCode , User,PermissionRoleEntity ,CompaniesEntity,Createmodule]),EmployeeDocumentModule,CompaniesModule, CreatemoduleModule],
+  imports:[TypeOrmModule.forFeature([EmployeeDocument, PagePermissionEntity,EmployeeModule,CompanyDocument , SystemCode , User,PermissionRoleEntity ,CompaniesEntity,Createmodule,Createpackage, Moduledetailsofpackage]),EmployeeDocumentModule,CompaniesModule, CreatemoduleModule],
   controllers: [EmployeeDocumentController],
   providers: [EmployeeDocumentService, EmployeeModuleService, CompaniesService, CompanyDocumentService,UserService,SystemCodeService,ImageUploadService,CreatemoduleService]
 })

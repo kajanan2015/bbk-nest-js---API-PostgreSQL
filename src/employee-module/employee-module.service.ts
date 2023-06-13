@@ -99,7 +99,10 @@ export class EmployeeModuleService {
   }
 
  async findById(id: number) {
-    return await this.employeeModuleRepository.findOne({id});
+    return await this.employeeModuleRepository.findOne({
+      where: {id: +id},
+      relations: ['employeeType', 'designation', 'company', 'gender', 'maritalStatus', 'bankName']
+    });
   }
 
   // async update(id: number, UpdateEmployeeModuleDto: UpdateEmployeeModuleDto) {

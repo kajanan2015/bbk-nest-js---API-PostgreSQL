@@ -93,6 +93,7 @@ export class CompaniesController {
   @UseGuards(AuthGuard('jwt'))
   @Put('assignpackage')
   async assignpackage(@Body() passdata){
+    console.log(passdata,88)
     const data={
       package:passdata.packages,
     }
