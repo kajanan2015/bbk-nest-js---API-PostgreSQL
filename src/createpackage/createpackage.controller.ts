@@ -9,30 +9,30 @@ import { AnyFilesInterceptor } from '@nestjs/platform-express';
 @UseGuards(AuthGuard('jwt'))
 @Controller('createpackage')
 export class CreatepackageController {
-  constructor(private readonly createpackageService: CreatepackageService,private   readonly imageUploadService: ImageUploadService,) {}
+  constructor(private readonly createpackageService: CreatepackageService, private readonly imageUploadService: ImageUploadService,) { }
 
-@Post()
-@UseInterceptors(AnyFilesInterceptor())
- async create(@UploadedFiles() packageImg,@Body() data) {
-  console.log(packageImg,345678)
-    console.log(data,5678934)
-    const pkglogo= await this.imageUploadService.upload(packageImg,'body')
-    const passdata={
+  @Post()
+  @UseInterceptors(AnyFilesInterceptor())
+  async create(@UploadedFiles() packageImg, @Body() data) {
+    console.log(packageImg, 345678)
+    console.log(data, 5678934)
+    const pkglogo = await this.imageUploadService.upload(packageImg, 'body')
+    const passdata = {
       ...data,
-      packagelogo:pkglogo[0],
-      pkgcreate:data.userId,
-      status:1
+      packagelogo: pkglogo[0],
+      pkgcreate: data.userId,
+      status: 1
     }
-    console.log(passdata,67890) 
-  
-  return this.createpackageService.create(passdata);
+    console.log(passdata, 67890)
+
+    return this.createpackageService.create(passdata);
   }
 
   @Get()
   async findAll() {
     return this.createpackageService.findAll();
   }
- 
+
   @Get('paymenttype')
   async findpayment() {
     return this.createpackageService.getpayementtype();
@@ -42,35 +42,36 @@ export class CreatepackageController {
     return this.createpackageService.findOne(+id);
   }
 
-  @Patch(':id')
+  @Patch()
   @UseInterceptors(AnyFilesInterceptor())
- async update(@Param('id') id: string, @UploadedFiles() pkgImg, @Body() updateCreatepackageDto) {
-  console.log(updateCreatepackageDto,8888);
-  const currentDateTime = new Date(); // Current date and time
-    let data={
-      ...updateCreatepackageDto,
-      updatedat:currentDateTime,
-      pkgupdate:updateCreatepackageDto.userId
+  async update(@UploadedFiles() pkgImg, @Body() updateCreatepackageDto) {
+    console.log(updateCreatepackageDto, 8888);
+    const currentDateTime = new Date(); // Current date and time
+    let data = {
+      ...updateCreatepackageDto.updatedValues,
+      updatedat: currentDateTime,
+      pkgupdate: updateCreatepackageDto.userId
     };
     delete data.userId;
-    if(updateCreatepackageDto.existlogo){
-      const pkglogo= await this.imageUploadService.upload(pkgImg,'body');
+    console.log(data,888)
+    if (data.existlogo) {
+      const pkglogo = await this.imageUploadService.upload(pkgImg, 'body');
       delete data.existlogo;
-     
-      data={
+
+      data = {
         ...data,
-        packagelogo:pkglogo[0]
+        packagelogo: pkglogo[0]
       }
-      console.log(data,67890)
+      console.log(data, 67890)
     }
-    return this.createpackageService.update(+id, updateCreatepackageDto);
+    return await this.createpackageService.update(updateCreatepackageDto.id,data);
   }
-  
+
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return this.createpackageService.remove(+id);
   }
 
 
-  
+
 }
