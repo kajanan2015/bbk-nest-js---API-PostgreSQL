@@ -5,6 +5,7 @@ import { TripEntity } from 'src/trip/trip.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
 import { Createmodule } from 'src/createmodule/createmodule.entity';
 import { Createpackage } from 'src/createpackage/createpackage.entity';
+import { CompanyPayment } from 'src/company-payment/company-payment.entity';
 @Entity()
 export class User  {
   @PrimaryGeneratedColumn()
@@ -72,14 +73,17 @@ export class User  {
   companies: CompaniesEntity[];
 
   @OneToMany(()=>Createmodule, cretedby => cretedby.modulecreate,{cascade:true})
-  modulecreatedby:Createmodule[]
+  modulecreatedby:Createmodule[];
 
   @OneToMany(()=>Createmodule, updatedby => updatedby.moduleupdate,{cascade:true})
-  moduleupdateby:Createmodule[]
+  moduleupdateby:Createmodule[];
 
   @OneToMany(()=>Createpackage, cretedby => cretedby.pkgcreate,{cascade:true})
-  pkgcreatedby:Createpackage[]
+  pkgcreatedby:Createpackage[];
 
   @OneToMany(()=>Createpackage, updatedby => updatedby.pkgupdate,{cascade:true})
-  pkgupdateby:Createpackage[]
+  pkgupdateby:Createpackage[];
+
+  @OneToMany(()=>CompanyPayment, updatedby => updatedby.issuedBy,{cascade:true})
+  issueByuser:CompanyPayment[];
 }
