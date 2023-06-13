@@ -101,7 +101,7 @@ export class EmployeeModuleService {
  async findById(id: number) {
     return await this.employeeModuleRepository.findOne({
       where: {id: +id},
-      relations: ['employeeType', 'designation', 'company', 'gender', 'maritalStatus', 'bankName']
+      relations: ['documents', 'employeeType', 'designation', 'company', 'gender', 'maritalStatus', 'bankName', 'paymentFrequency', 'drivingLicenceType']
     });
   }
 
