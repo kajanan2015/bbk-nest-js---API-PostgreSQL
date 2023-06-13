@@ -811,14 +811,15 @@ return entityA;
   }
   async assignmodule(id, data) {
     const entityA = await this.companyRepository.findOne(id, {
-      relations: ["module"],
+      relations: ["module","package"],
     });
     if (!entityA) {
       throw new NotFoundException("module not found");
     }
 
     entityA.module = await this.modulerepository.findByIds(data.module);
-
+entityA.package=[]
+console.log(entityA,999)
     const responese = await this.companyRepository.save(entityA);
 
     return entityA;

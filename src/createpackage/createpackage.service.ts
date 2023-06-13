@@ -50,7 +50,7 @@ export class CreatepackageService {
 
   async findAll() {
     return await this.createpkgRepository.find({ 
-      where: { status: 1 },relations:['packagedetails','packagedetails.module','pkgcreate','pkgupdate'] 
+      where: { status: 1 },relations:['packagedetails','packagedetails.module','pkgcreate','pkgupdate','packagedetails.company'] 
     });
   }
 
