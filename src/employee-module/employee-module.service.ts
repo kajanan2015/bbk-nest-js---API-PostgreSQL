@@ -206,7 +206,7 @@ export class EmployeeModuleService {
   async findCompanyAllEmployees(companyid: number) {
     return await this.employeeModuleRepository.find({
       where: {company: companyid},
-      relations: ['employeeType', 'designation', 'company']
+      relations: ['employeeType', 'designation', 'company', 'gender', 'maritalStatus', 'drivingLicenceType']
     });
   }
 
