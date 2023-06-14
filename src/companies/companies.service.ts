@@ -52,10 +52,7 @@ export class CompaniesService {
     private readonly pkgrepository: Repository<Createpackage>,
     @InjectRepository(Moduledetailsofpackage)
     private readonly detailsrepository: Repository<Moduledetailsofpackage>
-
-
-
-  ) { }
+  ) {}
 
   async showAll() {
     return await this.companyRepository.find({
@@ -68,7 +65,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
-        "billing"
+        "billing",
       ],
     });
   }
@@ -98,7 +95,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
-        "billing"
+        "billing",
       ],
     });
   }
@@ -114,7 +111,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
-        "billing"
+        "billing",
       ],
       order: {
         mainCompany: "ASC",
@@ -133,7 +130,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
-        "billing"
+        "billing",
       ],
     });
   }
@@ -166,7 +163,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
-        "billing"
+        "billing",
       ],
     });
   }
@@ -203,6 +200,7 @@ export class CompaniesService {
     let dataCompany;
 
     if (companyData.parentCompany && companyData.parentCompany != "") {
+      const users = [];
       const company = await this.companyRepository.findOne(
         companyData.parentCompany,
         {
@@ -220,24 +218,25 @@ export class CompaniesService {
         userIds.push(company.users.map((user) => user.id));
 
         const adminUsers = companyData.admins;
-        console.log(adminUsers,7890)
+        console.log(adminUsers, 7890);
         let existing;
         let adminData;
         let adminResponse;
         let adminUser;
         let userId;
+
         for (const admin of adminUsers) {
           existing = await this.userservice.findByEmail(admin.email);
           if (existing) {
             return "account exist";
           }
-          console.log(admin,7890)
+          console.log(admin, 7890);
           profilethumbUrl = admin.profileImage
             ? await this.imageUploadService.uploadThumbnailToS3(
-              admin.profileImage
-            )
+                admin.profileImage
+              )
             : null;
-            adminData = {
+          adminData = {
             firstName: admin.firstName,
             lastName: admin.lastName,
             uType: "SADMIN",
@@ -248,7 +247,7 @@ export class CompaniesService {
             email: admin.email,
           };
 
-           adminResponse = await this.userservice.create(adminData);
+          adminResponse = await this.userservice.create(adminData);
 
           // await this.mailservice.senduserCreate(
           //   admin.password,
@@ -256,43 +255,18 @@ export class CompaniesService {
           //   admin.email,
           //   admin.email
           // );
+          userIds.push(adminResponse.id.toString());
+          // userId = adminResponse.id.toString();
+          // console.log(userId,5678)
 
-          userId = adminResponse.id.toString();
-          console.log(userId,5678)
-         adminUser = await this.userRepository.findByIds([userId]);
-          console.log(adminUser,5678)
-          if (!companyData.sameTradingAddress) {
-            dataCompany = {
-              ...companyData,
-              companyLogo: companyData.logoImg,
-              companyLogoThumb: companythumbUrl,
-              companyCode: companyCode,
-              users: adminUser,
-              documents: files,
-              companyIdentifier: "maincompany",
-            };
-          } else {
-            dataCompany = {
-              ...companyData,
-              regAddressNo: companyData.number,
-              regAddressStreet: companyData.street,
-              regAddressCity: companyData.city,
-              regAddressPostalCode: companyData.postalCode,
-              regAddressCountry: companyData.country,
-              companyLogo: companyData.logoImg,
-              companyLogoThumb: companythumbUrl,
-              companyCode: companyCode,
-              users: adminUser,
-              documents: files,
-              companyIdentifier: "maincompany",
-            };
-          }
-          console.log(dataCompany,678)
+          // console.log(adminUser,5678)
+
+          // console.log(dataCompany,678)
         }
       } else {
         if (companyData.parentCompanyAdmin) {
           for (const value of companyData.parentCompanyAdmin) {
-            console.log(value,77777)
+            console.log(value, 77777);
             userIds.push(value);
           }
         }
@@ -315,8 +289,8 @@ export class CompaniesService {
             }
             profilethumbUrl = admin.profileImage
               ? await this.imageUploadService.uploadThumbnailToS3(
-                admin.profileImage
-              )
+                  admin.profileImage
+                )
               : null;
             const adminData = {
               firstName: admin.firstName,
@@ -338,37 +312,10 @@ export class CompaniesService {
             //   admin.email
             // );
 
-            const userId = adminResponse.id.toString();
-            const adminUser = await this.userRepository.findByIds([userId]);
-            
-            userIds.push(adminUser[0]);
-
-            if (!companyData.sameTradingAddress) {
-              dataCompany = {
-                ...companyData,
-                companyLogo: companyData.logoImg,
-                companyLogoThumb: companythumbUrl,
-                companyCode: companyCode,
-                users: adminUser,
-                documents: files,
-                companyIdentifier: "maincompany",
-              };
-            } else {
-              dataCompany = {
-                ...companyData,
-                regAddressNo: companyData.number,
-                regAddressStreet: companyData.street,
-                regAddressCity: companyData.city,
-                regAddressPostalCode: companyData.postalCode,
-                regAddressCountry: companyData.country,
-                companyLogo: companyData.logoImg,
-                companyLogoThumb: companythumbUrl,
-                companyCode: companyCode,
-                users: adminUser,
-                documents: files,
-                companyIdentifier: "maincompany",
-              };
-            }
+            // const userId = adminResponse.id.toString();
+            userIds.push(adminResponse.id.toString());
+            // adminUser = await this.userRepository.findByIds([userId]);
+            // users.push(adminUser[0]);
           }
         } else {
           // await this.mailservice.sendcompanyCreate("", companyData.companyName, companyData.companyEmail, "");
@@ -377,9 +324,37 @@ export class CompaniesService {
       // const users = await this.userRepository.findByIds(userIds);
       // console.log(userIds,56789)
       // console.log(users,56789)
-     
+      const adminUser = await this.userRepository.findByIds([userIds]);
 
-      console.log(dataCompany,45678)
+      users.push(adminUser[0]);
+      if (!companyData.sameTradingAddress) {
+        dataCompany = {
+          ...companyData,
+          companyLogo: companyData.logoImg,
+          companyLogoThumb: companythumbUrl,
+          companyCode: companyCode,
+          users: users,
+          documents: files,
+          companyIdentifier: "subcompany",
+        };
+      } else {
+        dataCompany = {
+          ...companyData,
+          regAddressNo: companyData.number,
+          regAddressStreet: companyData.street,
+          regAddressCity: companyData.city,
+          regAddressPostalCode: companyData.postalCode,
+          regAddressCountry: companyData.country,
+          companyLogo: companyData.logoImg,
+          companyLogoThumb: companythumbUrl,
+          companyCode: companyCode,
+          users: users,
+          documents: files,
+          companyIdentifier: "subcompany",
+        };
+      }
+
+      console.log(dataCompany, 45678);
     } else {
       const adminUsers = companyData.admins;
 
@@ -391,8 +366,8 @@ export class CompaniesService {
         }
         profilethumbUrl = admin.profileImage
           ? await this.imageUploadService.uploadThumbnailToS3(
-            admin.profileImage
-          )
+              admin.profileImage
+            )
           : null;
         const adminData = {
           firstName: admin.firstName,
@@ -447,7 +422,7 @@ export class CompaniesService {
     }
 
     await this.systemcodeService.update(response.id, newstartvalue);
-    console.log(dataCompany,345678)
+    console.log(dataCompany, 345678);
     const newCompany = await this.companyRepository.create(dataCompany);
     const responsesave = await this.companyRepository.save(newCompany);
     console.log(responsesave, 344343433344343);
@@ -506,7 +481,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
-        "billing"
+        "billing",
       ],
     });
   }
@@ -532,12 +507,12 @@ export class CompaniesService {
       ...(data.companyType ? { companyType: data.companyType } : {}),
       ...(data.sameTradingAddress !== false
         ? {
-          regAddressNo: data.regAddressNo,
-          regAddressStreet: data.regAddressStreet,
-          regAddressCity: data.regAddressCity,
-          regAddressPostalCode: data.regAddressPostalCode,
-          regAddressCountry: data.regAddressCountry.id,
-        }
+            regAddressNo: data.regAddressNo,
+            regAddressStreet: data.regAddressStreet,
+            regAddressCity: data.regAddressCity,
+            regAddressPostalCode: data.regAddressPostalCode,
+            regAddressCountry: data.regAddressCountry.id,
+          }
         : {}),
     };
     console.log(passcompanyData, 4567890);
@@ -628,8 +603,8 @@ export class CompaniesService {
           } else {
             profilethumbUrl = user.profileImage
               ? await this.imageUploadService.uploadThumbnailToS3(
-                user.profileImage
-              )
+                  user.profileImage
+                )
               : null;
             profilePic = user.profileImage;
           }
@@ -697,7 +672,7 @@ export class CompaniesService {
         "country",
         "regAddressCountry",
         "companyType",
-        "billing"
+        "billing",
       ],
     });
   }
@@ -764,15 +739,17 @@ export class CompaniesService {
   }
 
   async getassignpackage(id) {
-    return await this.companyRepository.findOne(id, { relations: ["package", "package.packages","package.module"] });
+    return await this.companyRepository.findOne(id, {
+      relations: ["package", "package.packages", "package.module"],
+    });
   }
 
   async getcontractagreement(id) {
     return await this.companyRepository.findOne(id);
   }
   async assignpackage(id, data) {
-    console.log(id, 77)
-    console.log(data.package, 88)
+    console.log(id, 77);
+    console.log(data.package, 88);
 
     const entityA = await this.companyRepository.findOne(id, {
       relations: ["package"],
@@ -780,28 +757,26 @@ export class CompaniesService {
     if (!entityA) {
       throw new NotFoundException("package not found");
     }
-    console.log(entityA)
+    console.log(entityA);
     entityA.package = await this.detailsrepository.findByIds(data.package);
-    console.log(entityA)
+    console.log(entityA);
     const responese = await this.companyRepository.save(entityA);
-    console.log(responese)
+    console.log(responese);
 
     return entityA;
 
-
-    // return  await this.companyRepository.update(id,data); 
+    // return  await this.companyRepository.update(id,data);
   }
   async contractagreement(id, data) {
     return await this.companyRepository.update(id, data);
   }
   async assignpaymentmethod(id, data) {
-    console.log(data, 88)
+    console.log(data, 88);
     return await this.companyRepository.update(id, data);
   }
 
-
   async getassignpaymentmethod(id) {
-    return await this.companyRepository.findOne(id,{relations:['billing']});
+    return await this.companyRepository.findOne(id, { relations: ["billing"] });
   }
   async assignmodule(id, data) {
     const entityA = await this.companyRepository.findOne(id, {
@@ -812,8 +787,8 @@ export class CompaniesService {
     }
 
     entityA.module = await this.modulerepository.findByIds(data.module);
-    entityA.package = []
-    console.log(entityA, 999)
+    entityA.package = [];
+    console.log(entityA, 999);
     const responese = await this.companyRepository.save(entityA);
 
     return entityA;
