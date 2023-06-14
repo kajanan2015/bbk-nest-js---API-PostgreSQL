@@ -10,10 +10,10 @@ export class Moduledetailsofpackage {
     @Column()
     NoOfRecords: number;
   
-    @Column()
+    @Column({ type: 'numeric', precision: 10, scale: 2 })
     CostPerRecord: number;
   
-    @Column()
+    @Column({ type: 'numeric', precision: 10, scale: 2 })
     PackagePrice: number;
 
     @ManyToOne(() => Createmodule, module => module.moduledetails)

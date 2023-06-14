@@ -17,6 +17,9 @@ export class CompanyPayment {
     @Column("varchar", { length: 250 })
     invoiceNumber: string;
 
+    @Column({ type: 'numeric', precision: 10, scale: 2 })
+    totalvalue: number;
+
     @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
     issuedDate: Date;
 

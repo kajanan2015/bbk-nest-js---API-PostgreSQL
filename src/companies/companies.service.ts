@@ -220,12 +220,13 @@ export class CompaniesService {
         userIds.push(company.users.map((user) => user.id));
 
         const adminUsers = companyData.admins;
-
+        console.log(adminUsers,7890)
         for (const admin of adminUsers) {
           const existing = await this.userservice.findByEmail(admin.email);
           if (existing) {
             return "account exist";
           }
+          console.log(admin,7890)
           profilethumbUrl = admin.profileImage
             ? await this.imageUploadService.uploadThumbnailToS3(
               admin.profileImage
@@ -252,6 +253,7 @@ export class CompaniesService {
           // );
 
           const userId = adminResponse.id.toString();
+          console.log(userId)
           const adminUser = await this.userRepository.findByIds([userId]);
           if (!companyData.sameTradingAddress) {
             dataCompany = {
