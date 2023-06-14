@@ -9,9 +9,9 @@ import { Injectable } from "@nestjs/common";
 export class MailService {
   constructor(private mailerService: MailerService) {}
 
-  async newadminadded(adninemail,companyname,adminname,adminpassword){
+  async newadminadded(adminemail,companyname,adminname,adminpassword){
     await this.mailerService.sendMail({
-      to: adninemail.trim(),
+      to: adminemail.trim(),
       from: "noreply@hexagonasia.com", // override default from
       subject: ` Welcome to ${companyname} Account - New Admin Access Granted`,
       template: "./newadminadded", // `.hbs` extension is appended automatically
@@ -24,7 +24,7 @@ export class MailService {
 
   async trialpackageadded(companyemail,adminemail,adminname,companyname,link){
     await this.mailerService.sendMail({
-          to: companyemail.trim(),
+          to: adminemail.trim(),
           from: "noreply@hexagonasia.com", // override default from
           subject: `User Credentials for Accessing the Application - Trial Package`,
           template: "./trialpackagecreate", // `.hbs` extension is appended automatically

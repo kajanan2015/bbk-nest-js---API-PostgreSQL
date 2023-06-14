@@ -248,13 +248,10 @@ export class CompaniesService {
           };
 
           adminResponse = await this.userservice.create(adminData);
-
-          // await this.mailservice.senduserCreate(
-          //   admin.password,
-          //   admin.firstName,
-          //   admin.email,
-          //   admin.email
-          // );
+          
+       
+          await this.mailservice.newadminadded(admin.email,companyData.companyName,admin.firstName,admin.password);
+         
           userIds.push(adminResponse.id.toString());
           // userId = adminResponse.id.toString();
           // console.log(userId,5678)
@@ -304,14 +301,9 @@ export class CompaniesService {
             };
 
             const adminResponse = await this.userservice.create(adminData);
-
-            // await this.mailservice.senduserCreate(
-            //   admin.password,
-            //   admin.firstName,
-            //   admin.email,
-            //   admin.email
-            // );
-
+            await this.mailservice.newadminadded(admin.email,companyData.companyName,admin.firstName,admin.password);
+         
+          
             // const userId = adminResponse.id.toString();
             userIds.push(adminResponse.id.toString());
             // adminUser = await this.userRepository.findByIds([userId]);
@@ -382,12 +374,8 @@ export class CompaniesService {
 
         const adminResponse = await this.userservice.create(adminData);
 
-        // await this.mailservice.senduserCreate(
-        //   admin.password,
-        //   admin.firstName,
-        //   admin.email,
-        //   admin.email
-        // );
+        await this.mailservice.newadminadded(admin.email,companyData.companyName,admin.firstName,admin.password);
+         
 
         const userId = adminResponse.id.toString();
         const adminUser = await this.userRepository.findByIds([userId]);
