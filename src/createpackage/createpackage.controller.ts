@@ -50,7 +50,8 @@ export class CreatepackageController {
     let data = {
       ...updateCreatepackageDto.updatedValues,
       updatedat: currentDateTime,
-      pkgupdate: updateCreatepackageDto.userId
+      pkgupdate: updateCreatepackageDto.userId,
+      status:parseInt(updateCreatepackageDto.updatedValues.status)
     };
     delete data.userId;
     console.log(data,888)
@@ -64,7 +65,7 @@ export class CreatepackageController {
       }
       console.log(data, 67890)
     }
-    return await this.createpackageService.update(updateCreatepackageDto.id,data);
+    return await this.createpackageService.update(updateCreatepackageDto.id,data,updateCreatepackageDto);
   }
 
   @Delete(':id')

@@ -35,6 +35,13 @@ export class CreatemoduleController {
     return this.createmoduleService.findAll();
   }
 
+
+  @Get('findallactive')
+  async findAllActive() {
+    return this.createmoduleService.findAll();
+  }
+  
+
   @Get(':id')
  async findOne(@Param('id') id: string) {
     return this.createmoduleService.findOne(+id);
