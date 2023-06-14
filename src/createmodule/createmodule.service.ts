@@ -28,6 +28,9 @@ export class CreatemoduleService {
 
 
 
+  async findAllActive() {
+    return await this.createmoduleRepository.find({relations:['moduleupdate','modulecreate','company']});
+  }
 
   async findAll() {
     return await this.createmoduleRepository.find({relations:['moduleupdate','modulecreate','company']});
