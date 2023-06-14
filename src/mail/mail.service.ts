@@ -9,18 +9,58 @@ import { Injectable } from "@nestjs/common";
 export class MailService {
   constructor(private mailerService: MailerService) {}
 
-  async sendcompanyCreateNew(email,companyname){
-  await this.mailerService.sendMail({
-        to: email.trim(),
-        from: "noreply@hexagonasia.com", // override default from
-        subject: `Login Credentials for BBK Application`,
-        template: "./companyconfirmationnew", // `.hbs` extension is appended automatically
-        context: {
-          companyname
-        }});
+  async newadminadded(adninemail,companyname,adminname,adminpassword){
+    await this.mailerService.sendMail({
+      to: adninemail.trim(),
+      from: "noreply@hexagonasia.com", // override default from
+      subject: ` Welcome to ${companyname} Account - New Admin Access Granted`,
+      template: "./newadminadded", // `.hbs` extension is appended automatically
+      context: {
+        adminname,
+        companyname,
+        adminpassword
+      }});
   }
 
+  async trialpackageadded(companyemail,adminemail,adminname,companyname,link){
+    await this.mailerService.sendMail({
+          to: companyemail.trim(),
+          from: "noreply@hexagonasia.com", // override default from
+          subject: `User Credentials for Accessing the Application - Trial Package`,
+          template: "./trialpackagecreate", // `.hbs` extension is appended automatically
+          context: {
+            adminname,
+            adminemail,
+            link,
+            companyname
 
+          }});
+    }
+
+    async shareaccesstochildcompany(adminemail,adminname,companyname,parentcompanyname){
+      await this.mailerService.sendMail({
+            to: adminemail.trim(),
+            from: "noreply@hexagonasia.com", // override default from
+            subject: `Access Granted: Welcome to ${companyname}`,
+            template: "./shareaccesstochildofcmpanies", // `.hbs` extension is appended automatically
+            context: {
+              adminname,
+              companyname,
+              parentcompanyname
+            }});
+      }
+
+
+    async sendcompanyCreateNew(toemail,companyname){
+      await this.mailerService.sendMail({
+            to: toemail.trim(),
+            from: "noreply@hexagonasia.com", // override default from
+            subject: `Login Credentials for BBK Application`,
+            template: "./companyconfirmationnew", // `.hbs` extension is appended automatically
+            context: {
+              companyname
+            }});
+      }
   async senduserCreate(
     password: string,
     name: string,
