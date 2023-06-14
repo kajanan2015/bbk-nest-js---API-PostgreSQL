@@ -775,7 +775,7 @@ export class CompaniesService {
   }
 
   async getassignpackage(id) {
-    return await this.companyRepository.findOne(id, { relations: ["package", "package.packages"] });
+    return await this.companyRepository.findOne(id, { relations: ["package", "package.packages","package.module"] });
   }
 
   async getcontractagreement(id) {
