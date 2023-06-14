@@ -8,6 +8,7 @@ import { EmployeeDocument } from 'src/employee-document/employee-document.entity
 import { DrivingLicenceType } from './driving_licence_type/driving_licence_type.entity';
 import { PaymentFrequency } from './payment_frequency/payment_frequency.entity';
 import { Bank } from './bank/bank.entity';
+import { User } from 'src/user/user.entity';
 @Entity()
 export class EmployeeModule {
     @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
@@ -299,4 +300,8 @@ export class EmployeeModule {
 
     @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
     createdat: Date;
+
+    @ManyToOne(() => User, user => user.empAddedByuser)
+    @JoinColumn({ name: 'addedBy' })
+    addedBy: User;
 }
