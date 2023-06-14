@@ -62,9 +62,51 @@ export class CreatepackageService {
   return packagedata;
   }
 
- async update(id: number, updateCreatepackageDto) {
-  const updateresponse=await this.createpkgRepository.update({ id }, updateCreatepackageDto);
+ async update(id: number, data,updateCreatepackageDto) {
+  console.log(updateCreatepackageDto,88889)
+  console.log(id,818889)
+  const updateresponse=await this.createpkgRepository.update({ id }, data);
+  console.log(updateresponse,54678)
+  let passdata;
+  
+  if(updateCreatepackageDto.newModules){
+    for (const item of updateCreatepackageDto.newModules) {
+      passdata={
+        NoOfRecords: item.details.noOfRecords,
+        CostPerRecord: item.details.costPerRecord,
+        PackagePrice: item.details.packagePrice,
+        module: item.details.id,
+        packages:id
+      }
+    await this.moduledetailspackageservice.create(passdata)
+     
+    }
+    }
+   
+  if(updateCreatepackageDto.deletedModules){
+    let deleteid;
+    for (const item of updateCreatepackageDto.deletedModules) {
+      deleteid=item.id
+      await this.moduledetailspackageservice.remove(deleteid);
     
+    }
+  }
+  console.log(updateCreatepackageDto.updatedModules,888)
+  let updatedata;
+  if(updateCreatepackageDto.updatedModules){
+    for (const item of updateCreatepackageDto.updatedModules) {
+      updatedata={
+        ...(item.details.noOfRecords? { NoOfRecords:  item.details.noOfRecords } : {}),
+        ...(item.details.costPerRecord? { CostPerRecord:  item.details.costPerRecord } : {}),
+        ...(item.details.packagePrice? { PackagePrice:  item.details.packagePrice } : {}),
+              }
+
+      console.log(updatedata,89889)
+      const row=await this.moduledetailspackageservice.update(item.details.packageId,updatedata);
+      console.log(row,8888)
+    }
+  }
+
   if(updateresponse){
     return {
       statusCode: HttpStatus.OK,

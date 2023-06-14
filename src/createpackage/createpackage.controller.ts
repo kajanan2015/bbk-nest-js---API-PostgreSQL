@@ -64,7 +64,7 @@ export class CreatepackageController {
       }
       console.log(data, 67890)
     }
-    return await this.createpackageService.update(updateCreatepackageDto.id,data);
+    return await this.createpackageService.update(updateCreatepackageDto.id,data,updateCreatepackageDto);
   }
 
   @Delete(':id')
