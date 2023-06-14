@@ -18,7 +18,7 @@ export class UserService {
 
   async getCompaniesByUserId(userId: number): Promise<CompaniesEntity[]> {
     const user = await this.userRepository.findOne(userId, {
-      relations: ['companies'],
+      relations: ['companies','companies.country'],
     });
     return user.companies;
   }

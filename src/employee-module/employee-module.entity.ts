@@ -8,6 +8,8 @@ import { EmployeeDocument } from 'src/employee-document/employee-document.entity
 import { DrivingLicenceType } from './driving_licence_type/driving_licence_type.entity';
 import { PaymentFrequency } from './payment_frequency/payment_frequency.entity';
 import { Bank } from './bank/bank.entity';
+import { User } from 'src/user/user.entity';
+import { country } from 'src/companies/country.entity';
 @Entity()
 export class EmployeeModule {
     @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
@@ -81,8 +83,9 @@ export class EmployeeModule {
     @Column("varchar", { nullable: true, length: 250, default: () => null })
     addressPostal: string | null;
 
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    addressCountry: string | null;
+    @ManyToOne(() => country, country => country.country)
+    @JoinColumn({ name: 'country' })
+    country: country;
 
     @Column("varchar", { nullable: true, default: null })
     empProvidedForm: string | null;
@@ -162,8 +165,12 @@ export class EmployeeModule {
     @Column("varchar", { nullable: true, length: 250, default: () => null })
     refCompAddressPostal: string | null;
 
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    refCompAddressCountry: string | null;
+    // @Column("varchar", { nullable: true, length: 250, default: () => null })
+    // refCompAddressCountry: string | null;
+
+    @ManyToOne(() => country, refCompAddressCountry => refCompAddressCountry.refCompAddressCountry)
+    @JoinColumn({ name: 'refCompAddressCountry' })
+    refCompAddressCountry: country;
 
     @Column({ type: 'boolean', default: true })
     drivingLicence: boolean;
@@ -299,4 +306,8 @@ export class EmployeeModule {
 
     @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
     createdat: Date;
+
+    @ManyToOne(() => User, user => user.empAddedByuser)
+    @JoinColumn({ name: 'addedBy' })
+    addedBy: User;
 }

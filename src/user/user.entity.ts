@@ -6,6 +6,7 @@ import { CompaniesEntity } from 'src/companies/companies.entity';
 import { Createmodule } from 'src/createmodule/createmodule.entity';
 import { Createpackage } from 'src/createpackage/createpackage.entity';
 import { CompanyPayment } from 'src/company-payment/company-payment.entity';
+import { EmployeeModule } from 'src/employee-module/employee-module.entity';
 @Entity()
 export class User  {
   @PrimaryGeneratedColumn()
@@ -86,4 +87,7 @@ export class User  {
 
   @OneToMany(()=>CompanyPayment, updatedby => updatedby.issuedBy,{cascade:true})
   issueByuser:CompanyPayment[];
+
+  @OneToMany(()=>EmployeeModule, employee => employee.addedBy,{cascade:true})
+  empAddedByuser:EmployeeModule[];
 }

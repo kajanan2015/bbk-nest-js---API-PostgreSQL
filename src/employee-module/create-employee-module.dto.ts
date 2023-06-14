@@ -7,6 +7,8 @@ import { EmployeeDocument } from "src/employee-document/employee-document.entity
 import { DrivingLicenceType } from "./driving_licence_type/driving_licence_type.entity";
 import { PaymentFrequency } from "./payment_frequency/payment_frequency.entity";
 import { Bank } from "./bank/bank.entity";
+import { User } from "src/user/user.entity";
+import { country } from "src/companies/country.entity";
 export class CreateEmployeeModuleDto {
     id: number;
     employeeId: string;
@@ -30,7 +32,7 @@ export class CreateEmployeeModuleDto {
     addressCity: string;
     addressState: string;
     addressPostal: string;
-    addressCountry: string;
+    addressCountry: country[];
     empProvidedForm: string;
     dateofJoined: Date;
     niNo: string;
@@ -58,7 +60,7 @@ export class CreateEmployeeModuleDto {
     refCompAddressCity: string;
     refCompAddressState: string;
     refCompAddressPostal: string;
-    refCompAddressCountry: string;
+    refCompAddressCountry: country[];
     drivingLicence: string;
     drivingLicenceNo: string;
     drivingLicenceCategory: string;
@@ -99,4 +101,5 @@ export class CreateEmployeeModuleDto {
     slrySickType: string;
     slrySickRate: number;
     paymentFrequency: PaymentFrequency[];
+    addedBy:User[];
 }
