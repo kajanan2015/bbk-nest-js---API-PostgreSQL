@@ -221,8 +221,13 @@ export class CompaniesService {
 
         const adminUsers = companyData.admins;
         console.log(adminUsers,7890)
+        let existing;
+        let adminData;
+        let adminResponse;
+        let adminUser;
+        let userId;
         for (const admin of adminUsers) {
-          const existing = await this.userservice.findByEmail(admin.email);
+          existing = await this.userservice.findByEmail(admin.email);
           if (existing) {
             return "account exist";
           }
@@ -232,7 +237,7 @@ export class CompaniesService {
               admin.profileImage
             )
             : null;
-          const adminData = {
+            adminData = {
             firstName: admin.firstName,
             lastName: admin.lastName,
             uType: "SADMIN",
@@ -243,7 +248,7 @@ export class CompaniesService {
             email: admin.email,
           };
 
-          const adminResponse = await this.userservice.create(adminData);
+           adminResponse = await this.userservice.create(adminData);
 
           // await this.mailservice.senduserCreate(
           //   admin.password,
@@ -252,9 +257,10 @@ export class CompaniesService {
           //   admin.email
           // );
 
-          const userId = adminResponse.id.toString();
-          console.log(userId)
-          const adminUser = await this.userRepository.findByIds([userId]);
+          userId = adminResponse.id.toString();
+          console.log(userId,5678)
+         adminUser = await this.userRepository.findByIds([userId]);
+          console.log(adminUser,5678)
           if (!companyData.sameTradingAddress) {
             dataCompany = {
               ...companyData,
@@ -281,10 +287,12 @@ export class CompaniesService {
               companyIdentifier: "maincompany",
             };
           }
+          console.log(dataCompany,678)
         }
       } else {
         if (companyData.parentCompanyAdmin) {
           for (const value of companyData.parentCompanyAdmin) {
+            console.log(value,77777)
             userIds.push(value);
           }
         }
@@ -332,6 +340,7 @@ export class CompaniesService {
 
             const userId = adminResponse.id.toString();
             const adminUser = await this.userRepository.findByIds([userId]);
+            
             userIds.push(adminUser[0]);
 
             if (!companyData.sameTradingAddress) {
@@ -365,35 +374,12 @@ export class CompaniesService {
           // await this.mailservice.sendcompanyCreate("", companyData.companyName, companyData.companyEmail, "");
         }
       }
-      const users = await this.userRepository.findByIds(userIds);
-      if (!companyData.sameTradingAddress) {
-        dataCompany = {
-          ...companyData,
-          companyLogo: companyData.logoImg,
-          companyLogoThumb: companythumbUrl,
-          companyCode: companyCode,
-          users: users,
-          mainCompany: companyData.parentCompany,
-          documents: files,
-          companyIdentifier: "subcompany",
-        };
-      } else {
-        dataCompany = {
-          ...companyData,
-          regAddressNo: companyData.number,
-          regAddressStreet: companyData.street,
-          regAddressCity: companyData.city,
-          regAddressPostalCode: companyData.postalCode,
-          regAddressCountry: companyData.country,
-          companyLogo: companyData.logoImg,
-          companyLogoThumb: companythumbUrl,
-          companyCode: companyCode,
-          users: users,
-          mainCompany: companyData.parentCompany,
-          documents: files,
-          companyIdentifier: "subcompany",
-        };
-      }
+      // const users = await this.userRepository.findByIds(userIds);
+      // console.log(userIds,56789)
+      // console.log(users,56789)
+     
+
+      console.log(dataCompany,45678)
     } else {
       const adminUsers = companyData.admins;
 
@@ -461,6 +447,7 @@ export class CompaniesService {
     }
 
     await this.systemcodeService.update(response.id, newstartvalue);
+    console.log(dataCompany,345678)
     const newCompany = await this.companyRepository.create(dataCompany);
     const responsesave = await this.companyRepository.save(newCompany);
     console.log(responsesave, 344343433344343);
