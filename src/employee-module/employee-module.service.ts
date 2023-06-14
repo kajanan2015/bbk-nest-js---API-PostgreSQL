@@ -86,12 +86,18 @@ export class EmployeeModuleService {
 
   async generateemployeeid(id){
     const individualcompany=await this.companyservice.read(id)
-    let randomId = randomstring.generate(7);
+    let randomId = randomstring.generate({
+      length: 7,
+      charset: 'numeric'
+    });
     let newrandomId=individualcompany.code+'-'+randomId;;
     let response = await this.employeeModuleRepository.find({ where: { employeeId: newrandomId } });
 
     while (response.length > 0) {
-      randomId = randomstring.generate(7);
+      randomId = randomstring.generate({
+        length: 7,
+        charset: 'numeric'
+      });
       newrandomId=individualcompany.code+'-'+randomId;
       response = await this.employeeModuleRepository.find({ where: { employeeId: newrandomId } });
     }
