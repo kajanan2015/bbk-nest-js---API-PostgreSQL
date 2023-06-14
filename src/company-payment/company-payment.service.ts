@@ -1,11 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCompanyPaymentDto } from './create-company-payment.dto';
 import { UpdateCompanyPaymentDto } from './update-company-payment.dto';
-
+import { InjectRepository } from '@nestjs/typeorm';
+import { CompanyPayment } from './company-payment.entity';
+import { Repository } from 'typeorm';
 @Injectable()
 export class CompanyPaymentService {
-  create(createCompanyPaymentDto: CreateCompanyPaymentDto) {
-    return 'This action adds a new companyPayment';
+
+  constructor(
+    @InjectRepository(CompanyPayment)
+    private companyPaymentRepository: Repository<CompanyPayment>,
+  ) {}
+  async create(createCompanyPaymentDto: CreateCompanyPaymentDto) {
+    const response=this.companyPaymentRepository.create(createCompanyPaymentDto);
+    const saveresponse= await this.companyPaymentRepository.save(response);
   }
 
   findAll() {
