@@ -10,7 +10,7 @@ export class ModuledetailsofpackageService {
     @InjectRepository(Moduledetailsofpackage)
     private createpkgmoduledetailsRepository: Repository<Moduledetailsofpackage>,
   ) {}
-async  create(createModuledetailsofpackageDto: CreateModuledetailsofpackageDto) {
+async  create(createModuledetailsofpackageDto) {
     const response=this.createpkgmoduledetailsRepository.create(createModuledetailsofpackageDto);
     return await this.createpkgmoduledetailsRepository.save(response);
   }
@@ -23,11 +23,12 @@ async  create(createModuledetailsofpackageDto: CreateModuledetailsofpackageDto) 
     return await this.createpkgmoduledetailsRepository.find({where:{module:id},relations:['packages']});
   }
 
-  update(id: number, updateModuledetailsofpackageDto: UpdateModuledetailsofpackageDto) {
-    return `This action updates a #${id} moduledetailsofpackage`;
+  async update(id: number, data) {
+    await this.createpkgmoduledetailsRepository.update({ id }, data);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} moduledetailsofpackage`;
+  async remove(id: number) {
+    await this.createpkgmoduledetailsRepository.delete({ id });
+      return { deleted: true };
   }
 }
