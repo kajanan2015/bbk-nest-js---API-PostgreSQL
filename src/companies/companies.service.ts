@@ -243,6 +243,7 @@ export class CompaniesService {
         // console.log(adminUser, 88889)
         for (var i = 0; i < adminUser.length; i++) {
           users.push(adminUser[i]);
+          await this.mailservice.shareaccesstochildcompany(adminUser[i].email,companyData.companyName,adminUser[i].firstName,company.companyName);
         }
         // console.log(users, 999)
         for (const admin of adminUsers) {
@@ -298,6 +299,9 @@ export class CompaniesService {
           // console.log(adminUser, 88889)
           for (var i = 0; i < adminUser.length; i++) {
             users.push(adminUser[i]);
+            console.log(adminUser[i],99900909099990)
+            console.log(adminUser[i].email,99900909099990)
+            await this.mailservice.shareaccesstochildcompany(adminUser[i].email,companyData.companyName,adminUser[i].firstName,company.companyName);
           }
 
           // console.log(users, 999)
