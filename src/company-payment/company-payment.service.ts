@@ -10,10 +10,10 @@ export class CompanyPaymentService {
   constructor(
     @InjectRepository(CompanyPayment)
     private companyPaymentRepository: Repository<CompanyPayment>,
-  ) {}
+  ) { }
   async create(createCompanyPaymentDto: CreateCompanyPaymentDto) {
-    const response=this.companyPaymentRepository.create(createCompanyPaymentDto);
-    const saveresponse= await this.companyPaymentRepository.save(response);
+    const response = this.companyPaymentRepository.create(createCompanyPaymentDto);
+    await this.companyPaymentRepository.save(response);
   }
 
   findAll() {

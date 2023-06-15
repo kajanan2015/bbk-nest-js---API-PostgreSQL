@@ -14,7 +14,7 @@ export class CompanyPayment {
     @Column({ type: 'boolean', default: true })
     linkstatus: Boolean;
 
-    @Column("varchar", { length: 250 })
+    @Column("varchar", { length: 250 , default: true})
     invoiceNumber: string;
 
     @Column({ type: 'numeric', precision: 10, scale: 2 })

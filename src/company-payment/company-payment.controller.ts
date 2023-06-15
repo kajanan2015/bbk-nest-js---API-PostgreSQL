@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { CompanyPaymentService } from './company-payment.service';
 import { CreateCompanyPaymentDto } from './create-company-payment.dto';
 import { UpdateCompanyPaymentDto } from './update-company-payment.dto';
-
+import { AuthGuard } from '@nestjs/passport';
+@UseGuards(AuthGuard('jwt'))
 @Controller('company-payment')
 export class CompanyPaymentController {
   constructor(private readonly companyPaymentService: CompanyPaymentService) {}
