@@ -38,7 +38,7 @@ export class CreatemoduleController {
 
   @Get('findallactive')
   async findAllActive() {
-    return this.createmoduleService.findAll();
+    return this.createmoduleService.findAllActive();
   }
   
 
