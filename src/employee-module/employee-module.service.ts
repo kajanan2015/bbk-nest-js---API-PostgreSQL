@@ -107,7 +107,7 @@ export class EmployeeModuleService {
  async findById(id: number) {
     return await this.employeeModuleRepository.findOne({
       where: {id: +id},
-      relations: ['documents', 'employeeType', 'addedBy', 'designation', 'company', 'gender', 'maritalStatus', 'bankName', 'paymentFrequency', 'drivingLicenceType']
+      relations: ['documents', 'employeeType', 'addedBy', 'designation', 'company', 'gender', 'maritalStatus', 'bankName', 'paymentFrequency', 'addressCountry', 'refCompAddressCountry']
     });
   }
 
@@ -212,7 +212,7 @@ export class EmployeeModuleService {
   async findCompanyAllEmployees(companyid: number) {
     return await this.employeeModuleRepository.find({
       where: {company: companyid},
-      relations: ['employeeType', 'designation', 'company', 'gender', 'maritalStatus', 'drivingLicenceType', 'addedBy']
+      relations: ['employeeType', 'designation', 'company', 'gender', 'maritalStatus', 'drivingLicenceType', 'addedBy', 'addressCountry', 'refCompAddressCountry']
     });
   }
 

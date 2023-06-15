@@ -83,9 +83,9 @@ export class EmployeeModule {
     @Column("varchar", { nullable: true, length: 250, default: () => null })
     addressPostal: string | null;
 
-    @ManyToOne(() => country, country => country.country)
-    @JoinColumn({ name: 'country' })
-    country: country;
+    @ManyToOne(() => country, country => country.employeeCountry)
+    @JoinColumn({ name: 'addressCountry' })
+    addressCountry: country;
 
     @Column("varchar", { nullable: true, default: null })
     empProvidedForm: string | null;
