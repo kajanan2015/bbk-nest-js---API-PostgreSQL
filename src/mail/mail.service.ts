@@ -25,7 +25,7 @@ export class MailService {
 
   async trialpackageadded(companyemail,adminemail,adminname,companyname,link){
     await this.mailerService.sendMail({
-          to: adminemail.trim(),
+          to: companyemail.trim(),
           from: "noreply@hexagonasia.com", // override default from
           subject: `User Credentials for Accessing the Application - Trial Package`,
           template: "./trialpackagecreate", // `.hbs` extension is appended automatically
@@ -51,7 +51,17 @@ export class MailService {
             }});
       }
 
-
+      async updateemailforcompanydata(adminemail,companyname){
+        await this.mailerService.sendMail({
+              to: adminemail.trim(),
+              from: "noreply@hexagonasia.com", // override default from
+              subject: `User Credentials Updated ${companyname}`,
+              template: "./updateemailforcompanyadmin", // `.hbs` extension is appended automatically
+              context: {
+                companyname,
+              }});
+        }
+  
     async sendcompanyCreateNew(toemail,companyname){
       await this.mailerService.sendMail({
             to: toemail.trim(),
