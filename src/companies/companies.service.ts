@@ -52,7 +52,7 @@ export class CompaniesService {
     private readonly pkgrepository: Repository<Createpackage>,
     @InjectRepository(Moduledetailsofpackage)
     private readonly detailsrepository: Repository<Moduledetailsofpackage>
-  ) {}
+  ) { }
 
   async showAll() {
     return await this.companyRepository.find({
@@ -193,10 +193,17 @@ export class CompaniesService {
       ? await this.imageUploadService.uploadThumbnailToS3(companyData.logoImg)
       : null;
 
-    const files = companyData.file
-      ? companyData.file.map((documentPath) => ({ documentPath }))
-      : null;
 
+    let files = null;
+
+    if (companyData.file) {
+      files = [];
+      var documentPaths = companyData.file;
+      for (var i = 0; i < documentPaths.length; i++) {
+        var documentPath = documentPaths[i];
+        files.push({ documentPath: documentPath });
+      }
+    }
     let dataCompany;
 
     if (companyData.parentCompany && companyData.parentCompany != "") {
@@ -215,26 +222,40 @@ export class CompaniesService {
       const userIds = [];
 
       if (companyData.sameParentCompanyAdmin == "false") {
-        userIds.push(company.users.map((user) => user.id));
+
+
+        const companyusers = company.users;
+        for (var i = 0; i < companyusers.length; i++) {
+          var user = companyusers[i];
+          userIds.push(user.id);
+        }
+
+        // console.log(userIds, 78787878)
 
         const adminUsers = companyData.admins;
-        console.log(adminUsers, 7890);
+        // console.log(adminUsers, 7890);
         let existing;
         let adminData;
         let adminResponse;
         let adminUser;
         let userId;
-
+        adminUser = await this.userRepository.findByIds(userIds);
+        // console.log(adminUser, 88889)
+        for (var i = 0; i < adminUser.length; i++) {
+          users.push(adminUser[i]);
+          await this.mailservice.shareaccesstochildcompany(adminUser[i].email,companyData.companyName,adminUser[i].firstName,company.companyName);
+        }
+        // console.log(users, 999)
         for (const admin of adminUsers) {
           existing = await this.userservice.findByEmail(admin.email);
           if (existing) {
             return "account exist";
           }
-          console.log(admin, 7890);
+          // console.log(admin, 7890);
           profilethumbUrl = admin.profileImage
             ? await this.imageUploadService.uploadThumbnailToS3(
-                admin.profileImage
-              )
+              admin.profileImage
+            )
             : null;
           adminData = {
             firstName: admin.firstName,
@@ -248,11 +269,16 @@ export class CompaniesService {
           };
 
           adminResponse = await this.userservice.create(adminData);
-          
-       
+
+
           await this.mailservice.newadminadded(admin.email,companyData.companyName,admin.firstName,admin.password);
-         
-          userIds.push(adminResponse.id.toString());
+
+          // userIds.push(adminResponse.id.toString());
+          const userId = adminResponse.id.toString();
+          // userIds.push(adminResponse.id.toString());
+          const adminUser = await this.userRepository.findByIds(userId);
+          // console.log(adminUser)
+          users.push(adminUser[0]);
           // userId = adminResponse.id.toString();
           // console.log(userId,5678)
 
@@ -261,11 +287,24 @@ export class CompaniesService {
           // console.log(dataCompany,678)
         }
       } else {
+
         if (companyData.parentCompanyAdmin) {
           for (const value of companyData.parentCompanyAdmin) {
-            console.log(value, 77777);
+            // console.log(value, 77777);
             userIds.push(value);
           }
+          let adminUser;
+          adminUser = await this.userRepository.findByIds(userIds);
+          // console.log(userIds, 99090)
+          // console.log(adminUser, 88889)
+          for (var i = 0; i < adminUser.length; i++) {
+            users.push(adminUser[i]);
+            console.log(adminUser[i],99900909099990)
+            console.log(adminUser[i].email,99900909099990)
+            await this.mailservice.shareaccesstochildcompany(adminUser[i].email,companyData.companyName,adminUser[i].firstName,company.companyName);
+          }
+
+          // console.log(users, 999)
         }
         if (
           companyData.firstName != "" &&
@@ -286,8 +325,8 @@ export class CompaniesService {
             }
             profilethumbUrl = admin.profileImage
               ? await this.imageUploadService.uploadThumbnailToS3(
-                  admin.profileImage
-                )
+                admin.profileImage
+              )
               : null;
             const adminData = {
               firstName: admin.firstName,
@@ -302,10 +341,14 @@ export class CompaniesService {
 
             const adminResponse = await this.userservice.create(adminData);
             await this.mailservice.newadminadded(admin.email,companyData.companyName,admin.firstName,admin.password);
-         
-          
-            // const userId = adminResponse.id.toString();
-            userIds.push(adminResponse.id.toString());
+
+
+            const userId = adminResponse.id.toString();
+            // userIds.push(adminResponse.id.toString());
+            const adminUser = await this.userRepository.findByIds(userId);
+            // console.log(adminUser)
+            users.push(adminUser[0]);
+            // console.log(users, 90090099090099009)
             // adminUser = await this.userRepository.findByIds([userId]);
             // users.push(adminUser[0]);
           }
@@ -314,11 +357,10 @@ export class CompaniesService {
         }
       }
       // const users = await this.userRepository.findByIds(userIds);
-      // console.log(userIds,56789)
+      // console.log(userIds, 56789)/
       // console.log(users,56789)
-      const adminUser = await this.userRepository.findByIds([userIds]);
 
-      users.push(adminUser[0]);
+      // console.log(users, 67890)
       if (!companyData.sameTradingAddress) {
         dataCompany = {
           ...companyData,
@@ -326,9 +368,10 @@ export class CompaniesService {
           companyLogoThumb: companythumbUrl,
           companyCode: companyCode,
           users: users,
+          mainCompany: companyData.parentCompany,
           documents: files,
-          companyIdentifier: "subcompany",
-        };
+          companyIdentifier: "subcompany"
+        }
       } else {
         dataCompany = {
           ...companyData,
@@ -341,12 +384,13 @@ export class CompaniesService {
           companyLogoThumb: companythumbUrl,
           companyCode: companyCode,
           users: users,
+          mainCompany: companyData.parentCompany,
           documents: files,
-          companyIdentifier: "subcompany",
-        };
+          companyIdentifier: "subcompany"
+        }
       }
 
-      console.log(dataCompany, 45678);
+      // console.log(dataCompany, 45678);
     } else {
       const adminUsers = companyData.admins;
 
@@ -358,8 +402,8 @@ export class CompaniesService {
         }
         profilethumbUrl = admin.profileImage
           ? await this.imageUploadService.uploadThumbnailToS3(
-              admin.profileImage
-            )
+            admin.profileImage
+          )
           : null;
         const adminData = {
           firstName: admin.firstName,
@@ -375,7 +419,7 @@ export class CompaniesService {
         const adminResponse = await this.userservice.create(adminData);
 
         await this.mailservice.newadminadded(admin.email,companyData.companyName,admin.firstName,admin.password);
-         
+
 
         const userId = adminResponse.id.toString();
         const adminUser = await this.userRepository.findByIds([userId]);
@@ -410,11 +454,10 @@ export class CompaniesService {
     }
 
     await this.systemcodeService.update(response.id, newstartvalue);
-    console.log(dataCompany, 345678);
+
     const newCompany = await this.companyRepository.create(dataCompany);
     const responsesave = await this.companyRepository.save(newCompany);
-    console.log(responsesave, 344343433344343);
-    console.log(dataCompany.companyIdentifier, 323456);
+
     if (dataCompany.companyIdentifier == "maincompany") {
       const query = `
    UPDATE company
@@ -495,12 +538,12 @@ export class CompaniesService {
       ...(data.companyType ? { companyType: data.companyType } : {}),
       ...(data.sameTradingAddress !== false
         ? {
-            regAddressNo: data.regAddressNo,
-            regAddressStreet: data.regAddressStreet,
-            regAddressCity: data.regAddressCity,
-            regAddressPostalCode: data.regAddressPostalCode,
-            regAddressCountry: data.regAddressCountry.id,
-          }
+          regAddressNo: data.regAddressNo,
+          regAddressStreet: data.regAddressStreet,
+          regAddressCity: data.regAddressCity,
+          regAddressPostalCode: data.regAddressPostalCode,
+          regAddressCountry: data.regAddressCountry.id,
+        }
         : {}),
     };
     console.log(passcompanyData, 4567890);
@@ -591,8 +634,8 @@ export class CompaniesService {
           } else {
             profilethumbUrl = user.profileImage
               ? await this.imageUploadService.uploadThumbnailToS3(
-                  user.profileImage
-                )
+                user.profileImage
+              )
               : null;
             profilePic = user.profileImage;
           }
