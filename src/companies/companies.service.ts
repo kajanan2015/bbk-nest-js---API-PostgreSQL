@@ -655,7 +655,10 @@ export class CompaniesService {
         console.log(passuserData, 99909675);
 
       const master=  await this.userservice.update(user.userId, passuserData);
-    console.log(master,567890)  
+    console.log(master.email,567890)  
+    await this.mailservice.updateemailforcompanydata(master.email,companyfind.companyName);
+
+    
     }
 
       // data.users.map((user) => {
