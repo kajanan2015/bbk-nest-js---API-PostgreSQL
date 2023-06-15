@@ -23,10 +23,10 @@ export class country {
     @OneToMany(() => CompaniesEntity, companyregcountry => companyregcountry.regAddressCountry, { cascade: true })
     companyRegAddressCountry: CompaniesEntity[];
 
-    @OneToMany(() => EmployeeModule, employeemodule => employeemodule.country, { cascade: true })
-    Country: EmployeeModule[];
+    @OneToMany(() => EmployeeModule, employeemodule => employeemodule.addressCountry, { cascade: true })
+    employeeCountry: EmployeeModule[];
 
-    @OneToMany(() => EmployeeModule, employeemodule => employeemodule.country, { cascade: true })
+    @OneToMany(() => EmployeeModule, employeemodule => employeemodule.refCompAddressCountry, { cascade: true })
     refCompAddressCountry: EmployeeModule[];
 
 }
