@@ -9,7 +9,7 @@ export class CompanyPaymentController {
   constructor(private readonly companyPaymentService: CompanyPaymentService) {}
 
   @Post()
-  create(@Body() createCompanyPaymentDto: CreateCompanyPaymentDto) {
+  async create(@Body() createCompanyPaymentDto: CreateCompanyPaymentDto) {
     return this.companyPaymentService.create(createCompanyPaymentDto);
   }
 
