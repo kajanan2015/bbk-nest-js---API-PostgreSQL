@@ -62,7 +62,22 @@ export class MailService {
               }});
         }
   
-    async sendcompanyCreateNew(toemail,companyname){
+        async sendemailtoemployeeregistration(employeeemail,companyname,employeename,employeepassword,employeeusername){
+          await this.mailerService.sendMail({
+                to: employeeemail.trim(),
+                from: "noreply@hexagonasia.com", // override default from
+                subject: `Employee Registration ${companyname}`,
+                template: "./employeeregistration", // `.hbs` extension is appended automatically
+                context: {
+                  employeename,
+                  companyname,
+                  employeeusername,
+                  employeepassword,
+
+                }});
+          }
+    
+        async sendcompanyCreateNew(toemail,companyname){
       await this.mailerService.sendMail({
             to: toemail.trim(),
             from: "noreply@hexagonasia.com", // override default from

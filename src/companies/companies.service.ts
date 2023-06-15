@@ -654,8 +654,9 @@ export class CompaniesService {
 
         console.log(passuserData, 99909675);
 
-        await this.userservice.update(user.userId, passuserData);
-      }
+      const master=  await this.userservice.update(user.userId, passuserData);
+    console.log(master,567890)  
+    }
 
       // data.users.map((user) => {
       //   if(user.profileImage){

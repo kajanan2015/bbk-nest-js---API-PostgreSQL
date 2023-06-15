@@ -36,9 +36,11 @@ import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetails
 import { ModuledetailsofpackageService } from 'src/moduledetailsofpackage/moduledetailsofpackage.service';
 import { Paymenttype } from 'src/createpackage/paymenttype.entity';
 import { country } from 'src/companies/country.entity';
+import { MailModule } from 'src/mail/mail.module';
+import { MailService } from 'src/mail/mail.service';
 @Module({
-  imports: [TypeOrmModule.forFeature([EmployeeType, EmployeeModule, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency,country,Createmodule,Createpackage,Paymenttype,Moduledetailsofpackage]), EmployeeDocumentModule, CompaniesModule,CreatemoduleModule],
+  imports: [TypeOrmModule.forFeature([EmployeeType, EmployeeModule, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency,country,Createmodule,Createpackage,Paymenttype,Moduledetailsofpackage]), EmployeeDocumentModule, CompaniesModule,CreatemoduleModule,MailModule],
   controllers: [EmployeeModuleController, ImageUploadController],
-  providers: [EmployeeModuleService, ImageUploadService, EmployeeDocumentService, CompaniesService, SystemCodeService, UserService,CompanyDocumentService,CreatemoduleService,CreatepackageService,ModuledetailsofpackageService ]
+  providers: [EmployeeModuleService, ImageUploadService, EmployeeDocumentService, CompaniesService, SystemCodeService, UserService,CompanyDocumentService,CreatemoduleService,CreatepackageService,ModuledetailsofpackageService,MailService ]
 })
 export class EmployeeModuleModule {}
