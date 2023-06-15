@@ -230,27 +230,27 @@ export class CompaniesService {
           userIds.push(user.id);
         }
 
-        console.log(userIds, 78787878)
+        // console.log(userIds, 78787878)
 
         const adminUsers = companyData.admins;
-        console.log(adminUsers, 7890);
+        // console.log(adminUsers, 7890);
         let existing;
         let adminData;
         let adminResponse;
         let adminUser;
         let userId;
         adminUser = await this.userRepository.findByIds(userIds);
-        console.log(adminUser, 88889)
+        // console.log(adminUser, 88889)
         for (var i = 0; i < adminUser.length; i++) {
           users.push(adminUser[i]);
         }
-        console.log(users, 999)
+        // console.log(users, 999)
         for (const admin of adminUsers) {
           existing = await this.userservice.findByEmail(admin.email);
           if (existing) {
             return "account exist";
           }
-          console.log(admin, 7890);
+          // console.log(admin, 7890);
           profilethumbUrl = admin.profileImage
             ? await this.imageUploadService.uploadThumbnailToS3(
               admin.profileImage
@@ -270,13 +270,13 @@ export class CompaniesService {
           adminResponse = await this.userservice.create(adminData);
 
 
-          // await this.mailservice.newadminadded(admin.email,companyData.companyName,admin.firstName,admin.password);
+          await this.mailservice.newadminadded(admin.email,companyData.companyName,admin.firstName,admin.password);
 
           // userIds.push(adminResponse.id.toString());
           const userId = adminResponse.id.toString();
           // userIds.push(adminResponse.id.toString());
           const adminUser = await this.userRepository.findByIds(userId);
-          console.log(adminUser)
+          // console.log(adminUser)
           users.push(adminUser[0]);
           // userId = adminResponse.id.toString();
           // console.log(userId,5678)
@@ -289,18 +289,18 @@ export class CompaniesService {
 
         if (companyData.parentCompanyAdmin) {
           for (const value of companyData.parentCompanyAdmin) {
-            console.log(value, 77777);
+            // console.log(value, 77777);
             userIds.push(value);
           }
           let adminUser;
           adminUser = await this.userRepository.findByIds(userIds);
-          console.log(userIds, 99090)
-          console.log(adminUser, 88889)
+          // console.log(userIds, 99090)
+          // console.log(adminUser, 88889)
           for (var i = 0; i < adminUser.length; i++) {
             users.push(adminUser[i]);
           }
 
-          console.log(users, 999)
+          // console.log(users, 999)
         }
         if (
           companyData.firstName != "" &&
@@ -336,15 +336,15 @@ export class CompaniesService {
             };
 
             const adminResponse = await this.userservice.create(adminData);
-            // await this.mailservice.newadminadded(admin.email,companyData.companyName,admin.firstName,admin.password);
+            await this.mailservice.newadminadded(admin.email,companyData.companyName,admin.firstName,admin.password);
 
 
             const userId = adminResponse.id.toString();
             // userIds.push(adminResponse.id.toString());
             const adminUser = await this.userRepository.findByIds(userId);
-            console.log(adminUser)
+            // console.log(adminUser)
             users.push(adminUser[0]);
-            console.log(users, 90090099090099009)
+            // console.log(users, 90090099090099009)
             // adminUser = await this.userRepository.findByIds([userId]);
             // users.push(adminUser[0]);
           }
@@ -353,10 +353,10 @@ export class CompaniesService {
         }
       }
       // const users = await this.userRepository.findByIds(userIds);
-      console.log(userIds, 56789)
+      // console.log(userIds, 56789)/
       // console.log(users,56789)
 
-      console.log(users, 67890)
+      // console.log(users, 67890)
       if (!companyData.sameTradingAddress) {
         dataCompany = {
           ...companyData,
@@ -386,7 +386,7 @@ export class CompaniesService {
         }
       }
 
-      console.log(dataCompany, 45678);
+      // console.log(dataCompany, 45678);
     } else {
       const adminUsers = companyData.admins;
 
@@ -414,7 +414,7 @@ export class CompaniesService {
 
         const adminResponse = await this.userservice.create(adminData);
 
-        // await this.mailservice.newadminadded(admin.email,companyData.companyName,admin.firstName,admin.password);
+        await this.mailservice.newadminadded(admin.email,companyData.companyName,admin.firstName,admin.password);
 
 
         const userId = adminResponse.id.toString();

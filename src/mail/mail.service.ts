@@ -11,14 +11,15 @@ export class MailService {
 
   async newadminadded(adminemail,companyname,adminname,adminpassword){
     await this.mailerService.sendMail({
-      to: adminemail.trim(),
+      to: `${adminemail.trim()}`,
       from: "noreply@hexagonasia.com", // override default from
       subject: ` Welcome to ${companyname} Account - New Admin Access Granted`,
       template: "./newadminadded", // `.hbs` extension is appended automatically
       context: {
         adminname,
         companyname,
-        adminpassword
+        adminpassword,
+        adminemail
       }});
   }
 
