@@ -156,7 +156,7 @@ export class UserController {
   }
 
 // to check email exist
-  @Get('employeecheck')
+  @Post('employeecheck')
   async checkemailexist(@Body() data:any){
     const existing = await this.service.findByEmail(data.email);
     if (existing) {
