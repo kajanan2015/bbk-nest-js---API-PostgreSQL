@@ -457,7 +457,7 @@ export class CompaniesService {
 
     const newCompany = await this.companyRepository.create(dataCompany);
     const responsesave = await this.companyRepository.save(newCompany);
-
+    await this.mailservice.companycreationsuccess(dataCompany.companyEmail,"adminemail","adminname","","https://dev.d3mnkfnlzusm0o.amplifyapp.com");
     if (dataCompany.companyIdentifier == "maincompany") {
       const query = `
    UPDATE company
