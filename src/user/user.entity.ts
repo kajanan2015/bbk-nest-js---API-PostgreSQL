@@ -7,6 +7,7 @@ import { Createmodule } from 'src/createmodule/createmodule.entity';
 import { Createpackage } from 'src/createpackage/createpackage.entity';
 import { CompanyPayment } from 'src/company-payment/company-payment.entity';
 import { EmployeeModule } from 'src/employee-module/employee-module.entity';
+import { CustomizeTable } from 'src/customize-table/customize-table.entity';
 @Entity()
 export class User  {
   @PrimaryGeneratedColumn()
@@ -90,4 +91,7 @@ export class User  {
 
   @OneToMany(()=>EmployeeModule, employee => employee.addedBy,{cascade:true})
   empAddedByuser:EmployeeModule[];
+
+  @OneToMany(()=>CustomizeTable, customizeTable => customizeTable.user,{cascade:true})
+  tableUser:CustomizeTable[];
 }

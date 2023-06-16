@@ -10,6 +10,7 @@ import { Createmodule } from 'src/createmodule/createmodule.entity';
 import { Createpackage } from 'src/createpackage/createpackage.entity';
 import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetailsofpackage.entity';
 import { Paymenttype } from 'src/createpackage/paymenttype.entity';
+import { CustomizeTable } from 'src/customize-table/customize-table.entity';
 
 
 
@@ -168,5 +169,8 @@ export class CompaniesEntity {
   @ManyToOne(() => Paymenttype, paymenttype => paymenttype.paymentType)
   @JoinColumn({ name: 'billing' })
   billing: Paymenttype;
+
+  @OneToMany(()=>CustomizeTable,customizeTable=>customizeTable.company, ({cascade:true}))
+  usertablecompany: CustomizeTable;
   
 }

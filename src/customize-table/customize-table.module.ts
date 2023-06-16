@@ -1,0 +1,32 @@
+import { Module } from '@nestjs/common';
+import { CustomizeTableService } from './customize-table.service';
+import { CustomizeTableController } from './customize-table.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CustomizeTable } from './customize-table.entity';
+import { User } from 'src/user/user.entity';
+import { CompaniesEntity } from 'src/companies/companies.entity';
+import { UserService } from 'src/user/user.service';
+import { CompaniesService } from 'src/companies/companies.service';
+import { PermissionRoleEntity } from 'src/permission-role/permission-role.entity';
+import { PermissionRoleService } from 'src/permission-role/permission-role.service';
+import { PagePermissionService } from 'src/pagepermission/pagepermission.service';
+import { PagePermissionEntity } from 'src/pagepermission/pagepermission.entity';
+import { CompanyDocument } from 'src/company-document/company-document.entity';
+import { CompanyDocumentService } from 'src/company-document/company-document.service';
+import { SystemCodeService } from 'src/system-code/system-code.service';
+import { ImageUploadService } from 'src/imageupload/imageupload.service';
+import { CreatemoduleService } from 'src/createmodule/createmodule.service';
+import { Createmodule } from 'src/createmodule/createmodule.entity';
+import { Createpackage } from 'src/createpackage/createpackage.entity';
+import { CreatepackageService } from 'src/createpackage/createpackage.service';
+import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetailsofpackage.entity';
+import { SystemCode } from 'src/system-code/system-code.entity';
+import { Paymenttype } from 'src/createpackage/paymenttype.entity';
+import { ModuledetailsofpackageService } from 'src/moduledetailsofpackage/moduledetailsofpackage.service';
+
+@Module({
+  imports:[TypeOrmModule.forFeature([CustomizeTable, User, CompaniesEntity, PermissionRoleEntity, PagePermissionEntity, CompanyDocument, Createmodule, Createpackage, Moduledetailsofpackage, SystemCode, Paymenttype])],
+  controllers: [CustomizeTableController],
+  providers: [CustomizeTableService, UserService, CompaniesService, PermissionRoleService, PagePermissionService, CompanyDocumentService, SystemCodeService, ImageUploadService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService]
+})
+export class CustomizeTableModule {}
