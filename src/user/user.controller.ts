@@ -161,6 +161,8 @@ export class UserController {
     const existing = await this.service.findByEmail(data.email);
     if (existing) {
       return "account exist";
+    }else{
+      return 'account not exist'
     }
   }
 }
