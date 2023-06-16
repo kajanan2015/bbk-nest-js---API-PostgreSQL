@@ -4,16 +4,20 @@ import { UpdateCompanyPaymentDto } from './update-company-payment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CompanyPayment } from './company-payment.entity';
 import { Repository } from 'typeorm';
+import { MailService } from 'src/mail/mail.service';
 @Injectable()
 export class CompanyPaymentService {
 
   constructor(
     @InjectRepository(CompanyPayment)
     private companyPaymentRepository: Repository<CompanyPayment>,
+    private readonly mailservice: MailService,
   ) { }
   async create(createCompanyPaymentDto: CreateCompanyPaymentDto) {
     const response = this.companyPaymentRepository.create(createCompanyPaymentDto);
+    console.log(response,666)
     await this.companyPaymentRepository.save(response);
+  return await this.mailservice.trialpackageadded(createCompanyPaymentDto.sendedContact,"adminemail","adminname","",createCompanyPaymentDto.paymentLink);
   }
 
   findAll() {

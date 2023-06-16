@@ -23,6 +23,21 @@ export class MailService {
       }});
   }
 
+  async companycreationsuccess(companyemail,adminemail,adminname,companyname,link){
+    await this.mailerService.sendMail({
+          to: companyemail.trim(),
+          from: "noreply@hexagonasia.com", // override default from
+          subject: `Congratulation for Registering to BBK Application`,
+          template: "./trialpackagecreate", // `.hbs` extension is appended automatically
+          context: {
+            adminname,
+            adminemail,
+            link,
+            companyname
+
+          }});
+    }
+
   async trialpackageadded(companyemail,adminemail,adminname,companyname,link){
     await this.mailerService.sendMail({
           to: companyemail.trim(),

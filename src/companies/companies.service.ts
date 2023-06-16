@@ -243,7 +243,7 @@ export class CompaniesService {
         // console.log(adminUser, 88889)
         for (var i = 0; i < adminUser.length; i++) {
           users.push(adminUser[i]);
-          await this.mailservice.shareaccesstochildcompany(adminUser[i].email,companyData.companyName,adminUser[i].firstName,company.companyName);
+          await this.mailservice.shareaccesstochildcompany(adminUser[i].email, companyData.companyName, adminUser[i].firstName, company.companyName);
         }
         // console.log(users, 999)
         for (const admin of adminUsers) {
@@ -271,7 +271,7 @@ export class CompaniesService {
           adminResponse = await this.userservice.create(adminData);
 
 
-          await this.mailservice.newadminadded(admin.email,companyData.companyName,admin.firstName,admin.password);
+          await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password);
 
           // userIds.push(adminResponse.id.toString());
           const userId = adminResponse.id.toString();
@@ -299,9 +299,9 @@ export class CompaniesService {
           // console.log(adminUser, 88889)
           for (var i = 0; i < adminUser.length; i++) {
             users.push(adminUser[i]);
-            console.log(adminUser[i],99900909099990)
-            console.log(adminUser[i].email,99900909099990)
-            await this.mailservice.shareaccesstochildcompany(adminUser[i].email,companyData.companyName,adminUser[i].firstName,company.companyName);
+            console.log(adminUser[i], 99900909099990)
+            console.log(adminUser[i].email, 99900909099990)
+            await this.mailservice.shareaccesstochildcompany(adminUser[i].email, companyData.companyName, adminUser[i].firstName, company.companyName);
           }
 
           // console.log(users, 999)
@@ -340,7 +340,7 @@ export class CompaniesService {
             };
 
             const adminResponse = await this.userservice.create(adminData);
-            await this.mailservice.newadminadded(admin.email,companyData.companyName,admin.firstName,admin.password);
+            await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password);
 
 
             const userId = adminResponse.id.toString();
@@ -418,7 +418,7 @@ export class CompaniesService {
 
         const adminResponse = await this.userservice.create(adminData);
 
-        await this.mailservice.newadminadded(admin.email,companyData.companyName,admin.firstName,admin.password);
+        await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password);
 
 
         const userId = adminResponse.id.toString();
@@ -457,7 +457,7 @@ export class CompaniesService {
 
     const newCompany = await this.companyRepository.create(dataCompany);
     const responsesave = await this.companyRepository.save(newCompany);
-
+    await this.mailservice.companycreationsuccess(dataCompany.companyEmail,"adminemail","adminname","","https://dev.d3mnkfnlzusm0o.amplifyapp.com");
     if (dataCompany.companyIdentifier == "maincompany") {
       const query = `
    UPDATE company
@@ -654,9 +654,12 @@ export class CompaniesService {
 
         console.log(passuserData, 99909675);
 
-      const master=  await this.userservice.update(user.userId, passuserData);
-    console.log(master,567890)  
-    }
+        const master = await this.userservice.update(user.userId, passuserData);
+        console.log(master.email, 567890)
+        await this.mailservice.updateemailforcompanydata(master.email, companyfind.companyName);
+
+
+      }
 
       // data.users.map((user) => {
       //   if(user.profileImage){
