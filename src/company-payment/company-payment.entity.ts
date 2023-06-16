@@ -5,16 +5,16 @@ export class CompanyPayment {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column("varchar", { length: 250 })
+    @Column("varchar", { length: 250 ,nullable: true ,default: () => null})
     paymentLink: string;
 
-    @Column("varchar", { length: 250 })
+    @Column("varchar", { length: 250 ,nullable: true ,default: () => null})
     sendedContact: string;
 
-    @Column({ type: 'boolean', default: true })
+    @Column({ type: 'boolean', default:true})
     linkstatus: Boolean;
 
-    @Column("varchar", { length: 250 , default: true})
+    @Column("varchar", { length: 250 , nullable: true ,default: () => null})
     invoiceNumber: string;
 
     @Column({ type: 'numeric', precision: 10, scale: 2 })

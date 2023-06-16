@@ -154,4 +154,13 @@ export class UserController {
     //   message: 'User updated successfully',
     // };
   }
+
+// to check email exist
+  @Get('employeecheck')
+  async checkemailexist(@Body() data:any){
+    const existing = await this.service.findByEmail(data.email);
+    if (existing) {
+      return "account exist";
+    }
+  }
 }
