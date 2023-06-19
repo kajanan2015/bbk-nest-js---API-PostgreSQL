@@ -871,7 +871,7 @@ export class CompaniesService {
     // const name = "nuwan";
     // const toemail = "nuwanpriyamal@gmail.com";
     // const username = "dfdfd";
-    return await this.mailservice.send_activation_email_admin('nuwanpriyamal@gmail.com')
+    // return await this.mailservice.send_activation_email_admin('nuwanpriyamal@gmail.com')
     // await this.mailservice.sendcompanyCreate(password, name, toemail, username);
   }
 
