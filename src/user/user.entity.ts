@@ -8,6 +8,7 @@ import { Createpackage } from 'src/createpackage/createpackage.entity';
 import { CompanyPayment } from 'src/company-payment/company-payment.entity';
 import { EmployeeModule } from 'src/employee-module/employee-module.entity';
 import { CustomizeTable } from 'src/customize-table/customize-table.entity';
+import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 @Entity()
 export class User  {
   @PrimaryGeneratedColumn()
@@ -94,4 +95,7 @@ export class User  {
 
   @OneToMany(()=>CustomizeTable, customizeTable => customizeTable.user,{cascade:true})
   tableUser:CustomizeTable[];
+
+  @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.editedBy,{cascade:true})
+  empEditedUser:CustomizeTable[];
 }

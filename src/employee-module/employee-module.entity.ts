@@ -10,6 +10,7 @@ import { PaymentFrequency } from './payment_frequency/payment_frequency.entity';
 import { Bank } from './bank/bank.entity';
 import { User } from 'src/user/user.entity';
 import { country } from 'src/companies/country.entity';
+import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 @Entity()
 export class EmployeeModule {
     @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
@@ -310,4 +311,7 @@ export class EmployeeModule {
     @ManyToOne(() => User, user => user.empAddedByuser)
     @JoinColumn({ name: 'addedBy' })
     addedBy: User;
+
+    @OneToMany(() => EmployeeDataHistory, empDataHistory => empDataHistory.employee,{ cascade: true })
+    editHistory: EmployeeDataHistory[];
 }

@@ -41,6 +41,7 @@ import { CreatepackageModule } from './createpackage/createpackage.module';
 import { ModuledetailsofpackageModule } from './moduledetailsofpackage/moduledetailsofpackage.module';
 import { CompanyPaymentModule } from './company-payment/company-payment.module';
 import { CustomizeTableModule } from './customize-table/customize-table.module';
+import { EmployeeDataHistoryModule } from './employee-data-history/employee-data-history.module';
 
 
 
@@ -88,7 +89,8 @@ const settings = require("../ormconfig.js");
     CreatepackageModule,
     ModuledetailsofpackageModule,
     CompanyPaymentModule,
-    CustomizeTableModule
+    CustomizeTableModule,
+    EmployeeDataHistoryModule
   ],
   controllers: [AppController],
   providers: [AppService],
