@@ -20,7 +20,9 @@ async  create(createModuledetailsofpackageDto) {
   }
 
   async findOne(id: number) {
-    return await this.createpkgmoduledetailsRepository.find({where:{module:id},relations:['packages']});
+    const packages= await this.createpkgmoduledetailsRepository.find({where:{module:id},relations:['packages']});
+    const filteredPackages = packages.filter((packagepass) => packagepass.packages.status === 1);
+return filteredPackages;
   }
 
   async update(id: number, data) {
