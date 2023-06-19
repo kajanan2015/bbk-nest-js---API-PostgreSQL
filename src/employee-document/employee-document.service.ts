@@ -16,6 +16,10 @@ export class EmployeeDocumentService {
     return await this.employeeDocumentRepository.save(response);
   }
 
+  async findEmployeeDocuments(empId: number,){
+    return await this.employeeDocumentRepository.find({ where: { empid: empId }});
+  }
+
   async findAll() {
     return await this.employeeDocumentRepository.find();
   }

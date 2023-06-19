@@ -35,6 +35,7 @@ export class EmployeeModuleService {
 
       return await this.employeeModuleRepository.findOne({id:existingEmployee.id});
      }else {
+      const existingEmployee = await this.employeeModuleRepository.findOne({where:{email:createEmployeeModuleDto.email, companyId:createEmployeeModuleDto.companyId, niNo:createEmployeeModuleDto.niNo}});
       const response=this.employeeModuleRepository.create(createEmployeeModuleDto);
       await this.employeeModuleRepository.save(response);
       return response;

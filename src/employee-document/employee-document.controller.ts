@@ -12,6 +12,11 @@ export class EmployeeDocumentController {
     return this.employeeDocumentService.create(createEmployeeDocumentDto);
   }
 
+  @Get(':empId')
+  findEmpDocuments(@Param('empId') id: string) {
+    return this.employeeDocumentService.findEmployeeDocuments(+id);
+  }
+
   @Get()
   findAll() {
     return this.employeeDocumentService.findAll();
