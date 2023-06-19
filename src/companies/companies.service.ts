@@ -770,7 +770,15 @@ export class CompaniesService {
     return scheduledeactivate;
   }
   async getassignmodule(id) {
-    return await this.companyRepository.findOne(id, { relations: ["module"] });
+    const company= await this.companyRepository.findOne(id, { relations: ["module"] });
+    const activeModules = company.module.filter((module) => module.status === 1);
+    delete company.module;
+    const data={
+      ...company,
+      module:activeModules
+    }
+    return data;
+
   }
 
   async getassignpackage(id) {
@@ -859,10 +867,11 @@ export class CompaniesService {
     await this.companyRepository.save(company);
   }
   async testemail() {
-    const password = "nuwan@gmail.com";
-    const name = "nuwan";
-    const toemail = "nuwanpriyamal@gmail.com";
-    const username = "dfdfd";
+    // const password = "nuwan@gmail.com";
+    // const name = "nuwan";
+    // const toemail = "nuwanpriyamal@gmail.com";
+    // const username = "dfdfd";
+    return await this.mailservice.send_activation_email_admin('nuwanpriyamal@gmail.com')
     // await this.mailservice.sendcompanyCreate(password, name, toemail, username);
   }
 
@@ -876,4 +885,6 @@ export class CompaniesService {
       return 0;
     }
   }
+
+
 }
