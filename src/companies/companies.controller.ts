@@ -334,7 +334,7 @@ export class CompaniesController {
     return await this.service.checkcompanycode(code);
   }
 
-
+// activation email verify
   @Get('/activate/:key')
   async activateadmin(@Param('key') key: string){
     return await this.service.decodemyactivatetoken(key);

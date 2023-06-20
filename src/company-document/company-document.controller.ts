@@ -7,27 +7,27 @@ import { AuthGuard } from '@nestjs/passport';
 @Controller('company-document')
 export class CompanyDocumentController {
   constructor(private readonly companyDocumentService: CompanyDocumentService) {}
-
+// company document upload
   @Post()
   create(@Body() createCompanyDocumentDto: CreateCompanyDocumentDto) {
     return this.companyDocumentService.create(createCompanyDocumentDto);
   }
-
+// company document find all 
   @Get()
   findAll() {
     return this.companyDocumentService.findAll();
   }
-
+// company document find  by company id
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.companyDocumentService.findOne(+id);
   }
-
+// update company document
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCompanyDocumentDto: UpdateCompanyDocumentDto) {
     return this.companyDocumentService.update(+id, updateCompanyDocumentDto);
   }
-
+// delete company document
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.companyDocumentService.remove(+id);

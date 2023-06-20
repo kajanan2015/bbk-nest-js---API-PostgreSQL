@@ -7,12 +7,12 @@ import { AuthGuard } from '@nestjs/passport';
 @Controller('company-payment')
 export class CompanyPaymentController {
   constructor(private readonly companyPaymentService: CompanyPaymentService) {}
-
+// company payment store when sending payment link
   @Post()
   async create(@Body() createCompanyPaymentDto: CreateCompanyPaymentDto) {
     return this.companyPaymentService.create(createCompanyPaymentDto);
   }
-
+// find all company payment
   @Get()
   findAll() {
     return this.companyPaymentService.findAll();
