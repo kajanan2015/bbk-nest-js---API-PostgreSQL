@@ -85,14 +85,20 @@ export class EmployeeModuleController {
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   async create(@UploadedFiles() file, @Body() createEmployeeModuleDto: CreateEmployeeModuleDto) {
-    const filename = await this.imageUploadService.uploadcompany(file, "body");
+    const filenames = await this.imageUploadService.uploadcompany(file, "body");
    
-    if(filename.length>0){
-      createEmployeeModuleDto.profilePic = filename[0]['profilePic[]'][0];
-      createEmployeeModuleDto.profilePicThumb=await this.imageUploadService.uploadThumbnailToS3(filename[0]['profilePic[]'][0]);
-    }    
+    if(filenames.length>0){
+      createEmployeeModuleDto.profilePic = filenames?.[0]?.['profilePic[]']?.[0];
+      // createEmployeeModuleDto.profilePicThumb=await this.imageUploadService.uploadThumbnailToS3(filename[0]['profilePic[]'][0]);
+    }
+    
+    const data = {
+      ...createEmployeeModuleDto,
+      filenames
+    } 
+
     // console.log(await this.imageUploadService.uploadThumbnailToS3(filename[0]['profilePic[]'][0]))
-    return this.employeeModuleService.create(createEmployeeModuleDto);
+    return this.employeeModuleService.create(data);
   }
 
   @Get()
@@ -118,6 +124,10 @@ export class EmployeeModuleController {
   @UseInterceptors(AnyFilesInterceptor())
   async update(@UploadedFiles() file, @Param('id') id: string,  @Body() updateEmployeeModuleDto) {
     const filenames = await this.imageUploadService.uploadcompany(file, "body");
+    if(filenames.length>0){
+      updateEmployeeModuleDto.profilePic = filenames?.[0]?.['profilePic[]']?.[0];
+      // createEmployeeModuleDto.profilePicThumb=await this.imageUploadService.uploadThumbnailToS3(filename[0]['profilePic[]'][0]);
+    }
     const data = {
       ...updateEmployeeModuleDto,
       filenames

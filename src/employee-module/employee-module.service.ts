@@ -16,54 +16,122 @@ export class EmployeeModuleService {
     @InjectRepository(EmployeeModule)
     private employeeModuleRepository: Repository<EmployeeModule>,
     private readonly connection: Connection,
-    private readonly employeedocumentservice: EmployeeDocumentService,    
-    private  companyservice:CompaniesService,
+    private readonly employeedocumentservice: EmployeeDocumentService,
+    private companyservice: CompaniesService,
     private readonly imageUploadService: ImageUploadService,
     @InjectRepository(EmployeeDocument)
     private employeeDocumentRepository: Repository<EmployeeDocument>,
     private readonly mailservice: MailService,
-    ) {}
+  ) { }
 
-  async create(createEmployeeModuleDto ) {
-    const existingEmployee = await this.employeeModuleRepository.findOne({where:{employeeId:createEmployeeModuleDto.employeeId}});
-     if (existingEmployee) {
-      const {providedCopyUrl, empProvidedCopyUrl, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
-      const data={
+  async create(createEmployeeModuleDto) {
+    const existingEmployee = await this.employeeModuleRepository.findOne({ where: { employeeId: createEmployeeModuleDto.employeeId } });
+    if (existingEmployee) {
+      const { providedCopyUrl, empProvidedCopyUrl, filenames, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
+      const data = {
         ...dataWithouturl
       }
-      const response = await this.employeeModuleRepository.update({id:existingEmployee.id}, data);
 
-      return await this.employeeModuleRepository.findOne({id:existingEmployee.id});
-     }else {
-      const existingEmployee = await this.employeeModuleRepository.findOne({where:{email:createEmployeeModuleDto.email, companyId:createEmployeeModuleDto.companyId, niNo:createEmployeeModuleDto.niNo}});
-      const response=this.employeeModuleRepository.create(createEmployeeModuleDto);
-      await this.employeeModuleRepository.save(response);
-      return response;
-     }  
+      const documents = createEmployeeModuleDto['filenames'];
+      const res = await this.employeeModuleRepository.update({ id: existingEmployee.id }, data);
+
+      if (documents.length > 0) {
+        for (let document in documents) {
+          const docEntry = documents[document];
+          for (const doc in docEntry as {}) {
+            const docType = doc;
+            const docUrls = docEntry[doc]
+            let empExsistDocRow;
+            if (docType == "empProvidedCopy[]") {
+              empExsistDocRow = await this.employeedocumentservice.findOne(+existingEmployee['id'], 'empProvidedCopy')
+            }
+            if (empExsistDocRow) {
+              const empdocs = []
+              for (const url in docUrls as {}) {
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee['id'] })
+              };
+              await this.employeedocumentservice.update(+empExsistDocRow.id, empdocs[0])
+            } else {
+              const empdocs = []
+              for (const url in docUrls as {}) {
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee['id'] })
+              };
+              await this.employeedocumentservice.create(empdocs)
+            }
+
+          }
+        }
+      }
+      
+      return await this.employeeModuleRepository.findOne({
+        where: { id: existingEmployee.id },
+        relations: ['documents']
+      });
+      
+    } else {
+      //const existingEmployee = await this.employeeModuleRepository.findOne({where:{email:createEmployeeModuleDto.email, company:createEmployeeModuleDto.company, niNo:createEmployeeModuleDto.niNo}});
+      const { providedCopyUrl, empProvidedCopyUrl, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
+      const response = await this.employeeModuleRepository.create(dataWithouturl);
+      const res = await this.employeeModuleRepository.save(response);
+
+      const documents = createEmployeeModuleDto['filenames'];
+
+      if (documents.length > 0) {
+        for (let document in documents) {
+          const docEntry = documents[document];
+          for (const doc in docEntry as {}) {
+            const docType = doc;
+            const docUrls = docEntry[doc]
+            let empExsistDocRow;
+            if (docType == "empProvidedCopy[]") {
+              empExsistDocRow = await this.employeedocumentservice.findOne(+res['id'], 'empProvidedCopy')
+            }
+            if (empExsistDocRow) {
+              const empdocs = []
+              for (const url in docUrls as {}) {
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +res['id'] })
+              };
+              await this.employeedocumentservice.update(+empExsistDocRow.id, empdocs[0])
+            } else {
+              const empdocs = []
+              for (const url in docUrls as {}) {
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +res['id'] })
+              };
+              await this.employeedocumentservice.create(empdocs)
+            }
+
+          }
+        }
+      }
+      return await this.employeeModuleRepository.findOne({
+        where: { employeeId: createEmployeeModuleDto.employeeId },
+        relations: ['documents']
+      });
+    }
   }
 
-  async getGender(){
+  async getGender() {
     const query = 'SELECT * FROM `gender`';
     const genderList = await this.connection.query(query);
     return genderList;
   }
-  async getEmployeeType(){
+  async getEmployeeType() {
     const query = 'SELECT * FROM `EmployeeType`';
     const employeeTypeList = await this.connection.query(query);
     return employeeTypeList;
   }
-  async getDesignation(){
+  async getDesignation() {
     const query = 'SELECT * FROM `employeeDesignation`';
     const designationList = await this.connection.query(query);
     return designationList;
   }
-  async getCompany(){
+  async getCompany() {
     const query = 'SELECT * FROM `company`';
     const companyList = await this.connection.query(query);
     return companyList;
   }
 
-  async getMaritalStatus(){
+  async getMaritalStatus() {
     const query = 'SELECT * FROM `marital_status`';
     const maritalStatusList = await this.connection.query(query);
     return maritalStatusList;
@@ -87,13 +155,13 @@ export class EmployeeModuleService {
     return bankTypeList;
   }
 
-  async generateemployeeid(id){
-    const individualcompany=await this.companyservice.read(id)
+  async generateemployeeid(id) {
+    const individualcompany = await this.companyservice.read(id)
     let randomId = randomstring.generate({
       length: 7,
       charset: 'numeric'
     });
-    let newrandomId=individualcompany.code+'-'+randomId;;
+    let newrandomId = individualcompany.code + '-' + randomId;;
     let response = await this.employeeModuleRepository.find({ where: { employeeId: newrandomId } });
 
     while (response.length > 0) {
@@ -101,15 +169,15 @@ export class EmployeeModuleService {
         length: 7,
         charset: 'numeric'
       });
-      newrandomId=individualcompany.code+'-'+randomId;
+      newrandomId = individualcompany.code + '-' + randomId;
       response = await this.employeeModuleRepository.find({ where: { employeeId: newrandomId } });
     }
     return newrandomId;
   }
 
- async findById(id: number) {
+  async findById(id: number) {
     return await this.employeeModuleRepository.findOne({
-      where: {id: +id},
+      where: { id: +id },
       relations: ['documents', 'drivingLicenceType', 'employeeType', 'addedBy', 'designation', 'company', 'gender', 'maritalStatus', 'bankName', 'paymentFrequency', 'addressCountry', 'refCompAddressCountry']
     });
   }
@@ -118,70 +186,70 @@ export class EmployeeModuleService {
   //   await this.employeeModuleRepository.update({ id }, UpdateEmployeeModuleDto);
   //   return await this.employeeModuleRepository.findOne({ id });
   // }
-  async update(id:string, UpdateEmployeeModuleDto: Partial<EmployeeModule>) {
-    const data={
+  async update(id: string, UpdateEmployeeModuleDto: Partial<EmployeeModule>) {
+    const data = {
       ...UpdateEmployeeModuleDto
     }
-   
-      // for (const filename of data['filenames']) {
-      //   if (filename['empProvidedCopy[]']) {
-      //     data.empProvidedCopy = filename[0]['empProvidedCopy[]'][0];
-      //     data.empProvidedCopyThumb=await this.imageUploadService.uploadThumbnailToS3(filename[0]['empProvidedCopy[]'][0]);
-      //   }
-      // }
 
-    const employeerowid = await this.employeeModuleRepository.findOne({where:{employeeId:id}});
-    
+    // for (const filename of data['filenames']) {
+    //   if (filename['empProvidedCopy[]']) {
+    //     data.empProvidedCopy = filename[0]['empProvidedCopy[]'][0];
+    //     data.empProvidedCopyThumb=await this.imageUploadService.uploadThumbnailToS3(filename[0]['empProvidedCopy[]'][0]);
+    //   }
+    // }
+
+    const employeerowid = await this.employeeModuleRepository.findOne({ where: { employeeId: id } });
+
     const documents = data['filenames'];
-    if(documents.length>0){
-     for(let document in documents){      
-      const docEntry = documents[document];
-      for(const doc in docEntry as {}){
-          const docType  = doc;
+    if (documents.length > 0) {
+      for (let document in documents) {
+        const docEntry = documents[document];
+        for (const doc in docEntry as {}) {
+          const docType = doc;
           const docUrls = docEntry[doc]
-          if(docType == "visaDoc[]" || docType == "empProvidedCopy[]" || docType == "officialDoc[]"){
+          if (docType == "visaDoc[]" || docType == "empProvidedCopy[]" || docType == "officialDoc[]") {
             let empExsistDocRow;
-            if(docType == "empProvidedCopy[]"){
-              empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'empProvidedCopy' )        
-            }else if(docType == "officialDoc[]"){
-              empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'officialDoc' )          
-            }else if(docType == "visaDoc[]"){
-              empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'visaDoc' )           
+            if (docType == "empProvidedCopy[]") {
+              empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'empProvidedCopy')
+            } else if (docType == "officialDoc[]") {
+              empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'officialDoc')
+            } else if (docType == "visaDoc[]") {
+              empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'visaDoc')
             }
-            if(empExsistDocRow){
-              const empdocs = [] 
-              for(const url in docUrls as {}){
-                empdocs.push({ docType: docType.replace('[]',''), docPath:docUrls[url], empid: +employeerowid.id })
+            if (empExsistDocRow) {
+              const empdocs = []
+              for (const url in docUrls as {}) {
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +employeerowid.id })
               };
               await this.employeedocumentservice.update(+empExsistDocRow.id, empdocs[0])
-            }else{
-              const empdocs = [] 
-              for(const url in docUrls as {}){
-                empdocs.push({ docType: docType.replace('[]',''), docPath:docUrls[url], empid: +employeerowid.id })
+            } else {
+              const empdocs = []
+              for (const url in docUrls as {}) {
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +employeerowid.id })
               };
               await this.employeedocumentservice.create(empdocs)
-            }            
-          }else if(docType == "contractDoc[]" || docType == "offerLetterDoc[]" || 
-              docType == "refdoc[]" || docType == "drivingLicenceDoc[]" || docType == "tachoDoc[]" 
-              || docType == "cpcCardDoc[]" || docType == "crbCardDoc[]"){
-                console.log(docType)
-              const empdocs = []
-              for(const url in docUrls as {}){
-                empdocs.push({ docType: docType.replace('[]',''), docPath:docUrls[url], empid: +employeerowid.id })
-              };
-              await this.employeedocumentservice.create(empdocs)       
-          }else{
+            }
+          } else if (docType == "contractDoc[]" || docType == "offerLetterDoc[]" ||
+            docType == "refdoc[]" || docType == "drivingLicenceDoc[]" || docType == "tachoDoc[]"
+            || docType == "cpcCardDoc[]" || docType == "crbCardDoc[]") {
+            console.log(docType)
             const empdocs = []
-              for(const url in docUrls as {}){
-                empdocs.push({ docType: docType.replace('[]',''), description:'additional', docPath:docUrls[url], empid: +employeerowid.id })
-              };
+            for (const url in docUrls as {}) {
+              empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +employeerowid.id })
+            };
+            await this.employeedocumentservice.create(empdocs)
+          } else {
+            const empdocs = []
+            for (const url in docUrls as {}) {
+              empdocs.push({ docType: docType.replace('[]', ''), description: 'additional', docPath: docUrls[url], empid: +employeerowid.id })
+            };
             await this.employeedocumentservice.create(empdocs)
           }
-        }       
+        }
       }
     }
 
-    if (data["deletedDocs"]) {      
+    if (data["deletedDocs"]) {
       let deletedocuments = data["deletedDocs"];
       for (const doc in data["deletedDocs"]) {
         const deletedocument = await this.employeeDocumentRepository.find({
@@ -190,16 +258,16 @@ export class EmployeeModuleService {
         await this.imageUploadService.deletedoc(deletedocuments[doc])
         await this.employeeDocumentRepository.remove(deletedocument)
       }
-      
+
     }
 
-    delete data['deletedDocs']; 
-    delete data['filenames'];    
-    await this.employeeModuleRepository.update({id:+employeerowid.id}, data);
-// added by nuwan for mail send employeee password should be random generate one add random string
+    delete data['deletedDocs'];
+    delete data['filenames'];
+    await this.employeeModuleRepository.update({ id: +employeerowid.id }, data);
+    // added by nuwan for mail send employeee password should be random generate one add random string
     // await this.mailservice.sendemailtoemployeeregistration(employeeemail,companyname,employeename,employeepassword,employeeusername)
     return await this.employeeModuleRepository.findOne({
-      where: {id:employeerowid.id},
+      where: { id: employeerowid.id },
       relations: ['documents']
     });
   }
@@ -208,20 +276,20 @@ export class EmployeeModuleService {
     return `This action removes a #${id} employeeModule`;
   }
 
-  async find(){
-    return await this.employeeModuleRepository.find({    
+  async find() {
+    return await this.employeeModuleRepository.find({
       relations: ['documents']
     });
   }
-  
+
   async findCompanyAllEmployees(companyid: number) {
     return await this.employeeModuleRepository.find({
-      where: {company: companyid},
+      where: { company: companyid },
       relations: ['employeeType', 'designation', 'company', 'gender', 'maritalStatus', 'drivingLicenceType', 'addedBy', 'addressCountry', 'refCompAddressCountry']
     });
   }
 
-  async generateTemporaryNumber(gender,birthday){
+  async generateTemporaryNumber(gender, birthday) {
     const year = birthday.getFullYear().toString().slice(-2);
     const month = (birthday.getMonth() + 1).toString().padStart(2, '0');
     const day = birthday.getDate().toString().padStart(2, '0');
