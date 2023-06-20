@@ -457,7 +457,7 @@ export class CompaniesService {
 
     const newCompany = await this.companyRepository.create(dataCompany);
     const responsesave = await this.companyRepository.save(newCompany);
-    await this.mailservice.companycreationsuccess(dataCompany.companyEmail,"adminemail","adminname","","https://dev.d3mnkfnlzusm0o.amplifyapp.com");
+    await this.mailservice.companycreationsuccess(dataCompany.companyEmail, "adminemail", "adminname", "", "https://dev.d3mnkfnlzusm0o.amplifyapp.com");
     if (dataCompany.companyIdentifier == "maincompany") {
       const query = `
    UPDATE company
@@ -770,12 +770,12 @@ export class CompaniesService {
     return scheduledeactivate;
   }
   async getassignmodule(id) {
-    const company= await this.companyRepository.findOne(id, { relations: ["module"] });
+    const company = await this.companyRepository.findOne(id, { relations: ["module"] });
     const activeModules = company.module.filter((module) => module.status === 1);
     delete company.module;
-    const data={
+    const data = {
       ...company,
-      module:activeModules
+      module: activeModules
     }
     return data;
 
@@ -871,7 +871,7 @@ export class CompaniesService {
     // const name = "nuwan";
     // const toemail = "nuwanpriyamal@gmail.com";
     // const username = "dfdfd";
-    // return await this.mailservice.send_activation_email_admin('nuwanpriyamal@gmail.com')
+    return await this.mailservice.send_activation_email_admin('nuwanpriyamal@gmail.com')
     // await this.mailservice.sendcompanyCreate(password, name, toemail, username);
   }
 
@@ -884,6 +884,27 @@ export class CompaniesService {
     } else {
       return 0;
     }
+  }
+
+  async decodemyactivatetoken(key) {
+    const decodedkey = await this.mailservice.decodemyactivatetoken(key);
+    const currentDateTime = new Date();
+    const updateuserdata = {
+      activate: 1,
+      activated_time: currentDateTime
+    }
+    if(Array.isArray(decodedkey)){
+      const exist = await this.userRepository.findOne({ email: decodedkey['email'] })
+      if (exist.activate == true) {
+        return "You are already activated";
+      } else {
+        const updateresponse = await this.userRepository.update({ email: decodedkey['email'] }, updateuserdata);
+        return "activated";
+      }
+    }else{
+      return decodedkey
+    }
+   
   }
 
 

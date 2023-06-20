@@ -17,7 +17,7 @@ import { AuthEntity } from './auth.entity';
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '30 days' },
+      signOptions: { expiresIn: '1 days' },
     }),
   ],
   providers: [AuthService, LocalSignInStrategy, LocalSignUpStrategy, JwtStrategy],

@@ -98,4 +98,11 @@ export class User  {
 
   @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.editedBy,{cascade:true})
   empEditedUser:CustomizeTable[];
+
+  @Column({ type: 'boolean', default:false})
+  activate: Boolean|null;
+
+  @Column("timestamp", { name: "activated_time", nullable:true, default: () => null })
+  activated_time: Date|null;
+
 }
