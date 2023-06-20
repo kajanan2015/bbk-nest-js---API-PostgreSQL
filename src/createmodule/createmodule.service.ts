@@ -13,7 +13,7 @@ export class CreatemoduleService {
   async create(createCreatemoduleDto) {
     const response=this.createmoduleRepository.create(createCreatemoduleDto);
     const saveresponse= await this.createmoduleRepository.save(response);
-  if(saveresponse.length>0){
+  if(saveresponse){
     return {
       statusCode: HttpStatus.OK,
       message:"successs"
