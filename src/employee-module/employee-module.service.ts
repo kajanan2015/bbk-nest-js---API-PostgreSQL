@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { Connection, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmployeeModule } from './employee-module.entity';
@@ -62,14 +62,22 @@ export class EmployeeModuleService {
           }
         }
       }
-      
+
       return await this.employeeModuleRepository.findOne({
         where: { id: existingEmployee.id },
         relations: ['documents']
       });
       
     } else {
-      //const existingEmployee = await this.employeeModuleRepository.findOne({where:{email:createEmployeeModuleDto.email, company:createEmployeeModuleDto.company, niNo:createEmployeeModuleDto.niNo}});
+      const existingEmployee = await this.employeeModuleRepository.findOne({where:{email:createEmployeeModuleDto.email, company:createEmployeeModuleDto.company, niNo:createEmployeeModuleDto.niNo}});
+      
+      if(existingEmployee){
+        return {
+          statusCode: HttpStatus.CONFLICT,
+          message: "User already exists!",
+        };
+      }
+      
       const { providedCopyUrl, empProvidedCopyUrl, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
       const response = await this.employeeModuleRepository.create(dataWithouturl);
       const res = await this.employeeModuleRepository.save(response);
