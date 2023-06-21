@@ -12,7 +12,10 @@ export class Createpackage {
     
     @Column("varchar",{ nullable: true, default: () => null})
     packagelogo: string;
-    
+
+    @Column("varchar",{ nullable: true, default: () => null})
+    numberOfDays:string;
+
     @Column("tinyint", { default: 1, comment: ' 1-active, 2-inactive, 3-deactivate' })
     status: number;
 

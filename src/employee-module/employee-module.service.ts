@@ -7,6 +7,7 @@ import { CompaniesService } from 'src/companies/companies.service';
 import { EmployeeDocument } from 'src/employee-document/employee-document.entity';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
 import { MailService } from 'src/mail/mail.service';
+import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 // import randomstring from 'randomstring';
 const randomstring = require("randomstring");
 
@@ -22,6 +23,8 @@ export class EmployeeModuleService {
     @InjectRepository(EmployeeDocument)
     private employeeDocumentRepository: Repository<EmployeeDocument>,
     private readonly mailservice: MailService,
+    @InjectRepository(EmployeeDataHistory)
+    private employeedatahistoryrepo: Repository<EmployeeDataHistory>,
   ) { }
 
   async create(createEmployeeModuleDto) {
