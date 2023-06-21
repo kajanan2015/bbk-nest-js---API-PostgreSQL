@@ -135,6 +135,21 @@ export class EmployeeModuleController {
     return this.employeeModuleService.update(id, data);
   }
 
+  @Put('/history/:id')
+  @UseInterceptors(AnyFilesInterceptor())
+  async updateWithHistory(@UploadedFiles() file, @Param('id') id: string,  @Body() updateEmployeeModuleDto) {
+    const filenames = await this.imageUploadService.uploadcompany(file, "body");
+    if(filenames.length>0){
+      updateEmployeeModuleDto.profilePic = filenames?.[0]?.['profilePic[]']?.[0];
+      // createEmployeeModuleDto.profilePicThumb=await this.imageUploadService.uploadThumbnailToS3(filename[0]['profilePic[]'][0]);
+    }
+    const data = {
+      ...updateEmployeeModuleDto,
+      filenames
+    }    
+    return this.employeeModuleService.update(id, data);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.employeeModuleService.remove(+id);

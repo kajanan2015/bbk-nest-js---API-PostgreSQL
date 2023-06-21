@@ -7,6 +7,8 @@ import { CompaniesService } from 'src/companies/companies.service';
 import { EmployeeDocument } from 'src/employee-document/employee-document.entity';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
 import { MailService } from 'src/mail/mail.service';
+import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
+import { EmployeeDataHistoryService } from 'src/employee-data-history/employee-data-history.service';
 // import randomstring from 'randomstring';
 const randomstring = require("randomstring");
 
@@ -21,6 +23,8 @@ export class EmployeeModuleService {
     private readonly imageUploadService: ImageUploadService,
     @InjectRepository(EmployeeDocument)
     private employeeDocumentRepository: Repository<EmployeeDocument>,
+    @InjectRepository(EmployeeDataHistoryService)
+    private empDataHistoryRepository: Repository<EmployeeDataHistoryService>,
     private readonly mailservice: MailService,
   ) { }
 
@@ -199,13 +203,6 @@ export class EmployeeModuleService {
       ...UpdateEmployeeModuleDto
     }
 
-    // for (const filename of data['filenames']) {
-    //   if (filename['empProvidedCopy[]']) {
-    //     data.empProvidedCopy = filename[0]['empProvidedCopy[]'][0];
-    //     data.empProvidedCopyThumb=await this.imageUploadService.uploadThumbnailToS3(filename[0]['empProvidedCopy[]'][0]);
-    //   }
-    // }
-
     const employeerowid = await this.employeeModuleRepository.findOne({ where: { employeeId: id } });
 
     const documents = data['filenames'];
@@ -272,6 +269,22 @@ export class EmployeeModuleService {
     delete data['deletedDocs'];
     delete data['filenames'];
     await this.employeeModuleRepository.update({ id: +employeerowid.id }, data);
+    // added by nuwan for mail send employeee password should be random generate one add random string
+    // await this.mailservice.sendemailtoemployeeregistration(employeeemail,companyname,employeename,employeepassword,employeeusername)
+    return await this.employeeModuleRepository.findOne({
+      where: { id: employeerowid.id },
+      relations: ['documents']
+    });
+  }
+
+  async updateWithHistory(id: string, UpdateEmployeeModuleDto) {
+    const data = {
+      ...UpdateEmployeeModuleDto
+    }
+
+    const employeerowid = await this.employeeModuleRepository.findOne({ where: { employeeId: id } });
+    const res = await this.empDataHistoryRepository.create({ ...UpdateEmployeeModuleDto, data: JSON.stringify(UpdateEmployeeModuleDto.data) });
+    await this.employeeModuleRepository.update({ id: +employeerowid.id }, data.data);
     // added by nuwan for mail send employeee password should be random generate one add random string
     // await this.mailservice.sendemailtoemployeeregistration(employeeemail,companyname,employeename,employeepassword,employeeusername)
     return await this.employeeModuleRepository.findOne({
