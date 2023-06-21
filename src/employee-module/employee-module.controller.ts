@@ -146,8 +146,8 @@ export class EmployeeModuleController {
     const data = {
       ...updateEmployeeModuleDto,
       filenames
-    }    
-    return this.employeeModuleService.update(id, data);
+    }
+    return this.employeeModuleService.updateWithHistory(id, data);
   }
 
   @Delete(':id')

@@ -17,8 +17,14 @@ export class EmployeeDataHistoryService {
     return await this.empDataHistoryRepository.save(response);
   }
 
-  async findAll() {
-    return await this.empDataHistoryRepository.find();
+  async findEmpDataHistory(createEmployeeDataHistoryDto) {
+    return await this.empDataHistoryRepository.find({
+        where:{
+          employee:createEmployeeDataHistoryDto.employee, 
+          type:createEmployeeDataHistoryDto.type,
+        },
+        relations: ['editedBy']
+        });
   }
 
   findOne(id: number) {

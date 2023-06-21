@@ -12,9 +12,14 @@ export class EmployeeDataHistoryController {
     return this.employeeDataHistoryService.create(createEmployeeDataHistoryDto);
   }
 
+  @Post('/historybytype')
+  findEmpDataHistory(@Body() createEmployeeDataHistoryDto: CreateEmployeeDataHistoryDto) {
+    return this.employeeDataHistoryService.findEmpDataHistory(createEmployeeDataHistoryDto);
+  }
+
   @Get()
   findAll() {
-    return this.employeeDataHistoryService.findAll();
+   // return this.employeeDataHistoryService.findAll();
   }
 
   @Get(':id')
