@@ -7,27 +7,27 @@ import { AuthGuard } from '@nestjs/passport';
 @Controller('accident-upload-image')
 export class AccidentUploadImageController {
   constructor(private readonly accidentUploadImageService: AccidentUploadImageService) {}
-
+// upload image
   @Post()
   create(@Body() createAccidentUploadImageDto: CreateAccidentUploadImageDto) {
     return this.accidentUploadImageService.create(createAccidentUploadImageDto);
   }
-
+// find all image
   @Get()
   findAll() {
     return this.accidentUploadImageService.findAll();
   }
-
+// get image by id
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.accidentUploadImageService.findOne(+id);
   }
-
+// update
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAccidentUploadImageDto: UpdateAccidentUploadImageDto) {
     return this.accidentUploadImageService.update(+id, updateAccidentUploadImageDto);
   }
-
+// delete
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.accidentUploadImageService.remove(+id);

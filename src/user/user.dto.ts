@@ -23,5 +23,7 @@ export class CreateUserDto {
     updatedat:Date;
     companies: CompaniesEntity[];
     roles: PermissionRoleEntity[];
-    jobdata:TripEntity[]
+    jobdata:TripEntity[];
+    activate: Boolean|null;
+    activated_time: Date|null
 }

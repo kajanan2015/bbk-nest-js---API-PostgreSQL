@@ -11,7 +11,7 @@ import { ImageUploadService } from 'src/imageupload/imageupload.service';
 @Controller('createmodule')
 export class CreatemoduleController {
   constructor(private readonly createmoduleService: CreatemoduleService,private   readonly imageUploadService: ImageUploadService,) {}
-
+// module create
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   async create(@UploadedFiles() moduleImg ,@Body() createCreatemoduleDto) {
@@ -29,24 +29,24 @@ export class CreatemoduleController {
   }
 
 
-
+// all module get
   @Get()
   async findAll() {
     return this.createmoduleService.findAll();
   }
 
-
+// all active module get
   @Get('findallactive')
   async findAllActive() {
     return this.createmoduleService.findAllActive();
   }
   
-
+// get module data by id
   @Get(':id')
  async findOne(@Param('id') id: string) {
     return this.createmoduleService.findOne(+id);
   }
-
+// update module details
   @Patch(':id')
   @UseInterceptors(AnyFilesInterceptor())
   async update(@Param('id') id: string, @UploadedFiles() moduleImg, @Body() updateCreatemoduleDto: UpdateCreatemoduleDto) {
@@ -71,7 +71,7 @@ export class CreatemoduleController {
     // console.log(data,67890)
     return this.createmoduleService.update(+id, data);
   }
-
+// delete module
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return this.createmoduleService.remove(+id);

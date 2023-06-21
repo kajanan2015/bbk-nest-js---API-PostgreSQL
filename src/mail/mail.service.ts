@@ -1,5 +1,7 @@
 import { MailerService } from "@nestjs-modules/mailer";
 import { Repository, getManager } from "typeorm";
+import * as jwt from 'jsonwebtoken';
+import * as dotenv from 'dotenv';
 
 const nodemailer = require("nodemailer");
 
@@ -7,9 +9,38 @@ import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class MailService {
-  constructor(private mailerService: MailerService) {}
+  constructor(private mailerService: MailerService,) {}
+
+async decodemyactivatetoken(key){
+  try {
+    const decoded = jwt.verify(key, 'intaapactivate');
+    return decoded;
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      // Handle expired token error
+      return 'Expired token';
+      // Perform necessary actions
+    } else {
+      // Handle other verification errors
+      return 'Token verification failed';
+      // Perform necessary actions
+    }
+  }
+}
+async send_activation_email_admin(adminemail){
+  const payload = {
+    email:adminemail
+  };
+
+  const token = jwt.sign(payload, 'intaapactivate', { expiresIn: '24h' }); // Set expiration to 24 hours
+  let url=process.env.activate_host_url+token;
+  return url;
+} 
+
 
   async newadminadded(adminemail,companyname,adminname,adminpassword){
+   const token = await this.send_activation_email_admin(adminemail);
+   
     await this.mailerService.sendMail({
       to: `${adminemail.trim()}`,
       from: "noreply@hexagonasia.com", // override default from

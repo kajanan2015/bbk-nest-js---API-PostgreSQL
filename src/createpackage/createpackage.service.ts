@@ -34,7 +34,7 @@ export class CreatepackageService {
       console.log(detailsdata, 8998)
       await this.moduledetailspackageservice.create(detailsdata)
     }
-    if (packageresponse.length > 0) {
+    if (packageresponse) {
       return {
         statusCode: HttpStatus.OK,
         message: "successs"
