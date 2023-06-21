@@ -893,7 +893,9 @@ export class CompaniesService {
       activate: 1,
       activated_time: currentDateTime
     }
-    if(Array.isArray(decodedkey)){
+    console.log(decodedkey,999)
+    if(decodedkey.hasOwnProperty('email')&&decodedkey.hasOwnProperty('email')&&decodedkey.hasOwnProperty('exp')){
+      console.log('decodedkey',999)
       const exist = await this.userRepository.findOne({ email: decodedkey['email'] })
       if (exist.activate == true) {
         return "You are already activated";
