@@ -10,7 +10,7 @@ import { Injectable } from "@nestjs/common";
 @Injectable()
 export class MailService {
   constructor(private mailerService: MailerService,) {}
-
+// check active url validity
 async decodemyactivatetoken(key){
   try {
     const decoded = jwt.verify(key, 'intaapactivate');
@@ -19,14 +19,15 @@ async decodemyactivatetoken(key){
     if (error.name === 'TokenExpiredError') {
       // Handle expired token error
       return 'Expired token';
-      // Perform necessary actions
+      
     } else {
       // Handle other verification errors
       return 'Token verification failed';
-      // Perform necessary actions
+    
     }
   }
 }
+// send activation email url generate of admin
 async send_activation_email_admin(adminemail){
   const payload = {
     email:adminemail
@@ -37,9 +38,9 @@ async send_activation_email_admin(adminemail){
   return url;
 } 
 
-
+// send activation email send
   async newadminadded(adminemail,companyname,adminname,adminpassword){
-   const token = await this.send_activation_email_admin(adminemail);
+   const link = await this.send_activation_email_admin(adminemail);
    
     await this.mailerService.sendMail({
       to: `${adminemail.trim()}`,
@@ -50,10 +51,11 @@ async send_activation_email_admin(adminemail){
         adminname,
         companyname,
         adminpassword,
-        adminemail
+        adminemail,
+        link
       }});
   }
-
+// after succefully creation company send email to company email address
   async companycreationsuccess(companyemail,adminemail,adminname,companyname,link){
     await this.mailerService.sendMail({
           to: companyemail.trim(),
@@ -68,7 +70,7 @@ async send_activation_email_admin(adminemail){
 
           }});
     }
-
+// trial package added and send payment link
   async trialpackageadded(companyemail,adminemail,adminname,companyname,link){
     await this.mailerService.sendMail({
           to: companyemail.trim(),
@@ -83,7 +85,7 @@ async send_activation_email_admin(adminemail){
 
           }});
     }
-
+// sub company creation send email to parent company
     async shareaccesstochildcompany(adminemail,adminname,companyname,parentcompanyname){
       await this.mailerService.sendMail({
             to: adminemail.trim(),
@@ -96,7 +98,7 @@ async send_activation_email_admin(adminemail){
               parentcompanyname
             }});
       }
-
+// update admin user credentials
       async updateemailforcompanydata(adminemail,companyname){
         await this.mailerService.sendMail({
               to: adminemail.trim(),
@@ -107,7 +109,7 @@ async send_activation_email_admin(adminemail){
                 companyname,
               }});
         }
-  
+  // send email after register employee
         async sendemailtoemployeeregistration(employeeemail,companyname,employeename,employeepassword,employeeusername){
           await this.mailerService.sendMail({
                 to: employeeemail.trim(),

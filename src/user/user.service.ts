@@ -162,22 +162,21 @@ export class UserService {
 // new admin create
   async create_new_admin(id: number, data) {
     const newhashpassword = await this.hashPassword(data.password);
-    let user;
+    
+   const user={
+    ...data,
+    password: newhashpassword,
+   }
+    
     if (data.companyType == "subcompany") {
-      user = {
-        ...data,
-        password: newhashpassword,
-        uType: "SADMIN",
-        companies: [id]
-      };
+     user.uType= "SADMIN";
     } else if (data.companyType == "maincompany") {
-      user = {
-        ...data,
-        password: newhashpassword,
-        uType: "CADMIN",
-        companies: [id]
-      };
+      user.uType= "CADMIN";
+    }else{
+      
     }
+    const company = await this.companyRepository.findOne(id);
+    user.companies = [company];
     return await this.userRepository.save(user);
   }
 
