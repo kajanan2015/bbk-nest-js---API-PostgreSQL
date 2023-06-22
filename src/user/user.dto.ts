@@ -25,5 +25,7 @@ export class CreateUserDto {
     roles: PermissionRoleEntity[];
     jobdata:TripEntity[];
     activate: Boolean|null;
-    activated_time: Date|null
+    activated_time: Date|null;
+    firsttimepasswordchange: Boolean|null;
+
 }

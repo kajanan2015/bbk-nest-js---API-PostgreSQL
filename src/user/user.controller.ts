@@ -21,17 +21,17 @@ import { AuthGuard } from '@nestjs/passport';
 import { CompaniesEntity } from 'src/companies/companies.entity';
 import { create } from 'domain';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
-
+import { ImageUploadService } from 'src/imageupload/imageupload.service';
 @UseGuards(AuthGuard('jwt'))
 @Controller('user')
 export class UserController {
-  constructor(private service: UserService) {}
+  constructor(private service: UserService, private imageUploadService: ImageUploadService) { }
 
   @Get('/usercompany/:id')
   async getUserCompanies(@Param('id') id: number): Promise<CompaniesEntity[]> {
     return this.service.getCompaniesByUserId(id);
   }
-  
+
   @Put('/edit/:id')
   async uppdate(@Param('id') id: number, @Body() data: any) {
     await this.service.update(id, data);
@@ -43,7 +43,7 @@ export class UserController {
 
   @Get('getjob/:id')
   async getjob(@Param('id') id: number) {
-   
+
     const user = await this.service.findjob(id);
     return {
       statusCode: HttpStatus.OK,
@@ -65,8 +65,8 @@ export class UserController {
     @Param('employeeId') employeeId: number,
     @Body('roleIds') roleIds,
   ) {
-    console.log(employeeId,33)
-    console.log(roleIds,44)
+    console.log(employeeId, 33)
+    console.log(roleIds, 44)
     await this.service.updateRolesForEmployee(employeeId, roleIds);
   }
 
@@ -81,38 +81,38 @@ export class UserController {
 
     const customer = await stripe.customers.create({
       description: new Date(),
-      email :data.user.email,
-      name :data.user.name,
+      email: data.user.email,
+      name: data.user.name,
     });
 
     const paymentMethod = await stripe.paymentMethods.create({
       type: 'card',
       card: {
         number: data.cnumber,
-        exp_month:data.month,
+        exp_month: data.month,
         exp_year: data.year,
         cvc: data.cvc,
       },
     });
 
-    
+
 
     const paymentMethodAdd = await stripe.paymentMethods.attach(
       paymentMethod.id,
-      {customer: customer.id}
+      { customer: customer.id }
     );
 
     const customer1 = await stripe.customers.update(
       customer.id,
-      {invoice_settings: {default_payment_method: paymentMethod.id}}
+      { invoice_settings: { default_payment_method: paymentMethod.id } }
     );
 
-    
+
 
     const subscription = await stripe.subscriptions.create({
       customer: customer.id,
       items: [
-        {price: 'price_1LiQSVChovVblxJgToISRMMR'},
+        { price: 'price_1LiQSVChovVblxJgToISRMMR' },
       ],
     });
 
@@ -126,9 +126,9 @@ export class UserController {
 
   @Post('createuser')
   @UseInterceptors(AnyFilesInterceptor())
-  async createuser(@UploadedFiles() profileImg, @Body() data:any){
-    console.log(profileImg,1234)
-    console.log(data,456)
+  async createuser(@UploadedFiles() profileImg, @Body() data: any) {
+    console.log(profileImg, 1234)
+    console.log(data, 456)
     // const createuser=await this.service.create(data);
     // return createuser;
   }
@@ -141,27 +141,61 @@ export class UserController {
     };
   }
 
-// update one by one admin
+  // update one by one admin
   @Put('/updateuserdataone/:id')
   @UseInterceptors(AnyFilesInterceptor())
   async updateeditdata(@Param('id') id: number, @UploadedFiles() profileImg, @Body() data: any) {
-   console.log(profileImg,1234)
-   console.log(data,456)
-   
-    // await this.service.update(id, data);
-    // return {
-    //   statusCode: HttpStatus.OK,
-    //   message: 'User updated successfully',
-    // };
+    console.log(profileImg, 1234)
+    console.log(data, 456)
+    let profileImage;
+    let profilethumb;
+    if (profileImg) {
+      profileImage = await this.imageUploadService.upload(profileImg, 'body')
+      profilethumb = await this.imageUploadService.uploadThumbnailToS3(profileImage);
+    }
+
+    const passdata = {
+      ...data,
+      profilePic: profileImage,
+      profilethumb: profilethumb
+    }
+    await this.service.update(id, passdata);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'User updated successfully',
+    };
   }
 
-// to check email exist
+  // create user by one company
+  @Post('/updatenewadminforcompany/:companyid')
+  @UseInterceptors(AnyFilesInterceptor())
+  async updatenewadminforcompany(@Param('companyid') id: number, @UploadedFiles() profileImg, @Body() data: any) {
+    let profileImage;
+    let profilethumb;
+    if (profileImg) {
+      profileImage = await this.imageUploadService.upload(profileImg, 'body')
+      profilethumb = await this.imageUploadService.uploadThumbnailToS3(profileImage[0]);
+    }
+
+    const passdata = {
+      ...data,
+      profilePic: profileImage,
+      profilethumb: profilethumb
+    }
+    await this.service.create_new_admin(id, passdata);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'User created successfully',
+    };
+  }
+
+  // to check email exist
   @Post('employeecheck')
-  async checkemailexist(@Body() data:any){
+  async checkemailexist(@Body() data: any) {
     const existing = await this.service.findByEmail(data.email);
     if (existing) {
       return "account exist";
-    }else{
+    } else {
       return 'account not exist'
     }
   }

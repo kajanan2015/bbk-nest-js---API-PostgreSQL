@@ -11,10 +11,11 @@ import { CompaniesEntity } from 'src/companies/companies.entity';
 import { Createmodule } from 'src/createmodule/createmodule.entity';
 import { Createpackage } from 'src/createpackage/createpackage.entity';
 import { CompanyPayment } from 'src/company-payment/company-payment.entity';
+import { ImageUploadService } from 'src/imageupload/imageupload.service';
 @Module({
   imports: [TypeOrmModule.forFeature([User, PermissionRoleEntity,TripEntity, CompaniesEntity,Createmodule,Createpackage,CompanyPayment]), PermissionRoleModule],
   controllers: [UserController],
   exports: [TypeOrmModule, UserService],
-  providers: [UserService],
+  providers: [UserService,ImageUploadService],
 })
 export class UserModule { }
