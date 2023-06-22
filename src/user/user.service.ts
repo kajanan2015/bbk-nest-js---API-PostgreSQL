@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult,Not } from 'typeorm';
+import { Repository, UpdateResult, Not } from 'typeorm';
 
 import { User } from './user.entity';
 import * as bcrypt from 'bcryptjs';
@@ -10,6 +10,8 @@ import { CompaniesEntity } from 'src/companies/companies.entity';
 @Injectable()
 export class UserService {
   constructor(
+    @InjectRepository(CompaniesEntity)
+    private companyRepository: Repository<CompaniesEntity>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(PermissionRoleEntity)
@@ -18,49 +20,49 @@ export class UserService {
 
   async getCompaniesByUserId(userId: number): Promise<CompaniesEntity[]> {
     const user = await this.userRepository.findOne(userId, {
-      relations: ['companies','companies.country'],
+      relations: ['companies', 'companies.country'],
     });
     return user.companies;
   }
 
   async findAll(): Promise<User[]> {
-    return await this.userRepository.find({ 
-      where: { status: 1,uType: Not('ADMIN') }, 
+    return await this.userRepository.find({
+      where: { status: 1, uType: Not('ADMIN') },
     });
   }
 
-  async findjob(id:number){
-    const job=await this.userRepository.findOne({ where: { id:id, status: 1},relations:['jobdata','jobdata.vehicle','jobdata.vehicle.vehicletype'] });
-   delete job.password;
+  async findjob(id: number) {
+    const job = await this.userRepository.findOne({ where: { id: id, status: 1 }, relations: ['jobdata', 'jobdata.vehicle', 'jobdata.vehicle.vehicletype'] });
+    delete job.password;
     return job
   }
 
-  async findUsingId(id):Promise<User[]>{
+  async findUsingId(id): Promise<User[]> {
     // return await this.userRepository.findOne({ where: { id:id, status: 1 },relations:['jobdata']  });
-    const users= await this.userRepository.findByIds(id);
+    const users = await this.userRepository.findByIds(id);
     return users
   }
 
   async find(id: number): Promise<User> {
-    return await this.userRepository.findOne({ where: { id:id, status: 1 },relations:['jobdata']  });
+    return await this.userRepository.findOne({ where: { id: id, status: 1 }, relations: ['jobdata'] });
   }
 
   async findByEmail(email: string): Promise<User> {
-    return await this.userRepository.findOne({ where: { email:email,status: 1  } });
+    return await this.userRepository.findOne({ where: { email: email, status: 1 } });
   }
-// we added same login for employee and admin, we need to identify uniquly employee data, that why we pass employee id
-  async create(data){
+  // we added same login for employee and admin, we need to identify uniquly employee data, that why we pass employee id
+  async create(data) {
     const newhashpassword = await this.hashPassword(data.password);
     const user = {
       ...data,
       password: newhashpassword,
-      
+
     };
     return await this.userRepository.save(user);
   }
 
 
- 
+
 
   async hashPassword(plain: string): Promise<string> {
     const saltRounds = 10;
@@ -69,72 +71,72 @@ export class UserService {
   }
 
   async update(id: number, data: Partial<User>) {
-    console.log(data,877878787878787878)
-   let user=data; 
-    if(data.password){
+    console.log(data, 877878787878787878)
+    let user = data;
+    if (data.password) {
       const newhashpassword = await this.hashPassword(data.password);
-       user = {
+      user = {
         ...data,
         password: newhashpassword,
       };
     }
-    await this.userRepository.update({ id : id }, user);
-    return await this.userRepository.findOne({ where: {  id : id } });
+    await this.userRepository.update({ id: id }, user);
+    return await this.userRepository.findOne({ where: { id: id } });
   }
 
-  async updateUserStatus(id:number,status:string):Promise<void>{
+  async updateUserStatus(id: number, status: string): Promise<void> {
     await this.userRepository
-    .createQueryBuilder()
-    .update(User)
-    .set({ status: status })
-    .where({id:id})
-    .execute();
+      .createQueryBuilder()
+      .update(User)
+      .set({ status: status })
+      .where({ id: id })
+      .execute();
   }
 
   async updateEmployeePassword(id: number, employeeupdatedata: Partial<User>) {
     let user
-    if(employeeupdatedata.password){
+    if (employeeupdatedata.password) {
       const newhashpassword = await this.hashPassword(employeeupdatedata.password);
       let user = {
         ...employeeupdatedata,
         password: newhashpassword,
       };
-    }else{
+    } else {
       const { password, ...dataWithoutPassword } = employeeupdatedata;
       let user = {
         ...dataWithoutPassword,
       };
     }
-    
-// return ;
-    await this.userRepository.update({ id : id }, user);
-    return await this.userRepository.findOne({ where: {  id : id } });
+
+    // return ;
+    await this.userRepository.update({ id: id }, user);
+    return await this.userRepository.findOne({ where: { id: id } });
   }
 
   async updateRolesForEmployee(employeeId: number, roleIds: number[]): Promise<void> {
     const employee = await this.userRepository.findOne(employeeId, {
       relations: ['roles'],
     });
-  
+
     console.log(employeeId, 11);
     console.log(roleIds, 22);
-  
+
     const existingRoles = employee.roles.map((role) => role.id);
     const rolesToRemove = existingRoles.filter((roleId) => !roleIds.includes(roleId));
     const rolesToAdd = roleIds.filter((roleId) => !existingRoles.includes(roleId));
-  
+
     if (rolesToRemove.length) {
       employee.roles = employee.roles.filter((role) => !rolesToRemove.includes(role.id));
       await this.userRepository.save(employee);
-    }    
-  
+    }
+
     if (rolesToAdd.length) {
       const rolesToAddEntities = await this.permissionRoleRepository.findByIds(
         rolesToAdd
       );
       employee.roles.push(...rolesToAddEntities);
     }
-  
+
     await this.userRepository.save(employee);
   }
 
@@ -142,26 +144,37 @@ export class UserService {
     const employee = await this.userRepository.findOne(employeeId, {
       relations: ['roles'],
     });
-  
+
     const roleIds = employee.roles.map((role) => role.id);
-    console.log(roleIds,5555)
+    console.log(roleIds, 5555)
     return roleIds;
   }
 
-  async findoneuserdata(id){
-    const users= await this.userRepository.findOne(id);
+  async findoneuserdata(id) {
+    const users = await this.userRepository.findOne(id);
     return users
   }
 
 
-  async create_new_admin(data){
+  async create_new_admin(id: number, data) {
     const newhashpassword = await this.hashPassword(data.password);
-    const user = {
-      ...data,
-      password: newhashpassword,
-      
-    };
+    let user;
+    if (data.companyType == "subcompany") {
+      user = {
+        ...data,
+        password: newhashpassword,
+        uType: "SADMIN",
+        companies: [id]
+      };
+    } else if (data.companyType == "maincompany") {
+      user = {
+        ...data,
+        password: newhashpassword,
+        uType: "CADMIN",
+        companies: [id]
+      };
+    }
     return await this.userRepository.save(user);
   }
-  
+
 }
