@@ -192,11 +192,18 @@ export class UserController {
   // to check email exist
   @Post('employeecheck')
   async checkemailexist(@Body() data: any) {
-    const existing = await this.service.findByEmail(data.email);
+    const existing = await this.service.findByEmailexist(data.email);
     if (existing) {
       return "account exist";
     } else {
       return 'account not exist'
     }
   }
+
+    // change password
+    @Put('changepassword/:id')
+    async changepassword(@Param('id') id, @Body() data:any){
+      console.log(id)  
+      return await this.service.changepassword(id,data);
+    }
 }
