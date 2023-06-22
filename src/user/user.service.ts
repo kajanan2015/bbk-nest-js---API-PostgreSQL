@@ -59,6 +59,9 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
+
+ 
+
   async hashPassword(plain: string): Promise<string> {
     const saltRounds = 10;
     const hashed: string = await bcrypt.hash(plain, saltRounds);
@@ -150,5 +153,15 @@ export class UserService {
     return users
   }
 
+
+  async create_new_admin(data){
+    const newhashpassword = await this.hashPassword(data.password);
+    const user = {
+      ...data,
+      password: newhashpassword,
+      
+    };
+    return await this.userRepository.save(user);
+  }
   
 }

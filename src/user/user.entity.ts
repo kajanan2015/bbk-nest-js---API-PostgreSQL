@@ -105,4 +105,7 @@ export class User  {
   @Column("timestamp", { name: "activated_time", nullable:true, default: () => null })
   activated_time: Date|null;
 
+  @Column({ type: 'boolean', default:false})
+  firsttimepasswordchange: Boolean|null;
+
 }

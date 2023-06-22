@@ -21,11 +21,11 @@ import { AuthGuard } from '@nestjs/passport';
 import { CompaniesEntity } from 'src/companies/companies.entity';
 import { create } from 'domain';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
-
+import { ImageUploadService } from 'src/imageupload/imageupload.service';
 @UseGuards(AuthGuard('jwt'))
 @Controller('user')
 export class UserController {
-  constructor(private service: UserService) {}
+  constructor(private service: UserService,private imageUploadService:ImageUploadService) {}
 
   @Get('/usercompany/:id')
   async getUserCompanies(@Param('id') id: number): Promise<CompaniesEntity[]> {
@@ -147,13 +147,49 @@ export class UserController {
   async updateeditdata(@Param('id') id: number, @UploadedFiles() profileImg, @Body() data: any) {
    console.log(profileImg,1234)
    console.log(data,456)
+   let profileImage;
+   let profilethumb;
+   if(profileImg){
+    profileImage= await this.imageUploadService.upload(profileImg,'body')
+    profilethumb = await this.imageUploadService.uploadThumbnailToS3(profileImage);
+   }
    
-    // await this.service.update(id, data);
-    // return {
-    //   statusCode: HttpStatus.OK,
-    //   message: 'User updated successfully',
-    // };
+   const passdata={
+    ...data,
+    profilePic:profileImage,
+    profilethumb:profilethumb
+   }
+    await this.service.update(id, passdata);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'User updated successfully',
+    };
   }
+
+// create user by one company
+@Post('/updatenewadminforcompany/:companyid')
+@UseInterceptors(AnyFilesInterceptor())
+async updatenewadminforcompany(@Param('companyid') id: number, @UploadedFiles() profileImg, @Body() data: any) {
+ console.log(profileImg,1234)
+ console.log(data,456)
+ let profileImage;
+   let profilethumb;
+   if(profileImg){
+    profileImage= await this.imageUploadService.upload(profileImg,'body')
+    profilethumb = await this.imageUploadService.uploadThumbnailToS3(profileImage);
+   }
+   
+   const passdata={
+    ...data,
+    profilePic:profileImage,
+    profilethumb:profilethumb
+   }
+  await this.service.create_new_admin(passdata);
+  return {
+    statusCode: HttpStatus.OK,
+    message: 'User created successfully',
+  };
+}
 
 // to check email exist
   @Post('employeecheck')
