@@ -99,6 +99,9 @@ export class User  {
   @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.editedBy,{cascade:true})
   empEditedUser:CustomizeTable[];
 
+  @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.createdBy,{cascade:true})
+  empCreatedUser:CustomizeTable[];
+
   @Column({ type: 'boolean', default:false})
   activate: Boolean|null;
 

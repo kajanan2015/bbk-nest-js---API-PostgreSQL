@@ -21,11 +21,18 @@ export class EmployeeDataHistory {
     @JoinColumn({ name: 'editedBy' })
     editedBy: User;
 
+    @ManyToOne(() => User, user => user.empCreatedUser)
+    @JoinColumn({ name: 'createdBy' })
+    createdBy: User;
+
     @Column("timestamp", { name: "startDate", default: () => "CURRENT_TIMESTAMP" })
     startDate: Date;
 
     @Column("timestamp", { name: "endDate", default: null })
     endDate: Date;
+
+    @Column("timestamp", { name: "editedDate", default: () => "CURRENT_TIMESTAMP"})
+    editedDate: Date;
 
     @Column({ type: 'boolean', default: true })
     status: boolean;

@@ -7,7 +7,9 @@ export class CreateEmployeeDataHistoryDto {
     type:string;
     data:string;
     editedBy:User[];
+    createdBy:User[];
     startDate:Date;
     endDate:Date;
+    editedDate: Date;
     status:boolean;
 }

@@ -71,17 +71,17 @@ export class EmployeeModuleService {
         where: { id: existingEmployee.id },
         relations: ['documents']
       });
-      
+
     } else {
-      const existingEmployee = await this.employeeModuleRepository.findOne({where:{email:createEmployeeModuleDto.email, company:createEmployeeModuleDto.company, niNo:createEmployeeModuleDto.niNo}});
-      
-      if(existingEmployee){
+      const existingEmployee = await this.employeeModuleRepository.findOne({ where: { email: createEmployeeModuleDto.email, company: createEmployeeModuleDto.company, niNo: createEmployeeModuleDto.niNo } });
+
+      if (existingEmployee) {
         return {
           statusCode: HttpStatus.CONFLICT,
           message: "User already exists!",
         };
       }
-      
+
       const { providedCopyUrl, empProvidedCopyUrl, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
       const response = await this.employeeModuleRepository.create(dataWithouturl);
       const res = await this.employeeModuleRepository.save(response);
@@ -278,16 +278,39 @@ export class EmployeeModuleService {
   }
 
   async updateWithHistory(id: string, UpdateEmployeeModuleDto) {
+    // const data = {
+    //   firstName: UpdateEmployeeModuleDto.data.firstName,
+    //   lastName: UpdateEmployeeModuleDto.data.lastName,
+    //   dob: UpdateEmployeeModuleDto.data.dob,
+    //   gender: UpdateEmployeeModuleDto.data.gender,
+    //   maritalStatus: UpdateEmployeeModuleDto.data.maritalStatus
+    // }
+
     const data = {
-        firstName: UpdateEmployeeModuleDto.data.firstName,
-        lastName: UpdateEmployeeModuleDto.data.lastName,
-        dob: UpdateEmployeeModuleDto.data.dob,
-        gender: UpdateEmployeeModuleDto.data.gender,
-        maritalStatus: UpdateEmployeeModuleDto.data.maritalStatus
+      ...UpdateEmployeeModuleDto.data
     }
+
+    
+
+    // Find the previous record of the employee
+    const previousRecord = await this.employeedatahistoryrepo.findOne({
+      where: {
+        employee: +UpdateEmployeeModuleDto.employee,
+        type: UpdateEmployeeModuleDto.type
+      },
+      order: { createdBy: 'DESC' },
+    });
+
+    // If a previous record exists, update its endDate
+    if (previousRecord) {
+      previousRecord.endDate = new Date(Date.now());
+      previousRecord.editedBy = UpdateEmployeeModuleDto.createdBy;
+      await this.employeedatahistoryrepo.save(previousRecord);
+    }
+
     const response = await this.employeedatahistoryrepo.create({ ...UpdateEmployeeModuleDto, data: JSON.stringify(data) });
     const res = await this.employeedatahistoryrepo.save(response);
-    
+
     await this.employeeModuleRepository.update({ id: +id }, data);
     // added by nuwan for mail send employeee password should be random generate one add random string
     // await this.mailservice.sendemailtoemployeeregistration(employeeemail,companyname,employeename,employeepassword,employeeusername)
