@@ -16,7 +16,7 @@ export class EmployeeService {
 
    
      // added by nuwan
-     const existing = await this.userService.findByEmail(createEmployeeDto.email);
+     const existing = await this.userService.findByEmailexist(createEmployeeDto.email);
      if (existing) {
        throw new BadRequestException('auth/account-exists');
      }

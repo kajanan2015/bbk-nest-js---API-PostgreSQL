@@ -247,7 +247,7 @@ export class CompaniesService {
         }
         // console.log(users, 999)
         for (const admin of adminUsers) {
-          existing = await this.userservice.findByEmail(admin.email);
+          existing = await this.userservice.findByEmailexist(admin.email);
           if (existing) {
             return "account exist";
           }
@@ -319,7 +319,7 @@ export class CompaniesService {
           const adminUsers = companyData.admins;
 
           for (const admin of adminUsers) {
-            const existing = await this.userservice.findByEmail(admin.email);
+            const existing = await this.userservice.findByEmailexist(admin.email);
             if (existing) {
               return "account exist";
             }
@@ -396,7 +396,7 @@ export class CompaniesService {
 
       const users = [];
       for (const admin of adminUsers) {
-        const existing = await this.userservice.findByEmail(admin.email);
+        const existing = await this.userservice.findByEmailexist(admin.email);
         if (existing) {
           return "account exist";
         }

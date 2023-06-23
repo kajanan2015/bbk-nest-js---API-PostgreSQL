@@ -46,9 +46,13 @@ export class UserService {
   async find(id: number): Promise<User> {
     return await this.userRepository.findOne({ where: { id: id, status: 1 }, relations: ['jobdata'] });
   }
-
+  
   async findByEmail(email: string): Promise<User> {
-    return await this.userRepository.findOne({ where: { email: email, status: 1 } });
+    return await this.userRepository.findOne({ where: { email:email,status: 1,activate:1} });
+  }
+
+  async findByEmailexist(email: string): Promise<User> {
+    return await this.userRepository.findOne({ where: { email:email} });
   }
   // we added same login for employee and admin, we need to identify uniquly employee data, that why we pass employee id
   async create(data) {
@@ -155,26 +159,42 @@ export class UserService {
     return users
   }
 
-
+// new admin create
   async create_new_admin(id: number, data) {
     const newhashpassword = await this.hashPassword(data.password);
-    let user;
+    
+   const user={
+    ...data,
+    password: newhashpassword,
+   }
+    
     if (data.companyType == "subcompany") {
-      user = {
-        ...data,
-        password: newhashpassword,
-        uType: "SADMIN",
-        companies: [id]
-      };
+     user.uType= "SADMIN";
     } else if (data.companyType == "maincompany") {
-      user = {
-        ...data,
-        password: newhashpassword,
-        uType: "CADMIN",
-        companies: [id]
-      };
+      user.uType= "CADMIN";
+    }else{
+      
     }
+    const company = await this.companyRepository.findOne(id);
+    user.companies = [company];
     return await this.userRepository.save(user);
   }
 
+// password change
+  async changepassword(id,data){
+    if(data.newPassword==data.confirmPassword){
+      const newhashpassword = await this.hashPassword(data.newPassword);
+      const currentDateTime = new Date();
+      const user={
+        password:newhashpassword,
+        firsttimepasswordchange:1,
+        updatedat:currentDateTime
+      }
+      await this.userRepository.update({ id }, user);
+      return 'change'
+    }else{
+      return "notchange"
+    }
+   
+  }
 }

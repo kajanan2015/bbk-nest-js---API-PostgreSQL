@@ -16,7 +16,7 @@ export class DriverService {
 
   async create(createDriverDto: CreateDriverDto) {
     const driver = this.driverRepository.create(createDriverDto);
-    const existing = await this.userService.findByEmail(createDriverDto.driverEmail);
+    const existing = await this.userService.findByEmailexist(createDriverDto.driverEmail);
     if (existing) {
       throw new BadRequestException('auth/account-exists');
     }

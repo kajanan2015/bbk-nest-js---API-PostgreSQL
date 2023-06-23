@@ -145,20 +145,24 @@ export class UserController {
   @Put('/updateuserdataone/:id')
   @UseInterceptors(AnyFilesInterceptor())
   async updateeditdata(@Param('id') id: number, @UploadedFiles() profileImg, @Body() data: any) {
-    console.log(profileImg, 1234)
-    console.log(data, 456)
     let profileImage;
     let profilethumb;
-    if (profileImg) {
+    if (profileImg.length > 0) {
       profileImage = await this.imageUploadService.upload(profileImg, 'body')
-      profilethumb = await this.imageUploadService.uploadThumbnailToS3(profileImage);
+      profilethumb = await this.imageUploadService.uploadThumbnailToS3(profileImage[0]);
     }
 
     const passdata = {
-      ...data,
-      profilePic: profileImage,
-      profilethumb: profilethumb
+      ...(data.firstName ? { firstName: data.firstName } : {}),
+      ...(data.lastName ? { lastName: data.lastName } : {}),
+      ...(data.email ? { email: data.email } : {}),
+      ...(data.password ? { password: data.password } : {}),
+      ...(data.phone ? { phone: data.phone } : {}),
+      ...(profileImage
+        ? { profilePic: profileImage, profilePicThumb: profilethumb }
+        : {}),
     }
+
     await this.service.update(id, passdata);
     return {
       statusCode: HttpStatus.OK,
@@ -172,15 +176,16 @@ export class UserController {
   async updatenewadminforcompany(@Param('companyid') id: number, @UploadedFiles() profileImg, @Body() data: any) {
     let profileImage;
     let profilethumb;
-    if (profileImg) {
+    if (profileImg.length > 0) {
       profileImage = await this.imageUploadService.upload(profileImg, 'body')
       profilethumb = await this.imageUploadService.uploadThumbnailToS3(profileImage[0]);
     }
 
     const passdata = {
       ...data,
-      profilePic: profileImage,
-      profilethumb: profilethumb
+      ...(profileImage
+        ? { profilePic: profileImage, profilePicThumb: profilethumb }
+        : {}),
     }
     await this.service.create_new_admin(id, passdata);
     return {
@@ -192,11 +197,18 @@ export class UserController {
   // to check email exist
   @Post('employeecheck')
   async checkemailexist(@Body() data: any) {
-    const existing = await this.service.findByEmail(data.email);
+    const existing = await this.service.findByEmailexist(data.email);
     if (existing) {
       return "account exist";
     } else {
       return 'account not exist'
     }
+  }
+
+  // change password
+  @Put('changepassword/:id')
+  async changepassword(@Param('id') id, @Body() data: any) {
+    console.log(id)
+    return await this.service.changepassword(id, data);
   }
 }
