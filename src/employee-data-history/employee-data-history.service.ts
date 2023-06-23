@@ -36,13 +36,24 @@ export class EmployeeDataHistoryService {
   }
 
   async findEmpDataHistory(createEmployeeDataHistoryDto) {
-    return await this.empDataHistoryRepository.find({
+    const [results, totalCount] = await this.empDataHistoryRepository.findAndCount({
       where: {
         employee: createEmployeeDataHistoryDto.employee,
         type: createEmployeeDataHistoryDto.type,
       },
-      relations: ['editedBy', 'createdBy']
+      relations: ['editedBy', 'createdBy'],
+      order: {
+        startDate: 'DESC',
+      },
+      skip: createEmployeeDataHistoryDto.page * createEmployeeDataHistoryDto.pageSize,
+      take: createEmployeeDataHistoryDto.pageSize, 
     });
+
+  return {
+    historyList : results,
+    totalCount,
+    totalPages: Math.ceil(totalCount / createEmployeeDataHistoryDto.pageSize),  // Calculate the total number of pages
+  };
   }
 
   findOne(id: number) {
