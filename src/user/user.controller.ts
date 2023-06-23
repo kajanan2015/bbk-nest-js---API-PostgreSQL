@@ -145,20 +145,22 @@ export class UserController {
   @Put('/updateuserdataone/:id')
   @UseInterceptors(AnyFilesInterceptor())
   async updateeditdata(@Param('id') id: number, @UploadedFiles() profileImg, @Body() data: any) {
-    console.log(profileImg, 1234)
-    console.log(data, 456)
     let profileImage;
     let profilethumb;
-    if (profileImg) {
+    if (!profileImg) {
       profileImage = await this.imageUploadService.upload(profileImg, 'body')
-      profilethumb = await this.imageUploadService.uploadThumbnailToS3(profileImage);
+      profilethumb = await this.imageUploadService.uploadThumbnailToS3(profileImage[0]);
     }
 
     const passdata = {
-      ...data,
-      profilePic: profileImage,
-      profilethumb: profilethumb
+      ...(data.firstName ? { firstName: data.firstName } : {}),
+      ...(data.email ? { email: data.email } : {}),
+      ...(data.password ? { password: data.password } : {}),
+      ...(profileImage
+        ? { profilePic: profileImage, profilePicThumb: profilethumb }
+        : {}),
     }
+
     await this.service.update(id, passdata);
     return {
       statusCode: HttpStatus.OK,
@@ -200,10 +202,10 @@ export class UserController {
     }
   }
 
-    // change password
-    @Put('changepassword/:id')
-    async changepassword(@Param('id') id, @Body() data:any){
-      console.log(id)  
-      return await this.service.changepassword(id,data);
-    }
+  // change password
+  @Put('changepassword/:id')
+  async changepassword(@Param('id') id, @Body() data: any) {
+    console.log(id)
+    return await this.service.changepassword(id, data);
+  }
 }
