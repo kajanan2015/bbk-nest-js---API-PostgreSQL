@@ -154,8 +154,10 @@ export class UserController {
 
     const passdata = {
       ...(data.firstName ? { firstName: data.firstName } : {}),
+      ...(data.lastName ? { lastName: data.lastName } : {}),
       ...(data.email ? { email: data.email } : {}),
       ...(data.password ? { password: data.password } : {}),
+      ...(data.phone ? { phone: data.phone } : {}),
       ...(profileImage
         ? { profilePic: profileImage, profilePicThumb: profilethumb }
         : {}),
