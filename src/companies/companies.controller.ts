@@ -308,9 +308,11 @@ export class CompaniesController {
   // mail testing
   @UseGuards(AuthGuard('jwt'))
   @Post('sendemail')
-  async sendemail() {
-    return await this.service.testemail();
+  async sendemail(@Body() data) {
+    // return await this.service.testemail();
+    return await this.service.sendverifyemail(data);
   }
+  
 
   // deactivate compnay immediately
   @UseGuards(AuthGuard('jwt'))

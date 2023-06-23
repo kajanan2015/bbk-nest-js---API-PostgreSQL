@@ -38,6 +38,22 @@ async send_activation_email_admin(adminemail){
   return url;
 } 
 
+// send verify email again
+async sendverifyemailagain(data){
+  const link = await this.send_activation_email_admin(data.email);
+  
+   await this.mailerService.sendMail({
+     to: `${data.email.trim()}`,
+     from: "noreply@hexagonasia.com", // override default from
+     subject: ` Welcome to ${data.name} Account - New Admin Access Granted`,
+     template: "./newadminadded", // `.hbs` extension is appended automatically
+     context: {
+      //  data.name,
+      //  data.email,
+       link
+     }});
+ }
+
 // send activation email send
   async newadminadded(adminemail,companyname,adminname,adminpassword){
    const link = await this.send_activation_email_admin(adminemail);

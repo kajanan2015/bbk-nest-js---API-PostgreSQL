@@ -875,6 +875,12 @@ export class CompaniesService {
     // await this.mailservice.sendcompanyCreate(password, name, toemail, username);
   }
 
+
+  // send verify email
+async sendverifyemail(data){
+  return await this.mailservice.sendverifyemailagain(data)
+}
+  
   async checkcompanycode(code) {
     const checkcodeexist = await this.companyRepository.find({
       where: { code },
