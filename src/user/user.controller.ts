@@ -147,7 +147,7 @@ export class UserController {
   async updateeditdata(@Param('id') id: number, @UploadedFiles() profileImg, @Body() data: any) {
     let profileImage;
     let profilethumb;
-    if (!profileImg) {
+    if (profileImg.length > 0) {
       profileImage = await this.imageUploadService.upload(profileImg, 'body')
       profilethumb = await this.imageUploadService.uploadThumbnailToS3(profileImage[0]);
     }
@@ -174,15 +174,16 @@ export class UserController {
   async updatenewadminforcompany(@Param('companyid') id: number, @UploadedFiles() profileImg, @Body() data: any) {
     let profileImage;
     let profilethumb;
-    if (profileImg) {
+    if (profileImg.length > 0) {
       profileImage = await this.imageUploadService.upload(profileImg, 'body')
       profilethumb = await this.imageUploadService.uploadThumbnailToS3(profileImage[0]);
     }
 
     const passdata = {
       ...data,
-      profilePic: profileImage,
-      profilethumb: profilethumb
+      ...(profileImage
+        ? { profilePic: profileImage, profilePicThumb: profilethumb }
+        : {}),
     }
     await this.service.create_new_admin(id, passdata);
     return {
