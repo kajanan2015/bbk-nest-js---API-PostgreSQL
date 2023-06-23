@@ -15,9 +15,9 @@ export class CompanyPaymentService {
   ) { }
   async create(createCompanyPaymentDto: CreateCompanyPaymentDto) {
     const response = this.companyPaymentRepository.create(createCompanyPaymentDto);
-    console.log(response,666)
+    console.log(response, 666)
     await this.companyPaymentRepository.save(response);
-  return await this.mailservice.trialpackageadded(createCompanyPaymentDto.sendedContact,"adminemail","adminname","",createCompanyPaymentDto.paymentLink);
+    return await this.mailservice.trialpackageadded(createCompanyPaymentDto.sendedContact, "adminemail", "adminname", "", createCompanyPaymentDto.paymentLink);
   }
 
   findAll() {

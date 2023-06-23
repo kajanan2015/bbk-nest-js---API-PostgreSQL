@@ -106,7 +106,7 @@ export class CompaniesEntity {
   @Column("int", { name: "deactivatedby", default: null })
   deactivatedby: number;
 
-  @Column("bigint", { default: 0, comment: ' 0-pending, 1-active, 2-deactivate' })
+  @Column("bigint", { default: 0, comment: ' 0-trial, 1-active, 2-deactivate,3-payment pending,4-expired' })
   compstatus: number;
 
 

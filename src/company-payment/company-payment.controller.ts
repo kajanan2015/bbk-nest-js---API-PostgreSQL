@@ -3,16 +3,24 @@ import { CompanyPaymentService } from './company-payment.service';
 import { CreateCompanyPaymentDto } from './create-company-payment.dto';
 import { UpdateCompanyPaymentDto } from './update-company-payment.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CompaniesEntity } from 'src/companies/companies.entity';
+import { Repository } from 'typeorm';
 @UseGuards(AuthGuard('jwt'))
 @Controller('company-payment')
 export class CompanyPaymentController {
-  constructor(private readonly companyPaymentService: CompanyPaymentService) {}
-// company payment store when sending payment link
+  @InjectRepository(CompaniesEntity)
+  private companyRepository: Repository<CompaniesEntity>
+  constructor(private readonly companyPaymentService: CompanyPaymentService) { }
+  // company payment store when sending payment link
   @Post()
-  async create(@Body() createCompanyPaymentDto: CreateCompanyPaymentDto) {
-    return this.companyPaymentService.create(createCompanyPaymentDto);
+  async create(@Body() data) {
+    await this.companyRepository.update(data.companyId, {
+      compstatus: 3,
+    })
+    return this.companyPaymentService.create(data);
   }
-// find all company payment
+  // find all company payment
   @Get()
   findAll() {
     return this.companyPaymentService.findAll();
