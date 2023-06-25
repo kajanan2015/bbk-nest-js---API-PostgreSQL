@@ -10,6 +10,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthController } from './auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthEntity } from './auth.entity';
+import { MailService } from 'src/mail/mail.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([AuthEntity]),
@@ -20,7 +21,7 @@ import { AuthEntity } from './auth.entity';
       signOptions: { expiresIn: '1 days' },
     }),
   ],
-  providers: [AuthService, LocalSignInStrategy, LocalSignUpStrategy, JwtStrategy],
+  providers: [AuthService, LocalSignInStrategy, LocalSignUpStrategy, JwtStrategy,MailService],
   exports: [AuthService],
   controllers: [AuthController],
 })

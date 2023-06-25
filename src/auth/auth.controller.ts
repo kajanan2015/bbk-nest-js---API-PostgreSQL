@@ -50,4 +50,17 @@ export class AuthController {
       userLoginData,
     };
   }
+  @Post('passwordresetlink')
+  async sendpasswordresetlink(@Body() data:any){
+const response=await this.authService.sendpasswordresetlink(data);
+return response
+  }
+
+  @Post('verifypasswordresetlink')
+  async decodemyresettoken(@Body() data:any){
+    const response=await this.authService.decodemyresettoken(data.key);
+    return response;
+  }
+
+
 }

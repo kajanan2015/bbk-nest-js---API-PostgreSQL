@@ -29,6 +29,8 @@ import { CreatemoduleService } from "src/createmodule/createmodule.service";
 import { Createmodule } from "src/createmodule/createmodule.entity";
 import { Createpackage } from "src/createpackage/createpackage.entity";
 import { Moduledetailsofpackage } from "src/moduledetailsofpackage/moduledetailsofpackage.entity";
+import * as dotenv from 'dotenv';
+
 @Injectable()
 export class CompaniesService {
   constructor(
@@ -457,7 +459,7 @@ export class CompaniesService {
 
     const newCompany = await this.companyRepository.create(dataCompany);
     const responsesave = await this.companyRepository.save(newCompany);
-    await this.mailservice.companycreationsuccess(dataCompany.companyEmail, "adminemail", "adminname", "", "https://dev.d3mnkfnlzusm0o.amplifyapp.com");
+    await this.mailservice.companycreationsuccess(dataCompany.companyEmail, "adminemail", "adminname", dataCompany.companyName, process.env.main_url);
     if (dataCompany.companyIdentifier == "maincompany") {
       const query = `
    UPDATE company
@@ -881,6 +883,7 @@ async sendverifyemail(data){
   return await this.mailservice.sendverifyemailagain(data)
 }
   
+// company code check exist 0r not
   async checkcompanycode(code) {
     const checkcodeexist = await this.companyRepository.find({
       where: { code },

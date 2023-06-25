@@ -6,7 +6,7 @@ import * as bcrypt from 'bcryptjs';
 import { Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthEntity } from './auth.entity';
-
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +15,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectRepository(AuthEntity)
     private readonly authRepository: Repository<AuthEntity>,
+    private readonly mailservice:MailService
   ) {}
 
   async signIn(email: string, password: string): Promise<User> {
@@ -62,6 +63,16 @@ export class AuthService {
     };
   }
 
+
+  async activatedcheckemail(email: string) {
+    const existing = await this.userService.findByEmail(email);
+    if (existing) {
+      return existing;
+    }
+  
+    return false;
+  }
+
   async account(token: string) {
     const user = await this.jwtService.verify(token);
 
@@ -94,6 +105,21 @@ export class AuthService {
 
   async find(id: number): Promise<AuthEntity> {
     return await this.authRepository.findOne({ where: { id } });
+  }
+
+  // send password resetlink
+  async sendpasswordresetlink(data){
+    const accountemail=data.email;
+    const checkemail=await this.activatedcheckemail(accountemail)
+    if(checkemail){
+      return await this.mailservice.sendresetlink(checkemail['email'],checkemail['id']);
+    }
+   return "cant find account"
+  }
+
+  async decodemyresettoken(key){
+const decoderesult=await this.mailservice.decodemyresettoken(key);
+return decoderesult;
   }
 
 }
