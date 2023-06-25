@@ -8,5 +8,8 @@ export class CreateCreatepackageDto {
     packagedetails:Moduledetailsofpackage[];
     company:CompaniesEntity[];
     paymentType: CompaniesEntity[];
- 
+    starteddate: Date;
+    enddate: Date;
+    validity:boolean
+    
 }

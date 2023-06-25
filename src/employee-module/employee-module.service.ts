@@ -9,6 +9,7 @@ import { ImageUploadService } from 'src/imageupload/imageupload.service';
 import { MailService } from 'src/mail/mail.service';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { Gender } from './gender/gender.entity';
+import { UserService } from 'src/user/user.service';
 // import randomstring from 'randomstring';
 const randomstring = require("randomstring");
 
@@ -26,6 +27,7 @@ export class EmployeeModuleService {
     private readonly mailservice: MailService,
     @InjectRepository(EmployeeDataHistory)
     private employeedatahistoryrepo: Repository<EmployeeDataHistory>,
+    private readonly userservice:UserService
   ) { }
 
   async create(createEmployeeModuleDto) {
@@ -87,6 +89,30 @@ export class EmployeeModuleService {
       const res = await this.employeeModuleRepository.save(response);
 
       const documents = createEmployeeModuleDto['filenames'];
+    
+    // //  to create account login account for user
+    // const employeerandompassword = randomstring.generate({
+    //   length: 8,
+    //   charset: 'alphanumeric',
+    //   readable: true,
+    //   symbols: true,
+    // });
+    //   const employeeaccountcreationdata = {
+    //     firstName: createEmployeeModuleDto.firstName,
+    //     lastName: createEmployeeModuleDto.lastName,
+    //     uType: "EMPLOYEE",
+    //     profilePic: createEmployeeModuleDto.profilePic,
+    //     profilePicThumb:createEmployeeModuleDto.profilePicThumb,
+    //     password: employeerandompassword,
+    //     phone: createEmployeeModuleDto.mobilePhone,
+    //     email: createEmployeeModuleDto.employeeId,
+    //   };
+
+    //   const adminResponse = await this.userservice.create(employeeaccountcreationdata);
+
+    // // added for send email and password to the user 
+    // await this.mailservice.sendemailtoemployeeregistration(createEmployeeModuleDto.email,"ABC",createEmployeeModuleDto.firstName,employeerandompassword,createEmployeeModuleDto.employeeId)
+
 
       if (documents.length > 0) {
         for (let document in documents) {
@@ -269,8 +295,6 @@ export class EmployeeModuleService {
     delete data['deletedDocs'];
     delete data['filenames'];
     await this.employeeModuleRepository.update({ id: +employeerowid.id }, data);
-    // added by nuwan for mail send employeee password should be random generate one add random string
-    // await this.mailservice.sendemailtoemployeeregistration(employeeemail,companyname,employeename,employeepassword,employeeusername)
     return await this.employeeModuleRepository.findOne({
       where: { id: employeerowid.id },
       relations: ['documents']

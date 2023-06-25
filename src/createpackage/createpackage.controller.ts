@@ -14,8 +14,6 @@ export class CreatepackageController {
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   async create(@UploadedFiles() packageImg, @Body() data) {
-    console.log(packageImg, 345678)
-    console.log(data, 5678934)
     const pkglogo = await this.imageUploadService.upload(packageImg, 'body')
     const passdata = {
       ...data,

@@ -16,6 +16,15 @@ export class Createpackage {
     @Column("varchar",{ nullable: true, default: () => null})
     numberOfDays:string;
 
+    @Column("timestamp", { name: "starteddate", default: () => "CURRENT_TIMESTAMP" })
+    starteddate: Date;
+
+    @Column("timestamp",  { name: "updatedat", nullable:true, default: () => null })
+    enddate: Date;
+    
+    @Column("boolean",{ default: false, comment: ' 0-valid, 1-ended' })
+    validity:boolean
+    
     @Column("tinyint", { default: 1, comment: ' 1-active, 2-inactive, 3-deactivate' })
     status: number;
 
@@ -30,7 +39,7 @@ export class Createpackage {
     @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
     createdat: Date;
   
-    @Column("timestamp", { name: "updatedat", default: () => null })
+    @Column("timestamp", { name: "updatedat", nullable:true, default: () => null })
     updatedat: Date;
 
 
