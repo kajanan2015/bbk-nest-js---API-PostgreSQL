@@ -43,28 +43,48 @@ export class CreatepackageController {
   @Patch()
   @UseInterceptors(AnyFilesInterceptor())
   async update(@UploadedFiles() pkgImg, @Body() updateCreatepackageDto) {
+let pkglogo=[]
+    if(pkgImg){
+   pkglogo = await this.imageUploadService.upload(pkgImg, 'body')
+}
+  
+    const passdata = {
+      ...updateCreatepackageDto,
+      packagelogo: pkglogo[0],
+      pkgcreate: updateCreatepackageDto.userId,
+      status: 1
+    }
+    console.log(passdata, 67890)
+
+return await this.createpackageService.update(updateCreatepackageDto.id,updateCreatepackageDto);
+    // return this.createpackageService.create(passdata);
+
+
+
+
     console.log(updateCreatepackageDto, 8888);
     const currentDateTime = new Date(); // Current date and time
     let data = {
-      ...updateCreatepackageDto.updatedValues,
+      // ...updateCreatepackageDto.updatedValues,
       updatedat: currentDateTime,
       pkgupdate: updateCreatepackageDto.userId,
       ...(updateCreatepackageDto.updatedValues.status ? { status:parseInt(updateCreatepackageDto.updatedValues.status)} : {}),
    
     };
-    delete data.userId;
+    // delete data.userId;
     console.log(data,888)
-    if (data.existlogo) {
-      const pkglogo = await this.imageUploadService.upload(pkgImg, 'body');
-      delete data.existlogo;
+    // if (pkgImg) {
+    //   const pkglogo = await this.imageUploadService.upload(pkgImg, 'body');
+    //   delete data.existlogo;
 
-      data = {
-        ...data,
-        packagelogo: pkglogo[0]
-      }
-      console.log(data, 67890)
-    }
-    return await this.createpackageService.update(updateCreatepackageDto.id,data,updateCreatepackageDto);
+    //   data = {
+    //     ...data,
+    //     packagelogo: pkglogo[0]
+    //   }
+    //   console.log(data, 67890)
+    // }
+    console.log('fghjk')
+    // return await this.createpackageService.update(updateCreatepackageDto.id,data,updateCreatepackageDto);
   }
 
   @Delete(':id')

@@ -48,55 +48,52 @@ export class CreatepackageService {
 
   }
 
-  async findAll() {
-    return await this.createpkgRepository.find({
-      relations: ['packagedetails', 'packagedetails.module', 'pkgcreate', 'pkgupdate', 'packagedetails.company']
-    });
-  }
 
-  async currentlyvalidpackageonly(){
-    return await this.createpkgRepository.find({where:{validity:false},
-      relations: ['packagedetails', 'packagedetails.module', 'pkgcreate', 'pkgupdate', 'packagedetails.company']
-    });
-  }
 
-  async findallreadyendedpackage(){
-    return await this.createpkgRepository.find({where:{validity:true},
-      relations: ['packagedetails', 'packagedetails.module', 'pkgcreate', 'pkgupdate', 'packagedetails.company']
-    });
-  }
-  async findOne(id: number) {
-    const packagedata = await this.createpkgRepository.findOne(id, { relations: ['packagedetails', 'packagedetails.module', 'pkgcreate', 'pkgupdate'] });
-    if (!packagedata) {
-      throw new NotFoundException(` ID '${id}' not found`);
-    }
-    return packagedata;
-  }
+  async update(id: number,updateCreatepackageDto) {
+    // {
+//   id: '2',
+//   userId: '1',
+//   packagename: 'heart',
+//   existlogo: 'https://intaap.s3.amazonaws.com/1687168097836_Screenshot%20from%202023-06-07%2013-45-46.png',
+//   status: 1,
+//   modules: [
+//     [Object: null prototype] { details: [Object: null prototype] },
+//     [Object: null prototype] { details: [Object: null prototype] }
+//   ],
+//   packagelogo: undefined,
+//   pkgcreate: '1'
 
-  async update(id: number, data, updateCreatepackageDto) {
+//   } 
     console.log(updateCreatepackageDto, 88889)
     console.log(id, 818889)
     const currentDateTime = new Date(); // Current date and time
     const updateexistpackage={
       enddate: currentDateTime,
-      validity:true
+      validity:true,
+      ...(updateCreatepackageDto.packagelogo ? { packagelogo:updateCreatepackageDto.packagelogo} : {}),
+      updatedat: currentDateTime,
+      pkgupdate: updateCreatepackageDto.userId,
     }
     let packagenameexist;
-    if(data.packagename){
-       packagenameexist= await this.createpkgRepository.findOne({where:{packagename:data.packagename,enddate:null,validity:false}})
+    if(updateCreatepackageDto.packagename){
+       packagenameexist= await this.createpkgRepository.findOne({where:{packagename:updateCreatepackageDto.packagename,enddate:null,validity:false}})
     }
     if(packagenameexist){
       const updateresponse = await this.createpkgRepository.update({ id },updateexistpackage);
     }
-   
-
 // create new one
-    const response = this.createpkgRepository.create(data);
+const newdata={
+  packagename:updateCreatepackageDto.packagename,
+  ...(updateCreatepackageDto.packagelogo ? { packagelogo:updateCreatepackageDto.packagelogo} : {packagelogo:updateCreatepackageDto.existlogo}),
+  pkgcreate:updateCreatepackageDto.userId
+}
+    const response = this.createpkgRepository.create(newdata);
 
     const packageresponse = await this.createpkgRepository.save(response);
    
     let detailsdata;
-    for (const value of data.modules) {
+    for (const value of updateCreatepackageDto.modules) {
       console.log(value.details, 66789)
       detailsdata = {
         module: value.details.id,
@@ -175,6 +172,33 @@ export class CreatepackageService {
     // }
   }
 
+
+  async findAll() {
+    return await this.createpkgRepository.find({
+      relations: ['packagedetails', 'packagedetails.module', 'pkgcreate', 'pkgupdate', 'packagedetails.company']
+    });
+  }
+
+  async currentlyvalidpackageonly(){
+    return await this.createpkgRepository.find({where:{validity:false},
+      relations: ['packagedetails', 'packagedetails.module', 'pkgcreate', 'pkgupdate', 'packagedetails.company']
+    });
+  }
+
+  async findallreadyendedpackage(){
+    return await this.createpkgRepository.find({where:{validity:true},
+      relations: ['packagedetails', 'packagedetails.module', 'pkgcreate', 'pkgupdate', 'packagedetails.company']
+    });
+  }
+  async findOne(id: number) {
+    const packagedata = await this.createpkgRepository.findOne(id, { relations: ['packagedetails', 'packagedetails.module', 'pkgcreate', 'pkgupdate'] });
+    if (!packagedata) {
+      throw new NotFoundException(` ID '${id}' not found`);
+    }
+    return packagedata;
+  }
+
+ 
   async remove(id: number) {
     return `This action removes a #${id} createpackage`;
   }
