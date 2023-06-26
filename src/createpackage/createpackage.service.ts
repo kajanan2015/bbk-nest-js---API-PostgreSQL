@@ -81,6 +81,13 @@ export class CreatepackageService {
     }
     if(packagenameexist){
       const updateresponse = await this.createpkgRepository.update({ id },updateexistpackage);
+      if(updateCreatepackageDto.status==2){
+        const updateresponse = await this.createpkgRepository.update({ id },{status:2});
+        return {
+          statusCode: HttpStatus.OK,
+          message: "successs"
+        };        
+      }
     }
 // create new one
 const newdata={
@@ -89,9 +96,7 @@ const newdata={
   pkgcreate:updateCreatepackageDto.userId
 }
     const response = this.createpkgRepository.create(newdata);
-
     const packageresponse = await this.createpkgRepository.save(response);
-   
     let detailsdata;
     for (const value of updateCreatepackageDto.modules) {
       console.log(value.details, 66789)
