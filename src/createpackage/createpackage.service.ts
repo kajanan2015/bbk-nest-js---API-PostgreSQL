@@ -79,19 +79,24 @@ export class CreatepackageService {
     if (updateCreatepackageDto.packagename) {
       packagenameexist = await this.createpkgRepository.findOne({ where: { packagename: updateCreatepackageDto.packagename, enddate: null, validity: false } })
     }
-    if (packagenameexist) {
-      const updateresponse = await this.createpkgRepository.update({ id }, updateexistpackage);
+    if(packagenameexist){
+      const updateresponse = await this.createpkgRepository.update({ id },updateexistpackage);
+      if(updateCreatepackageDto.status==2){
+        const updateresponse = await this.createpkgRepository.update({ id },{status:2});
+        return {
+          statusCode: HttpStatus.OK,
+          message: "successs"
+        };        
+      }
     }
-    // create new one
-    const newdata = {
-      packagename: updateCreatepackageDto.packagename,
-      ...(updateCreatepackageDto.packagelogo ? { packagelogo: updateCreatepackageDto.packagelogo } : { packagelogo: updateCreatepackageDto.existlogo }),
-      pkgcreate: updateCreatepackageDto.userId
-    }
+// create new one
+const newdata={
+  packagename:updateCreatepackageDto.packagename,
+  ...(updateCreatepackageDto.packagelogo ? { packagelogo:updateCreatepackageDto.packagelogo} : {packagelogo:updateCreatepackageDto.existlogo}),
+  pkgcreate:updateCreatepackageDto.userId
+}
     const response = this.createpkgRepository.create(newdata);
-
     const packageresponse = await this.createpkgRepository.save(response);
-
     let detailsdata;
     for (const value of updateCreatepackageDto.modules) {
       console.log(value.details, 66789)
