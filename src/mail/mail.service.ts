@@ -19,9 +19,11 @@ export class MailService {
       id: userid
     };
 
-    const token = jwt.sign(payload, "intaappactivate", { expiresIn: "5m" }); // Set expiration to 24 hours
-    const base_url = "https://dev.d3mnkfnlzusm0o.amplifyapp.com/reset-password?token="
+    const token = jwt.sign(payload,process.env.passwordresetemailkey, { expiresIn: "5m" }); // Set expiration to 24 hours
+    const base_url = process.env.passwordreset_host_url
     let link = base_url + token;
+    console.log(token,343)
+    console.log(link,232323233)
     await this.mailerService.sendMail({
       to: accountemail.trim(),
       from: "noreply@hexagonasia.com", // override default from
@@ -39,7 +41,7 @@ export class MailService {
   // check reset link validity
   async decodemyresettoken(key) {
     try {
-      const decoded = jwt.verify(key, "intaappactivate");
+      const decoded = jwt.verify(key, process.env.passwordresetemailkey);
       return decoded;
     } catch (error) {
       if (error.name === 'TokenExpiredError') {
