@@ -39,7 +39,7 @@ export class MailService {
   // check reset link validity
   async decodemyresettoken(key) {
     try {
-      const decoded = jwt.verify(key, process.env.passwordresetemailkey);
+      const decoded = jwt.verify(key, "intaappactivate");
       return decoded;
     } catch (error) {
       if (error.name === 'TokenExpiredError') {
