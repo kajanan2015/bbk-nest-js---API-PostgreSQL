@@ -233,4 +233,8 @@ export class CreatepackageService {
   async getpayementtype() {
     return await this.paymenttyperepository.find()
   }
+
+  async findPackageNameExist(packagename: string): Promise<Createpackage> {
+    return await this.createpkgRepository.findOne({ where: { packagename:packagename} });
+  }
 }

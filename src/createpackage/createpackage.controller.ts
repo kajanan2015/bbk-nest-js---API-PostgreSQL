@@ -92,6 +92,14 @@ return await this.createpackageService.update(updateCreatepackageDto.id,updateCr
     return this.createpackageService.remove(+id);
   }
 
-
+  @Post('packagecheck')
+  async checkemailexist(@Body() data: any) {
+    const existing = await this.createpackageService.findPackageNameExist(data.packagename);
+    if (existing) {
+      return "package exist";
+    } else {
+      return 'package not exist'
+    }
+  }
 
 }
