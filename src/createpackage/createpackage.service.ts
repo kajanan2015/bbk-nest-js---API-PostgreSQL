@@ -16,11 +16,11 @@ export class CreatepackageService {
     private readonly moduledetailspackageservice: ModuledetailsofpackageService,
   ) { }
   async create(data) {
-  
+
     const response = this.createpkgRepository.create(data);
 
     const packageresponse = await this.createpkgRepository.save(response);
-   
+
     let detailsdata;
     for (const value of data.modules) {
       console.log(value.details, 66789)
@@ -50,48 +50,48 @@ export class CreatepackageService {
 
 
 
-  async update(id: number,updateCreatepackageDto) {
+  async update(id: number, updateCreatepackageDto) {
     // {
-//   id: '2',
-//   userId: '1',
-//   packagename: 'heart',
-//   existlogo: 'https://intaap.s3.amazonaws.com/1687168097836_Screenshot%20from%202023-06-07%2013-45-46.png',
-//   status: 1,
-//   modules: [
-//     [Object: null prototype] { details: [Object: null prototype] },
-//     [Object: null prototype] { details: [Object: null prototype] }
-//   ],
-//   packagelogo: undefined,
-//   pkgcreate: '1'
+    //   id: '2',
+    //   userId: '1',
+    //   packagename: 'heart',
+    //   existlogo: 'https://intaap.s3.amazonaws.com/1687168097836_Screenshot%20from%202023-06-07%2013-45-46.png',
+    //   status: 1,
+    //   modules: [
+    //     [Object: null prototype] { details: [Object: null prototype] },
+    //     [Object: null prototype] { details: [Object: null prototype] }
+    //   ],
+    //   packagelogo: undefined,
+    //   pkgcreate: '1'
 
-//   } 
+    //   } 
     console.log(updateCreatepackageDto, 88889)
     console.log(id, 818889)
     const currentDateTime = new Date(); // Current date and time
-    const updateexistpackage={
+    const updateexistpackage = {
       enddate: currentDateTime,
-      validity:true,
-      ...(updateCreatepackageDto.packagelogo ? { packagelogo:updateCreatepackageDto.packagelogo} : {}),
+      validity: true,
+      ...(updateCreatepackageDto.packagelogo ? { packagelogo: updateCreatepackageDto.packagelogo } : {}),
       updatedat: currentDateTime,
       pkgupdate: updateCreatepackageDto.userId,
     }
     let packagenameexist;
-    if(updateCreatepackageDto.packagename){
-       packagenameexist= await this.createpkgRepository.findOne({where:{packagename:updateCreatepackageDto.packagename,enddate:null,validity:false}})
+    if (updateCreatepackageDto.packagename) {
+      packagenameexist = await this.createpkgRepository.findOne({ where: { packagename: updateCreatepackageDto.packagename, enddate: null, validity: false } })
     }
-    if(packagenameexist){
-      const updateresponse = await this.createpkgRepository.update({ id },updateexistpackage);
+    if (packagenameexist) {
+      const updateresponse = await this.createpkgRepository.update({ id }, updateexistpackage);
     }
-// create new one
-const newdata={
-  packagename:updateCreatepackageDto.packagename,
-  ...(updateCreatepackageDto.packagelogo ? { packagelogo:updateCreatepackageDto.packagelogo} : {packagelogo:updateCreatepackageDto.existlogo}),
-  pkgcreate:updateCreatepackageDto.userId
-}
+    // create new one
+    const newdata = {
+      packagename: updateCreatepackageDto.packagename,
+      ...(updateCreatepackageDto.packagelogo ? { packagelogo: updateCreatepackageDto.packagelogo } : { packagelogo: updateCreatepackageDto.existlogo }),
+      pkgcreate: updateCreatepackageDto.userId
+    }
     const response = this.createpkgRepository.create(newdata);
 
     const packageresponse = await this.createpkgRepository.save(response);
-   
+
     let detailsdata;
     for (const value of updateCreatepackageDto.modules) {
       console.log(value.details, 66789)
@@ -174,19 +174,40 @@ const newdata={
 
 
   async findAll() {
+    const results = await this.createpkgRepository.find({
+      relations: ['packagedetails', 'packagedetails.module', 'pkgcreate', 'pkgupdate', 'packagedetails.company'],
+    });
+
+    // Perform grouping by packagename
+    const groupedResults = results.reduce((groups, item) => {
+      const key = item.packagename;
+
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+
+      groups[key].push(item);
+
+      return groups;
+    }, {});
+
+    // Convert grouped results to an array
+    const groupedArray = Object.values(groupedResults);
+
+    return groupedArray;
+  }
+
+
+  async currentlyvalidpackageonly() {
     return await this.createpkgRepository.find({
+      where: { validity: false },
       relations: ['packagedetails', 'packagedetails.module', 'pkgcreate', 'pkgupdate', 'packagedetails.company']
     });
   }
 
-  async currentlyvalidpackageonly(){
-    return await this.createpkgRepository.find({where:{validity:false},
-      relations: ['packagedetails', 'packagedetails.module', 'pkgcreate', 'pkgupdate', 'packagedetails.company']
-    });
-  }
-
-  async findallreadyendedpackage(){
-    return await this.createpkgRepository.find({where:{validity:true},
+  async findallreadyendedpackage() {
+    return await this.createpkgRepository.find({
+      where: { validity: true },
       relations: ['packagedetails', 'packagedetails.module', 'pkgcreate', 'pkgupdate', 'packagedetails.company']
     });
   }
@@ -198,7 +219,7 @@ const newdata={
     return packagedata;
   }
 
- 
+
   async remove(id: number) {
     return `This action removes a #${id} createpackage`;
   }
