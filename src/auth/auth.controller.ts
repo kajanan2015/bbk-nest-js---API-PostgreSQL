@@ -7,7 +7,8 @@ import {
   Body,
   Get,
   Param,
-  Headers
+  Headers,
+  Put
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Request } from "express";
@@ -51,15 +52,26 @@ export class AuthController {
     };
   }
   @Post('passwordresetlink')
-  async sendpasswordresetlink(@Body() data: any) {
-    const response = await this.authService.sendpasswordresetlink(data);
+  async sendpasswordresetlink(@Body() data: any , @Req() req: Request) {
+  //  console.log(req,99909)
+    const base_url=`${req.get('origin')}/`;
+    console.log(base_url)
+    const response = await this.authService.sendpasswordresetlink(data,base_url);
     return response
   }
 
-  @Post('verifypasswordresetlink')
-  async decodemyresettoken(@Body() data: any) {
-    const response = await this.authService.decodemyresettoken(data.key);
+  @Get('verifypasswordresetlink/:key')
+  async decodemyresettoken(@Param("key") key) {
+    console.log(key,898989)
+    const response = await this.authService.decodemyresettoken(key);
+    console.log(response)
     return response;
+  }
+
+  @Put('changepassword/:id')
+  async changepassword(@Param('id') id, @Body() data: any) {
+    console.log(id)
+    return await this.authService.changepassword(id, data);
   }
 
 

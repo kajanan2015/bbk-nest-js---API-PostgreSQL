@@ -108,11 +108,11 @@ export class AuthService {
   }
 
   // send password resetlink
-  async sendpasswordresetlink(data) {
+  async sendpasswordresetlink(data,base_url){
     const accountemail = data.email;
     const checkemail = await this.activatedcheckemail(accountemail)
     if (checkemail) {
-      return await this.mailservice.sendresetlink(checkemail['email'], checkemail['id']);
+      return await this.mailservice.sendresetlink(checkemail['email'], checkemail['id'],base_url);
     }
     return "cant find account"
   }
@@ -120,6 +120,9 @@ export class AuthService {
   async decodemyresettoken(key) {
     const decoderesult = await this.mailservice.decodemyresettoken(key);
     return decoderesult;
+  }
+  async changepassword(id,data){
+    return await this.userService.changepassword(id,data)
   }
 
 }

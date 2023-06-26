@@ -13,15 +13,14 @@ export class MailService {
 
 
   // password rest link send
-  async sendresetlink(accountemail, userid) {
+  async sendresetlink(accountemail, userid,base_url) {
     const payload = {
       email: accountemail,
       id: userid
     };
 
     const token = jwt.sign(payload,process.env.passwordresetemailkey, { expiresIn: "5m" }); // Set expiration to 24 hours
-    const base_url = process.env.passwordreset_host_url
-    let link = base_url + token;
+    let link = base_url +'reset-password?token='+ token;
     console.log(token,343)
     console.log(link,232323233)
     await this.mailerService.sendMail({
@@ -81,19 +80,19 @@ export class MailService {
   }
 
   // send activation email url generate of admin
-  async send_activation_email_admin(adminemail) {
+  async send_activation_email_admin(adminemail,base_url) {
     const payload = {
       email: adminemail
     };
 
-    const token = jwt.sign(payload, process.env.activateemailkey, { expiresIn: process.env.activateemailvalidity }); // Set expiration to 24 hours
-    let url = process.env.activate_host_url + token;
-    return url;
+    const token = jwt.sign(payload, process.env.activateemailkey, { expiresIn: '24h' }); // Set expiration to 24 hours
+    let link = base_url +'verifyemail?token='+ token;
+    return link;
   }
 
   // send verify email again
-  async sendverifyemailagain(data) {
-    const link = await this.send_activation_email_admin(data.email);
+  async sendverifyemailagain(data,base_url) {
+    const link = await this.send_activation_email_admin(data.email,base_url);
     const email = data.email
     await this.mailerService.sendMail({
       to: `${data.email.trim()}`,
@@ -109,8 +108,8 @@ export class MailService {
   }
 
   // send activation email send
-  async newadminadded(adminemail, companyname, adminname, adminpassword) {
-    const link = await this.send_activation_email_admin(adminemail);
+  async newadminadded(adminemail, companyname, adminname, adminpassword,base_url) {
+    const link = await this.send_activation_email_admin(adminemail,base_url);
 
     await this.mailerService.sendMail({
       to: `${adminemail.trim()}`,

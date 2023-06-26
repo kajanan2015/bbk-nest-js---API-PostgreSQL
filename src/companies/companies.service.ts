@@ -170,7 +170,7 @@ export class CompaniesService {
     });
   }
 
-  async create(companyData) {
+  async create(companyData,base_url) {
     const existingcompanyname = await this.companyRepository.findOne({
       where: {
         companyName: companyData.companyName,
@@ -273,7 +273,7 @@ export class CompaniesService {
           adminResponse = await this.userservice.create(adminData);
 
 
-          await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password);
+          await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password,base_url);
 
           // userIds.push(adminResponse.id.toString());
           const userId = adminResponse.id.toString();
@@ -342,7 +342,7 @@ export class CompaniesService {
             };
 
             const adminResponse = await this.userservice.create(adminData);
-            await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password);
+            await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password,base_url);
 
 
             const userId = adminResponse.id.toString();
@@ -420,7 +420,7 @@ export class CompaniesService {
 
         const adminResponse = await this.userservice.create(adminData);
 
-        await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password);
+        await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password,base_url);
 
 
         const userId = adminResponse.id.toString();
@@ -868,19 +868,19 @@ export class CompaniesService {
 
     await this.companyRepository.save(company);
   }
-  async testemail() {
+  async testemail(base_url) {
     // const password = "nuwan@gmail.com";
     // const name = "nuwan";
     // const toemail = "nuwanpriyamal@gmail.com";
     // const username = "dfdfd";
-    return await this.mailservice.send_activation_email_admin('nuwanpriyamal@gmail.com')
+    return await this.mailservice.send_activation_email_admin('nuwanpriyamal@gmail.com',base_url)
     // await this.mailservice.sendcompanyCreate(password, name, toemail, username);
   }
 
 
   // send verify email
-async sendverifyemail(data){
-  return await this.mailservice.sendverifyemailagain(data)
+async sendverifyemail(data, base_url){
+  return await this.mailservice.sendverifyemailagain(data,base_url)
 }
   
 // company code check exist 0r not
