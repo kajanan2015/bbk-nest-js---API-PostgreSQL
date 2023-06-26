@@ -10,7 +10,7 @@ import { AnyFilesInterceptor } from '@nestjs/platform-express';
 @Controller('createpackage')
 export class CreatepackageController {
   constructor(private readonly createpackageService: CreatepackageService, private readonly imageUploadService: ImageUploadService,) { }
-
+// create package
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   async create(@UploadedFiles() packageImg, @Body() data) {
@@ -25,21 +25,22 @@ export class CreatepackageController {
 
     return this.createpackageService.create(passdata);
   }
-
+// find all packages
   @Get()
   async findAll() {
     return this.createpackageService.findAll();
   }
-
+// fin payment method, because entity is in their
   @Get('paymenttype')
   async findpayment() {
     return this.createpackageService.getpayementtype();
   }
+  //package  find by id
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.createpackageService.findOne(+id);
   }
-
+// update package
   @Patch()
   @UseInterceptors(AnyFilesInterceptor())
   async update(@UploadedFiles() pkgImg, @Body() updateCreatepackageDto) {
@@ -86,12 +87,12 @@ return await this.createpackageService.update(updateCreatepackageDto.id,updateCr
     console.log('fghjk')
     // return await this.createpackageService.update(updateCreatepackageDto.id,data,updateCreatepackageDto);
   }
-
+// delete package
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return this.createpackageService.remove(+id);
   }
-
+// check package name exist or not
   @Post('packagecheck')
   async checkemailexist(@Body() data: any) {
     const existing = await this.createpackageService.findPackageNameExist(data.packagename);
@@ -101,5 +102,10 @@ return await this.createpackageService.update(updateCreatepackageDto.id,updateCr
       return 'package not exist'
     }
   }
+//find packages by using package name-for history
+@Post('findpackagebyname')
+async findbypackagename(@Body() data: any){
+return await this.createpackageService.findbypackagename(data.packagename);
+}
 
 }

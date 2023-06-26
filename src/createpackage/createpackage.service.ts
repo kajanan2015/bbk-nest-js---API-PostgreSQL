@@ -237,4 +237,27 @@ export class CreatepackageService {
   async findPackageNameExist(packagename: string): Promise<Createpackage> {
     return await this.createpkgRepository.findOne({ where: { packagename:packagename} });
   }
+  async findbypackagename(packagename){
+    const results = await this.createpkgRepository.find({
+      where:{packagename:packagename},relations: ['packagedetails', 'packagedetails.module', 'pkgcreate', 'pkgupdate', 'packagedetails.company'],
+    });
+
+    // Perform grouping by packagename
+    const groupedResults = results.reduce((groups, item) => {
+      const key = item.packagename;
+
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+
+      groups[key].push(item);
+
+      return groups;
+    }, {});
+
+    // Convert grouped results to an array
+    const groupedArray = Object.values(groupedResults);
+
+    return groupedArray;
+  }
 }
