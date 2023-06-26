@@ -17,7 +17,7 @@ import { RealIP } from "nestjs-real-ip";
 
 @Controller("auth")
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
   // ip saving process added by nuwan and kanjanan
   @UseGuards(AuthGuard("local-sign-up"))
   @Post("sign-up")
@@ -51,14 +51,14 @@ export class AuthController {
     };
   }
   @Post('passwordresetlink')
-  async sendpasswordresetlink(@Body() data:any){
-const response=await this.authService.sendpasswordresetlink(data);
-return response
+  async sendpasswordresetlink(@Body() data: any) {
+    const response = await this.authService.sendpasswordresetlink(data);
+    return response
   }
 
   @Post('verifypasswordresetlink')
-  async decodemyresettoken(@Body() data:any){
-    const response=await this.authService.decodemyresettoken(data.key);
+  async decodemyresettoken(@Body() data: any) {
+    const response = await this.authService.decodemyresettoken(data.key);
     return response;
   }
 

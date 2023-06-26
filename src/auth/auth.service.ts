@@ -15,17 +15,17 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectRepository(AuthEntity)
     private readonly authRepository: Repository<AuthEntity>,
-    private readonly mailservice:MailService
-  ) {}
+    private readonly mailservice: MailService
+  ) { }
 
   async signIn(email: string, password: string): Promise<User> {
     const user = await this.userService.findByEmail(email);
-    if (! user) {
+    if (!user) {
       throw new BadRequestException('auth/account-not-found');
-      
+
     }
     const matches: boolean = await bcrypt.compare(password, user.password);
-    if (! matches) {
+    if (!matches) {
       throw new BadRequestException({
         "statusCode": 200,
         "message": "Please check your username 2 and password"
@@ -41,12 +41,12 @@ export class AuthService {
       throw new BadRequestException('auth/account-exists');
     }
 
-    
-// we assign 0 for add value to emp id column, because we use same login for employee and admin- added by nuwan
+
+    // we assign 0 for add value to emp id column, because we use same login for employee and admin- added by nuwan
     // const user: User = await this.userService.create(name, email, password,"",null,null);
     // delete user.password;
     // return user;
-    return 
+    return
   }
 
 
@@ -57,7 +57,7 @@ export class AuthService {
         res: 0,
       };
     }
-  
+
     return {
       res: 1,
     };
@@ -69,30 +69,30 @@ export class AuthService {
     if (existing) {
       return existing;
     }
-  
+
     return false;
   }
 
   async account(token: string) {
     const user = await this.jwtService.verify(token);
 
-    console.log(user,787878787787)
+    console.log(user, 787878787787)
     return {
       user
     };
   }
-// ip saving process added by nuwan and kanjanan
+  // ip saving process added by nuwan and kanjanan
   async login(user: User, ip) {
     const data = {
-      username:user.email,
-      ipAddress:ip,
-      userid:user.id
+      username: user.email,
+      ipAddress: ip,
+      userid: user.id
     };
-    console.log(user,8889898)
+    console.log(user, 8889898)
     await this.authRepository.save(data)
-    const payload = { utype: user.uType, name: user.firstName, email: user.email, sub: user.id, firstpasswordset:user.firsttimepasswordchange } ;
+    const payload = { utype: user.uType, name: user.firstName, email: user.email, sub: user.id, firstpasswordset: user.firsttimepasswordchange };
 
-    
+
     return {
       access_token: this.jwtService.sign(payload),
       payload
@@ -108,18 +108,18 @@ export class AuthService {
   }
 
   // send password resetlink
-  async sendpasswordresetlink(data){
-    const accountemail=data.email;
-    const checkemail=await this.activatedcheckemail(accountemail)
-    if(checkemail){
-      return await this.mailservice.sendresetlink(checkemail['email'],checkemail['id']);
+  async sendpasswordresetlink(data) {
+    const accountemail = data.email;
+    const checkemail = await this.activatedcheckemail(accountemail)
+    if (checkemail) {
+      return await this.mailservice.sendresetlink(checkemail['email'], checkemail['id']);
     }
-   return "cant find account"
+    return "cant find account"
   }
 
-  async decodemyresettoken(key){
-const decoderesult=await this.mailservice.decodemyresettoken(key);
-return decoderesult;
+  async decodemyresettoken(key) {
+    const decoderesult = await this.mailservice.decodemyresettoken(key);
+    return decoderesult;
   }
 
 }
