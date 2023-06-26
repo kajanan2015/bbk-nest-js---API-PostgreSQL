@@ -19,7 +19,7 @@ export class Createpackage {
     @Column("timestamp", { name: "starteddate", default: () => "CURRENT_TIMESTAMP" })
     starteddate: Date;
 
-    @Column("timestamp",  { name: "updatedat", nullable:true, default: () => null })
+    @Column("timestamp",  { name: "enddate", nullable:true, default: () => null })
     enddate: Date;
     
     @Column("boolean",{ default: false, comment: ' 0-valid, 1-ended' })
