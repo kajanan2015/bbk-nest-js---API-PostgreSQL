@@ -40,6 +40,14 @@ export class CreatepackageController {
   async findOne(@Param('id') id: string) {
     return this.createpackageService.findOne(+id);
   }
+
+
+    //package  find by name
+    @Get('findbyname/:name')
+    async findOneByname(@Param('name') name: string) {
+      return this.createpackageService.findOneByname(name);
+    }
+
 // update package
   @Patch()
   @UseInterceptors(AnyFilesInterceptor())

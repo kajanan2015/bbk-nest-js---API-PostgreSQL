@@ -94,7 +94,8 @@ export class CreatepackageService {
     const newdata = {
       packagename: updateCreatepackageDto.packagename,
       ...(updateCreatepackageDto.packagelogo ? { packagelogo: updateCreatepackageDto.packagelogo } : { packagelogo: updateCreatepackageDto.existlogo }),
-      pkgcreate: updateCreatepackageDto.userId
+      pkgcreate: updateCreatepackageDto.userId,
+      ...(updateCreatepackageDto.numberOfDays ? { numberOfDays: updateCreatepackageDto.numberOfDays } : { }),
     }
     const response = this.createpkgRepository.create(newdata);
     const packageresponse = await this.createpkgRepository.save(response);
@@ -225,7 +226,13 @@ export class CreatepackageService {
     return packagedata;
   }
 
-
+  async findOneByname(name:string){
+    const packagedata = await this.createpkgRepository.find({where:{packagename:name,enddate:null,validity:0}});
+    if (!packagedata) {
+      throw new NotFoundException(` Packagename '${name}' not found`);
+    }
+    return packagedata[0];
+  }
   async remove(id: number) {
     return `This action removes a #${id} createpackage`;
   }
