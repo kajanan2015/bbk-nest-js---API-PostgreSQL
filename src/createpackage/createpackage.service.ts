@@ -15,8 +15,8 @@ export class CreatepackageService {
     private paymenttyperepository: Repository<Paymenttype>,
     private readonly moduledetailspackageservice: ModuledetailsofpackageService,
   ) { }
-  async create(data) {
 
+  async create(data) {
     const response = this.createpkgRepository.create(data);
 
     const packageresponse = await this.createpkgRepository.save(response);
@@ -48,23 +48,7 @@ export class CreatepackageService {
 
   }
 
-
-
   async update(id: number, updateCreatepackageDto) {
-    // {
-    //   id: '2',
-    //   userId: '1',
-    //   packagename: 'heart',
-    //   existlogo: 'https://intaap.s3.amazonaws.com/1687168097836_Screenshot%20from%202023-06-07%2013-45-46.png',
-    //   status: 1,
-    //   modules: [
-    //     [Object: null prototype] { details: [Object: null prototype] },
-    //     [Object: null prototype] { details: [Object: null prototype] }
-    //   ],
-    //   packagelogo: undefined,
-    //   pkgcreate: '1'
-
-    //   } 
     console.log(updateCreatepackageDto, 88889)
     console.log(id, 818889)
     const currentDateTime = new Date(); // Current date and time
@@ -74,7 +58,8 @@ export class CreatepackageService {
       ...(updateCreatepackageDto.packagelogo ? { packagelogo: updateCreatepackageDto.packagelogo } : {}),
       updatedat: currentDateTime,
       pkgupdate: updateCreatepackageDto.userId,
-      status:2
+      status: 2,
+      customizePackageValue: updateCreatepackageDto.customizePackageValue
     }
     let packagenameexist;
     if (updateCreatepackageDto.packagename) {
@@ -95,7 +80,8 @@ export class CreatepackageService {
       packagename: updateCreatepackageDto.packagename,
       ...(updateCreatepackageDto.packagelogo ? { packagelogo: updateCreatepackageDto.packagelogo } : { packagelogo: updateCreatepackageDto.existlogo }),
       pkgcreate: updateCreatepackageDto.userId,
-      ...(updateCreatepackageDto.numberOfDays ? { numberOfDays: updateCreatepackageDto.numberOfDays } : { }),
+      ...(updateCreatepackageDto.numberOfDays ? { numberOfDays: updateCreatepackageDto.numberOfDays } : {}),
+      customizePackageValue: updateCreatepackageDto.customizePackageValue
     }
     const response = this.createpkgRepository.create(newdata);
     const packageresponse = await this.createpkgRepository.save(response);
@@ -226,8 +212,8 @@ export class CreatepackageService {
     return packagedata;
   }
 
-  async findOneByname(name:string){
-    const packagedata = await this.createpkgRepository.find({where:{packagename:name,enddate:null,validity:0}});
+  async findOneByname(name: string) {
+    const packagedata = await this.createpkgRepository.find({ where: { packagename: name, enddate: null, validity: 0 } });
     if (!packagedata) {
       throw new NotFoundException(` Packagename '${name}' not found`);
     }
@@ -242,11 +228,11 @@ export class CreatepackageService {
   }
 
   async findPackageNameExist(packagename: string): Promise<Createpackage> {
-    return await this.createpkgRepository.findOne({ where: { packagename:packagename} });
+    return await this.createpkgRepository.findOne({ where: { packagename: packagename } });
   }
-  async findbypackagename(packagename){
+  async findbypackagename(packagename) {
     const results = await this.createpkgRepository.find({
-      where:{packagename:packagename},relations: ['packagedetails', 'packagedetails.module', 'pkgcreate', 'pkgupdate', 'packagedetails.company'],
+      where: { packagename: packagename }, relations: ['packagedetails', 'packagedetails.module', 'pkgcreate', 'pkgupdate', 'packagedetails.company'],
     });
 
     // Perform grouping by packagename
