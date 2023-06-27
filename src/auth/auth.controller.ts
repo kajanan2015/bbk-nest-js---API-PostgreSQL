@@ -7,7 +7,8 @@ import {
   Body,
   Get,
   Param,
-  Headers
+  Headers,
+  Put
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { Request } from "express";
@@ -17,7 +18,7 @@ import { RealIP } from "nestjs-real-ip";
 
 @Controller("auth")
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
   // ip saving process added by nuwan and kanjanan
   @UseGuards(AuthGuard("local-sign-up"))
   @Post("sign-up")
@@ -51,15 +52,26 @@ export class AuthController {
     };
   }
   @Post('passwordresetlink')
-  async sendpasswordresetlink(@Body() data:any){
-const response=await this.authService.sendpasswordresetlink(data);
-return response
+  async sendpasswordresetlink(@Body() data: any , @Req() req: Request) {
+  //  console.log(req,99909)
+    const base_url=`${req.get('origin')}/`;
+    console.log(base_url)
+    const response = await this.authService.sendpasswordresetlink(data,base_url);
+    return response
   }
 
-  @Post('verifypasswordresetlink')
-  async decodemyresettoken(@Body() data:any){
-    const response=await this.authService.decodemyresettoken(data.key);
+  @Get('verifypasswordresetlink/:key')
+  async decodemyresettoken(@Param("key") key) {
+    console.log(key,898989)
+    const response = await this.authService.decodemyresettoken(key);
+    console.log(response)
     return response;
+  }
+
+  @Put('changepassword/:id')
+  async changepassword(@Param('id') id, @Body() data: any) {
+    console.log(id)
+    return await this.authService.changepassword(id, data);
   }
 
 

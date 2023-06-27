@@ -170,7 +170,7 @@ export class CompaniesService {
     });
   }
 
-  async create(companyData) {
+  async create(companyData,base_url) {
     const existingcompanyname = await this.companyRepository.findOne({
       where: {
         companyName: companyData.companyName,
@@ -273,7 +273,7 @@ export class CompaniesService {
           adminResponse = await this.userservice.create(adminData);
 
 
-          await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password);
+          await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password,base_url);
 
           // userIds.push(adminResponse.id.toString());
           const userId = adminResponse.id.toString();
@@ -342,7 +342,7 @@ export class CompaniesService {
             };
 
             const adminResponse = await this.userservice.create(adminData);
-            await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password);
+            await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password,base_url);
 
 
             const userId = adminResponse.id.toString();
@@ -420,7 +420,7 @@ export class CompaniesService {
 
         const adminResponse = await this.userservice.create(adminData);
 
-        await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password);
+        await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password,base_url);
 
 
         const userId = adminResponse.id.toString();
@@ -456,9 +456,13 @@ export class CompaniesService {
     }
 
     await this.systemcodeService.update(response.id, newstartvalue);
-
+    const trialpackagedata= await this.pkgrepository.findOne({where:{packagename:"Trial",validity:0,enddate:null},relations:['packagedetails']})
+console.log(trialpackagedata,56)
+dataCompany.package=trialpackagedata.packagedetails;
     const newCompany = await this.companyRepository.create(dataCompany);
     const responsesave = await this.companyRepository.save(newCompany);
+console.log(dataCompany,453)
+console.log(newCompany,43534)
     await this.mailservice.companycreationsuccess(dataCompany.companyEmail, "adminemail", "adminname", dataCompany.companyName, process.env.main_url);
     if (dataCompany.companyIdentifier == "maincompany") {
       const query = `
@@ -792,6 +796,9 @@ export class CompaniesService {
   async getcontractagreement(id) {
     return await this.companyRepository.findOne(id);
   }
+
+
+
   async assignpackage(id, data) {
     console.log(id, 77);
     console.log(data.package, 88);
@@ -868,19 +875,19 @@ export class CompaniesService {
 
     await this.companyRepository.save(company);
   }
-  async testemail() {
+  async testemail(base_url) {
     // const password = "nuwan@gmail.com";
     // const name = "nuwan";
     // const toemail = "nuwanpriyamal@gmail.com";
     // const username = "dfdfd";
-    return await this.mailservice.send_activation_email_admin('nuwanpriyamal@gmail.com')
+    return await this.mailservice.send_activation_email_admin('nuwanpriyamal@gmail.com',base_url)
     // await this.mailservice.sendcompanyCreate(password, name, toemail, username);
   }
 
 
   // send verify email
-async sendverifyemail(data){
-  return await this.mailservice.sendverifyemailagain(data)
+async sendverifyemail(data, base_url){
+  return await this.mailservice.sendverifyemailagain(data,base_url)
 }
   
 // company code check exist 0r not

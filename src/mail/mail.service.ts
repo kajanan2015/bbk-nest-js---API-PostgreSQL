@@ -9,49 +9,51 @@ import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class MailService {
-  constructor(private mailerService: MailerService,) {}
+  constructor(private mailerService: MailerService,) { }
 
 
-// password rest link send
-async sendresetlink(accountemail,userid){
-  const payload = {
-    email:accountemail,
-    id:userid
-  };
+  // password rest link send
+  async sendresetlink(accountemail, userid,base_url) {
+    const payload = {
+      email: accountemail,
+      id: userid
+    };
 
-  const token = jwt.sign(payload, process.env.passwordresetemailkey, { expiresIn: process.env.passwordresetvalidity }); // Set expiration to 24 hours
-  let url=process.env.passwordreset_host_url+token;
+    const token = jwt.sign(payload,process.env.passwordresetemailkey, { expiresIn: "5m" }); // Set expiration to 24 hours
+    let link = base_url +'reset-password?token='+ token;
+    console.log(token,343)
+    console.log(link,232323233)
+    await this.mailerService.sendMail({
+      to: accountemail.trim(),
+      from: "noreply@hexagonasia.com", // override default from
+      subject: `Password Reset Link`,
+      template: "./resentlink", // `.hbs` extension is appended automatically
+      context: {
+        accountemail,
+        link
 
-  await this.mailerService.sendMail({
-    to: accountemail.trim(),
-    from: "noreply@hexagonasia.com", // override default from
-    subject: `Password Reset Link`,
-    template: "./resetlink", // `.hbs` extension is appended automatically
-    context: {
-     accountemail,
-     url
+      }
+    });
+    return 'success'
+  }
 
-    }});
-  return 'success'
-}
+  // check reset link validity
+  async decodemyresettoken(key) {
+    try {
+      const decoded = jwt.verify(key, process.env.passwordresetemailkey);
+      return decoded;
+    } catch (error) {
+      if (error.name === 'TokenExpiredError') {
+        // Handle expired token error
+        return 'Expired token';
 
- // check reset link validity
- async decodemyresettoken(key){
-  try {
-    const decoded = jwt.verify(key, process.env.passwordresetemailkey);
-    return decoded;
-  } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      // Handle expired token error
-      return 'Expired token';
-      
-    } else {
-      // Handle other verification errors
-      return 'Token verification failed';
-    
+      } else {
+        // Handle other verification errors
+        return 'Token verification failed';
+
+      }
     }
   }
-}
 
 
 
@@ -60,54 +62,56 @@ async sendresetlink(accountemail,userid){
 
 
   // check active url validity
-async decodemyactivatetoken(key){
-  try {
-    const decoded = jwt.verify(key, process.env.activateemailkey);
-    return decoded;
-  } catch (error) {
-    if (error.name === 'TokenExpiredError') {
-      // Handle expired token error
-      return 'Expired token';
-      
-    } else {
-      // Handle other verification errors
-      return 'Token verification failed';
-    
+  async decodemyactivatetoken(key) {
+    try {
+      const decoded = jwt.verify(key, process.env.activateemailkey);
+      return decoded;
+    } catch (error) {
+      if (error.name === 'TokenExpiredError') {
+        // Handle expired token error
+        return 'Expired token';
+
+      } else {
+        // Handle other verification errors
+        return 'Token verification failed';
+
+      }
     }
   }
-}
 
-// send activation email url generate of admin
-async send_activation_email_admin(adminemail){
-  const payload = {
-    email:adminemail
-  };
+  // send activation email url generate of admin
+  async send_activation_email_admin(adminemail,base_url) {
+    const payload = {
+      email: adminemail
+    };
 
-  const token = jwt.sign(payload, process.env.activateemailkey, { expiresIn: process.env.activateemailvalidity }); // Set expiration to 24 hours
-  let url=process.env.activate_host_url+token;
-  return url;
-} 
+    const token = jwt.sign(payload, process.env.activateemailkey, { expiresIn: '24h' }); // Set expiration to 24 hours
+    let link = base_url +'verifyemail?token='+ token;
+    return link;
+  }
 
-// send verify email again
-async sendverifyemailagain(data){
-  const link = await this.send_activation_email_admin(data.email);
-  const email=data.email
-   await this.mailerService.sendMail({
-     to: `${data.email.trim()}`,
-     from: "noreply@hexagonasia.com", // override default from
-     subject: ` Welcome to BBK portal- Activaye account`,
-     template: "./newactivateemail", // `.hbs` extension is appended automatically
-     context: {
-      //  data.name,
-      email,
-       link
-     }});
- }
+  // send verify email again
+  async sendverifyemailagain(data,base_url) {
+    const link = await this.send_activation_email_admin(data.email,base_url);
+    const email = data.email
+    await this.mailerService.sendMail({
+      to: `${data.email.trim()}`,
+      from: "noreply@hexagonasia.com", // override default from
+      subject: ` Welcome to BBK portal- Activaye account`,
+      template: "./newactivateemail", // `.hbs` extension is appended automatically
+      context: {
+        //  data.name,
+        email,
+        link
+      }
+    });
+    return "success"
+  }
 
-// send activation email send
-  async newadminadded(adminemail,companyname,adminname,adminpassword){
-   const link = await this.send_activation_email_admin(adminemail);
-   
+  // send activation email send
+  async newadminadded(adminemail, companyname, adminname, adminpassword,base_url) {
+    const link = await this.send_activation_email_admin(adminemail,base_url);
+
     await this.mailerService.sendMail({
       to: `${adminemail.trim()}`,
       from: "noreply@hexagonasia.com", // override default from
@@ -119,86 +123,92 @@ async sendverifyemailagain(data){
         adminpassword,
         adminemail,
         link
-      }});
-  }
-// after succefully creation company send email to company email address defaul traial package is in their
-  async companycreationsuccess(companyemail,adminemail,adminname,companyname,link){
-    await this.mailerService.sendMail({
-          to: companyemail.trim(),
-          from: "noreply@hexagonasia.com", // override default from
-          subject: `Congratulation for Registering to BBK Application`,
-          template: "./trialpackagecreate", // `.hbs` extension is appended automatically
-          context: {
-            adminname,
-            adminemail,
-            link,
-            companyname
-
-          }});
-    }
-//  send payment link for added packages
-  async trialpackageadded(companyemail,adminemail,adminname,companyname,link){
-    await this.mailerService.sendMail({
-          to: companyemail.trim(),
-          from: "noreply@hexagonasia.com", // override default from
-          subject: `Continue Your Payemnts`,
-          template: "./packagepaymentlink", // `.hbs` extension is appended automatically
-          context: {
-            link,
-            companyname
-
-          }});
-    }
-// sub company creation send email to parent company
-    async shareaccesstochildcompany(adminemail,adminname,companyname,parentcompanyname){
-      await this.mailerService.sendMail({
-            to: adminemail.trim(),
-            from: "noreply@hexagonasia.com", // override default from
-            subject: `Access Granted: Welcome to ${companyname}`,
-            template: "./shareaccesstochildofcmpanies", // `.hbs` extension is appended automatically
-            context: {
-              adminname,
-              companyname,
-              parentcompanyname
-            }});
       }
-// update admin user credentials
-      async updateemailforcompanydata(adminemail,companyname){
-        await this.mailerService.sendMail({
-              to: adminemail.trim(),
-              from: "noreply@hexagonasia.com", // override default from
-              subject: `User Credentials Updated ${companyname}`,
-              template: "./updateemailforcompanyadmin", // `.hbs` extension is appended automatically
-              context: {
-                companyname,
-              }});
-        }
-  // send email after register employee
-        async sendemailtoemployeeregistration(employeeemail,companyname,employeename,employeepassword,employeeusername){
-          await this.mailerService.sendMail({
-                to: employeeemail.trim(),
-                from: "noreply@hexagonasia.com", // override default from
-                subject: `Employee Registration ${companyname}`,
-                template: "./employeeregistration", // `.hbs` extension is appended automatically
-                context: {
-                  employeename,
-                  companyname,
-                  employeeusername,
-                  employeepassword,
+    });
+  }
+  // after succefully creation company send email to company email address defaul traial package is in their
+  async companycreationsuccess(companyemail, adminemail, adminname, companyname, link) {
+    await this.mailerService.sendMail({
+      to: companyemail.trim(),
+      from: "noreply@hexagonasia.com", // override default from
+      subject: `Congratulation for Registering to BBK Application`,
+      template: "./trialpackagecreate", // `.hbs` extension is appended automatically
+      context: {
+        adminname,
+        adminemail,
+        link,
+        companyname
 
-                }});
-          }
-    
-      //   async sendcompanyCreateNew(toemail,companyname){
-      // await this.mailerService.sendMail({
-      //       to: toemail.trim(),
-      //       from: "noreply@hexagonasia.com", // override default from
-      //       subject: `Login Credentials for BBK Application`,
-      //       template: "./companyconfirmationnew", // `.hbs` extension is appended automatically
-      //       context: {
-      //         companyname
-      //       }});
-      // }
+      }
+    });
+  }
+  //  send payment link for added packages
+  async trialpackageadded(companyemail, adminemail, adminname, companyname, link) {
+    await this.mailerService.sendMail({
+      to: companyemail.trim(),
+      from: "noreply@hexagonasia.com", // override default from
+      subject: `Continue Your Payemnts`,
+      template: "./packagepaymentlink", // `.hbs` extension is appended automatically
+      context: {
+        link,
+        companyname
+
+      }
+    });
+  }
+  // sub company creation send email to parent company
+  async shareaccesstochildcompany(adminemail, adminname, companyname, parentcompanyname) {
+    await this.mailerService.sendMail({
+      to: adminemail.trim(),
+      from: "noreply@hexagonasia.com", // override default from
+      subject: `Access Granted: Welcome to ${companyname}`,
+      template: "./shareaccesstochildofcmpanies", // `.hbs` extension is appended automatically
+      context: {
+        adminname,
+        companyname,
+        parentcompanyname
+      }
+    });
+  }
+  // update admin user credentials
+  async updateemailforcompanydata(adminemail, companyname) {
+    await this.mailerService.sendMail({
+      to: adminemail.trim(),
+      from: "noreply@hexagonasia.com", // override default from
+      subject: `User Credentials Updated ${companyname}`,
+      template: "./updateemailforcompanyadmin", // `.hbs` extension is appended automatically
+      context: {
+        companyname,
+      }
+    });
+  }
+  // send email after register employee
+  async sendemailtoemployeeregistration(employeeemail, companyname, employeename, employeepassword, employeeusername) {
+    await this.mailerService.sendMail({
+      to: employeeemail.trim(),
+      from: "noreply@hexagonasia.com", // override default from
+      subject: `Employee Registration ${companyname}`,
+      template: "./employeeregistration", // `.hbs` extension is appended automatically
+      context: {
+        employeename,
+        companyname,
+        employeeusername,
+        employeepassword,
+
+      }
+    });
+  }
+
+  //   async sendcompanyCreateNew(toemail,companyname){
+  // await this.mailerService.sendMail({
+  //       to: toemail.trim(),
+  //       from: "noreply@hexagonasia.com", // override default from
+  //       subject: `Login Credentials for BBK Application`,
+  //       template: "./companyconfirmationnew", // `.hbs` extension is appended automatically
+  //       context: {
+  //         companyname
+  //       }});
+  // }
   // async senduserCreate(
   //   password: string,
   //   name: string,
@@ -230,7 +240,7 @@ async sendverifyemailagain(data){
   //       },
   //     });
   //   }
-    
+
   // }
 
 
@@ -266,13 +276,13 @@ async sendverifyemailagain(data){
   //       },
   //     });
   //   }
-    
+
   // }
 
   async sendCustomerConfirmation() {
 
 
-    
+
     await this.mailerService.sendMail({
       to: "nuwanpriyamal@gmail.com ",
       from: "nuwan@intaap.com", // override default from

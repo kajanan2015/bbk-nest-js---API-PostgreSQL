@@ -173,7 +173,10 @@ export class CompaniesController {
   @UseGuards(AuthGuard('jwt'))
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
-  async create(@UploadedFiles() file, @Body() companyData) {
+  async create(@UploadedFiles() file, @Body() companyData, @Req() req) {
+    
+    const base_url=`${req.get('origin')}/`;
+    console.log(base_url)
     console.log(companyData, 1234567890)
     const filename = await this.imageUploadService.uploadcompany(file, "body");
 
@@ -189,7 +192,7 @@ export class CompaniesController {
       file: filesArray,
     }
     console.log(data, 1111111111111111)
-    return await this.service.create(data);
+    return await this.service.create(data,base_url);
     //  return filename
 
   }
@@ -308,9 +311,11 @@ export class CompaniesController {
   // mail testing
   @UseGuards(AuthGuard('jwt'))
   @Post('sendemail')
-  async sendemail(@Body() data) {
+  async sendemail(@Body() data ,  @Req() req) {
+    const base_url=`${req.get('origin')}/`;
+    console.log(base_url)
     // return await this.service.testemail();
-    return await this.service.sendverifyemail(data);
+    return await this.service.sendverifyemail(data,base_url);
   }
   
 
