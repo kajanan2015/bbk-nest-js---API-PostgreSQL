@@ -6,26 +6,26 @@ import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entit
 @Entity()
 export class Createpackage {
     @PrimaryGeneratedColumn()
-    id:number;
+    id: number;
 
-    @Column("varchar",{ nullable: true, default: () => null})
-    packagename:string;
-    
-    @Column("varchar",{ nullable: true, default: () => null})
+    @Column("varchar", { nullable: true, default: () => null })
+    packagename: string;
+
+    @Column("varchar", { nullable: true, default: () => null })
     packagelogo: string;
 
-    @Column("varchar",{ nullable: true, default: () => null})
-    numberOfDays:string;
+    @Column("varchar", { nullable: true, default: () => null })
+    numberOfDays: string;
 
     @Column("timestamp", { name: "starteddate", default: () => "CURRENT_TIMESTAMP" })
     starteddate: Date;
 
-    @Column("timestamp",  { name: "enddate", nullable:true, default: () => null })
+    @Column("timestamp", { name: "enddate", nullable: true, default: () => null })
     enddate: Date;
-    
-    @Column("boolean",{ default: false, comment: ' 0-valid, 1-ended' })
-    validity:boolean
-    
+
+    @Column("boolean", { default: false, comment: ' 0-valid, 1-ended' })
+    validity: boolean
+
     @Column("tinyint", { default: 1, comment: ' 1-active, 2-inactive, 3-deactivate' })
     status: number;
 
@@ -36,13 +36,15 @@ export class Createpackage {
     @JoinColumn({ name: 'createdBy' })
     pkgcreate: User;
 
-  
+
     @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
     createdat: Date;
-  
-    @Column("timestamp", { name: "updatedat", nullable:true, default: () => null })
+
+    @Column("timestamp", { name: "updatedat", nullable: true, default: () => null })
     updatedat: Date;
 
+    @Column("boolean", { default: false, comment: ' 0-false, 1-true' })
+    customizePackageValue: boolean
 
     @ManyToOne(() => User, usercretae => usercretae.pkgupdateby)
     @JoinColumn({ name: 'updatedBy' })

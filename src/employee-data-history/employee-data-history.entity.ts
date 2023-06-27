@@ -36,4 +36,7 @@ export class EmployeeDataHistory {
 
     @Column({ type: 'boolean', default: true })
     status: boolean;
+
+    @Column({ type: 'boolean', default: false })
+    active: boolean;
 }

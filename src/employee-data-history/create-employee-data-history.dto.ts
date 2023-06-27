@@ -11,5 +11,6 @@ export class CreateEmployeeDataHistoryDto {
     startDate:Date;
     endDate:Date;
     editedDate: Date;
+    active:boolean;
     status:boolean;
 }
