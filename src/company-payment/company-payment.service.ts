@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CompanyPayment } from './company-payment.entity';
 import { Repository } from 'typeorm';
 import { MailService } from 'src/mail/mail.service';
+import { CompaniesEntity } from 'src/companies/companies.entity';
 @Injectable()
 export class CompanyPaymentService {
 
@@ -12,10 +13,14 @@ export class CompanyPaymentService {
     @InjectRepository(CompanyPayment)
     private companyPaymentRepository: Repository<CompanyPayment>,
     private readonly mailservice: MailService,
+    @InjectRepository(CompaniesEntity)
+    private companyRepository: Repository<CompaniesEntity>
   ) { }
-  async create(createCompanyPaymentDto: CreateCompanyPaymentDto) {
+  async create(createCompanyPaymentDto) {
+    await this.companyRepository.update(createCompanyPaymentDto.companyId, {
+      compstatus: 3,
+    })
     const response = this.companyPaymentRepository.create(createCompanyPaymentDto);
-    console.log(response, 666)
     await this.companyPaymentRepository.save(response);
     return await this.mailservice.trialpackageadded(createCompanyPaymentDto.sendedContact, "adminemail", "adminname", "", createCompanyPaymentDto.paymentLink);
   }
