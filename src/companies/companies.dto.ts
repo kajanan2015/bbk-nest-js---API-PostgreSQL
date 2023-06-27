@@ -7,6 +7,7 @@ import { Createpackage } from "src/createpackage/createpackage.entity";
 import { Createmodule } from "src/createmodule/createmodule.entity";
 import { Moduledetailsofpackage } from "src/moduledetailsofpackage/moduledetailsofpackage.entity";
 import { Paymenttype } from "src/createpackage/paymenttype.entity";
+import { Companypackagerow } from "src/companypackagerow/companypackagerow.entity";
 export interface CompaniesDTO {
   
 id: number;
@@ -57,4 +58,5 @@ userId:number
 module: Createmodule[];
 package:Moduledetailsofpackage[];
 contractagreement: number;
+companypackagerow: Companypackagerow[];
 }

@@ -2,6 +2,7 @@ import { BeforeInsert, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyTo
 import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetailsofpackage.entity';
 import { User } from 'src/user/user.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
+import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entity';
 @Entity()
 export class Createpackage {
     @PrimaryGeneratedColumn()
@@ -29,7 +30,7 @@ export class Createpackage {
     status: number;
 
     @OneToMany(()=>Moduledetailsofpackage, packagedetails => packagedetails.packages,{cascade:true})
-    packagedetails:Moduledetailsofpackage[]
+    packagedetails:Moduledetailsofpackage[];
 
     @ManyToOne(() => User, usercretae => usercretae.pkgcreatedby)
     @JoinColumn({ name: 'createdBy' })
@@ -47,6 +48,7 @@ export class Createpackage {
     @JoinColumn({ name: 'updatedBy' })
     pkgupdate: User;
 
-    
+    @OneToMany(()=>Companypackagerow, companypackage => companypackage.packages,{cascade:true})
+    companypackagerow:Companypackagerow[];
 
 }

@@ -346,4 +346,12 @@ export class CompaniesController {
   async activateadmin(@Param('key') key: string){
     return await this.service.decodemyactivatetoken(key);
   }
+// genertae payment link
+  @UseGuards(AuthGuard('jwt'))
+  @Post('generatepaymentlink/:companyid')
+  async generatepaymentlink(@Param('companyid') companyid: string, @Req() req) {
+    const base_url=`${req.get('origin')}/`;
+    return await this.service.generatepaymentlink(companyid,base_url);
+  }
+
 }

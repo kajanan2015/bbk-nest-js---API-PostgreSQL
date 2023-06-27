@@ -12,6 +12,20 @@ export class MailService {
   constructor(private mailerService: MailerService,) { }
 
 
+// generate paymentlink
+async generatepaymentlink(companyemail, companyid,base_url,paymentid) {
+  const payload = {
+    email: companyemail,
+    id: companyid,
+    paymenttokenid:paymentid
+  };
+
+  const token = jwt.sign(payload,process.env.paymentlinkgeneratekey, { expiresIn: "48h" }); // Set expiration to 24 hours
+  let link = base_url +'paymentpackage?token='+ token;
+  
+  return link
+}
+
   // password rest link send
   async sendresetlink(accountemail, userid,base_url) {
     const payload = {
@@ -57,10 +71,6 @@ export class MailService {
 
 
 
-
-
-
-
   // check active url validity
   async decodemyactivatetoken(key) {
     try {
@@ -94,7 +104,7 @@ export class MailService {
   async sendverifyemailagain(data,base_url) {
     const link = await this.send_activation_email_admin(data.email,base_url);
     const email = data.email
-    await this.mailerService.sendMail({
+    const response=await this.mailerService.sendMail({
       to: `${data.email.trim()}`,
       from: "noreply@hexagonasia.com", // override default from
       subject: ` Welcome to BBK portal- Activaye account`,

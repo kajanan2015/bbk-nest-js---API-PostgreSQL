@@ -925,5 +925,14 @@ async sendverifyemail(data, base_url){
    
   }
 
+  async generatepaymentlink(companyId,base_url){
+
+    let companyemail='';
+    let paymentid='';
+
+    await this.companyRepository.findOne(companyId)
+    return await this.mailservice.generatepaymentlink(companyemail, companyId,base_url,paymentid)
+  }
+
 
 }

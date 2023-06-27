@@ -11,7 +11,7 @@ import { Createpackage } from 'src/createpackage/createpackage.entity';
 import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetailsofpackage.entity';
 import { Paymenttype } from 'src/createpackage/paymenttype.entity';
 import { CustomizeTable } from 'src/customize-table/customize-table.entity';
-
+import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entity';
 
 
 @Entity('company')
@@ -171,6 +171,8 @@ export class CompaniesEntity {
   billing: Paymenttype;
 
   @OneToMany(()=>CustomizeTable,customizeTable=>customizeTable.company, ({cascade:true}))
-  usertablecompany: CustomizeTable;
+  usertablecompany: CustomizeTable[];
   
+  @OneToMany(()=>Companypackagerow,companypackagerow=>companypackagerow.company, ({cascade:true}))
+  companypackagerow: Companypackagerow[];
 }

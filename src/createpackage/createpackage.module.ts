@@ -11,9 +11,10 @@ import { ModuledetailsofpackageService } from 'src/moduledetailsofpackage/module
 import { User } from 'src/user/user.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
 import { Paymenttype } from './paymenttype.entity';
+import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entity';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([Createpackage,Createmodule,Moduledetailsofpackage,User, CompaniesEntity,Paymenttype]),ModuledetailsofpackageModule],
+  imports:[TypeOrmModule.forFeature([Createpackage,Createmodule,Moduledetailsofpackage,User, CompaniesEntity,Paymenttype,Companypackagerow]),ModuledetailsofpackageModule],
   controllers: [CreatepackageController],
   providers: [CreatepackageService,ImageUploadService,ModuledetailsofpackageService]
 })
