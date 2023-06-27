@@ -23,6 +23,9 @@ export class EmployeeDocument {
     @Column({ type: 'boolean', default:true})
     status: Boolean;
 
+    @Column({ type: 'boolean', default:true})
+    active: Boolean;
+
     @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
     createdat: Date;
 

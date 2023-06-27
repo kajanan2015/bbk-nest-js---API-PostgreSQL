@@ -27,7 +27,7 @@ export class EmployeeModuleService {
     private readonly mailservice: MailService,
     @InjectRepository(EmployeeDataHistory)
     private employeedatahistoryrepo: Repository<EmployeeDataHistory>,
-    private readonly userservice:UserService
+    private readonly userservice: UserService
   ) { }
 
   async create(createEmployeeModuleDto) {
@@ -89,29 +89,29 @@ export class EmployeeModuleService {
       const res = await this.employeeModuleRepository.save(response);
 
       const documents = createEmployeeModuleDto['filenames'];
-    
-    // //  to create account login account for user
-    // const employeerandompassword = randomstring.generate({
-    //   length: 8,
-    //   charset: 'alphanumeric',
-    //   readable: true,
-    //   symbols: true,
-    // });
-    //   const employeeaccountcreationdata = {
-    //     firstName: createEmployeeModuleDto.firstName,
-    //     lastName: createEmployeeModuleDto.lastName,
-    //     uType: "EMPLOYEE",
-    //     profilePic: createEmployeeModuleDto.profilePic,
-    //     profilePicThumb:createEmployeeModuleDto.profilePicThumb,
-    //     password: employeerandompassword,
-    //     phone: createEmployeeModuleDto.mobilePhone,
-    //     email: createEmployeeModuleDto.employeeId,
-    //   };
 
-    //   const adminResponse = await this.userservice.create(employeeaccountcreationdata);
+      // //  to create account login account for user
+      // const employeerandompassword = randomstring.generate({
+      //   length: 8,
+      //   charset: 'alphanumeric',
+      //   readable: true,
+      //   symbols: true,
+      // });
+      //   const employeeaccountcreationdata = {
+      //     firstName: createEmployeeModuleDto.firstName,
+      //     lastName: createEmployeeModuleDto.lastName,
+      //     uType: "EMPLOYEE",
+      //     profilePic: createEmployeeModuleDto.profilePic,
+      //     profilePicThumb:createEmployeeModuleDto.profilePicThumb,
+      //     password: employeerandompassword,
+      //     phone: createEmployeeModuleDto.mobilePhone,
+      //     email: createEmployeeModuleDto.employeeId,
+      //   };
 
-    // // added for send email and password to the user 
-    // await this.mailservice.sendemailtoemployeeregistration(createEmployeeModuleDto.email,"ABC",createEmployeeModuleDto.firstName,employeerandompassword,createEmployeeModuleDto.employeeId)
+      //   const adminResponse = await this.userservice.create(employeeaccountcreationdata);
+
+      // // added for send email and password to the user 
+      // await this.mailservice.sendemailtoemployeeregistration(createEmployeeModuleDto.email,"ABC",createEmployeeModuleDto.firstName,employeerandompassword,createEmployeeModuleDto.employeeId)
 
 
       if (documents.length > 0) {
@@ -302,19 +302,69 @@ export class EmployeeModuleService {
   }
 
   async updateWithHistory(id: string, UpdateEmployeeModuleDto) {
-    // const data = {
-    //   firstName: UpdateEmployeeModuleDto.data.firstName,
-    //   lastName: UpdateEmployeeModuleDto.data.lastName,
-    //   dob: UpdateEmployeeModuleDto.data.dob,
-    //   gender: UpdateEmployeeModuleDto.data.gender,
-    //   maritalStatus: UpdateEmployeeModuleDto.data.maritalStatus
-    // }
 
-    const data = {
+    let data = {
       ...UpdateEmployeeModuleDto.data
     }
 
-    
+    let { visaDoc, ...dataWithoutDoc } = data
+
+    const employeerowid = await this.employeeModuleRepository.findOne({ where: { id: id } });
+
+    await this.employeeModuleRepository.update({ id: +id }, dataWithoutDoc);
+
+    const documents = UpdateEmployeeModuleDto['filenames'];
+
+    for (const item of documents) {
+      let docType = '';
+      if (item.hasOwnProperty("visaDoc") || item.hasOwnProperty("visaDoc[]")) {
+        docType = "visaDoc";
+      } else if (item.hasOwnProperty("empProvidedCopy") || item.hasOwnProperty("empProvidedCopy[]")) {
+        docType = "empProvidedCopy";
+      } else if (item.hasOwnProperty("officialDoc") || item.hasOwnProperty("officialDoc[]")) {
+        docType = "officialDoc";
+      } else if (item.hasOwnProperty("contractDoc") || item.hasOwnProperty("contractDoc[]")) {
+        docType = "contractDoc";
+      } else if (item.hasOwnProperty("offerLetterDoc") || item.hasOwnProperty("offerLetterDoc[]")) {
+        docType = "offerLetterDoc";
+      } else if (item.hasOwnProperty("refdoc") || item.hasOwnProperty("refdoc[]")) {
+        docType = "refdoc";
+      } else if (item.hasOwnProperty("drivingLicenceDoc") || item.hasOwnProperty("drivingLicenceDoc[]")) {
+        docType = "drivingLicenceDoc";
+      } else if (item.hasOwnProperty("tachoDoc") || item.hasOwnProperty("tachoDoc[]")) {
+        docType = "tachoDoc";
+      } else if (item.hasOwnProperty("cpcCardDoc") || item.hasOwnProperty("cpcCardDoc[]")) {
+        docType = "cpcCardDoc";
+      } else if (item.hasOwnProperty("crbCardDoc") || item.hasOwnProperty("crbCardDoc[]")) {
+        docType = "crbCardDoc";
+      }
+
+      this.employeeDocumentRepository
+        .createQueryBuilder()
+        .update(EmployeeDocument)
+        .set({ active: 0 })
+        .where('empid = :id', { id })
+        .andWhere('docType = :docType', { docType })
+        .execute();
+    }
+
+    if (documents.length > 0) {
+      for (let document in documents) {
+        const docEntry = documents[document];
+        for (const doc in docEntry as {}) {
+          const docType = doc;
+          const docUrls = docEntry[doc]
+
+          const empdocs = []
+          for (const url in docUrls as {}) {
+            empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +employeerowid.id })
+          };
+          await this.employeedocumentservice.create(empdocs)
+          data = { ...data, [docType.replace('[]', '')]: empdocs }
+
+        }
+      }
+    }
 
     // Find the previous record of the employee
     const previousRecord = await this.employeedatahistoryrepo.findOne({
@@ -335,13 +385,23 @@ export class EmployeeModuleService {
     const response = await this.employeedatahistoryrepo.create({ ...UpdateEmployeeModuleDto, data: JSON.stringify(data) });
     const res = await this.employeedatahistoryrepo.save(response);
 
-    await this.employeeModuleRepository.update({ id: +id }, data);
     // added by nuwan for mail send employeee password should be random generate one add random string
     // await this.mailservice.sendemailtoemployeeregistration(employeeemail,companyname,employeename,employeepassword,employeeusername)
+
     return await this.employeeModuleRepository.findOne({
-      where: { id: id },
+      where: {
+        id: id,
+      },
       relations: ['documents']
     });
+
+    // return await this.employeeModuleRepository
+    // .createQueryBuilder('employeeModule')
+    // .leftJoinAndSelect('employeeModule.documents', 'documents')
+    // .leftJoinAndSelect('documents.employee', 'employee')
+    // .where('employeeModule.id = :id', { id })
+    // .andWhere('documents.active = :isActive', { isActive: true })
+    // .getOne();
   }
 
   remove(id: number) {
