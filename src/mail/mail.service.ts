@@ -105,6 +105,7 @@ export class MailService {
         link
       }
     });
+    return "success"
   }
 
   // send activation email send
