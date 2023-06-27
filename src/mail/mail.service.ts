@@ -26,6 +26,24 @@ async generatepaymentlink(companyemail, companyid,base_url,paymentid) {
   return link
 }
 
+
+// payment link decode
+async verifypaymentdetailstokendecode(key){
+  try {
+    const decoded = jwt.verify(key, process.env.paymentlinkgeneratekey);
+    return decoded;
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      // Handle expired token error
+      return 'Expired token';
+
+    } else {
+      // Handle other verification errors
+      return 'Token verification failed';
+
+    }
+  }
+}
   // password rest link send
   async sendresetlink(accountemail, userid,base_url) {
     const payload = {

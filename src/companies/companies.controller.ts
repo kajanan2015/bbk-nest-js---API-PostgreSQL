@@ -354,4 +354,13 @@ export class CompaniesController {
     return await this.service.generatepaymentlink(companyid,base_url);
   }
 
+  @Get('verifypaymentdetailstoken/:token')
+  async verifypaymentdetailstoken(@Param('token') token){
+return await this.service.verifypaymentdetailstoken(token);
+  }
+
+  @Get('paiddataupdate/:token')
+  async paiddataupdate(@Param('token') token){
+return await this.service.paiddataupdate(token);
+  }
 }

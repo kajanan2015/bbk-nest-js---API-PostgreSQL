@@ -59,4 +59,5 @@ module: Createmodule[];
 package:Moduledetailsofpackage[];
 contractagreement: number;
 companypackagerow: Companypackagerow[];
+paymentlinkotp: string;
 }

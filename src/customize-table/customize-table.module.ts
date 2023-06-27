@@ -23,10 +23,12 @@ import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetails
 import { SystemCode } from 'src/system-code/system-code.entity';
 import { Paymenttype } from 'src/createpackage/paymenttype.entity';
 import { ModuledetailsofpackageService } from 'src/moduledetailsofpackage/moduledetailsofpackage.service';
+import { CompanypackagerowService } from 'src/companypackagerow/companypackagerow.service';
+import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entity';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([CustomizeTable, User, CompaniesEntity, PermissionRoleEntity, PagePermissionEntity, CompanyDocument, Createmodule, Createpackage, Moduledetailsofpackage, SystemCode, Paymenttype])],
+  imports:[TypeOrmModule.forFeature([Companypackagerow,CustomizeTable, User, CompaniesEntity, PermissionRoleEntity, PagePermissionEntity, CompanyDocument, Createmodule, Createpackage, Moduledetailsofpackage, SystemCode, Paymenttype])],
   controllers: [CustomizeTableController],
-  providers: [CustomizeTableService, UserService, CompaniesService, PermissionRoleService, PagePermissionService, CompanyDocumentService, SystemCodeService, ImageUploadService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService]
+  providers: [CustomizeTableService, UserService, CompaniesService, PermissionRoleService, PagePermissionService, CompanyDocumentService, SystemCodeService, ImageUploadService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService,CompanypackagerowService]
 })
 export class CustomizeTableModule {}

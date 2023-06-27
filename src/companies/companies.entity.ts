@@ -106,7 +106,7 @@ export class CompaniesEntity {
   @Column("int", { name: "deactivatedby", default: null })
   deactivatedby: number;
 
-  @Column("bigint", { default: 0, comment: ' 0-trial, 1-active, 2-deactivate,3-payment pending,4-expired' })
+  @Column("bigint", { default: 0, comment: ' 0-trial, 1-active, 2-deactivate,3-payment pending,4-expired, 5-paid' })
   compstatus: number;
 
 
@@ -175,4 +175,7 @@ export class CompaniesEntity {
   
   @OneToMany(()=>Companypackagerow,companypackagerow=>companypackagerow.company, ({cascade:true}))
   companypackagerow: Companypackagerow[];
+
+  @Column("varchar", { length: 100, nullable: true, default: () => null })
+  paymentlinkotp: string;
 }

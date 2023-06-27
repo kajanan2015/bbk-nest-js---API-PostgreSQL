@@ -41,9 +41,13 @@ import { MailService } from 'src/mail/mail.service';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { EmployeeDataHistoryModule } from 'src/employee-data-history/employee-data-history.module';
 import { EmployeeDataHistoryService } from 'src/employee-data-history/employee-data-history.service';
+
+import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entity';
+import { CompanypackagerowService } from 'src/companypackagerow/companypackagerow.service';
+import { CompanypackagerowModule } from 'src/companypackagerow/companypackagerow.module';
 @Module({
-  imports: [TypeOrmModule.forFeature([EmployeeType, EmployeeModule, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency,country,Createmodule,Createpackage,Paymenttype,Moduledetailsofpackage,EmployeeDataHistory]), EmployeeDocumentModule, CompaniesModule,CreatemoduleModule,MailModule,EmployeeDataHistoryModule],
+  imports: [TypeOrmModule.forFeature([Companypackagerow,EmployeeType, EmployeeModule, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency,country,Createmodule,Createpackage,Paymenttype,Moduledetailsofpackage,EmployeeDataHistory]), EmployeeDocumentModule, CompaniesModule,CreatemoduleModule,MailModule,EmployeeDataHistoryModule],
   controllers: [EmployeeModuleController, ImageUploadController],
-  providers: [EmployeeModuleService, ImageUploadService, EmployeeDocumentService, CompaniesService, SystemCodeService, UserService,CompanyDocumentService,CreatemoduleService,CreatepackageService,ModuledetailsofpackageService,MailService,EmployeeDataHistoryService ]
+  providers: [CompanypackagerowService,EmployeeModuleService, ImageUploadService, EmployeeDocumentService, CompaniesService, SystemCodeService, UserService,CompanyDocumentService,CreatemoduleService,CreatepackageService,ModuledetailsofpackageService,MailService,EmployeeDataHistoryService ]
 })
 export class EmployeeModuleModule {}

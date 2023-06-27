@@ -30,7 +30,9 @@ import { Createmodule } from "src/createmodule/createmodule.entity";
 import { Createpackage } from "src/createpackage/createpackage.entity";
 import { Moduledetailsofpackage } from "src/moduledetailsofpackage/moduledetailsofpackage.entity";
 import * as dotenv from 'dotenv';
-
+import { CompanypackagerowService } from "src/companypackagerow/companypackagerow.service";
+const randomstring = require("randomstring");
+import { Companypackagerow } from "src/companypackagerow/companypackagerow.entity";
 @Injectable()
 export class CompaniesService {
   constructor(
@@ -53,7 +55,10 @@ export class CompaniesService {
     @InjectRepository(Createpackage)
     private readonly pkgrepository: Repository<Createpackage>,
     @InjectRepository(Moduledetailsofpackage)
-    private readonly detailsrepository: Repository<Moduledetailsofpackage>
+    private readonly detailsrepository: Repository<Moduledetailsofpackage>,
+    private readonly companyrowpackageservice:CompanypackagerowService,
+    @InjectRepository(Companypackagerow)
+    private readonly companypackagerowrepository: Repository<Companypackagerow>,
   ) { }
 
   async showAll() {
@@ -812,6 +817,24 @@ console.log(newCompany,43534)
     console.log(entityA);
     entityA.package = await this.detailsrepository.findByIds(data.package);
     console.log(entityA);
+   
+   
+   
+    let newcompassigndata;
+    for(const comppackagedata of entityA.package){
+      newcompassigndata={
+        rowcount:comppackagedata.NoOfRecords,
+        availablerowcount:comppackagedata.NoOfRecords,
+        rowprice:comppackagedata.CostPerRecord,
+        packageprice:comppackagedata.PackagePrice,
+        module:comppackagedata.module.id,
+        packages:comppackagedata.packages.id,
+        company:comppackagedata.id,
+      }  
+      await this.companypackagerowrepository.create(newcompassigndata)
+    }
+    
+   
     const responese = await this.companyRepository.save(entityA);
     console.log(responese);
 
@@ -927,12 +950,46 @@ async sendverifyemail(data, base_url){
 
   async generatepaymentlink(companyId,base_url){
 
-    let companyemail='';
-    let paymentid='';
-
-    await this.companyRepository.findOne(companyId)
+    const paymentid = randomstring.generate({
+      length: 4,
+      charset: 'numeric'
+    });
+    const updatecompany=await this.companyRepository.update({id:companyId},{paymentlinkotp: paymentid})
+    const comapny= await this.companyRepository.findOne(companyId);
+    const companyemail=comapny.companyEmail
     return await this.mailservice.generatepaymentlink(companyemail, companyId,base_url,paymentid)
   }
 
+  async verifypaymentdetailstoken(token){
+    const verifyresponse=await  this.mailservice.verifypaymentdetailstokendecode(token);
+    if(verifyresponse["id"]){
+      let id=verifyresponse["id"]
+      const company= await this.companyRepository.findOne(id);
+      const companyemail=company.companyEmail
+      const paymentid= company.paymentlinkotp
+      if((verifyresponse["paymenttokenid"]==paymentid)&&(verifyresponse["email"]==companyemail)){ 
+        const data={
+          id:id,
+          email:companyemail,
+        }
+        return data
+      }else{
+        return "Invalid token"
+      }
+    }else{
+      return verifyresponse
+    }
+    
+  }
+
+  async paiddataupdate(token){
+    const verify=await this.verifypaymentdetailstoken(token)
+    if(verify["id"]){
+      const updateresponse=await this.companyRepository.update({id:verify["id"]},{compstatus:5});
+      return "payment completed"
+    }else{
+      return "payment not complete"
+    }
+  }
 
 }
