@@ -5,7 +5,7 @@ export class CompanyPayment {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column("varchar", { length: 250 ,nullable: true ,default: () => null})
+    @Column("varchar", { length: 500 ,nullable: true ,default: () => null})
     paymentLink: string;
 
     @Column("varchar", { length: 250 ,nullable: true ,default: () => null})
