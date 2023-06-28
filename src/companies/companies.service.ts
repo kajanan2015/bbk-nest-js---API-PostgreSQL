@@ -843,24 +843,39 @@ if(comppackagedata.packages.customizePackageValue==false){
 }  
     }
     console.log(data.customizerecord,99)
-    for (const key in data.customizerecord) {
-      const dataf = data.customizerecord[key];
-      console.log(key,45678)
-      console.log(dataf.packageId,898989);
-      if(dataf.packageId){
-        newcompassigndata={
-          rowcount:dataf.records,
-          availablerowcount:dataf.records,
-          rowprice:dataf.costPerRecord,
-          packageprice:dataf.packagePrice,
-          module:key,
-          packages:dataf.packageId,
-          company:parseInt(id),
-        }  
-  console.log(newcompassigndata,8898)
-  const compackageresponsecustomize= await this.companypackagerowrepository.create(newcompassigndata)
-   const comppackagerowaddedcustomiza = await this.companypackagerowrepository.save(compackageresponsecustomize)
-      }
+    let getpkgid;
+    for (const newdata of data.customizerecord) {
+  console.log(newdata.records,88998)
+  getpkgid=await this.detailsrepository.findOne(newdata.packageId,{relations:["packages", "module"]});
+          newcompassigndata={
+            rowcount:newdata.records,
+            availablerowcount:newdata.records,
+            rowprice:newdata.costPerRecord,
+            packageprice:newdata.packagePrice,
+            module:newdata.moduleId,
+            packages:getpkgid.packages.id,
+            company:parseInt(id),
+          }
+          console.log(newcompassigndata,898989)
+          const compackageresponsecustomize= await this.companypackagerowrepository.create(newcompassigndata)
+          const comppackagerowaddedcustomiza = await this.companypackagerowrepository.save(compackageresponsecustomize)
+      //     const dataf = data.customizerecord[key];
+  //     console.log(key,45678)
+  //     console.log(dataf.packageId,898989);
+  //     if(dataf.packageId){
+  //       newcompassigndata={
+  //         rowcount:dataf.records,
+  //         availablerowcount:dataf.records,
+  //         rowprice:dataf.costPerRecord,
+  //         packageprice:dataf.packagePrice,
+  //         module:key,
+  //         packages:dataf.packageId,
+  //         company:parseInt(id),
+  //       }  
+  // console.log(newcompassigndata,8898)
+  // const compackageresponsecustomize= await this.companypackagerowrepository.create(newcompassigndata)
+  //  const comppackagerowaddedcustomiza = await this.companypackagerowrepository.save(compackageresponsecustomize)
+  //     }
       
 
     }
