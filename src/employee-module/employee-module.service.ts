@@ -307,7 +307,7 @@ export class EmployeeModuleService {
       ...UpdateEmployeeModuleDto.data
     }
 
-    let { visaDoc, ...dataWithoutDoc } = data
+    let { visaDoc, tachoDoc, officialDoc, drivingLicenceDoc, cpcCardDoc, refdoc, ...dataWithoutDoc } = data
 
     const employeerowid = await this.employeeModuleRepository.findOne({ where: { id: id } });
 

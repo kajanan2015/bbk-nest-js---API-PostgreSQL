@@ -983,9 +983,12 @@ async sendverifyemail(data, base_url){
   }
 
   async paiddataupdate(token){
-    const verify=await this.verifypaymentdetailstoken(token)
+    console.log(token)
+    const verify=await  this.mailservice.verifypaymentdetailstokendecode(token);
+    // const verify=await this.verifypaymentdetailstoken(token)
+    console.log(verify,898)
     if(verify["id"]){
-      const updateresponse=await this.companyRepository.update({id:verify["id"]},{compstatus:5});
+      const updateresponse=await this.companyRepository.update({id:verify["id"]},{compstatus:5,paymentlinkotp:null});
       return "payment completed"
     }else{
       return "payment not complete"
