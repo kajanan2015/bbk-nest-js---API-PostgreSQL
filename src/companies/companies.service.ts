@@ -807,7 +807,6 @@ console.log(newCompany,43534)
   async assignpackage(id, data) {
     console.log(id, 77);
     console.log(data.package, 88);
-
     const entityA = await this.companyRepository.findOne(id, {
       relations: ["package"],
     });
@@ -815,26 +814,55 @@ console.log(newCompany,43534)
       throw new NotFoundException("package not found");
     }
     console.log(entityA);
-    entityA.package = await this.detailsrepository.findByIds(data.package);
+    entityA.package = await this.detailsrepository.findByIds(data.package,{relations:["packages", "module"]});
     console.log(entityA);
-   
-   
-   
+    const currentDateTime = new Date();
+    await this.companypackagerowrepository
+    .createQueryBuilder()
+    .update(Companypackagerow)
+    .set({ enddate: currentDateTime })
+    .where('companyId = :id', { id })
+    .execute();
     let newcompassigndata;
     for(const comppackagedata of entityA.package){
-      newcompassigndata={
-        rowcount:comppackagedata.NoOfRecords,
-        availablerowcount:comppackagedata.NoOfRecords,
-        rowprice:comppackagedata.CostPerRecord,
-        packageprice:comppackagedata.PackagePrice,
-        module:comppackagedata.module.id,
-        packages:comppackagedata.packages.id,
-        company:comppackagedata.id,
-      }  
-      await this.companypackagerowrepository.create(newcompassigndata)
+console.log(comppackagedata.module.id,56565)
+if(comppackagedata.packages.customizePackageValue==false){
+  newcompassigndata={
+    rowcount:comppackagedata.NoOfRecords,
+    availablerowcount:comppackagedata.NoOfRecords,
+    rowprice:comppackagedata.CostPerRecord,
+    packageprice:comppackagedata.PackagePrice,
+    module:comppackagedata.module.id,
+    packages:comppackagedata.packages.id,
+    company:parseInt(id),
+  }  
+  console.log(newcompassigndata,5236565)
+ const compackageresponse= await this.companypackagerowrepository.create(newcompassigndata)
+ const comppackagerowadded = await this.companypackagerowrepository.save(compackageresponse)
+}  
     }
-    
-   
+    console.log(data.customizerecord,99)
+    for (const key in data.customizerecord) {
+      const dataf = data.customizerecord[key];
+      console.log(key,45678)
+      console.log(dataf.packageId,898989);
+      if(dataf.packageId){
+        newcompassigndata={
+          rowcount:dataf.records,
+          availablerowcount:dataf.records,
+          rowprice:dataf.costPerRecord,
+          packageprice:dataf.packagePrice,
+          module:key,
+          packages:dataf.packageId,
+          company:parseInt(id),
+        }  
+  console.log(newcompassigndata,8898)
+  const compackageresponsecustomize= await this.companypackagerowrepository.create(newcompassigndata)
+   const comppackagerowaddedcustomiza = await this.companypackagerowrepository.save(compackageresponsecustomize)
+      }
+      
+
+    }
     const responese = await this.companyRepository.save(entityA);
     console.log(responese);
 

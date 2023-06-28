@@ -73,17 +73,17 @@ export class CreatepackageController {
 
 
 
-    console.log(updateCreatepackageDto, 8888);
-    const currentDateTime = new Date(); // Current date and time
-    let data = {
+    // console.log(updateCreatepackageDto, 8888);
+    // const currentDateTime = new Date(); // Current date and time
+    // let data = {
       // ...updateCreatepackageDto.updatedValues,
-      updatedat: currentDateTime,
-      pkgupdate: updateCreatepackageDto.userId,
-      ...(updateCreatepackageDto.updatedValues.status ? { status: parseInt(updateCreatepackageDto.updatedValues.status) } : {}),
+    //   updatedat: currentDateTime,
+    //   pkgupdate: updateCreatepackageDto.userId,
+    //   ...(updateCreatepackageDto.updatedValues.status ? { status: parseInt(updateCreatepackageDto.updatedValues.status) } : {}),
 
-    };
+    // };
     // delete data.userId;
-    console.log(data, 888)
+    // console.log(data, 888)
     // if (pkgImg) {
     //   const pkglogo = await this.imageUploadService.upload(pkgImg, 'body');
     //   delete data.existlogo;
@@ -94,7 +94,7 @@ export class CreatepackageController {
     //   }
     //   console.log(data, 67890)
     // }
-    console.log('fghjk')
+    // console.log('fghjk')
     // return await this.createpackageService.update(updateCreatepackageDto.id,data,updateCreatepackageDto);
   }
   // delete package
