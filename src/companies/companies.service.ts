@@ -88,6 +88,7 @@ export class CompaniesService {
       where: {
         mainCompany: companylist.mainCompany.id,
       },
+      relations: ["mainCompany"]
     });
   }
 
