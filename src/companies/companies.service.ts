@@ -835,6 +835,7 @@ if(comppackagedata.packages.customizePackageValue==false){
     packageprice:comppackagedata.PackagePrice,
     module:comppackagedata.module.id,
     packages:comppackagedata.packages.id,
+    moduledetails:comppackagedata.id,
     company:parseInt(id),
   }  
   console.log(newcompassigndata,5236565)
@@ -854,6 +855,7 @@ if(comppackagedata.packages.customizePackageValue==false){
             packageprice:newdata.packagePrice,
             module:newdata.moduleId,
             packages:getpkgid.packages.id,
+            moduledetails:newdata.packageId,
             company:parseInt(id),
           }
           console.log(newcompassigndata,898989)
