@@ -67,7 +67,7 @@ export class CreatepackageController {
     }
     console.log(passdata, 67890)
 
-    return await this.createpackageService.update(updateCreatepackageDto.id, updateCreatepackageDto);
+    return await this.createpackageService.update(updateCreatepackageDto.id, passdata);
     // return this.createpackageService.create(passdata);
 
 
