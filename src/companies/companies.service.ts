@@ -489,8 +489,8 @@ export class CompaniesService {
         company:parseInt(responsesave["id"]),
       }  
       console.log(newcompassigndata,5236565)
-    //  const compackageresponse= await this.companypackagerowrepository.create(newcompassigndata)
-    //  const comppackagerowadded = await this.companypackagerowrepository.save(compackageresponse)
+     const compackageresponse= await this.companypackagerowrepository.create(newcompassigndata)
+     const comppackagerowadded = await this.companypackagerowrepository.save(compackageresponse)
   }
 
 
