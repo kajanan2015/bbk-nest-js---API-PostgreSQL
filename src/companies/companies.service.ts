@@ -487,6 +487,7 @@ export class CompaniesService {
         packages:trialpackagerowvalue.packages.id,
         moduledetails:trialpackagerowvalue.id,
         company:parseInt(responsesave["id"]),
+        trialpackageidentifier:'1'
       }  
       console.log(newcompassigndata,5236565)
      const compackageresponse= await this.companypackagerowrepository.create(newcompassigndata)
