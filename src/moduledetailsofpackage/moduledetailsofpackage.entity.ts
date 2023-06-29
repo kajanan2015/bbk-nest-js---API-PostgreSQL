@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, PrimaryC
 import { Createmodule } from 'src/createmodule/createmodule.entity';
 import { Createpackage } from 'src/createpackage/createpackage.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
+import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entity';
 @Entity()
 export class Moduledetailsofpackage {
     @PrimaryGeneratedColumn()
@@ -27,4 +28,8 @@ export class Moduledetailsofpackage {
     @ManyToMany(() => CompaniesEntity, module => module.package)
     @JoinTable()
     company: CompaniesEntity[];
+
+    @OneToMany(()=>Companypackagerow, companypackage => companypackage.moduledetails,{cascade:true})
+    companypackagerow:Companypackagerow[];
+    
 }

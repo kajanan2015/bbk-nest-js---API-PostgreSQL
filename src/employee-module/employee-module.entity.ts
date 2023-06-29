@@ -48,10 +48,10 @@ export class EmployeeModule {
     @JoinColumn({ name: 'maritalStatus' })
     maritalStatus: MaritalStatus;
 
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    @Column("varchar", { nullable: true, length: 500, default: () => null })
     profilePic: string | null;
 
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
+    @Column("varchar", { nullable: true, length: 500, default: () => null })
     profilePicThumb: string | null;
 
     @Column("varchar", { nullable: true, length: 250, default: () => null })
