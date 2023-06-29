@@ -462,12 +462,40 @@ export class CompaniesService {
     }
 
     await this.systemcodeService.update(response.id, newstartvalue);
-    const trialpackagedata= await this.pkgrepository.findOne({where:{packagename:"Trial",validity:0,enddate:null},relations:['packagedetails']})
-console.log(trialpackagedata,56)
-dataCompany.package=trialpackagedata.packagedetails;
+    const trialpackagedata= await this.pkgrepository.findOne({where:{packagename:"Trial",validity:0,enddate:null},relations:['packagedetails','packagedetails.packages','packagedetails.module']})
+    console.log(trialpackagedata,56)
+    dataCompany.package=trialpackagedata.packagedetails;
     const newCompany = await this.companyRepository.create(dataCompany);
     const responsesave = await this.companyRepository.save(newCompany);
-console.log(dataCompany,453)
+    let newcompassigndata; 
+    const currentDateTime = new Date();
+    const newlycreatedcompany=responsesave["id"];
+    await this.companypackagerowrepository
+    .createQueryBuilder()
+    .update(Companypackagerow)
+    .set({ enddate: currentDateTime })
+    .where('companyId = :newlycreatedcompany', { newlycreatedcompany })
+    .execute();
+    for(const trialpackagerowvalue of trialpackagedata.packagedetails ){
+      console.log(trialpackagerowvalue,5665566324324)
+      newcompassigndata={
+        rowcount:trialpackagerowvalue.NoOfRecords,
+        availablerowcount:trialpackagerowvalue.NoOfRecords,
+        rowprice:trialpackagerowvalue.CostPerRecord,
+        packageprice:trialpackagerowvalue.PackagePrice,
+        module:trialpackagerowvalue.module.id,
+        packages:trialpackagerowvalue.packages.id,
+        moduledetails:trialpackagerowvalue.id,
+        company:parseInt(responsesave["id"]),
+      }  
+      console.log(newcompassigndata,5236565)
+    //  const compackageresponse= await this.companypackagerowrepository.create(newcompassigndata)
+    //  const comppackagerowadded = await this.companypackagerowrepository.save(compackageresponse)
+  }
+
+
+
+    console.log(dataCompany,453)
 console.log(newCompany,43534)
     await this.mailservice.companycreationsuccess(dataCompany.companyEmail, "adminemail", "adminname", dataCompany.companyName, process.env.main_url);
     if (dataCompany.companyIdentifier == "maincompany") {
