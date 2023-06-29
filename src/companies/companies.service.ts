@@ -1069,4 +1069,13 @@ async sendverifyemail(data, base_url){
     }
   }
 
+  async changeparentadmin(id,data){
+    
+    const passdata={
+      companyIdentifier:"maincompany",
+      mainCompany:null,
+    }  
+    const response=await this.companyRepository.update({id},passdata);
+  }
+
 }

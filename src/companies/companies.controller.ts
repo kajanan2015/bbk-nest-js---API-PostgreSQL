@@ -357,11 +357,17 @@ export class CompaniesController {
 
   @Get('verifypaymentdetailstoken/:token')
   async verifypaymentdetailstoken(@Param('token') token){
-return await this.service.verifypaymentdetailstoken(token);
+    return await this.service.verifypaymentdetailstoken(token);
   }
 
   @Get('paiddataupdate/:token')
   async paiddataupdate(@Param('token') token){
-return await this.service.paiddataupdate(token);
+    return await this.service.paiddataupdate(token);
   }
+
+  @Post('changeparent:/id')
+  async changeparent(@Param('id') id:number, @Body() data:any){
+    return await this.service.changeparentadmin(id,data);
+  }
+
 }
