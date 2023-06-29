@@ -59,7 +59,8 @@ export class CreatepackageService {
       updatedat: currentDateTime,
       pkgupdate: updateCreatepackageDto.userId,
       status: 2,
-      customizePackageValue: updateCreatepackageDto.customizePackageValue
+      ...(updateCreatepackageDto.customizePackageValue ? { customizePackageValue: updateCreatepackageDto.customizePackageValue } : {}),
+    
     }
     let packagenameexist;
     if (updateCreatepackageDto.packagename) {
@@ -81,7 +82,7 @@ export class CreatepackageService {
       ...(updateCreatepackageDto.packagelogo ? { packagelogo: updateCreatepackageDto.packagelogo } : { packagelogo: updateCreatepackageDto.existlogo }),
       pkgcreate: updateCreatepackageDto.userId,
       ...(updateCreatepackageDto.numberOfDays ? { numberOfDays: updateCreatepackageDto.numberOfDays } : {}),
-      customizePackageValue: updateCreatepackageDto.customizePackageValue
+      ...(updateCreatepackageDto.customizePackageValue ? { customizePackageValue: updateCreatepackageDto.customizePackageValue } : {}),
     }
     const response = this.createpkgRepository.create(newdata);
     const packageresponse = await this.createpkgRepository.save(response);

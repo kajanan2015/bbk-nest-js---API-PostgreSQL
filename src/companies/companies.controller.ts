@@ -100,6 +100,7 @@ export class CompaniesController {
     console.log(passdata, 88)
     const data = {
       package: passdata.packages,
+      customizerecord:passdata.records
     }
     return await this.service.assignpackage(passdata.companyId, data)
   }

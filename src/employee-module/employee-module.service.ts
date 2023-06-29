@@ -90,28 +90,31 @@ export class EmployeeModuleService {
 
       const documents = createEmployeeModuleDto['filenames'];
 
-      // //  to create account login account for user
-      // const employeerandompassword = randomstring.generate({
-      //   length: 8,
-      //   charset: 'alphanumeric',
-      //   readable: true,
-      //   symbols: true,
-      // });
-      //   const employeeaccountcreationdata = {
-      //     firstName: createEmployeeModuleDto.firstName,
-      //     lastName: createEmployeeModuleDto.lastName,
-      //     uType: "EMPLOYEE",
-      //     profilePic: createEmployeeModuleDto.profilePic,
-      //     profilePicThumb:createEmployeeModuleDto.profilePicThumb,
-      //     password: employeerandompassword,
-      //     phone: createEmployeeModuleDto.mobilePhone,
-      //     email: createEmployeeModuleDto.employeeId,
-      //   };
+      //  to create account login account for user
+      const employeerandompassword = randomstring.generate({
+        length: 8,
+        charset: 'alphanumeric',
+        readable: true,
+        symbols: true,
+      });
+      const currentDateTime = new Date();
+      const employeeaccountcreationdata = {
+        firstName: createEmployeeModuleDto.firstName,
+        lastName: createEmployeeModuleDto.lastName,
+        uType: "EMPLOYEE",
+        profilePic: createEmployeeModuleDto.profilePic,
+        profilePicThumb: createEmployeeModuleDto.profilePicThumb,
+        password: employeerandompassword,
+        phone: createEmployeeModuleDto.mobilePhone,
+        email: createEmployeeModuleDto.employeeId,
+        activate:1,
+        activated_time: currentDateTime
+      };
 
-      //   const adminResponse = await this.userservice.create(employeeaccountcreationdata);
+      const adminResponse = await this.userservice.create(employeeaccountcreationdata);
 
-      // // added for send email and password to the user 
-      // await this.mailservice.sendemailtoemployeeregistration(createEmployeeModuleDto.email,"ABC",createEmployeeModuleDto.firstName,employeerandompassword,createEmployeeModuleDto.employeeId)
+      // added for send email and password to the user 
+      await this.mailservice.sendemailtoemployeeregistration(createEmployeeModuleDto.email, "ABC", createEmployeeModuleDto.firstName, employeerandompassword, createEmployeeModuleDto.employeeId)
 
 
       if (documents.length > 0) {
@@ -307,7 +310,7 @@ export class EmployeeModuleService {
       ...UpdateEmployeeModuleDto.data
     }
 
-    let { visaDoc, ...dataWithoutDoc } = data
+    let { visaDoc, tachoDoc, officialDoc, drivingLicenceDoc, cpcCardDoc, refdoc, empProvidedCopy, ...dataWithoutDoc } = data
 
     const employeerowid = await this.employeeModuleRepository.findOne({ where: { id: id } });
 

@@ -4,6 +4,7 @@ import { User } from 'src/user/user.entity';
 import { Createmodule } from 'src/createmodule/createmodule.entity';
 import { Createpackage } from 'src/createpackage/createpackage.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
+import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetailsofpackage.entity';
 @Entity()
 export class Companypackagerow {
     @PrimaryGeneratedColumn()
@@ -38,5 +39,9 @@ export class Companypackagerow {
     @ManyToOne(() => CompaniesEntity, company => company.companypackagerow)
     @JoinColumn()
     company: CompaniesEntity;
+
+    @ManyToOne(() => Moduledetailsofpackage, details => details.companypackagerow)
+    @JoinColumn()
+    moduledetails: Moduledetailsofpackage;
     
 }
