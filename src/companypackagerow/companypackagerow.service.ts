@@ -19,7 +19,7 @@ export class CompanypackagerowService {
   }
 
   async findOne(id: number) {
-    const response = await this.companyPaymentRepository.find({ where: { company: id, enddate: null }, relations: ["module", "packages", "moduledetails"] })
+    const response = await this.companyPaymentRepository.find({ where: { company: id, enddate: null, trialpackageidentifier: null }, relations: ["module", "packages", "moduledetails"] })
     return response;
   }
 

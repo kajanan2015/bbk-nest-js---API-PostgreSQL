@@ -43,5 +43,9 @@ export class Companypackagerow {
     @ManyToOne(() => Moduledetailsofpackage, details => details.companypackagerow)
     @JoinColumn()
     moduledetails: Moduledetailsofpackage;
+
+    @Column("tinyint",{ nullable: true ,default: () => null, comment: ' 1-trial,0-default'})
+    trialpackageidentifier: number;
+
     
 }
