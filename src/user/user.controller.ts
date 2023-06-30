@@ -155,7 +155,7 @@ export class UserController {
     const passdata = {
       ...(data.firstName ? { firstName: data.firstName } : {}),
       ...(data.lastName ? { lastName: data.lastName } : {}),
-      ...(data.email ? { email: data.email } : {}),
+      ...(data.email ? { email: data.email, activate: false, activated_time: null } : {}),
       ...(data.password ? { password: data.password } : {}),
       ...(data.phone ? { phone: data.phone } : {}),
       ...(profileImage
