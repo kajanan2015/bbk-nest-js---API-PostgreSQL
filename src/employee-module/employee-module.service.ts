@@ -404,6 +404,10 @@ export class EmployeeModuleService {
       relations: ['documents']
     });
 
+    // const query = `SELECT * FROM employee_module emp INNER JOIN employee_document doc ON emp.id = doc.empid WHERE emp.id = ${id} AND doc.active = 1;`;
+    // const employeeTypeList = await this.connection.query(query);
+    // return employeeTypeList;
+
     // return await this.employeeModuleRepository
     // .createQueryBuilder('employeeModule')
     // .leftJoinAndSelect('employeeModule.documents', 'documents')
@@ -425,7 +429,7 @@ export class EmployeeModuleService {
 
   async findCompanyAllEmployees(companyid: number) {
     return await this.employeeModuleRepository.find({
-      where: { company: companyid },
+      where: { company: companyid, status:1 },
       relations: ['employeeType', 'designation', 'company', 'gender', 'maritalStatus', 'drivingLicenceType', 'addedBy', 'addressCountry', 'refCompAddressCountry']
     });
   }

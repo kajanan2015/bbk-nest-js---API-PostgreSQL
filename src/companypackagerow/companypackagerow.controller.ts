@@ -5,7 +5,7 @@ import { UpdateCompanypackagerowDto } from './update-companypackagerow.dto';
 
 @Controller('companypackagerow')
 export class CompanypackagerowController {
-  constructor(private readonly companypackagerowService: CompanypackagerowService) {}
+  constructor(private readonly companypackagerowService: CompanypackagerowService) { }
 
   @Post()
   create(@Body() createCompanypackagerowDto: CreateCompanypackagerowDto) {
@@ -16,7 +16,7 @@ export class CompanypackagerowController {
   findAll() {
     return this.companypackagerowService.findAll();
   }
-
+  // get data by using companyid
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.companypackagerowService.findOne(+id);

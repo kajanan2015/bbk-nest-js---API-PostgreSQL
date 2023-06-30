@@ -6,8 +6,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Companypackagerow } from './companypackagerow.entity';
 @Injectable()
 export class CompanypackagerowService {
-  constructor( @InjectRepository(Companypackagerow)
-  private companyPaymentRepository: Repository<Companypackagerow>){ }
+  constructor(@InjectRepository(Companypackagerow)
+  private companyPaymentRepository: Repository<Companypackagerow>) { }
 
   async create(createCompanypackagerowDto) {
     const response = await this.companyPaymentRepository.create(createCompanypackagerowDto);
@@ -18,8 +18,9 @@ export class CompanypackagerowService {
     return `This action returns all companypackagerow`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} companypackagerow`;
+  async findOne(id: number) {
+    const response = await this.companyPaymentRepository.find({ where: { company: id, enddate: null, trialpackageidentifier: null }, relations: ["module", "packages", "moduledetails"] })
+    return response;
   }
 
   update(id: number, updateCompanypackagerowDto: UpdateCompanypackagerowDto) {

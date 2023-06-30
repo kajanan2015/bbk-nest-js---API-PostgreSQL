@@ -462,12 +462,41 @@ export class CompaniesService {
     }
 
     await this.systemcodeService.update(response.id, newstartvalue);
-    const trialpackagedata= await this.pkgrepository.findOne({where:{packagename:"Trial",validity:0,enddate:null},relations:['packagedetails']})
-console.log(trialpackagedata,56)
-dataCompany.package=trialpackagedata.packagedetails;
+    const trialpackagedata= await this.pkgrepository.findOne({where:{packagename:"Trial",validity:0,enddate:null},relations:['packagedetails','packagedetails.packages','packagedetails.module']})
+    console.log(trialpackagedata,56)
+    dataCompany.package=trialpackagedata.packagedetails;
     const newCompany = await this.companyRepository.create(dataCompany);
     const responsesave = await this.companyRepository.save(newCompany);
-console.log(dataCompany,453)
+    let newcompassigndata; 
+    const currentDateTime = new Date();
+    const newlycreatedcompany=responsesave["id"];
+    await this.companypackagerowrepository
+    .createQueryBuilder()
+    .update(Companypackagerow)
+    .set({ enddate: currentDateTime })
+    .where('companyId = :newlycreatedcompany', { newlycreatedcompany })
+    .execute();
+    for(const trialpackagerowvalue of trialpackagedata.packagedetails ){
+      console.log(trialpackagerowvalue,5665566324324)
+      newcompassigndata={
+        rowcount:trialpackagerowvalue.NoOfRecords,
+        availablerowcount:trialpackagerowvalue.NoOfRecords,
+        rowprice:trialpackagerowvalue.CostPerRecord,
+        packageprice:trialpackagerowvalue.PackagePrice,
+        module:trialpackagerowvalue.module.id,
+        packages:trialpackagerowvalue.packages.id,
+        moduledetails:trialpackagerowvalue.id,
+        company:parseInt(responsesave["id"]),
+        trialpackageidentifier:'1'
+      }  
+      console.log(newcompassigndata,5236565)
+     const compackageresponse= await this.companypackagerowrepository.create(newcompassigndata)
+     const comppackagerowadded = await this.companypackagerowrepository.save(compackageresponse)
+  }
+
+
+
+    console.log(dataCompany,453)
 console.log(newCompany,43534)
     await this.mailservice.companycreationsuccess(dataCompany.companyEmail, "adminemail", "adminname", dataCompany.companyName, process.env.main_url);
     if (dataCompany.companyIdentifier == "maincompany") {
@@ -835,6 +864,7 @@ if(comppackagedata.packages.customizePackageValue==false){
     packageprice:comppackagedata.PackagePrice,
     module:comppackagedata.module.id,
     packages:comppackagedata.packages.id,
+    moduledetails:comppackagedata.id,
     company:parseInt(id),
   }  
   console.log(newcompassigndata,5236565)
@@ -854,6 +884,7 @@ if(comppackagedata.packages.customizePackageValue==false){
             packageprice:newdata.packagePrice,
             module:newdata.moduleId,
             packages:getpkgid.packages.id,
+            moduledetails:newdata.packageId,
             company:parseInt(id),
           }
           console.log(newcompassigndata,898989)
@@ -904,8 +935,29 @@ if(comppackagedata.packages.customizePackageValue==false){
     if (!entityA) {
       throw new NotFoundException("module not found");
     }
+  const checkcompanypackagerow=await this.companypackagerowrepository.find({where:{company:id,enddate: null, trialpackageidentifier: null},relations:["module"]});
+  let existmoduleid=[];
+    for(const existmodule of checkcompanypackagerow){
+      console.log(existmodule.module.id,8899898)
+    existmoduleid.push(existmodule.module.id)
+  }
+console.log(existmoduleid,252435)
+// const moduleid= checkcompanypackagerow.module.id
+const result = existmoduleid.filter(value => !data.module.includes(value));
+console.log(result,8998988989);
 
-    entityA.module = await this.modulerepository.findByIds(data.module);
+if(result.length>0){
+ const currentDateTime = new Date();
+   const updatemodule= await this.companypackagerowrepository
+    .createQueryBuilder()
+    .update(Companypackagerow)
+    .set({ enddate: currentDateTime })
+    .where('companyId = :id', { id })
+    .andWhere('moduleId IN (:...result)', { result })
+    .execute();
+console.log(updatemodule,98989898899)
+}
+entityA.module = await this.modulerepository.findByIds(data.module);
     entityA.package = [];
     console.log(entityA, 999);
     const responese = await this.companyRepository.save(entityA);
@@ -1037,6 +1089,15 @@ async sendverifyemail(data, base_url){
     }else{
       return "payment not complete"
     }
+  }
+
+  async changeparentadmin(id,data){
+    
+    const passdata={
+      companyIdentifier:"maincompany",
+      mainCompany:null,
+    }  
+    const response=await this.companyRepository.update({id},passdata);
   }
 
 }
