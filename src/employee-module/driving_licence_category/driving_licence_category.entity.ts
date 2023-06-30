@@ -9,6 +9,9 @@ export class DrivingLicenceCategory {
     @Column("varchar", { nullable: true, length: 250, default: () => null })
     driverLicenceCategory: string;
 
+    @Column({ type: 'boolean', default: true })
+    status: Boolean;
+
     @OneToMany(() => EmployeeModule, employeemodule => employeemodule.driverLicenceCategory, ({ cascade: true }))
     employee: EmployeeModule;
 

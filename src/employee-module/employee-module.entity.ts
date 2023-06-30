@@ -183,8 +183,8 @@ export class EmployeeModule {
     @Column("varchar", { nullable: true, length: 250, default: () => null })
     drivingLicenceNo: string | null;
 
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    drivingLicenceCategory: string | null;
+    // @Column("varchar", { nullable: true, length: 250, default: () => null })
+    // drivingLicenceCategory: string | null;
 
     @Column({ nullable: true, default: () => null })
     drivingLicenceIssue: Date | null;

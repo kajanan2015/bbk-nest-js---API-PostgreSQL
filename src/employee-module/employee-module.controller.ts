@@ -79,7 +79,7 @@ export class EmployeeModuleController {
       bankTypeList
     };
   }
-  @Get('/driving_licence_category')
+  @Get('/driving-licence-category')
   async getDrivingLicenceCategory() {
     const drivingLicenceCategoryList = await this.employeeModuleService.getDrivingLicenceCategory();
     return {
