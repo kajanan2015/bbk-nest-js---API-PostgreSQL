@@ -935,8 +935,29 @@ if(comppackagedata.packages.customizePackageValue==false){
     if (!entityA) {
       throw new NotFoundException("module not found");
     }
+  const checkcompanypackagerow=await this.companypackagerowrepository.find({where:{company:id,enddate: null, trialpackageidentifier: null},relations:["module"]});
+  let existmoduleid=[];
+    for(const existmodule of checkcompanypackagerow){
+      console.log(existmodule.module.id,8899898)
+    existmoduleid.push(existmodule.module.id)
+  }
+console.log(existmoduleid,252435)
+// const moduleid= checkcompanypackagerow.module.id
+const result = existmoduleid.filter(value => !data.module.includes(value));
+console.log(result,8998988989);
 
-    entityA.module = await this.modulerepository.findByIds(data.module);
+if(result.length>0){
+ const currentDateTime = new Date();
+   const updatemodule= await this.companypackagerowrepository
+    .createQueryBuilder()
+    .update(Companypackagerow)
+    .set({ enddate: currentDateTime })
+    .where('companyId = :id', { id })
+    .andWhere('moduleId IN (:...result)', { result })
+    .execute();
+console.log(updatemodule,98989898899)
+}
+entityA.module = await this.modulerepository.findByIds(data.module);
     entityA.package = [];
     console.log(entityA, 999);
     const responese = await this.companyRepository.save(entityA);
