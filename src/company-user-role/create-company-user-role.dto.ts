@@ -7,7 +7,7 @@ userPhone: string;
 userType: string;
 password: string;
 profilePicture: string;
-status: boolean;
+status: number;
 createdat: Date;
 updatedat: Date;
   userId: any;

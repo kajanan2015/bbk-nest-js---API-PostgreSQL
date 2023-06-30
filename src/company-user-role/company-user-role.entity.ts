@@ -25,8 +25,8 @@ export class CompanyUserRole {
     @Column("varchar",{ nullable: true, default: () => null})
     profilePicture: string;
 
-    @Column({ type: 'boolean', default:true})
-    status: Boolean;
+    @Column("tinyint", { nullable: true, default:1, comment: ' 1-active, 2-inactive, 3-deactivate' })
+    status: number;
     
     @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
     createdat: Date;
