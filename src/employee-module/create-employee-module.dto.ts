@@ -9,6 +9,7 @@ import { PaymentFrequency } from "./payment_frequency/payment_frequency.entity";
 import { Bank } from "./bank/bank.entity";
 import { User } from "src/user/user.entity";
 import { country } from "src/companies/country.entity";
+import { DrivingLicenceCategory } from "./driving_licence_category/driving_licence_category.entity";
 export class CreateEmployeeModuleDto {
     id: number;
     employeeId: string;
@@ -102,4 +103,5 @@ export class CreateEmployeeModuleDto {
     slrySickRate: number;
     paymentFrequency: PaymentFrequency[];
     addedBy:User[];
+    driverLicenceCategory: DrivingLicenceCategory[];
 }

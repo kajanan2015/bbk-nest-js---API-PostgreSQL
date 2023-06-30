@@ -196,6 +196,12 @@ export class EmployeeModuleService {
     return bankTypeList;
   }
 
+  async  getDrivingLicenceCategory() {
+    const query = 'SELECT * FROM `driving_licence_category`';
+    const getDrivingLicenceCategory = await this.connection.query(query);
+    return getDrivingLicenceCategory;
+  }
+
   async generateemployeeid(id) {
     const individualcompany = await this.companyservice.read(id)
     let randomId = randomstring.generate({
