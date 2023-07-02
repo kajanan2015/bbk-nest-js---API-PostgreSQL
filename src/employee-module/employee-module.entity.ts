@@ -101,7 +101,7 @@ export class EmployeeModule {
     @Column("varchar", { nullable: true, length: 250, default: () => null })
     totalHolidays: string | null;
 
-    @Column({ type: 'boolean', default: true })
+    @Column({ type: 'boolean', default: null })
     isNonNative: boolean;
 
     @Column("varchar", { nullable: true, length: 250, default: () => null })
