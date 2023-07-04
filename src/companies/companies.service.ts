@@ -465,10 +465,20 @@ export class CompaniesService {
     const trialpackagedata= await this.pkgrepository.findOne({where:{packagename:"Trial",validity:0,enddate:null},relations:['packagedetails','packagedetails.packages','packagedetails.module']})
     console.log(trialpackagedata,56)
     dataCompany.package=trialpackagedata.packagedetails;
+    dataCompany.contractagreement=0;
+    const currentDateTime = new Date();
+    const validtimeTime = new Date();
+    console.log(validtimeTime,99)
+    validtimeTime.setDate(validtimeTime.getDate() + parseInt(trialpackagedata.numberOfDays));
+    console.log(validtimeTime,98898998989898)
+    validtimeTime.setMilliseconds(0);
+    dataCompany.validityperiod = validtimeTime;
+    // dataCompany.validityperiod=new Date(validtimeTime.split('.')[0]);
+    
     const newCompany = await this.companyRepository.create(dataCompany);
     const responsesave = await this.companyRepository.save(newCompany);
     let newcompassigndata; 
-    const currentDateTime = new Date();
+    
     const newlycreatedcompany=responsesave["id"];
     await this.companypackagerowrepository
     .createQueryBuilder()

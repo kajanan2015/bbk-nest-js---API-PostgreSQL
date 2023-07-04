@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToMany, JoinTable, JoinColumn, ManyToOne } from 'typeorm';
 import { EmployeeType } from './employee_type/employee-type.entity';
 import { EmpDesignation } from './designation/employee-designation.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
@@ -316,10 +316,15 @@ export class EmployeeModule {
     @OneToMany(() => EmployeeDataHistory, empDataHistory => empDataHistory.employee,{ cascade: true })
     editHistory: EmployeeDataHistory[];
 
-    @ManyToOne(() => DrivingLicenceCategory, driverLicenceCategory => driverLicenceCategory.employee)
-    @JoinColumn({ name: 'driverLicenceCategory' })
-    driverLicenceCategory: DrivingLicenceCategory;
+    // @ManyToOne(() => DrivingLicenceCategory, driverLicenceCategory => driverLicenceCategory.employee)
+    // @JoinColumn({ name: 'driverLicenceCategory' })
+    // driverLicenceCategory: DrivingLicenceCategory;
 
     @Column({ type: 'boolean', default: false })
     active: boolean;
+    
+    @ManyToMany(() => DrivingLicenceCategory, category => category.empDlCategory)
+    @JoinTable()
+    drivingLicenceCategory: DrivingLicenceCategory[];
+
 }

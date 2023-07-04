@@ -28,8 +28,9 @@ import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-his
 import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entity';
 import { CompanypackagerowService } from 'src/companypackagerow/companypackagerow.service';
 import { CompanypackagerowModule } from 'src/companypackagerow/companypackagerow.module';
+import { DrivingLicenceCategory } from 'src/employee-module/driving_licence_category/driving_licence_category.entity';
 @Module({
-  imports:[TypeOrmModule.forFeature([Companypackagerow,EmployeeDocument, PagePermissionEntity,EmployeeModule,CompanyDocument , SystemCode , User,PermissionRoleEntity ,CompaniesEntity,Createmodule,Createpackage, Moduledetailsofpackage,EmployeeDataHistory]),EmployeeDocumentModule,CompaniesModule, CreatemoduleModule],
+  imports:[TypeOrmModule.forFeature([Companypackagerow,EmployeeDocument, PagePermissionEntity,EmployeeModule,CompanyDocument , SystemCode , User,PermissionRoleEntity ,CompaniesEntity,Createmodule,Createpackage, Moduledetailsofpackage,EmployeeDataHistory, DrivingLicenceCategory]),EmployeeDocumentModule,CompaniesModule, CreatemoduleModule],
   controllers: [EmployeeDocumentController],
   providers: [CompanypackagerowService,EmployeeDocumentService, EmployeeModuleService, CompaniesService, CompanyDocumentService,UserService,SystemCodeService,ImageUploadService,CreatemoduleService]
 })

@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
 import { EmployeeModule } from '../employee-module.entity';
 
 @Entity('driving_licence_category')
@@ -12,7 +12,8 @@ export class DrivingLicenceCategory {
     @Column({ type: 'boolean', default: true })
     status: Boolean;
 
-    @OneToMany(() => EmployeeModule, employeemodule => employeemodule.driverLicenceCategory, ({ cascade: true }))
-    employee: EmployeeModule;
+    @ManyToMany(() => EmployeeModule, employeemodule => employeemodule.drivingLicenceCategory)
+    @JoinTable()
+    empDlCategory: EmployeeModule[];
 
 }

@@ -10,6 +10,7 @@ import { MailService } from 'src/mail/mail.service';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { Gender } from './gender/gender.entity';
 import { UserService } from 'src/user/user.service';
+import { DrivingLicenceCategory } from './driving_licence_category/driving_licence_category.entity';
 // import randomstring from 'randomstring';
 const randomstring = require("randomstring");
 
@@ -27,7 +28,9 @@ export class EmployeeModuleService {
     private readonly mailservice: MailService,
     @InjectRepository(EmployeeDataHistory)
     private employeedatahistoryrepo: Repository<EmployeeDataHistory>,
-    private readonly userservice: UserService
+    private readonly userservice: UserService,
+    @InjectRepository(DrivingLicenceCategory)
+    private readonly drivingLicenceCategoryRepository: Repository<DrivingLicenceCategory>,
   ) { }
 
   async create(createEmployeeModuleDto) {
@@ -237,8 +240,18 @@ export class EmployeeModuleService {
     const data = {
       ...UpdateEmployeeModuleDto
     }
+    console.log(data, 111111)
 
     const employeerowid = await this.employeeModuleRepository.findOne({ where: { employeeId: id } });
+    // const drivingLicenceCategoryIds = data.drivingLicenceCategory;
+
+    const drivingLicenceCategories = await this.drivingLicenceCategoryRepository.findByIds(data.drivingLicenceCategory);
+delete data.drivingLicenceCategory;
+employeerowid.drivingLicenceCategory=drivingLicenceCategories;
+const reponse011=await this.employeeModuleRepository.save(employeerowid);
+    // data.drivingLicenceCategory = drivingLicenceCategories
+console.log(reponse011,88899889)
+    console.log(drivingLicenceCategories, 101010);
 
     const documents = data['filenames'];
     if (documents.length > 0) {

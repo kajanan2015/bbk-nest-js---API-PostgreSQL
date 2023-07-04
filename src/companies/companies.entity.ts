@@ -162,8 +162,11 @@ export class CompaniesEntity {
   @JoinTable()
   package: Moduledetailsofpackage[];
 
-  @Column("tinyint", { default: 1, comment: ' 1-12 month, 2-36 month' })
+  @Column("tinyint", { default: 0, comment: ' 0-trial,1-12 month, 2-36 month' })
   contractagreement: number;
+
+  @Column("timestamp", { name: "validityperiod", default: null })
+  validityperiod: Date;
 
 
   @ManyToOne(() => Paymenttype, paymenttype => paymenttype.paymentType)

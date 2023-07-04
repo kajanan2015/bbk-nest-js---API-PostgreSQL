@@ -47,8 +47,8 @@ import { CompanypackagerowService } from 'src/companypackagerow/companypackagero
 import { CompanypackagerowModule } from 'src/companypackagerow/companypackagerow.module';
 import { DrivingLicenceCategory } from './driving_licence_category/driving_licence_category.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([Companypackagerow, EmployeeType, EmployeeModule, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency, country, Createmodule, Createpackage, Paymenttype, Moduledetailsofpackage, EmployeeDataHistory]), EmployeeDocumentModule, CompaniesModule, CreatemoduleModule, MailModule, EmployeeDataHistoryModule, DrivingLicenceCategory],
+  imports: [TypeOrmModule.forFeature([Companypackagerow, EmployeeType, EmployeeModule, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency, country, Createmodule, Createpackage, Paymenttype, Moduledetailsofpackage, EmployeeDataHistory, DrivingLicenceCategory]), EmployeeDocumentModule, CompaniesModule, CreatemoduleModule, MailModule, EmployeeDataHistoryModule, DrivingLicenceCategory],
   controllers: [EmployeeModuleController, ImageUploadController],
-  providers: [CompanypackagerowService,EmployeeModuleService, ImageUploadService, EmployeeDocumentService, CompaniesService, SystemCodeService, UserService,CompanyDocumentService,CreatemoduleService,CreatepackageService,ModuledetailsofpackageService,MailService,EmployeeDataHistoryService ]
+  providers: [CompanypackagerowService, EmployeeModuleService, ImageUploadService, EmployeeDocumentService, CompaniesService, SystemCodeService, UserService, CompanyDocumentService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService, MailService, EmployeeDataHistoryService, DrivingLicenceCategory]
 })
 export class EmployeeModuleModule {}
