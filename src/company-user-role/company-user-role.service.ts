@@ -54,15 +54,15 @@ export class CompanyUserRoleService {
   }
 
   async update(id: number, data) {
-    console.log(id,9898)
+    console.log(id, 9898);
     if (data.password) {
       const hashedPassword = await this.hashPassword(data.password);
       data.password = hashedPassword;
     }
 
-console.log(data,8908989)
-    const updateResult = await this.CompanyUserRepository.update({id}, data);
-console.log(updateResult,9898989)
+    console.log(data, 8908989);
+    const updateResult = await this.CompanyUserRepository.update({ id }, data);
+    console.log(updateResult, 9898989);
     if (updateResult) {
       return {
         statusCode: HttpStatus.OK,
