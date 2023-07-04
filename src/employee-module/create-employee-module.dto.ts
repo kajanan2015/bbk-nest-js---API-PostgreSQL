@@ -104,4 +104,5 @@ export class CreateEmployeeModuleDto {
     paymentFrequency: PaymentFrequency[];
     addedBy:User[];
     driverLicenceCategory: DrivingLicenceCategory[];
+    active: boolean;
 }

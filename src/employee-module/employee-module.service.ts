@@ -303,7 +303,17 @@ export class EmployeeModuleService {
 
     delete data['deletedDocs'];
     delete data['filenames'];
+
     await this.employeeModuleRepository.update({ id: +employeerowid.id }, data);
+
+    const updatedEmployee =  await this.employeeModuleRepository.findOne({
+      where: { id: employeerowid.id }
+    });
+
+    if(updatedEmployee.isNonNative != null && updatedEmployee.bankAccountNo != null && updatedEmployee.salaryType != null){
+      await this.employeeModuleRepository.update({ id: +employeerowid.id }, {active: true});
+    }
+    console.log(`${updatedEmployee.isNonNative} ${updatedEmployee.bankAccountNo} ${updatedEmployee.salaryType}`, 777777777777777777777777)
     return await this.employeeModuleRepository.findOne({
       where: { id: employeerowid.id },
       relations: ['documents']
