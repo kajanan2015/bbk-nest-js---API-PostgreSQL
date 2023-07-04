@@ -12,7 +12,7 @@ import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetails
 import { Paymenttype } from 'src/createpackage/paymenttype.entity';
 import { CustomizeTable } from 'src/customize-table/customize-table.entity';
 import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entity';
-
+import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
 
 @Entity('company')
 export class CompaniesEntity {
@@ -181,4 +181,8 @@ export class CompaniesEntity {
 
   @Column("varchar", { length: 100, nullable: true, default: () => null })
   paymentlinkotp: string;
+
+
+  @OneToMany(() => CompanyWorkPattern, workpattern => workpattern.company, ({ cascade: true }))
+  workpattern: CompanyWorkPattern[];
 }

@@ -44,6 +44,7 @@ import { CustomizeTableModule } from './customize-table/customize-table.module';
 import { EmployeeDataHistoryModule } from './employee-data-history/employee-data-history.module';
 import { CompanyUserRoleModule } from './company-user-role/company-user-role.module';
 import { CompanypackagerowModule } from './companypackagerow/companypackagerow.module';
+import { CompanyWorkPatternModule } from './company-work-pattern/company-work-pattern.module';
 
 
 
@@ -94,7 +95,8 @@ const settings = require("../ormconfig.js");
     CustomizeTableModule,
     EmployeeDataHistoryModule,
     CompanyUserRoleModule,
-    CompanypackagerowModule
+    CompanypackagerowModule,
+    CompanyWorkPatternModule
   ],
   controllers: [AppController],
   providers: [AppService],

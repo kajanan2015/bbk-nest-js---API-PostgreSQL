@@ -30,9 +30,9 @@ import { Paymenttype } from 'src/createpackage/paymenttype.entity';
 import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entity';
 import { CompanypackagerowService } from 'src/companypackagerow/companypackagerow.service';
 import { CompanypackagerowModule } from 'src/companypackagerow/companypackagerow.module';
-
+import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([CompaniesEntity, PagePermissionEntity, SystemCode,CompanyDocument,User,country, companytype, EmployeeModule,Createmodule, Createpackage,Moduledetailsofpackage, Paymenttype,Companypackagerow]), PagePermissionModule,SystemCodeModule, UserModule, MailModule, CompanyDocumentModule, CreatemoduleModule],
+  imports: [TypeOrmModule.forFeature([CompaniesEntity, PagePermissionEntity, SystemCode,CompanyDocument,User,country, companytype, EmployeeModule,Createmodule, Createpackage,Moduledetailsofpackage, Paymenttype,Companypackagerow,CompanyWorkPattern]), PagePermissionModule,SystemCodeModule, UserModule, MailModule, CompanyDocumentModule, CreatemoduleModule],
   controllers: [CompaniesController],
   providers: [CompanypackagerowService,CompaniesService, ImageUploadService, PagePermissionService,SystemCodeService, UserService,MailService, CompanyDocumentService,CreatemoduleService],
 })
