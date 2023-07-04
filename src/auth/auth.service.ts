@@ -19,8 +19,11 @@ export class AuthService {
   ) { }
 
   async signIn(email: string, password: string): Promise<User> {
+    console.log('hiiii')
     const user = await this.userService.findByEmail(email);
+    console.log(user,8787878)
     if (!user) {
+      console.log('master')
       throw new BadRequestException('auth/account-not-found');
 
     }
@@ -32,6 +35,7 @@ export class AuthService {
       });
     }
     delete user.password;
+    console.log(user,9898)
     return user;
   }
 
