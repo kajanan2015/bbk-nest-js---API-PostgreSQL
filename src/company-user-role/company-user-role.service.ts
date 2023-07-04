@@ -1,10 +1,10 @@
-import { Injectable } from "@nestjs/common";
+import { HttpStatus, Injectable } from "@nestjs/common";
 import { CreateCompanyUserRoleDto } from "./create-company-user-role.dto";
 import { UpdateCompanyUserRoleDto } from "./update-company-user-role.dto";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CompanyUserRole } from "./company-user-role.entity";
 import { FindOneOptions, Repository } from "typeorm";
-import * as bcrypt from 'bcryptjs';
+import * as bcrypt from "bcryptjs";
 @Injectable()
 export class CompanyUserRoleService {
   constructor(
@@ -14,16 +14,29 @@ export class CompanyUserRoleService {
 
   async create(data) {
     console.log(data, 5555);
-    const newhashpassword = await this.hashPassword(data.password);
-    console.log(newhashpassword , 666666)
+    let newhashpassword;
+    if (data.password) {
+      newhashpassword = await this.hashPassword(data.password);
+    }
+
+    console.log(newhashpassword, 666666);
     const user = {
       ...data,
       password: newhashpassword,
-     
     };
     const companyuser = this.CompanyUserRepository.create(user);
     await this.CompanyUserRepository.save(companyuser);
-    return companyuser;
+    if (companyuser) {
+      return {
+        statusCode: HttpStatus.OK,
+        message: "successs",
+      };
+    } else {
+      return {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: "failed",
+      };
+    }
   }
 
   async hashPassword(plain: string): Promise<string> {
@@ -40,10 +53,27 @@ export class CompanyUserRoleService {
     return this.CompanyUserRepository.findOne(id);
   }
 
-  async update(id: number, data, updatecompanyuserroleDto) {
-    const updatecompanyuser = await this.CompanyUserRepository.update({ id }, data);
-    const options: FindOneOptions = { where: { id } };
-    return await this.CompanyUserRepository.findOne(options);
+  async update(id: number, data) {
+    console.log(id,9898)
+    if (data.password) {
+      const hashedPassword = await this.hashPassword(data.password);
+      data.password = hashedPassword;
+    }
+
+console.log(data,8908989)
+    const updateResult = await this.CompanyUserRepository.update({id}, data);
+console.log(updateResult,9898989)
+    if (updateResult) {
+      return {
+        statusCode: HttpStatus.OK,
+        message: "successs",
+      };
+    } else {
+      return {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: "failed",
+      };
+    }
   }
 
   async remove(id: number): Promise<void> {

@@ -29,10 +29,10 @@ export class CompanyUserRoleController {
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   async create(@UploadedFiles() profileImg, @Body() data) {
-    console.log(profileImg,9090)
-    console.log(data,9090)
+    console.log(profileImg, 9090000);
+    console.log(data, 9090);
     const prflogo = await this.imageUploadService.upload(profileImg, "body");
-    console.log(prflogo,222222222222)
+    console.log(prflogo, 222222);
     const passdata = {
       ...data,
       profilePicture: prflogo[0],
@@ -54,34 +54,54 @@ export class CompanyUserRoleController {
 
   @Put("/edit/:id")
   @UseInterceptors(AnyFilesInterceptor())
-  async update(@UploadedFiles() prfImg, @Body() updateCompanyUserRoleDto) {
-    console.log(updateCompanyUserRoleDto, 999999);
+  async update(
+    @UploadedFiles() prfImg,
+    @Param("id") id,
+    @Body() updateCompanyUserRoleDto
+  ) {
+    console.log(prfImg, 999999);
     const currentDateTime = new Date();
     let data = {
-      ...updateCompanyUserRoleDto.updatedValues,
+      ...updateCompanyUserRoleDto,
       updatedat: currentDateTime,
-      prfupdate: updateCompanyUserRoleDto.userId,
-      ...(updateCompanyUserRoleDto.updatedValues.status
-        ? { status: parseInt(updateCompanyUserRoleDto.updatedValues.status) }
+      ...(updateCompanyUserRoleDto.status
+        ? { status: parseInt(updateCompanyUserRoleDto.status) }
         : {}),
     };
     delete data.userId;
     console.log(data, 111111);
 
     if (prfImg && prfImg.length) {
-      const prflogo = await this.imageUploadService.upload(prfImg, "body");
+      const profilePicture = await this.imageUploadService.upload(
+        prfImg,
+        "body"
+      );
+      console.log(profilePicture, 12345);
       delete data.existprfpic;
-
       data = {
         ...data,
-        profilepicture: prflogo[0],
+        profilePicture: profilePicture[0],
       };
       console.log(data, 23232323);
     }
+
+
+    // if(updateCompanyUserRoleDto.existprfpic){
+    //   const profilePicture= await this.imageUploadService.upload(prfImg,'body');
+    //   delete data.existprfpic;
+     
+    //   data={
+    //     ...data,
+    //     profilePicture:profilePicture[0]
+    //   }
+    //   console.log(data,67890)
+    // }
+
+
     return await this.companyUserRoleService.update(
-      updateCompanyUserRoleDto.id,
-      data,
-      updateCompanyUserRoleDto
+      +id,
+      data
+      // updateCompanyUserRoleDto
     );
   }
 
