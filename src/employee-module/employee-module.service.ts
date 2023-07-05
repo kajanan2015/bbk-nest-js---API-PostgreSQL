@@ -74,7 +74,7 @@ export class EmployeeModuleService {
 
       return await this.employeeModuleRepository.findOne({
         where: { id: existingEmployee.id },
-        relations: ['documents']
+        relations: ['drivingLicenceCategory', 'documents']
       });
 
     } else {
@@ -110,7 +110,7 @@ export class EmployeeModuleService {
         password: employeerandompassword,
         phone: createEmployeeModuleDto.mobilePhone,
         email: createEmployeeModuleDto.employeeId,
-        activate:1,
+        activate: 1,
         activated_time: currentDateTime
       };
 
@@ -149,7 +149,7 @@ export class EmployeeModuleService {
       }
       return await this.employeeModuleRepository.findOne({
         where: { employeeId: createEmployeeModuleDto.employeeId },
-        relations: ['documents']
+        relations: ['drivingLicenceCategory', 'documents']
       });
     }
   }
@@ -199,7 +199,7 @@ export class EmployeeModuleService {
     return bankTypeList;
   }
 
-  async  getDrivingLicenceCategory() {
+  async getDrivingLicenceCategory() {
     const query = 'SELECT * FROM `driving_licence_category`';
     const getDrivingLicenceCategory = await this.connection.query(query);
     return getDrivingLicenceCategory;
@@ -228,7 +228,7 @@ export class EmployeeModuleService {
   async findById(id: number) {
     return await this.employeeModuleRepository.findOne({
       where: { id: +id },
-      relations: ['documents', 'drivingLicenceType', 'employeeType', 'addedBy', 'designation', 'company', 'gender', 'maritalStatus', 'bankName', 'paymentFrequency', 'addressCountry', 'refCompAddressCountry']
+      relations: ['drivingLicenceCategory', 'documents', 'drivingLicenceType', 'employeeType', 'addedBy', 'designation', 'company', 'gender', 'maritalStatus', 'bankName', 'paymentFrequency', 'addressCountry', 'refCompAddressCountry']
     });
   }
 
@@ -240,18 +240,21 @@ export class EmployeeModuleService {
     const data = {
       ...UpdateEmployeeModuleDto
     }
-    console.log(data, 111111)
 
-    const employeerowid = await this.employeeModuleRepository.findOne({ where: { employeeId: id } });
-    // const drivingLicenceCategoryIds = data.drivingLicenceCategory;
-
+    const employeerowid = await this.employeeModuleRepository.findOne({ where: { employeeId: id }, relations: ['drivingLicenceCategory'] });
     if (data.hasOwnProperty("drivingLicenceCategory")) {
-      const drivingLicenceCategories = await this.drivingLicenceCategoryRepository.findByIds(data.drivingLicenceCategory);
-      delete data?.drivingLicenceCategory;
-      employeerowid.drivingLicenceCategory=drivingLicenceCategories;
-      const reponse011=await this.employeeModuleRepository.save(employeerowid);
-    }    
-    // data.drivingLicenceCategory = drivingLicenceCategories
+      const drivingLicenceCategories = data.drivingLicenceCategory;
+      let drivinglicensecategoryId = [];
+      for (const categoryid of data.drivingLicenceCategory) {
+        drivinglicensecategoryId.push(categoryid.id)
+      }
+      console.log(drivinglicensecategoryId, 5654)
+      const repsonse1 = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
+      employeerowid.drivingLicenceCategory = repsonse1;
+      const response3333 = await this.employeeModuleRepository.save(employeerowid)
+
+      delete data.drivingLicenceCategory;
+    }
 
     const documents = data['filenames'];
     if (documents?.length > 0) {
@@ -319,16 +322,16 @@ export class EmployeeModuleService {
 
     await this.employeeModuleRepository.update({ id: +employeerowid.id }, data);
 
-    const updatedEmployee =  await this.employeeModuleRepository.findOne({
+    const updatedEmployee = await this.employeeModuleRepository.findOne({
       where: { id: employeerowid.id }
     });
 
-    if(updatedEmployee.isNonNative != null && updatedEmployee.bankAccountNo != null && updatedEmployee.salaryType != null){
-      await this.employeeModuleRepository.update({ id: +employeerowid.id }, {active: true});
+    if (updatedEmployee.isNonNative != null && updatedEmployee.bankAccountNo != null && updatedEmployee.salaryType != null) {
+      await this.employeeModuleRepository.update({ id: +employeerowid.id }, { active: true });
     }
     return await this.employeeModuleRepository.findOne({
       where: { id: employeerowid.id },
-      relations: ['documents']
+      relations: ['drivingLicenceCategory', 'documents']
     });
   }
 
@@ -423,7 +426,7 @@ export class EmployeeModuleService {
       where: {
         id: id,
       },
-      relations: ['documents']
+      relations: ['drivingLicenceCategory', 'documents']
     });
 
     // const query = `SELECT * FROM employee_module emp INNER JOIN employee_document doc ON emp.id = doc.empid WHERE emp.id = ${id} AND doc.active = 1;`;
@@ -445,14 +448,14 @@ export class EmployeeModuleService {
 
   async find() {
     return await this.employeeModuleRepository.find({
-      relations: ['documents']
+      relations: ['drivingLicenceCategory', 'documents']
     });
   }
 
   async findCompanyAllEmployees(companyid: number) {
     return await this.employeeModuleRepository.find({
-      where: { company: companyid, status:1 },
-      relations: ['employeeType', 'designation', 'company', 'gender', 'maritalStatus', 'drivingLicenceType', 'addedBy', 'addressCountry', 'refCompAddressCountry']
+      where: { company: companyid, status: 1 },
+      relations: ['drivingLicenceCategory', 'employeeType', 'designation', 'company', 'gender', 'maritalStatus', 'drivingLicenceType', 'addedBy', 'addressCountry', 'refCompAddressCountry']
     });
   }
 
