@@ -28,27 +28,24 @@ export class CompanyWorkPatternService {
   const withtimepattern=await this.patternrepository.save(response2)
   await this.systemcodeService.update(responsesystemcode.id, newstartvalue);
 
-  if(withputtimepattern&&withtimepattern){
-    return "successfully created"
-  }else{
-    return "error occured"
-  }
+    if (withputtimepattern && withtimepattern) {
+      return "successfully created"
+    } else {
+      return "error occured"
+    }
   }
 
   async findAll() {
-   return await this.patternrepository.find({relations:['company']})
+    return await this.patternrepository.find({ relations: ['company'] })
   }
-async findbypattername(name:string,companyId){
+
+  async findbypattername(name: string, companyId) {
+    const pattern = await this.patternrepository.find({ where: { workPatternName: name, company: companyId } });
+    if (pattern.length > 0) {
+      return "name exist"
+    }
+  }
   
-  const pattern = await this.patternrepository.find({where:{workPatternName:name,company:companyId}});
-  console.log(pattern,8787878)
-  if (pattern.length>0) {
-    console.log('master')
-    throw new BadRequestException('patter-name exist');
-
-
-}
-}
   async findOne(id: number) {
     const workpattern = await this.patternrepository.findOne(id);
     if (!workpattern) {
