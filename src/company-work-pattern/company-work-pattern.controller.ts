@@ -6,7 +6,7 @@ import { AuthGuard } from '@nestjs/passport';
 @UseGuards(AuthGuard('jwt'))
 @Controller('company-work-pattern')
 export class CompanyWorkPatternController {
-  constructor(private readonly companyWorkPatternService: CompanyWorkPatternService) {}
+  constructor(private readonly companyWorkPatternService: CompanyWorkPatternService) { }
 
   @Post('create-pattern')
   async create(@Body() createCompanyWorkPatternDto: CreateCompanyWorkPatternDto) {
@@ -19,12 +19,12 @@ export class CompanyWorkPatternController {
   }
 
   @Post('findByname/:name')
-  async findByname(@Param('name') name: string,@Body() data) {
-    return this.companyWorkPatternService.findbypattername(name,data.company);
+  async findByname(@Param('name') name: string, @Body() data) {
+    return this.companyWorkPatternService.findbypattername(name, data.company);
   }
 
   @Get(':id')
- async findOne(@Param('id') id: number) {
+  async findOne(@Param('id') id: number) {
     return this.companyWorkPatternService.findOne(+id);
   }
 

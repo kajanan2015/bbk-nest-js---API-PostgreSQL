@@ -8,38 +8,35 @@ import { Repository } from 'typeorm';
 export class CompanyWorkPatternService {
   constructor(
     @InjectRepository(CompanyWorkPattern)
-    private readonly patternrepository:Repository<CompanyWorkPattern>
-  ){}
- async create(createCompanyWorkPatternDto: CreateCompanyWorkPatternDto) {
-  await this.findbypattername(createCompanyWorkPatternDto.workPatternName,createCompanyWorkPatternDto.company)
-  createCompanyWorkPatternDto.workType=0;
-  const response= await this.patternrepository.create(createCompanyWorkPatternDto)
-  const withputtimepattern=await this.patternrepository.save(response);
-  createCompanyWorkPatternDto.workType=1;
-  const response2= await this.patternrepository.create(createCompanyWorkPatternDto)
-  const withtimepattern=await this.patternrepository.save(response2)
+    private readonly patternrepository: Repository<CompanyWorkPattern>
+  ) { }
+  async create(createCompanyWorkPatternDto: CreateCompanyWorkPatternDto) {
+    await this.findbypattername(createCompanyWorkPatternDto.workPatternName, createCompanyWorkPatternDto.company)
+    createCompanyWorkPatternDto.workType = 0;
+    const response = await this.patternrepository.create(createCompanyWorkPatternDto)
+    const withputtimepattern = await this.patternrepository.save(response);
+    createCompanyWorkPatternDto.workType = 1;
+    const response2 = await this.patternrepository.create(createCompanyWorkPatternDto)
+    const withtimepattern = await this.patternrepository.save(response2)
 
-  if(withputtimepattern&&withtimepattern){
-    return "successfully created"
-  }else{
-    return "error occured"
-  }
+    if (withputtimepattern && withtimepattern) {
+      return "successfully created"
+    } else {
+      return "error occured"
+    }
   }
 
   async findAll() {
-   return await this.patternrepository.find({relations:['company']})
+    return await this.patternrepository.find({ relations: ['company'] })
   }
-async findbypattername(name:string,companyId){
+
+  async findbypattername(name: string, companyId) {
+    const pattern = await this.patternrepository.find({ where: { workPatternName: name, company: companyId } });
+    if (pattern.length > 0) {
+      return "name exist"
+    }
+  }
   
-  const pattern = await this.patternrepository.find({where:{workPatternName:name,company:companyId}});
-  console.log(pattern,8787878)
-  if (pattern.length>0) {
-    console.log('master')
-    throw new BadRequestException('patter-name exist');
-
-
-}
-}
   async findOne(id: number) {
     const workpattern = await this.patternrepository.findOne(id);
     if (!workpattern) {
@@ -48,8 +45,8 @@ async findbypattername(name:string,companyId){
     return workpattern;
   }
 
- async update(id: number, updateCompanyWorkPatternDto: UpdateCompanyWorkPatternDto) {
-   return await this.patternrepository.update(id,updateCompanyWorkPatternDto)
+  async update(id: number, updateCompanyWorkPatternDto: UpdateCompanyWorkPatternDto) {
+    return await this.patternrepository.update(id, updateCompanyWorkPatternDto)
   }
 
   remove(id: number) {
