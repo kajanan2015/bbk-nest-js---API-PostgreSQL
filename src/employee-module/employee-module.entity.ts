@@ -128,13 +128,13 @@ export class EmployeeModule {
     @Column({ nullable: true, default: () => null })
     visaExpireDate: Date | null;
 
-    @Column({ type: 'boolean', default: false})
+    @Column({ type: 'boolean', default: null})
     contract: boolean;
 
-    @Column({ type: 'boolean', default: false})
+    @Column({ type: 'boolean', default: null})
     offerLetter: boolean;
 
-    @Column({ type: 'boolean', default: false})
+    @Column({ type: 'boolean', default: null})
     referenceCheck: boolean;
 
     @Column("varchar", { nullable: true, length: 250, default: () => null })
@@ -174,7 +174,7 @@ export class EmployeeModule {
     @JoinColumn({ name: 'refCompAddressCountry' })
     refCompAddressCountry: country;
 
-    @Column({ type: 'boolean', default: false})
+    @Column({ type: 'boolean', default: null})
     drivingLicence: boolean;
 
     // @Column("varchar", { nullable: true, length: 250, default: () => null })
@@ -198,7 +198,7 @@ export class EmployeeModule {
     @Column({ nullable: true, default: () => null })
     drivingLicenceCatDExpire: Date | null;
     
-    @Column({ type: 'boolean', default: false})
+    @Column({ type: 'boolean', default: null})
     tachoCard: boolean;
 
     @Column("varchar", { nullable: true, length: 250, default: () => null })
@@ -210,7 +210,7 @@ export class EmployeeModule {
     @Column({ nullable: true, default: () => null })
     tachoExpireDate: Date | null;
 
-    @Column({ type: 'boolean', default: false })
+    @Column({ type: 'boolean', default: null })
     cpcCard: boolean;
 
     @Column("varchar", { nullable: true, length: 250, default: () => null })
@@ -222,7 +222,7 @@ export class EmployeeModule {
     @Column({ nullable: true, default: () => null })
     cpcCardExpireDate: Date | null;
 
-    @Column({ type: 'boolean', default: false })
+    @Column({ type: 'boolean', default: null })
     crbCheckCard: boolean;
 
     @Column("varchar", { nullable: true, length: 250, default: () => null })
@@ -234,7 +234,7 @@ export class EmployeeModule {
     @Column({ nullable: true, default: () => null })
     crbCardExpireDate: Date | null;
 
-    @Column({ type: 'boolean', default: false})
+    @Column({ type: 'boolean', default: null})
     additionalDocs: boolean;
 
     @Column({ type: 'boolean', default: true })
@@ -316,14 +316,11 @@ export class EmployeeModule {
     @OneToMany(() => EmployeeDataHistory, empDataHistory => empDataHistory.employee,{ cascade: true })
     editHistory: EmployeeDataHistory[];
 
-    // @ManyToOne(() => DrivingLicenceCategory, driverLicenceCategory => driverLicenceCategory.employee)
-    // @JoinColumn({ name: 'driverLicenceCategory' })
-    // driverLicenceCategory: DrivingLicenceCategory;
 
     @Column({ type: 'boolean', default: false })
     active: boolean;
     
-    @ManyToMany(() => DrivingLicenceCategory, category => category.empDlCategory)
+    @ManyToMany(() => DrivingLicenceCategory, category => category.empDlCategory, { cascade: true })
     @JoinTable()
     drivingLicenceCategory: DrivingLicenceCategory[];
 
