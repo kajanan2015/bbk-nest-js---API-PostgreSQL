@@ -3,6 +3,7 @@ import { UpdateEmployeeDataHistoryDto } from './update-employee-data-history.dto
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EmployeeDataHistory } from './employee-data-history.entity';
+import { EmployeeModule } from 'src/employee-module/employee-module.entity';
 
 @Injectable()
 export class EmployeeDataHistoryService {
@@ -10,9 +11,12 @@ export class EmployeeDataHistoryService {
   constructor(
     @InjectRepository(EmployeeDataHistory)
     private empDataHistoryRepository: Repository<EmployeeDataHistory>,
+    @InjectRepository(EmployeeModule)
+    private employeeModuleRepository: Repository<EmployeeModule>,
   ) { }
 
   async create(createEmployeeDataHistoryDto) {
+
     const response = this.empDataHistoryRepository.create(createEmployeeDataHistoryDto);
 
     // Find the previous record of the employee
