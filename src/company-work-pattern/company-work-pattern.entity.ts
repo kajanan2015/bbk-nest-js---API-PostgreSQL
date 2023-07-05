@@ -17,7 +17,7 @@ export class CompanyWorkPattern {
     workType: number;
 
 
-    @Column("tinyint", { default: 0, comment: ' 0-default 7 day pattern,1-more than 7 days, 2-custom pattern' })
+    @Column("tinyint", { default: 1, comment: ' 1-default 7 day pattern,2-more than 7 days, 3-custom pattern' })
     patternType: number;
 
     @Column("int", { nullable: true, default: () => null })
