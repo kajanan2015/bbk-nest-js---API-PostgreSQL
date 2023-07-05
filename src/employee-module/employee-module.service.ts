@@ -245,16 +245,16 @@ export class EmployeeModuleService {
     const employeerowid = await this.employeeModuleRepository.findOne({ where: { employeeId: id } });
     // const drivingLicenceCategoryIds = data.drivingLicenceCategory;
 
-    const drivingLicenceCategories = await this.drivingLicenceCategoryRepository.findByIds(data.drivingLicenceCategory);
-delete data.drivingLicenceCategory;
-employeerowid.drivingLicenceCategory=drivingLicenceCategories;
-const reponse011=await this.employeeModuleRepository.save(employeerowid);
+    if (data.hasOwnProperty("drivingLicenceCategory")) {
+      const drivingLicenceCategories = await this.drivingLicenceCategoryRepository.findByIds(data.drivingLicenceCategory);
+      delete data?.drivingLicenceCategory;
+      employeerowid.drivingLicenceCategory=drivingLicenceCategories;
+      const reponse011=await this.employeeModuleRepository.save(employeerowid);
+    }    
     // data.drivingLicenceCategory = drivingLicenceCategories
-console.log(reponse011,88899889)
-    console.log(drivingLicenceCategories, 101010);
 
     const documents = data['filenames'];
-    if (documents.length > 0) {
+    if (documents?.length > 0) {
       for (let document in documents) {
         const docEntry = documents[document];
         for (const doc in docEntry as {}) {
@@ -326,7 +326,6 @@ console.log(reponse011,88899889)
     if(updatedEmployee.isNonNative != null && updatedEmployee.bankAccountNo != null && updatedEmployee.salaryType != null){
       await this.employeeModuleRepository.update({ id: +employeerowid.id }, {active: true});
     }
-    console.log(`${updatedEmployee.isNonNative} ${updatedEmployee.bankAccountNo} ${updatedEmployee.salaryType}`, 777777777777777777777777)
     return await this.employeeModuleRepository.findOne({
       where: { id: employeerowid.id },
       relations: ['documents']
