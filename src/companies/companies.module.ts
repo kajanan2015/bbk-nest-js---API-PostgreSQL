@@ -31,9 +31,12 @@ import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entit
 import { CompanypackagerowService } from 'src/companypackagerow/companypackagerow.service';
 import { CompanypackagerowModule } from 'src/companypackagerow/companypackagerow.module';
 import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
+import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
+import { EmployeeDataHistoryModule } from 'src/employee-data-history/employee-data-history.module';
+import { EmployeeDataHistoryService } from 'src/employee-data-history/employee-data-history.service';
 @Module({
-  imports: [TypeOrmModule.forFeature([CompaniesEntity, PagePermissionEntity, SystemCode,CompanyDocument,User,country, companytype, EmployeeModule,Createmodule, Createpackage,Moduledetailsofpackage, Paymenttype,Companypackagerow,CompanyWorkPattern]), PagePermissionModule,SystemCodeModule, UserModule, MailModule, CompanyDocumentModule, CreatemoduleModule],
+  imports: [TypeOrmModule.forFeature([CompaniesEntity, PagePermissionEntity, SystemCode,CompanyDocument,User,country, companytype, EmployeeModule,Createmodule, Createpackage,Moduledetailsofpackage, Paymenttype,Companypackagerow,CompanyWorkPattern,EmployeeDataHistory]), PagePermissionModule,SystemCodeModule, UserModule, MailModule, CompanyDocumentModule, CreatemoduleModule,EmployeeDataHistoryModule],
   controllers: [CompaniesController],
-  providers: [CompanypackagerowService,CompaniesService, ImageUploadService, PagePermissionService,SystemCodeService, UserService,MailService, CompanyDocumentService,CreatemoduleService],
+  providers: [CompanypackagerowService,CompaniesService, ImageUploadService, PagePermissionService,SystemCodeService, UserService,MailService, CompanyDocumentService,CreatemoduleService,EmployeeDataHistoryService],
 })
 export class CompaniesModule {}

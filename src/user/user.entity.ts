@@ -115,4 +115,7 @@ export class User  {
 
   @OneToMany(()=>CompanyWorkPattern, cretedby => cretedby.patterncreate,{cascade:true})
   patterncreateby:CompanyWorkPattern[];
+
+  @OneToMany(()=>CompanyWorkPattern, updatedby => updatedby.patternupdate,{cascade:true})
+  patternupdatedby:CompanyWorkPattern[];
 }

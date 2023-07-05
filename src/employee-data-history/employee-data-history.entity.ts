@@ -1,7 +1,8 @@
 import { EmployeeModule } from "src/employee-module/employee-module.entity";
 import { User } from "src/user/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-
+import { CompaniesEntity } from "src/companies/companies.entity";
+import { CompanyWorkPattern } from "src/company-work-pattern/company-work-pattern.entity";
 @Entity()
 export class EmployeeDataHistory {
     @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
@@ -10,6 +11,11 @@ export class EmployeeDataHistory {
     @ManyToOne(() => EmployeeModule, employee => employee.editHistory)
     @JoinColumn({ name: 'employee' })
     employee: EmployeeModule;
+
+    @ManyToOne(() => CompaniesEntity, company => company.editHistory)
+    @JoinColumn({ name: 'company' })
+    company: CompaniesEntity;
+
 
     @Column("varchar", {  length: 250, nullable: true, default: () => null })
     type: string | null;
@@ -39,4 +45,8 @@ export class EmployeeDataHistory {
 
     @Column({ type: 'boolean', default: false })
     active: boolean;
+
+    @ManyToOne(() => CompanyWorkPattern, pattern => pattern.editHistory)
+    @JoinColumn({ name: 'workpattern' })
+    workpattern: CompanyWorkPattern;
 }

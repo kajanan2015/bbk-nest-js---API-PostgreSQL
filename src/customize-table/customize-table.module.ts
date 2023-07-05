@@ -25,10 +25,12 @@ import { Paymenttype } from 'src/createpackage/paymenttype.entity';
 import { ModuledetailsofpackageService } from 'src/moduledetailsofpackage/moduledetailsofpackage.service';
 import { CompanypackagerowService } from 'src/companypackagerow/companypackagerow.service';
 import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entity';
-
+import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
+import { EmployeeDataHistoryModule } from 'src/employee-data-history/employee-data-history.module';
+import { EmployeeDataHistoryService } from 'src/employee-data-history/employee-data-history.service';
 @Module({
-  imports:[TypeOrmModule.forFeature([Companypackagerow,CustomizeTable, User, CompaniesEntity, PermissionRoleEntity, PagePermissionEntity, CompanyDocument, Createmodule, Createpackage, Moduledetailsofpackage, SystemCode, Paymenttype])],
+  imports:[TypeOrmModule.forFeature([Companypackagerow,CustomizeTable, User, CompaniesEntity, PermissionRoleEntity, PagePermissionEntity, CompanyDocument, Createmodule, Createpackage, Moduledetailsofpackage, SystemCode, Paymenttype,EmployeeDataHistory]),EmployeeDataHistoryModule],
   controllers: [CustomizeTableController],
-  providers: [CustomizeTableService, UserService, CompaniesService, PermissionRoleService, PagePermissionService, CompanyDocumentService, SystemCodeService, ImageUploadService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService,CompanypackagerowService]
+  providers: [CustomizeTableService, UserService, CompaniesService, PermissionRoleService, PagePermissionService, CompanyDocumentService, SystemCodeService, ImageUploadService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService,CompanypackagerowService,EmployeeDataHistoryService]
 })
 export class CustomizeTableModule {}

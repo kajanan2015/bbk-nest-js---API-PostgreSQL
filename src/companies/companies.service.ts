@@ -33,6 +33,8 @@ import * as dotenv from 'dotenv';
 import { CompanypackagerowService } from "src/companypackagerow/companypackagerow.service";
 const randomstring = require("randomstring");
 import { Companypackagerow } from "src/companypackagerow/companypackagerow.entity";
+import { EmployeeDataHistory } from "src/employee-data-history/employee-data-history.entity";
+import { EmployeeDataHistoryService } from "src/employee-data-history/employee-data-history.service";
 @Injectable()
 export class CompaniesService {
   constructor(
@@ -59,6 +61,9 @@ export class CompaniesService {
     private readonly companyrowpackageservice:CompanypackagerowService,
     @InjectRepository(Companypackagerow)
     private readonly companypackagerowrepository: Repository<Companypackagerow>,
+    private readonly datahistoryservice: EmployeeDataHistoryService,
+    @InjectRepository(EmployeeDataHistory)
+    private readonly datahistoryrepo: Repository<EmployeeDataHistory>,
   ) { }
 
   async showAll() {
@@ -477,6 +482,15 @@ export class CompaniesService {
     
     const newCompany = await this.companyRepository.create(dataCompany);
     const responsesave = await this.companyRepository.save(newCompany);
+
+
+    const responsehistory = await this.datahistoryrepo.create({ type:"company-history", data: JSON.stringify(dataCompany), company:responsesave["id"] });
+    const res = await this.datahistoryrepo.save(responsehistory);
+
+
+
+
+
     let newcompassigndata; 
     
     const newlycreatedcompany=responsesave["id"];
@@ -619,6 +633,31 @@ console.log(newCompany,43534)
           !removedUserEntities.some((removedUser) => removedUser.id === user.id)
       );
       const r1 = await this.companyRepository.save(companyfind);
+        
+                // Find the previous record of the employee
+    const previousRecord = await this.datahistoryrepo.findOne({
+      where: {
+        company: +id,
+        type: "company-history"
+      },
+      order: { createdBy: 'DESC' },
+    });
+
+    // If a previous record exists, update its endDate
+    if (previousRecord) {
+      previousRecord.endDate = new Date(Date.now());
+      await this.datahistoryrepo.save(previousRecord);
+    }
+    const historyresponse={
+      users:companyfind.users
+    }
+    const responsehistory = await this.datahistoryrepo.create({ type:"company-history", data: JSON.stringify(historyresponse), company:{id}});
+    const res = await this.datahistoryrepo.save(responsehistory);
+    
+
+
+
+
     }
 
     if (data.deletedDocument) {
@@ -748,6 +787,23 @@ console.log(newCompany,43534)
 
     if (Object.keys(passcompanyData).length > 0) {
       await this.companyRepository.update({ id }, passcompanyData);
+
+          // Find the previous record of the employee
+    const previousRecord = await this.datahistoryrepo.findOne({
+      where: {
+        company: +id,
+        type: "company-history"
+      },
+      order: { createdBy: 'DESC' },
+    });
+
+    // If a previous record exists, update its endDate
+    if (previousRecord) {
+      previousRecord.endDate = new Date(Date.now());
+      await this.datahistoryrepo.save(previousRecord);
+    }
+    const responsehistory = await this.datahistoryrepo.create({ type:"company-history", data: JSON.stringify(passcompanyData), company:{id}});
+    const res = await this.datahistoryrepo.save(responsehistory);
     }
 
     return await this.companyRepository.findOne(id, {

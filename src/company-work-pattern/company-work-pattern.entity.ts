@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinColumn, JoinTable, OneToMany } from 'typeorm';
 import { User } from 'src/user/user.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
-
+import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 @Entity()
 export class CompanyWorkPattern {
     @PrimaryGeneratedColumn()
@@ -44,4 +44,11 @@ export class CompanyWorkPattern {
     @ManyToOne(() => User, usercretae => usercretae.patterncreateby)
     @JoinColumn({ name: 'createdBy' })
     patterncreate: User;
+
+    @ManyToOne(() => User, userupdate => userupdate.patternupdatedby)
+    @JoinColumn({ name: 'updatedBy' })
+    patternupdate: User;
+
+    @OneToMany(() => EmployeeDataHistory, patternDataHistory => patternDataHistory.workpattern,{ cascade: true })
+    editHistory: EmployeeDataHistory[];
 }

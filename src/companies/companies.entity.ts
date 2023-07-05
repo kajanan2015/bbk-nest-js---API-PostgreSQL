@@ -13,7 +13,7 @@ import { Paymenttype } from 'src/createpackage/paymenttype.entity';
 import { CustomizeTable } from 'src/customize-table/customize-table.entity';
 import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entity';
 import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
-
+import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 @Entity('company')
 export class CompaniesEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
@@ -185,4 +185,7 @@ export class CompaniesEntity {
 
   @OneToMany(() => CompanyWorkPattern, workpattern => workpattern.company, ({ cascade: true }))
   workpattern: CompanyWorkPattern[];
+
+  @OneToMany(() => EmployeeDataHistory, compDataHistory => compDataHistory.company,{ cascade: true })
+  editHistory: EmployeeDataHistory[];
 }
