@@ -9,6 +9,7 @@ import { CompanyPayment } from 'src/company-payment/company-payment.entity';
 import { EmployeeModule } from 'src/employee-module/employee-module.entity';
 import { CustomizeTable } from 'src/customize-table/customize-table.entity';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
+import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
 @Entity()
 export class User  {
   @PrimaryGeneratedColumn()
@@ -111,4 +112,7 @@ export class User  {
   @Column({ type: 'boolean', default:false})
   firsttimepasswordchange: Boolean|null;
 
+
+  @OneToMany(()=>CompanyWorkPattern, cretedby => cretedby.patterncreate,{cascade:true})
+  patterncreateby:CompanyWorkPattern[];
 }

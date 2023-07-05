@@ -316,14 +316,11 @@ export class EmployeeModule {
     @OneToMany(() => EmployeeDataHistory, empDataHistory => empDataHistory.employee,{ cascade: true })
     editHistory: EmployeeDataHistory[];
 
-    // @ManyToOne(() => DrivingLicenceCategory, driverLicenceCategory => driverLicenceCategory.employee)
-    // @JoinColumn({ name: 'driverLicenceCategory' })
-    // driverLicenceCategory: DrivingLicenceCategory;
 
     @Column({ type: 'boolean', default: false })
     active: boolean;
     
-    @ManyToMany(() => DrivingLicenceCategory, category => category.empDlCategory)
+    @ManyToMany(() => DrivingLicenceCategory, category => category.empDlCategory, { cascade: true })
     @JoinTable()
     drivingLicenceCategory: DrivingLicenceCategory[];
 
