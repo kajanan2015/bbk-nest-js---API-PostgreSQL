@@ -27,7 +27,7 @@ export class CompanyWorkPatternService {
   }
 
   async findAll() {
-   return await this.patternrepository.find()
+   return await this.patternrepository.find({relations:['company']})
   }
 async findbypattername(name:string){
   
