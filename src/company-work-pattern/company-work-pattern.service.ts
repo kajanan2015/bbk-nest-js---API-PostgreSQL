@@ -48,8 +48,8 @@ async findbypattername(name:string){
     return workpattern;
   }
 
-  update(id: number, updateCompanyWorkPatternDto: UpdateCompanyWorkPatternDto) {
-    return `This action updates a #${id} companyWorkPattern`;
+ async update(id: number, updateCompanyWorkPatternDto: UpdateCompanyWorkPatternDto) {
+   return await this.patternrepository.update(id,updateCompanyWorkPatternDto)
   }
 
   remove(id: number) {
