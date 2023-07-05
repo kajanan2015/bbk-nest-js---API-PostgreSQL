@@ -25,9 +25,10 @@ import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetails
 import { CompanypackagerowService } from 'src/companypackagerow/companypackagerow.service';
 import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entity';
 import { SystemCode } from 'src/system-code/system-code.entity';
-
+import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
+import { EmployeeDocumentModule } from 'src/employee-document/employee-document.module';
 @Module({
-  imports:[TypeOrmModule.forFeature([EmployeeDataHistory, Companypackagerow, SystemCode, Moduledetailsofpackage, EmployeeModule, EmployeeDocument, Createmodule, Createpackage, DrivingLicenceCategory, CompaniesEntity, User, PermissionRoleEntity, PagePermissionEntity, CompanyDocument], EmployeeModuleModule)],
+  imports:[TypeOrmModule.forFeature([EmployeeDataHistory, Companypackagerow, SystemCode, Moduledetailsofpackage, EmployeeModule, EmployeeDocument, Createmodule, Createpackage, DrivingLicenceCategory, CompaniesEntity, User, PermissionRoleEntity, PagePermissionEntity, CompanyDocument,CompanyWorkPattern] )],
   controllers: [EmployeeDataHistoryController],
   providers: [EmployeeDataHistoryService, CompanypackagerowService, EmployeeModuleService, EmployeeDocumentService, UserService, CompaniesService, ImageUploadService, EmployeeDocumentService, SystemCodeService, CompanyDocumentService]
 })

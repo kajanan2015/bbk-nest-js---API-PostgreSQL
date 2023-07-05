@@ -32,7 +32,7 @@ import { DrivingLicenceCategory } from 'src/employee-module/driving_licence_cate
 import { EmployeeDataHistoryModule } from 'src/employee-data-history/employee-data-history.module';
 import { EmployeeDataHistoryService } from 'src/employee-data-history/employee-data-history.service';
 @Module({
-  imports:[TypeOrmModule.forFeature([Companypackagerow,EmployeeDocument, PagePermissionEntity,EmployeeModule,CompanyDocument , SystemCode , User,PermissionRoleEntity ,CompaniesEntity,Createmodule,Createpackage, Moduledetailsofpackage,EmployeeDataHistory, DrivingLicenceCategory]),EmployeeDocumentModule,CompaniesModule, CreatemoduleModule,EmployeeDataHistoryModule],
+  imports:[TypeOrmModule.forFeature([Companypackagerow,EmployeeDocument, PagePermissionEntity,EmployeeModule,CompanyDocument , SystemCode , User,PermissionRoleEntity ,CompaniesEntity,Createmodule,Createpackage, Moduledetailsofpackage,EmployeeDataHistory, DrivingLicenceCategory]),CompaniesModule, CreatemoduleModule,EmployeeDataHistoryModule],
   controllers: [EmployeeDocumentController],
   providers: [CompanypackagerowService,EmployeeDocumentService, EmployeeModuleService, CompaniesService, CompanyDocumentService,UserService,SystemCodeService,ImageUploadService,CreatemoduleService,EmployeeDataHistoryService]
 })
