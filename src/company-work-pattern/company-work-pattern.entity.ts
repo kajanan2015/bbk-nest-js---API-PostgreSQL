@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinColumn, JoinTable, OneToMany } from 'typeorm';
 import { User } from 'src/user/user.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
+
 @Entity()
 export class CompanyWorkPattern {
     @PrimaryGeneratedColumn()
@@ -35,5 +36,12 @@ export class CompanyWorkPattern {
     @ManyToOne(() => CompaniesEntity, company => company.workpattern)
     @JoinColumn({ name: 'companyId' })
     company: CompaniesEntity;
+
   
+    @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
+    createdat: Date;
+
+    @ManyToOne(() => User, usercretae => usercretae.patterncreateby)
+    @JoinColumn({ name: 'createdBy' })
+    patterncreate: User;
 }

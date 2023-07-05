@@ -11,7 +11,7 @@ export class CompanyWorkPatternService {
     private readonly patternrepository:Repository<CompanyWorkPattern>
   ){}
  async create(createCompanyWorkPatternDto: CreateCompanyWorkPatternDto) {
-  await this.findbypattername(createCompanyWorkPatternDto.workPatternName)
+  await this.findbypattername(createCompanyWorkPatternDto.workPatternName,createCompanyWorkPatternDto.company)
   createCompanyWorkPatternDto.workType=0;
   const response= await this.patternrepository.create(createCompanyWorkPatternDto)
   const withputtimepattern=await this.patternrepository.save(response);
@@ -29,11 +29,11 @@ export class CompanyWorkPatternService {
   async findAll() {
    return await this.patternrepository.find({relations:['company']})
   }
-async findbypattername(name:string){
+async findbypattername(name:string,companyId){
   
-  const pattern = await this.patternrepository.find({where:{workPatternName:name}});
+  const pattern = await this.patternrepository.find({where:{workPatternName:name,company:companyId}});
   console.log(pattern,8787878)
-  if (!pattern) {
+  if (pattern.length>0) {
     console.log('master')
     throw new BadRequestException('patter-name exist');
 

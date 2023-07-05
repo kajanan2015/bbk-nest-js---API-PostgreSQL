@@ -18,9 +18,9 @@ export class CompanyWorkPatternController {
     return this.companyWorkPatternService.findAll();
   }
 
-  @Get('findByname/:name')
-  async findByname(@Param('name') name: string) {
-    return this.companyWorkPatternService.findbypattername(name);
+  @Post('findByname/:name')
+  async findByname(@Param('name') name: string,@Body() data) {
+    return this.companyWorkPatternService.findbypattername(name,data.company);
   }
 
   @Get(':id')
