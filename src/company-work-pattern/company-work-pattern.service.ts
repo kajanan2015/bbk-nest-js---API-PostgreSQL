@@ -56,9 +56,10 @@ export class CompanyWorkPatternService {
 
  async update(id: number, updateCompanyWorkPatternDto: UpdateCompanyWorkPatternDto) {
   const data= await this.patternrepository.findOne(id)
+
   const response=  await this.patternrepository.find({where:{workPatternCode:data.workPatternCode}})
-  for(const data in response){
-   console.log(data['id'],90909090990)
+
+  for(const data of response){
     await this.patternrepository.update(data['id'],updateCompanyWorkPatternDto);
   }
   return "updated success"
