@@ -7,8 +7,9 @@ import { CompaniesEntity } from 'src/companies/companies.entity';
 import { User } from 'src/user/user.entity';
 import { SystemCodeService } from 'src/system-code/system-code.service';
 import { SystemCode } from 'src/system-code/system-code.entity';
+import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 @Module({
-  imports:[TypeOrmModule.forFeature([CompanyWorkPattern,User,SystemCode])],
+  imports:[TypeOrmModule.forFeature([CompanyWorkPattern,User,SystemCode,EmployeeDataHistory])],
   controllers: [CompanyWorkPatternController],
   providers: [CompanyWorkPatternService,SystemCodeService]
 })
