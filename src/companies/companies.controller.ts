@@ -380,9 +380,9 @@ export class CompaniesController {
   }
 
   @Put('cancel-trial/:id')
-  async cancelrial(@Param('id') companyid:number){
+  async cancelrial(@Param('id') companyid:number, @Body() data:any){
     console.log(companyid,555);
-    return await this.service.cancelrial(companyid)
+    return await this.service.cancelrial(companyid,data)
    
 
   }

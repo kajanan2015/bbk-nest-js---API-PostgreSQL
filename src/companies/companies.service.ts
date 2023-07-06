@@ -58,7 +58,7 @@ export class CompaniesService {
     private readonly pkgrepository: Repository<Createpackage>,
     @InjectRepository(Moduledetailsofpackage)
     private readonly detailsrepository: Repository<Moduledetailsofpackage>,
-    private readonly companyrowpackageservice:CompanypackagerowService,
+    private readonly companyrowpackageservice: CompanypackagerowService,
     @InjectRepository(Companypackagerow)
     private readonly companypackagerowrepository: Repository<Companypackagerow>,
     private readonly datahistoryservice: EmployeeDataHistoryService,
@@ -181,7 +181,7 @@ export class CompaniesService {
     });
   }
 
-  async create(companyData,base_url) {
+  async create(companyData, base_url) {
     const existingcompanyname = await this.companyRepository.findOne({
       where: {
         companyName: companyData.companyName,
@@ -284,7 +284,7 @@ export class CompaniesService {
           adminResponse = await this.userservice.create(adminData);
 
 
-          await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password,base_url);
+          await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password, base_url);
 
           // userIds.push(adminResponse.id.toString());
           const userId = adminResponse.id.toString();
@@ -353,7 +353,7 @@ export class CompaniesService {
             };
 
             const adminResponse = await this.userservice.create(adminData);
-            await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password,base_url);
+            await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password, base_url);
 
 
             const userId = adminResponse.id.toString();
@@ -431,7 +431,7 @@ export class CompaniesService {
 
         const adminResponse = await this.userservice.create(adminData);
 
-        await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password,base_url);
+        await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password, base_url);
 
 
         const userId = adminResponse.id.toString();
@@ -467,61 +467,61 @@ export class CompaniesService {
     }
 
     await this.systemcodeService.update(response.id, newstartvalue);
-    const trialpackagedata= await this.pkgrepository.findOne({where:{packagename:"Trial",validity:0,enddate:null},relations:['packagedetails','packagedetails.packages','packagedetails.module']})
-    console.log(trialpackagedata,56)
-    dataCompany.package=trialpackagedata.packagedetails;
-    dataCompany.contractagreement=0;
+    const trialpackagedata = await this.pkgrepository.findOne({ where: { packagename: "Trial", validity: 0, enddate: null }, relations: ['packagedetails', 'packagedetails.packages', 'packagedetails.module'] })
+    console.log(trialpackagedata, 56)
+    dataCompany.package = trialpackagedata.packagedetails;
+    dataCompany.contractagreement = 0;
     const currentDateTime = new Date();
     const validtimeTime = new Date();
-    console.log(validtimeTime,99)
+    console.log(validtimeTime, 99)
     validtimeTime.setDate(validtimeTime.getDate() + parseInt(trialpackagedata.numberOfDays));
-    console.log(validtimeTime,98898998989898)
+    console.log(validtimeTime, 98898998989898)
     validtimeTime.setMilliseconds(0);
     dataCompany.validityperiod = validtimeTime;
     // dataCompany.validityperiod=new Date(validtimeTime.split('.')[0]);
-    
+
     const newCompany = await this.companyRepository.create(dataCompany);
     const responsesave = await this.companyRepository.save(newCompany);
 
 
-    const responsehistory = await this.datahistoryrepo.create({ type:"company-history", data: JSON.stringify(dataCompany), company:responsesave["id"] });
+    const responsehistory = await this.datahistoryrepo.create({ type: "company-history", data: JSON.stringify(dataCompany), company: responsesave["id"] });
     const res = await this.datahistoryrepo.save(responsehistory);
 
 
 
 
 
-    let newcompassigndata; 
-    
-    const newlycreatedcompany=responsesave["id"];
+    let newcompassigndata;
+
+    const newlycreatedcompany = responsesave["id"];
     await this.companypackagerowrepository
-    .createQueryBuilder()
-    .update(Companypackagerow)
-    .set({ enddate: currentDateTime })
-    .where('companyId = :newlycreatedcompany', { newlycreatedcompany })
-    .execute();
-    for(const trialpackagerowvalue of trialpackagedata.packagedetails ){
-      console.log(trialpackagerowvalue,5665566324324)
-      newcompassigndata={
-        rowcount:trialpackagerowvalue.NoOfRecords,
-        availablerowcount:trialpackagerowvalue.NoOfRecords,
-        rowprice:trialpackagerowvalue.CostPerRecord,
-        packageprice:trialpackagerowvalue.PackagePrice,
-        module:trialpackagerowvalue.module.id,
-        packages:trialpackagerowvalue.packages.id,
-        moduledetails:trialpackagerowvalue.id,
-        company:parseInt(responsesave["id"]),
-        trialpackageidentifier:'1'
-      }  
-      console.log(newcompassigndata,5236565)
-     const compackageresponse= await this.companypackagerowrepository.create(newcompassigndata)
-     const comppackagerowadded = await this.companypackagerowrepository.save(compackageresponse)
-  }
+      .createQueryBuilder()
+      .update(Companypackagerow)
+      .set({ enddate: currentDateTime })
+      .where('companyId = :newlycreatedcompany', { newlycreatedcompany })
+      .execute();
+    for (const trialpackagerowvalue of trialpackagedata.packagedetails) {
+      console.log(trialpackagerowvalue, 5665566324324)
+      newcompassigndata = {
+        rowcount: trialpackagerowvalue.NoOfRecords,
+        availablerowcount: trialpackagerowvalue.NoOfRecords,
+        rowprice: trialpackagerowvalue.CostPerRecord,
+        packageprice: trialpackagerowvalue.PackagePrice,
+        module: trialpackagerowvalue.module.id,
+        packages: trialpackagerowvalue.packages.id,
+        moduledetails: trialpackagerowvalue.id,
+        company: parseInt(responsesave["id"]),
+        trialpackageidentifier: '1'
+      }
+      console.log(newcompassigndata, 5236565)
+      const compackageresponse = await this.companypackagerowrepository.create(newcompassigndata)
+      const comppackagerowadded = await this.companypackagerowrepository.save(compackageresponse)
+    }
 
 
 
-    console.log(dataCompany,453)
-console.log(newCompany,43534)
+    console.log(dataCompany, 453)
+    console.log(newCompany, 43534)
     await this.mailservice.companycreationsuccess(dataCompany.companyEmail, "adminemail", "adminname", dataCompany.companyName, process.env.main_url);
     if (dataCompany.companyIdentifier == "maincompany") {
       const query = `
@@ -633,27 +633,27 @@ console.log(newCompany,43534)
           !removedUserEntities.some((removedUser) => removedUser.id === user.id)
       );
       const r1 = await this.companyRepository.save(companyfind);
-        
-                // Find the previous record of the employee
-    const previousRecord = await this.datahistoryrepo.findOne({
-      where: {
-        company: +id,
-        type: "company-history"
-      },
-      order: { createdBy: 'DESC' },
-    });
 
-    // If a previous record exists, update its endDate
-    if (previousRecord) {
-      previousRecord.endDate = new Date(Date.now());
-      await this.datahistoryrepo.save(previousRecord);
-    }
-    const historyresponse={
-      users:companyfind.users
-    }
-    const responsehistory = await this.datahistoryrepo.create({ type:"company-history", data: JSON.stringify(historyresponse), company:{id}});
-    const res = await this.datahistoryrepo.save(responsehistory);
-    
+      // Find the previous record of the employee
+      const previousRecord = await this.datahistoryrepo.findOne({
+        where: {
+          company: +id,
+          type: "company-history"
+        },
+        order: { createdBy: 'DESC' },
+      });
+
+      // If a previous record exists, update its endDate
+      if (previousRecord) {
+        previousRecord.endDate = new Date(Date.now());
+        await this.datahistoryrepo.save(previousRecord);
+      }
+      const historyresponse = {
+        users: companyfind.users
+      }
+      const responsehistory = await this.datahistoryrepo.create({ type: "company-history", data: JSON.stringify(historyresponse), company: { id } });
+      const res = await this.datahistoryrepo.save(responsehistory);
+
 
 
 
@@ -788,22 +788,22 @@ console.log(newCompany,43534)
     if (Object.keys(passcompanyData).length > 0) {
       await this.companyRepository.update({ id }, passcompanyData);
 
-          // Find the previous record of the employee
-    const previousRecord = await this.datahistoryrepo.findOne({
-      where: {
-        company: +id,
-        type: "company-history"
-      },
-      order: { createdBy: 'DESC' },
-    });
+      // Find the previous record of the employee
+      const previousRecord = await this.datahistoryrepo.findOne({
+        where: {
+          company: +id,
+          type: "company-history"
+        },
+        order: { createdBy: 'DESC' },
+      });
 
-    // If a previous record exists, update its endDate
-    if (previousRecord) {
-      previousRecord.endDate = new Date(Date.now());
-      await this.datahistoryrepo.save(previousRecord);
-    }
-    const responsehistory = await this.datahistoryrepo.create({ type:"company-history", data: JSON.stringify(passcompanyData), company:{id}});
-    const res = await this.datahistoryrepo.save(responsehistory);
+      // If a previous record exists, update its endDate
+      if (previousRecord) {
+        previousRecord.endDate = new Date(Date.now());
+        await this.datahistoryrepo.save(previousRecord);
+      }
+      const responsehistory = await this.datahistoryrepo.create({ type: "company-history", data: JSON.stringify(passcompanyData), company: { id } });
+      const res = await this.datahistoryrepo.save(responsehistory);
     }
 
     return await this.companyRepository.findOne(id, {
@@ -910,70 +910,70 @@ console.log(newCompany,43534)
       throw new NotFoundException("package not found");
     }
     console.log(entityA);
-    entityA.package = await this.detailsrepository.findByIds(data.package,{relations:["packages", "module"]});
+    entityA.package = await this.detailsrepository.findByIds(data.package, { relations: ["packages", "module"] });
     console.log(entityA);
     const currentDateTime = new Date();
     await this.companypackagerowrepository
-    .createQueryBuilder()
-    .update(Companypackagerow)
-    .set({ enddate: currentDateTime })
-    .where('companyId = :id', { id })
-    .execute();
+      .createQueryBuilder()
+      .update(Companypackagerow)
+      .set({ enddate: currentDateTime })
+      .where('companyId = :id', { id })
+      .execute();
     let newcompassigndata;
-    for(const comppackagedata of entityA.package){
-console.log(comppackagedata.module.id,56565)
-if(comppackagedata.packages.customizePackageValue==false){
-  newcompassigndata={
-    rowcount:comppackagedata.NoOfRecords,
-    availablerowcount:comppackagedata.NoOfRecords,
-    rowprice:comppackagedata.CostPerRecord,
-    packageprice:comppackagedata.PackagePrice,
-    module:comppackagedata.module.id,
-    packages:comppackagedata.packages.id,
-    moduledetails:comppackagedata.id,
-    company:parseInt(id),
-  }  
-  console.log(newcompassigndata,5236565)
- const compackageresponse= await this.companypackagerowrepository.create(newcompassigndata)
- const comppackagerowadded = await this.companypackagerowrepository.save(compackageresponse)
-}  
+    for (const comppackagedata of entityA.package) {
+      console.log(comppackagedata.module.id, 56565)
+      if (comppackagedata.packages.customizePackageValue == false) {
+        newcompassigndata = {
+          rowcount: comppackagedata.NoOfRecords,
+          availablerowcount: comppackagedata.NoOfRecords,
+          rowprice: comppackagedata.CostPerRecord,
+          packageprice: comppackagedata.PackagePrice,
+          module: comppackagedata.module.id,
+          packages: comppackagedata.packages.id,
+          moduledetails: comppackagedata.id,
+          company: parseInt(id),
+        }
+        console.log(newcompassigndata, 5236565)
+        const compackageresponse = await this.companypackagerowrepository.create(newcompassigndata)
+        const comppackagerowadded = await this.companypackagerowrepository.save(compackageresponse)
+      }
     }
-    console.log(data.customizerecord,99)
+    console.log(data.customizerecord, 99)
     let getpkgid;
     for (const newdata of data.customizerecord) {
-  console.log(newdata.records,88998)
-  getpkgid=await this.detailsrepository.findOne(newdata.packageId,{relations:["packages", "module"]});
-          newcompassigndata={
-            rowcount:newdata.records,
-            availablerowcount:newdata.records,
-            rowprice:newdata.costPerRecord,
-            packageprice:newdata.packagePrice,
-            module:newdata.moduleId,
-            packages:getpkgid.packages.id,
-            moduledetails:newdata.packageId,
-            company:parseInt(id),
-          }
-          console.log(newcompassigndata,898989)
-          const compackageresponsecustomize= await this.companypackagerowrepository.create(newcompassigndata)
-          const comppackagerowaddedcustomiza = await this.companypackagerowrepository.save(compackageresponsecustomize)
+      console.log(newdata.records, 88998)
+      getpkgid = await this.detailsrepository.findOne(newdata.packageId, { relations: ["packages", "module"] });
+      newcompassigndata = {
+        rowcount: newdata.records,
+        availablerowcount: newdata.records,
+        rowprice: newdata.costPerRecord,
+        packageprice: newdata.packagePrice,
+        module: newdata.moduleId,
+        packages: getpkgid.packages.id,
+        moduledetails: newdata.packageId,
+        company: parseInt(id),
+      }
+      console.log(newcompassigndata, 898989)
+      const compackageresponsecustomize = await this.companypackagerowrepository.create(newcompassigndata)
+      const comppackagerowaddedcustomiza = await this.companypackagerowrepository.save(compackageresponsecustomize)
       //     const dataf = data.customizerecord[key];
-  //     console.log(key,45678)
-  //     console.log(dataf.packageId,898989);
-  //     if(dataf.packageId){
-  //       newcompassigndata={
-  //         rowcount:dataf.records,
-  //         availablerowcount:dataf.records,
-  //         rowprice:dataf.costPerRecord,
-  //         packageprice:dataf.packagePrice,
-  //         module:key,
-  //         packages:dataf.packageId,
-  //         company:parseInt(id),
-  //       }  
-  // console.log(newcompassigndata,8898)
-  // const compackageresponsecustomize= await this.companypackagerowrepository.create(newcompassigndata)
-  //  const comppackagerowaddedcustomiza = await this.companypackagerowrepository.save(compackageresponsecustomize)
-  //     }
-      
+      //     console.log(key,45678)
+      //     console.log(dataf.packageId,898989);
+      //     if(dataf.packageId){
+      //       newcompassigndata={
+      //         rowcount:dataf.records,
+      //         availablerowcount:dataf.records,
+      //         rowprice:dataf.costPerRecord,
+      //         packageprice:dataf.packagePrice,
+      //         module:key,
+      //         packages:dataf.packageId,
+      //         company:parseInt(id),
+      //       }  
+      // console.log(newcompassigndata,8898)
+      // const compackageresponsecustomize= await this.companypackagerowrepository.create(newcompassigndata)
+      //  const comppackagerowaddedcustomiza = await this.companypackagerowrepository.save(compackageresponsecustomize)
+      //     }
+
 
     }
     const responese = await this.companyRepository.save(entityA);
@@ -1001,29 +1001,29 @@ if(comppackagedata.packages.customizePackageValue==false){
     if (!entityA) {
       throw new NotFoundException("module not found");
     }
-  const checkcompanypackagerow=await this.companypackagerowrepository.find({where:{company:id,enddate: null, trialpackageidentifier: null},relations:["module"]});
-  let existmoduleid=[];
-    for(const existmodule of checkcompanypackagerow){
-      console.log(existmodule.module.id,8899898)
-    existmoduleid.push(existmodule.module.id)
-  }
-console.log(existmoduleid,252435)
-// const moduleid= checkcompanypackagerow.module.id
-const result = existmoduleid.filter(value => !data.module.includes(value));
-console.log(result,8998988989);
+    const checkcompanypackagerow = await this.companypackagerowrepository.find({ where: { company: id, enddate: null, trialpackageidentifier: null }, relations: ["module"] });
+    let existmoduleid = [];
+    for (const existmodule of checkcompanypackagerow) {
+      console.log(existmodule.module.id, 8899898)
+      existmoduleid.push(existmodule.module.id)
+    }
+    console.log(existmoduleid, 252435)
+    // const moduleid= checkcompanypackagerow.module.id
+    const result = existmoduleid.filter(value => !data.module.includes(value));
+    console.log(result, 8998988989);
 
-if(result.length>0){
- const currentDateTime = new Date();
-   const updatemodule= await this.companypackagerowrepository
-    .createQueryBuilder()
-    .update(Companypackagerow)
-    .set({ enddate: currentDateTime })
-    .where('companyId = :id', { id })
-    .andWhere('moduleId IN (:...result)', { result })
-    .execute();
-console.log(updatemodule,98989898899)
-}
-entityA.module = await this.modulerepository.findByIds(data.module);
+    if (result.length > 0) {
+      const currentDateTime = new Date();
+      const updatemodule = await this.companypackagerowrepository
+        .createQueryBuilder()
+        .update(Companypackagerow)
+        .set({ enddate: currentDateTime })
+        .where('companyId = :id', { id })
+        .andWhere('moduleId IN (:...result)', { result })
+        .execute();
+      console.log(updatemodule, 98989898899)
+    }
+    entityA.module = await this.modulerepository.findByIds(data.module);
     entityA.package = [];
     console.log(entityA, 999);
     const responese = await this.companyRepository.save(entityA);
@@ -1065,17 +1065,17 @@ entityA.module = await this.modulerepository.findByIds(data.module);
     // const name = "nuwan";
     // const toemail = "nuwanpriyamal@gmail.com";
     // const username = "dfdfd";
-    return await this.mailservice.send_activation_email_admin('nuwanpriyamal@gmail.com',base_url)
+    return await this.mailservice.send_activation_email_admin('nuwanpriyamal@gmail.com', base_url)
     // await this.mailservice.sendcompanyCreate(password, name, toemail, username);
   }
 
 
   // send verify email
-async sendverifyemail(data, base_url){
-  return await this.mailservice.sendverifyemailagain(data,base_url)
-}
-  
-// company code check exist 0r not
+  async sendverifyemail(data, base_url) {
+    return await this.mailservice.sendverifyemailagain(data, base_url)
+  }
+
+  // company code check exist 0r not
   async checkcompanycode(code) {
     const checkcodeexist = await this.companyRepository.find({
       where: { code },
@@ -1094,9 +1094,9 @@ async sendverifyemail(data, base_url){
       activate: 1,
       activated_time: currentDateTime
     }
-    console.log(decodedkey,999)
-    if(decodedkey.hasOwnProperty('email')&&decodedkey.hasOwnProperty('email')&&decodedkey.hasOwnProperty('exp')){
-      console.log('decodedkey',999)
+    console.log(decodedkey, 999)
+    if (decodedkey.hasOwnProperty('email') && decodedkey.hasOwnProperty('email') && decodedkey.hasOwnProperty('exp')) {
+      console.log('decodedkey', 999)
       const exist = await this.userRepository.findOne({ email: decodedkey['email'] })
       if (exist.activate == true) {
         return "You are already activated";
@@ -1104,98 +1104,145 @@ async sendverifyemail(data, base_url){
         const updateresponse = await this.userRepository.update({ email: decodedkey['email'] }, updateuserdata);
         return "activated";
       }
-    }else{
+    } else {
       return decodedkey
     }
-   
+
   }
 
-  async generatepaymentlink(companyId,base_url){
+  async generatepaymentlink(companyId, base_url) {
 
     const paymentid = randomstring.generate({
       length: 4,
       charset: 'numeric'
     });
-    const updatecompany=await this.companyRepository.update({id:companyId},{paymentlinkotp: paymentid})
-    const comapny= await this.companyRepository.findOne(companyId);
-    const companyemail=comapny.companyEmail
-    return await this.mailservice.generatepaymentlink(companyemail, companyId,base_url,paymentid)
+    const updatecompany = await this.companyRepository.update({ id: companyId }, { paymentlinkotp: paymentid })
+    const comapny = await this.companyRepository.findOne(companyId);
+    const companyemail = comapny.companyEmail
+    return await this.mailservice.generatepaymentlink(companyemail, companyId, base_url, paymentid)
   }
 
-  async verifypaymentdetailstoken(token){
-    const verifyresponse=await  this.mailservice.verifypaymentdetailstokendecode(token);
-    if(verifyresponse["id"]){
-      let id=verifyresponse["id"]
-      const company= await this.companyRepository.findOne(id);
-      const companyemail=company.companyEmail
-      const paymentid= company.paymentlinkotp
-      if((verifyresponse["paymenttokenid"]==paymentid)&&(verifyresponse["email"]==companyemail)){ 
-        const data={
-          id:id,
-          email:companyemail,
+  async verifypaymentdetailstoken(token) {
+    const verifyresponse = await this.mailservice.verifypaymentdetailstokendecode(token);
+    if (verifyresponse["id"]) {
+      let id = verifyresponse["id"]
+      const company = await this.companyRepository.findOne(id);
+      const companyemail = company.companyEmail
+      const paymentid = company.paymentlinkotp
+      if ((verifyresponse["paymenttokenid"] == paymentid) && (verifyresponse["email"] == companyemail)) {
+        const data = {
+          id: id,
+          email: companyemail,
         }
         return data
-      }else{
+      } else {
         return "Invalid token"
       }
-    }else{
+    } else {
       return verifyresponse
     }
-    
+
   }
 
-  async paiddataupdate(token){
+  async paiddataupdate(token) {
     console.log(token)
-    const verify=await  this.mailservice.verifypaymentdetailstokendecode(token);
+    const verify = await this.mailservice.verifypaymentdetailstokendecode(token);
     // const verify=await this.verifypaymentdetailstoken(token)
-    console.log(verify,898)
-    if(verify["id"]){
-      const updateresponse=await this.companyRepository.update({id:verify["id"]},{compstatus:5,paymentlinkotp:null});
+    console.log(verify, 898)
+    if (verify["id"]) {
+      const updateresponse = await this.companyRepository.update({ id: verify["id"] }, { compstatus: 5, paymentlinkotp: null });
       return "payment completed"
-    }else{
+    } else {
       return "payment not complete"
     }
   }
 
-  async changeparentadmin(id,data){
-    
-    const passdata={
-      companyIdentifier:"maincompany",
-      mainCompany:null,
-    }  
-    const response=await this.companyRepository.update({id},passdata);
+  async changeparentadmin(id, data) {
+
+    const passdata = {
+      companyIdentifier: "maincompany",
+      mainCompany: null,
+    }
+    const response = await this.companyRepository.update({ id }, passdata);
   }
 
-  async extendtrial(data){
-    const numofdays=data.numofdays
-    const updateDateTime=new Date(data.validitydate);
+  async extendtrial(data) {
+    const numofdays = data.numofdays
+    const updateDateTime = new Date(data.validitydate);
     updateDateTime.setDate(updateDateTime.getDate() + parseInt(data.numofdays));
-    console.log(updateDateTime,98898998989898)
+    console.log(updateDateTime, 98898998989898)
     updateDateTime.setMilliseconds(0);
-     
-    const passdata={
-      validityperiod:updateDateTime,
-    }  
-    console.log(passdata,77)
-    const response=await this.companyRepository.update({id:data.id},passdata)
-    console.log(response,88)
-    if(response){
+
+    const passdata = {
+      validityperiod: updateDateTime,
+    }
+    console.log(passdata, 77)
+    const response = await this.companyRepository.update({ id: data.id }, passdata)
+    console.log(response, 88)
+    const createdbydata=await this.userRepository.findOne({where:{id:data.createdby}})
+    // Find the previous record of the employee
+    const previousRecord = await this.datahistoryrepo.findOne({
+      where: {
+        company: +data.id,
+        type: "Trial-extend-history"
+      },
+      order: { createdBy: 'DESC' },
+    });
+
+    // If a previous record exists, update its endDate
+    if (previousRecord) {
+      previousRecord.endDate = new Date(Date.now());
+      previousRecord.editedBy=createdbydata
+      await this.datahistoryrepo.save(previousRecord);
+    }
+    const responsehistory = await this.datahistoryrepo.create({ type: "Trial-extend-history", data: JSON.stringify(passdata), company:{id:data.id},createdBy:createdbydata });
+    const res = await this.datahistoryrepo.save(responsehistory);
+
+    if (response) {
       return "Updated"
-    }else{
+    } else {
       return "Error Occured"
     }
   }
-async cancelrial(id){
-  const passdata={
-    compstatus:2,
-    validityperiod:null
-  }
-  const response=await this.companyRepository.update({id},passdata)
-    console.log(response,88)
-    if(response){
+  async cancelrial(id,data) {
+    // createdby
+    const createdbydata=await this.userRepository.findOne({where:{id:data.createdby}})
+const currentDateTime=new Date();
+    const passdata = {
+      compstatus: 2,
+      validityperiod: null,
+      deactivationreason:"trial cancel",
+      deactivationmethod:"immediate",
+      deactivatedtime:currentDateTime,
+      deactivatedby:data.createdby
+    }
+    const response = await this.companyRepository.update({ id }, passdata)
+
+    // Find the previous record of the employee
+    const previousRecord = await this.datahistoryrepo.findOne({
+      where: {
+        company: +id,
+        type: "cancel-trial"
+      },
+      order: { createdBy: 'DESC' },
+    });
+
+    // If a previous record exists, update its endDate
+    if (previousRecord) {
+      previousRecord.endDate = new Date(Date.now());
+      previousRecord.editedBy=createdbydata
+      await this.datahistoryrepo.save(previousRecord);
+    }
+    const responsehistory = await this.datahistoryrepo.create({ type: "cancel-trial", data: JSON.stringify(passdata), company:{id},createdBy:createdbydata });
+    const res = await this.datahistoryrepo.save(responsehistory);
+
+
+    console.log(response, 88)
+    if (response) {
       return "Trial Canceled"
-    }else{
+    } else {
       return "Error Occured"
     }
-}
+
+  }
 }
