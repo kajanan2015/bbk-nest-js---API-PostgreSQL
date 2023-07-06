@@ -78,7 +78,7 @@ export class EmployeeModuleService {
       });
 
     } else {
-      const existingEmployee = await this.employeeModuleRepository.findOne({ where: { email: createEmployeeModuleDto.email, company: createEmployeeModuleDto.company, niNo: createEmployeeModuleDto.niNo } });
+      const existingEmployee = await this.employeeModuleRepository.findOne({ where: { email: createEmployeeModuleDto.email, company: createEmployeeModuleDto.company } });
 
       if (existingEmployee) {
         return {
