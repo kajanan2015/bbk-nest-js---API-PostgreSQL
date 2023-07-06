@@ -60,4 +60,5 @@ package:Moduledetailsofpackage[];
 contractagreement: number;
 companypackagerow: Companypackagerow[];
 paymentlinkotp: string;
+validityperiod: Date;
 }

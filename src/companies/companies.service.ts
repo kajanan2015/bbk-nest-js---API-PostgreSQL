@@ -1166,4 +1166,36 @@ async sendverifyemail(data, base_url){
     const response=await this.companyRepository.update({id},passdata);
   }
 
+  async extendtrial(data){
+    const numofdays=data.numofdays
+    const updateDateTime=new Date(data.validitydate);
+    updateDateTime.setDate(updateDateTime.getDate() + parseInt(data.numofdays));
+    console.log(updateDateTime,98898998989898)
+    updateDateTime.setMilliseconds(0);
+     
+    const passdata={
+      validityperiod:updateDateTime,
+    }  
+    console.log(passdata,77)
+    const response=await this.companyRepository.update({id:data.id},passdata)
+    console.log(response,88)
+    if(response){
+      return "Updated"
+    }else{
+      return "Error Occured"
+    }
+  }
+async cancelrial(id){
+  const passdata={
+    compstatus:2,
+    validityperiod:null
+  }
+  const response=await this.companyRepository.update({id},passdata)
+    console.log(response,88)
+    if(response){
+      return "Trial Canceled"
+    }else{
+      return "Error Occured"
+    }
+}
 }

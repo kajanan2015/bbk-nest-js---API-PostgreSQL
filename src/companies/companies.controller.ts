@@ -370,4 +370,22 @@ export class CompaniesController {
     return await this.service.changeparentadmin(id,data);
   }
 
+  @Put('extend-trial/:id')
+  async extendtrial(@Param('id') companyid:number,@Body() data:any){
+    console.log(companyid,555);
+    console.log(data,444)
+    return await this.service.extendtrial(data)
+   
+
+  }
+
+  @Put('cancel-trial/:id')
+  async cancelrial(@Param('id') companyid:number){
+    console.log(companyid,555);
+    return await this.service.cancelrial(companyid)
+   
+
+  }
+
+
 }
