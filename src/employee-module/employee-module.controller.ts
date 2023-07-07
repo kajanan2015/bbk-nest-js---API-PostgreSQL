@@ -122,6 +122,15 @@ export class EmployeeModuleController {
     };
   }
 
+  @Get('/company-employees-docs/:id')
+  async getTableDoc(@Param('id') id: string) {
+    const employeedocList = await this.employeeModuleService.findCompanyAllEmployeesWithDoc(+id);;
+    return {
+      statusCode: HttpStatus.OK,
+      employeedocList: employeedocList
+    };
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.employeeModuleService.findById(+id);

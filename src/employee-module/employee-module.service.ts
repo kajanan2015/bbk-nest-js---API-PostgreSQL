@@ -459,6 +459,13 @@ export class EmployeeModuleService {
     });
   }
 
+  async findCompanyAllEmployeesWithDoc(companyid: number) {
+    return await this.employeeModuleRepository.find({
+      where: { company: companyid, status: 1 },
+      relations: ['documents', 'employeeType']
+    });
+  }
+
   async generateTemporaryNumber(gender, birthday) {
     const year = birthday.getFullYear().toString().slice(-2);
     const month = (birthday.getMonth() + 1).toString().padStart(2, '0');
