@@ -35,6 +35,8 @@ const randomstring = require("randomstring");
 import { Companypackagerow } from "src/companypackagerow/companypackagerow.entity";
 import { EmployeeDataHistory } from "src/employee-data-history/employee-data-history.entity";
 import { EmployeeDataHistoryService } from "src/employee-data-history/employee-data-history.service";
+import { country } from "./country.entity";
+import { companytype } from "./companytype.entity";
 @Injectable()
 export class CompaniesService {
   constructor(
@@ -64,6 +66,10 @@ export class CompaniesService {
     private readonly datahistoryservice: EmployeeDataHistoryService,
     @InjectRepository(EmployeeDataHistory)
     private readonly datahistoryrepo: Repository<EmployeeDataHistory>,
+    @InjectRepository(country)
+    private readonly countryrepo: Repository<country>,
+    @InjectRepository(companytype)
+    private readonly companytyperepo: Repository<companytype>,
   ) { }
 
   async showAll() {
@@ -149,14 +155,13 @@ export class CompaniesService {
   }
 
   async getcompanyType() {
-    const query = "SELECT * FROM `companyType`";
-    const companyTypeList = await this.connection.query(query);
+    const companyTypeList = await this.companytyperepo.find();
+    // const companyTypeList = await this.connection.query(query);
     return companyTypeList;
   }
 
   async getcountry() {
-    const query = "SELECT * FROM `country`";
-    const countryList = await this.connection.query(query);
+    const countryList = await this.countryrepo.find();
     return countryList;
   }
 

@@ -35,6 +35,7 @@ import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-his
 import { EmployeeDataHistoryModule } from 'src/employee-data-history/employee-data-history.module';
 import { EmployeeDataHistoryService } from 'src/employee-data-history/employee-data-history.service';
 import { VehicleTypeEntity } from 'src/vehicle-type/vehicle-type.entity';
+
 @Module({
   imports: [TypeOrmModule.forFeature([CompaniesEntity, PagePermissionEntity, SystemCode,CompanyDocument,User,country, companytype, EmployeeModule,Createmodule, Createpackage,Moduledetailsofpackage, Paymenttype,Companypackagerow,CompanyWorkPattern,EmployeeDataHistory,VehicleTypeEntity]), PagePermissionModule,SystemCodeModule, UserModule, MailModule, CompanyDocumentModule, CreatemoduleModule],
   controllers: [CompaniesController],

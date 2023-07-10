@@ -2,7 +2,7 @@ import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMa
 import * as bcrypt from 'bcryptjs';
 import { CompaniesEntity } from './companies.entity';
 
-@Entity('companyType')
+@Entity()
 export class companytype {
 @PrimaryGeneratedColumn()
 id:number;

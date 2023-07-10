@@ -34,8 +34,10 @@ import { EmpDesignation } from 'src/employee-module/designation/employee-designa
 import { MaritalStatus } from 'src/employee-module/marital_status/maritalStatus.entity';
 import { DrivingLicenceType } from 'src/employee-module/driving_licence_type/driving_licence_type.entity';
 import { PaymentFrequency } from 'src/employee-module/payment_frequency/payment_frequency.entity';
+import { country } from 'src/companies/country.entity';
+import { companytype } from 'src/companies/companytype.entity';
 @Module({
-  imports:[TypeOrmModule.forFeature([EmployeeDataHistory, Bank, DrivingLicenceType, PaymentFrequency, Gender, MaritalStatus, EmpDesignation, Companypackagerow, SystemCode, Moduledetailsofpackage, EmployeeModule, EmployeeDocument, Createmodule, Createpackage, DrivingLicenceCategory, CompaniesEntity, User, PermissionRoleEntity, PagePermissionEntity, Bank, EmployeeType, CompanyDocument,CompanyWorkPattern] )],
+  imports:[TypeOrmModule.forFeature([EmployeeDataHistory, Bank, DrivingLicenceType, PaymentFrequency, Gender, MaritalStatus, EmpDesignation, Companypackagerow, SystemCode, Moduledetailsofpackage, EmployeeModule, EmployeeDocument, Createmodule, Createpackage, DrivingLicenceCategory, CompaniesEntity, User, PermissionRoleEntity, PagePermissionEntity, Bank, EmployeeType, CompanyDocument,CompanyWorkPattern,country,companytype] )],
   controllers: [EmployeeDataHistoryController],
   providers: [EmployeeDataHistoryService, CompanypackagerowService, EmployeeModuleService, EmployeeDocumentService, UserService, CompaniesService, ImageUploadService, EmployeeDocumentService, SystemCodeService, CompanyDocumentService]
 })
