@@ -336,9 +336,24 @@ export class EmployeeModuleService {
   }
 
   async updateWithHistory(id: string, UpdateEmployeeModuleDto) {
-
     let data = {
       ...UpdateEmployeeModuleDto.data
+    }
+
+    const employeerow = await this.employeeModuleRepository.findOne({ where: { employeeId: id }, relations: ['drivingLicenceCategory'] });
+    if (data.hasOwnProperty("drivingLicenceCategory")) {
+      const drivingLicenceCategories = data.drivingLicenceCategory;
+      let drivinglicensecategoryId = [];
+      for (const categoryid of data.drivingLicenceCategory) {
+        drivinglicensecategoryId.push(categoryid.id)
+      }
+
+      const repsonse1 = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
+      employeerow.drivingLicenceCategory = repsonse1;
+
+      const response3333 = await this.employeeModuleRepository.save(employeerow)
+
+      delete data.drivingLicenceCategory;
     }
 
     let { visaDoc, tachoDoc, officialDoc, drivingLicenceDoc, cpcCardDoc, refdoc, empProvidedCopy, ...dataWithoutDoc } = data
