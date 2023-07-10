@@ -185,6 +185,18 @@ export class EmployeeModuleService {
   }
 
   async createBank(bank) {
+    const existingBank = await this.bankRepository.findOne({
+      where: [
+        { bankName: bank.bankName },
+        { sortCode: bank.sortCode }
+      ]
+    });
+    if (existingBank) {
+      return {
+        statusCode: HttpStatus.CONFLICT,
+        message: "Bank already exists!",
+      };
+    }
     const res = this.bankRepository.create(bank)
     return await this.bankRepository.save(res);
   }
