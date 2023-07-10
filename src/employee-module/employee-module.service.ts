@@ -82,13 +82,13 @@ export class EmployeeModuleService {
             if (empExsistDocRow) {
               const empdocs = []
               for (const url in docUrls as {}) {
-                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee['id'] })
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee['id'], addedBy: data.addedBy  })
               };
               await this.employeedocumentservice.update(+empExsistDocRow.id, empdocs[0])
             } else {
               const empdocs = []
               for (const url in docUrls as {}) {
-                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee['id'] })
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee['id'], addedBy: data.addedBy  })
               };
               await this.employeedocumentservice.create(empdocs)
             }
@@ -158,13 +158,13 @@ export class EmployeeModuleService {
             if (empExsistDocRow) {
               const empdocs = []
               for (const url in docUrls as {}) {
-                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +res['id'] })
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +res['id'], addedBy: createEmployeeModuleDto.addedBy  })
               };
               await this.employeedocumentservice.update(+empExsistDocRow.id, empdocs[0])
             } else {
               const empdocs = []
               for (const url in docUrls as {}) {
-                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +res['id'] })
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +res['id'], addedBy: createEmployeeModuleDto.addedBy })
               };
               await this.employeedocumentservice.create(empdocs)
             }
@@ -309,13 +309,13 @@ export class EmployeeModuleService {
             if (empExsistDocRow) {
               const empdocs = []
               for (const url in docUrls as {}) {
-                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +employeerowid.id })
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +employeerowid.id, addedBy: data.addedBy })
               };
               await this.employeedocumentservice.update(+empExsistDocRow.id, empdocs[0])
             } else {
               const empdocs = []
               for (const url in docUrls as {}) {
-                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +employeerowid.id })
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +employeerowid.id, addedBy: data.addedBy  })
               };
               await this.employeedocumentservice.create(empdocs)
             }
@@ -325,13 +325,13 @@ export class EmployeeModuleService {
             console.log(docType)
             const empdocs = []
             for (const url in docUrls as {}) {
-              empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +employeerowid.id })
+              empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +employeerowid.id, addedBy: data.addedBy  })
             };
             await this.employeedocumentservice.create(empdocs)
           } else {
             const empdocs = []
             for (const url in docUrls as {}) {
-              empdocs.push({ docType: docType.replace('[]', ''), description: 'additional', docPath: docUrls[url], empid: +employeerowid.id })
+              empdocs.push({ docType: docType.replace('[]', ''), description: 'additional', docPath: docUrls[url], empid: +employeerowid.id, addedBy: data.addedBy  })
             };
             await this.employeedocumentservice.create(empdocs)
           }
@@ -440,7 +440,7 @@ export class EmployeeModuleService {
 
           const empdocs = []
           for (const url in docUrls as {}) {
-            empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +employeerowid.id })
+            empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +employeerowid.id, addedBy: data.addedBy })
           };
           await this.employeedocumentservice.create(empdocs)
           data = { ...data, [docType.replace('[]', '')]: empdocs }

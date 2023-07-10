@@ -10,6 +10,7 @@ import { EmployeeModule } from 'src/employee-module/employee-module.entity';
 import { CustomizeTable } from 'src/customize-table/customize-table.entity';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
+import { EmployeeDocument } from 'src/employee-document/employee-document.entity';
 @Entity()
 export class User  {
   @PrimaryGeneratedColumn()
@@ -99,6 +100,9 @@ export class User  {
 
   @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.editedBy,{cascade:true})
   empEditedUser:CustomizeTable[];
+
+  @OneToMany(()=>EmployeeDocument, document => document.addedBy,{cascade:true})
+  empDocEditedUser:EmployeeDocument[];
 
   @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.createdBy,{cascade:true})
   empCreatedUser:CustomizeTable[];

@@ -1,5 +1,6 @@
 
 import { EmployeeModule } from "src/employee-module/employee-module.entity";
+import { User } from "src/user/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
@@ -25,6 +26,10 @@ export class EmployeeDocument {
 
     @Column({ type: 'boolean', default:true})
     active: Boolean;
+
+    @ManyToOne(() => User, user => user.empDocEditedUser)
+    @JoinColumn({ name: 'addedBy' })
+    addedBy: User;
 
     @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
     createdat: Date;
