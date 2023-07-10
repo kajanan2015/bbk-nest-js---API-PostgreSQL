@@ -14,6 +14,7 @@ import { CustomizeTable } from 'src/customize-table/customize-table.entity';
 import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entity';
 import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
+import { VehicleTypeEntity } from 'src/vehicle-type/vehicle-type.entity';
 @Entity('company')
 export class CompaniesEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
@@ -188,4 +189,8 @@ export class CompaniesEntity {
 
   @OneToMany(() => EmployeeDataHistory, compDataHistory => compDataHistory.company,{ cascade: true })
   editHistory: EmployeeDataHistory[];
+
+
+  @OneToMany(() => VehicleTypeEntity, vehicletype => vehicletype.company, ({ cascade: true }))
+  vehicleentity: VehicleTypeEntity[];
 }

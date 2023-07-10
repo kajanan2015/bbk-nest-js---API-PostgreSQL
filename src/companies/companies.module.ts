@@ -34,8 +34,9 @@ import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-patter
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { EmployeeDataHistoryModule } from 'src/employee-data-history/employee-data-history.module';
 import { EmployeeDataHistoryService } from 'src/employee-data-history/employee-data-history.service';
+import { VehicleTypeEntity } from 'src/vehicle-type/vehicle-type.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([CompaniesEntity, PagePermissionEntity, SystemCode,CompanyDocument,User,country, companytype, EmployeeModule,Createmodule, Createpackage,Moduledetailsofpackage, Paymenttype,Companypackagerow,CompanyWorkPattern,EmployeeDataHistory]), PagePermissionModule,SystemCodeModule, UserModule, MailModule, CompanyDocumentModule, CreatemoduleModule],
+  imports: [TypeOrmModule.forFeature([CompaniesEntity, PagePermissionEntity, SystemCode,CompanyDocument,User,country, companytype, EmployeeModule,Createmodule, Createpackage,Moduledetailsofpackage, Paymenttype,Companypackagerow,CompanyWorkPattern,EmployeeDataHistory,VehicleTypeEntity]), PagePermissionModule,SystemCodeModule, UserModule, MailModule, CompanyDocumentModule, CreatemoduleModule],
   controllers: [CompaniesController],
   providers: [CompanypackagerowService,CompaniesService, ImageUploadService, PagePermissionService,SystemCodeService, UserService,MailService, CompanyDocumentService,CreatemoduleService,EmployeeDataHistoryService],
 })

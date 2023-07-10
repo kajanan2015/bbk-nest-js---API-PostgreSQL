@@ -1,4 +1,5 @@
 import { Vehicle } from "src/vehicle/vehicle.entity";
+import { CompaniesEntity } from "src/companies/companies.entity";
 export class CreateVehicleTypeDto {
 
     id: number;
@@ -7,5 +8,6 @@ export class CreateVehicleTypeDto {
     seatCapacity: number;
     createdat:Date;
     updatedat:Date;
-    vehicle:Vehicle[]
+    vehicle:Vehicle[];
+    company: CompaniesEntity;
 }

@@ -8,6 +8,7 @@ import { Createmodule } from "src/createmodule/createmodule.entity";
 import { Moduledetailsofpackage } from "src/moduledetailsofpackage/moduledetailsofpackage.entity";
 import { Paymenttype } from "src/createpackage/paymenttype.entity";
 import { Companypackagerow } from "src/companypackagerow/companypackagerow.entity";
+import { VehicleTypeEntity } from "src/vehicle-type/vehicle-type.entity";
 export interface CompaniesDTO {
   
 id: number;
@@ -61,4 +62,5 @@ contractagreement: number;
 companypackagerow: Companypackagerow[];
 paymentlinkotp: string;
 validityperiod: Date;
+vehicleentity: VehicleTypeEntity[];
 }

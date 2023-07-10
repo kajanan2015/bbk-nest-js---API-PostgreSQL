@@ -1,29 +1,46 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Vehicle } from "src/vehicle/vehicle.entity";
-
+import { CompaniesEntity } from "src/companies/companies.entity";
 
 @Entity()
 export class VehicleTypeEntity {
 
-    @PrimaryGeneratedColumn()
-    id: number;
-  
-    @Column("varchar", { nullable: false , length: 30 })
-    typeName: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ type: 'boolean', default:true})
+  @Column("varchar", { name: "type_name", nullable: false, length: 30 })
+  typeName: string;
+
+  @Column({ type: 'boolean', default: true })
   status: boolean;
 
-    @Column( {type:'int', nullable: true })
+  @Column({ name: "seat_capacity", type: 'int', nullable: true })
   seatCapacity: number;
 
-  @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
+  @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
   createdat: Date;
 
-  @Column("timestamp", { name: "updatedat", default: () => "CURRENT_TIMESTAMP" })
+  @Column("timestamp", { name: "updated_at", default: () => "CURRENT_TIMESTAMP" })
   updatedat: Date;
-   
-  @OneToMany(()=>Vehicle, vehicle => vehicle.vehicletype,{cascade:true})
-  vehicle:Vehicle[]
+
+  @Column("int", { nullable: true, default: () => null })
+  created_by: number;
+
+  @Column("int", { nullable: true, default: () => null })
+  updated_by: number
+
+  @Column("timestamp", { name: "start_date", default: () => "CURRENT_TIMESTAMP" })
+  start_date: Date;
+
+  @Column("timestamp", { name: "end_date", default: () => "CURRENT_TIMESTAMP" })
+  end_date: Date;
+
+
+  @ManyToOne(() => CompaniesEntity, company => company.vehicleentity)
+  @JoinColumn({ name: 'company_id' })
+  company: CompaniesEntity;
+
+  @OneToMany(() => Vehicle, vehicle => vehicle.vehicletype, { cascade: true })
+  vehicle: Vehicle[]
 
 }

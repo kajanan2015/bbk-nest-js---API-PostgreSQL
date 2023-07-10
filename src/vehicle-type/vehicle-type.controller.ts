@@ -33,6 +33,10 @@ export class VehicleTypeController {
   findById(@Param("id") id: string) {
     return this.vehicleTypeService.findById(+id);
   }
+  @Get("gettype/:id")
+  async findBycompanyId(@Param("id") id: string) {
+    return this.vehicleTypeService.findBycompanyId(+id);
+  }
 
   @Put('/edit/:id')
     async uppdate(@Param('id') id: number, @Body() data: Partial<UpdateVehicleTypeDto>) {
