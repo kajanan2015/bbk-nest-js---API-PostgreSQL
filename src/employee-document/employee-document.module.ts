@@ -31,8 +31,15 @@ import { CompanypackagerowModule } from 'src/companypackagerow/companypackagerow
 import { DrivingLicenceCategory } from 'src/employee-module/driving_licence_category/driving_licence_category.entity';
 import { EmployeeDataHistoryModule } from 'src/employee-data-history/employee-data-history.module';
 import { EmployeeDataHistoryService } from 'src/employee-data-history/employee-data-history.service';
+import { Bank } from 'src/employee-module/bank/bank.entity';
+import { EmployeeType } from 'src/employee-module/employee_type/employee-type.entity';
+import { Gender } from 'src/employee-module/gender/gender.entity';
+import { EmpDesignation } from 'src/employee-module/designation/employee-designation.entity';
+import { MaritalStatus } from 'src/employee-module/marital_status/maritalStatus.entity';
+import { DrivingLicenceType } from 'src/employee-module/driving_licence_type/driving_licence_type.entity';
+import { PaymentFrequency } from 'src/employee-module/payment_frequency/payment_frequency.entity';
 @Module({
-  imports:[TypeOrmModule.forFeature([Companypackagerow,EmployeeDocument, PagePermissionEntity,EmployeeModule,CompanyDocument , SystemCode , User,PermissionRoleEntity ,CompaniesEntity,Createmodule,Createpackage, Moduledetailsofpackage,EmployeeDataHistory, DrivingLicenceCategory]),CompaniesModule, CreatemoduleModule,EmployeeDataHistoryModule],
+  imports:[TypeOrmModule.forFeature([Companypackagerow,EmployeeDocument, DrivingLicenceType, PaymentFrequency, MaritalStatus, EmpDesignation, Gender, EmployeeType, PagePermissionEntity,EmployeeModule,CompanyDocument , SystemCode , User,PermissionRoleEntity ,CompaniesEntity,Createmodule,Createpackage, Bank, Moduledetailsofpackage,EmployeeDataHistory, DrivingLicenceCategory]), CompaniesModule, CreatemoduleModule,EmployeeDataHistoryModule],
   controllers: [EmployeeDocumentController],
   providers: [CompanypackagerowService,EmployeeDocumentService, EmployeeModuleService, CompaniesService, CompanyDocumentService,UserService,SystemCodeService,ImageUploadService,CreatemoduleService,EmployeeDataHistoryService]
 })
