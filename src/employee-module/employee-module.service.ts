@@ -11,6 +11,13 @@ import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-his
 import { Gender } from './gender/gender.entity';
 import { UserService } from 'src/user/user.service';
 import { DrivingLicenceCategory } from './driving_licence_category/driving_licence_category.entity';
+import { Bank } from './bank/bank.entity';
+import { EmployeeType } from './employee_type/employee-type.entity';
+import { EmpDesignation } from './designation/employee-designation.entity';
+import { CompaniesEntity } from 'src/companies/companies.entity';
+import { MaritalStatus } from './marital_status/maritalStatus.entity';
+import { DrivingLicenceType } from './driving_licence_type/driving_licence_type.entity';
+import { PaymentFrequency } from './payment_frequency/payment_frequency.entity';
 // import randomstring from 'randomstring';
 const randomstring = require("randomstring");
 
@@ -31,6 +38,24 @@ export class EmployeeModuleService {
     private readonly userservice: UserService,
     @InjectRepository(DrivingLicenceCategory)
     private readonly drivingLicenceCategoryRepository: Repository<DrivingLicenceCategory>,
+    @InjectRepository(Bank)
+    private readonly bankRepository: Repository<Bank>,
+    @InjectRepository(EmployeeType)
+    private readonly empTypeRepository: Repository<EmployeeType>,
+    @InjectRepository(Gender)
+    private readonly genderRepository: Repository<Gender>,
+    @InjectRepository(EmpDesignation)
+    private readonly empDesignationRepository: Repository<EmpDesignation>,
+    @InjectRepository(CompaniesEntity)
+    private readonly companyRepository: Repository<CompaniesEntity>,
+    @InjectRepository(MaritalStatus)
+    private readonly maritalStatusRepository: Repository<MaritalStatus>,
+    @InjectRepository(DrivingLicenceType)
+    private readonly dlTypeRepository: Repository<DrivingLicenceType>,
+    @InjectRepository(PaymentFrequency)
+    private readonly paymentFreqRepository: Repository<PaymentFrequency>,
+    @InjectRepository(DrivingLicenceCategory)
+    private readonly dlCategoryRepository: Repository<DrivingLicenceCategory>,
   ) { }
 
   async create(createEmployeeModuleDto) {
@@ -155,53 +180,50 @@ export class EmployeeModuleService {
   }
 
   async getGender() {
-    const query = 'SELECT * FROM `gender`';
-    const genderList = await this.connection.query(query);
+    const genderList = await this.genderRepository.find();
     return genderList;
   }
+
+  async createBank(bank) {
+    const res = this.bankRepository.create(bank)
+    return await this.bankRepository.save(res);
+  }
+
   async getEmployeeType() {
-    const query = 'SELECT * FROM `EmployeeType`';
-    const employeeTypeList = await this.connection.query(query);
+    const employeeTypeList = await this.empTypeRepository.find();
     return employeeTypeList;
   }
   async getDesignation() {
-    const query = 'SELECT * FROM `employeeDesignation`';
-    const designationList = await this.connection.query(query);
+    const designationList = await this.empDesignationRepository.find();
     return designationList;
   }
   async getCompany() {
-    const query = 'SELECT * FROM `company`';
-    const companyList = await this.connection.query(query);
+    const companyList = this.companyRepository.find()
     return companyList;
   }
 
   async getMaritalStatus() {
-    const query = 'SELECT * FROM `marital_status`';
-    const maritalStatusList = await this.connection.query(query);
+    const maritalStatusList = await this.maritalStatusRepository.find();
     return maritalStatusList;
   }
 
   async getDrivingLicenceType() {
-    const query = 'SELECT * FROM `driving_licence_type`';
-    const drivingLicenceTypeList = await this.connection.query(query);
+    const drivingLicenceTypeList = await this.dlTypeRepository.find();
     return drivingLicenceTypeList;
   }
 
   async getPaymentFrequency() {
-    const query = 'SELECT * FROM `payment_frequency`';
-    const paymentFrequencyTypeList = await this.connection.query(query);
+    const paymentFrequencyTypeList = await this.paymentFreqRepository.find();
     return paymentFrequencyTypeList;
   }
 
   async getBank() {
-    const query = 'SELECT * FROM `bank`';
-    const bankTypeList = await this.connection.query(query);
+    const bankTypeList = await this.bankRepository.find();
     return bankTypeList;
   }
 
   async getDrivingLicenceCategory() {
-    const query = 'SELECT * FROM `driving_licence_category`';
-    const getDrivingLicenceCategory = await this.connection.query(query);
+    const getDrivingLicenceCategory = await this.dlCategoryRepository.find();
     return getDrivingLicenceCategory;
   }
 

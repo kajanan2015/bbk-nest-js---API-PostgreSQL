@@ -27,8 +27,15 @@ import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entit
 import { SystemCode } from 'src/system-code/system-code.entity';
 import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
 import { EmployeeDocumentModule } from 'src/employee-document/employee-document.module';
+import { Bank } from 'src/employee-module/bank/bank.entity';
+import { EmployeeType } from 'src/employee-module/employee_type/employee-type.entity';
+import { Gender } from 'src/employee-module/gender/gender.entity';
+import { EmpDesignation } from 'src/employee-module/designation/employee-designation.entity';
+import { MaritalStatus } from 'src/employee-module/marital_status/maritalStatus.entity';
+import { DrivingLicenceType } from 'src/employee-module/driving_licence_type/driving_licence_type.entity';
+import { PaymentFrequency } from 'src/employee-module/payment_frequency/payment_frequency.entity';
 @Module({
-  imports:[TypeOrmModule.forFeature([EmployeeDataHistory, Companypackagerow, SystemCode, Moduledetailsofpackage, EmployeeModule, EmployeeDocument, Createmodule, Createpackage, DrivingLicenceCategory, CompaniesEntity, User, PermissionRoleEntity, PagePermissionEntity, CompanyDocument,CompanyWorkPattern] )],
+  imports:[TypeOrmModule.forFeature([EmployeeDataHistory, Bank, DrivingLicenceType, PaymentFrequency, Gender, MaritalStatus, EmpDesignation, Companypackagerow, SystemCode, Moduledetailsofpackage, EmployeeModule, EmployeeDocument, Createmodule, Createpackage, DrivingLicenceCategory, CompaniesEntity, User, PermissionRoleEntity, PagePermissionEntity, Bank, EmployeeType, CompanyDocument,CompanyWorkPattern] )],
   controllers: [EmployeeDataHistoryController],
   providers: [EmployeeDataHistoryService, CompanypackagerowService, EmployeeModuleService, EmployeeDocumentService, UserService, CompaniesService, ImageUploadService, EmployeeDocumentService, SystemCodeService, CompanyDocumentService]
 })

@@ -79,6 +79,16 @@ export class EmployeeModuleController {
       bankTypeList
     };
   }
+
+  @Post('/bank')
+  async createBank(@Body() bank) {
+    const response = await this.employeeModuleService.createBank(bank);
+    return {
+      statusCode: HttpStatus.OK,
+      response
+    };
+  }
+
   @Get('/driving-licence-category')
   async getDrivingLicenceCategory() {
     const drivingLicenceCategoryList = await this.employeeModuleService.getDrivingLicenceCategory();
