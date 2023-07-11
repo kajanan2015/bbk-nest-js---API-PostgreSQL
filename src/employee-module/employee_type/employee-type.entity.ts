@@ -2,7 +2,7 @@ import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMa
 import * as bcrypt from 'bcryptjs';
 import { EmployeeModule } from '../employee-module.entity';
 
-@Entity()
+@Entity('EmployeeType')
 export class EmployeeType {
 @PrimaryGeneratedColumn()
 id:number;
