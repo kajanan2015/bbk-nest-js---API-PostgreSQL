@@ -34,7 +34,7 @@ export class VehicleTypeService {
   }
 
   async findBycompanyId(id:number){
-    return await this.vehicletypeRepository.findOne({where:{ company:id }});
+    return await this.vehicletypeRepository.find({where:{ company:id }});
   }
 
 
