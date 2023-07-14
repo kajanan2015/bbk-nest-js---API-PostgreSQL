@@ -102,6 +102,8 @@ export class CreateEmployeeModuleDto {
     slrySickType: string;
     slrySickRate: number;
     paymentFrequency: PaymentFrequency[];
+    leaveDate: Date;
+    former: boolean;
     addedBy:User[];
     driverLicenceCategory: DrivingLicenceCategory[];
     active: boolean;
