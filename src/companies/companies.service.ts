@@ -16,6 +16,10 @@ import {
 } from "typeorm";
 import { CompaniesDTO } from "./companies.dto";
 import { CompaniesEntity } from "./companies.entity";
+import { CompaniesEntityinfo } from './companies.entity';
+import { CompaniesHistorydata } from './companies.entity';
+
+
 import { PagePermissionEntity } from "src/pagepermission/pagepermission.entity";
 import { SystemCodeService } from "src/system-code/system-code.service";
 import { UserService } from "src/user/user.service";
@@ -35,13 +39,25 @@ const randomstring = require("randomstring");
 import { Companypackagerow } from "src/companypackagerow/companypackagerow.entity";
 import { EmployeeDataHistory } from "src/employee-data-history/employee-data-history.entity";
 import { EmployeeDataHistoryService } from "src/employee-data-history/employee-data-history.service";
-import { country } from "./country.entity";
-import { companytype } from "./companytype.entity";
+import { country } from "./country/country.entity";
+import { companytype } from "./company Type/companytype.entity";
+
+import { Deactivationmethod } from "./companies.entity";
+import { Companystatus } from "./companies.entity";
 @Injectable()
 export class CompaniesService {
+
+  deactivationmethodvalue=Deactivationmethod.IMMEDIATE;
+  companystatusvalue=Companystatus.DEACTIVATE;
   constructor(
     @InjectRepository(CompaniesEntity)
     private companyRepository: Repository<CompaniesEntity>,
+    @InjectRepository(CompaniesEntityinfo)
+    private companyinfoRepository: Repository<CompaniesEntityinfo>,
+    @InjectRepository(CompaniesHistorydata)
+    private companyhistoryRepository: Repository<CompaniesHistorydata>,
+
+
     @InjectRepository(PagePermissionEntity)
     private pagePermissionRepository: Repository<PagePermissionEntity>,
     @InjectRepository(CompanyDocument)
@@ -72,122 +88,9 @@ export class CompaniesService {
     private readonly companytyperepo: Repository<companytype>,
   ) { }
 
-  async showAll() {
-    return await this.companyRepository.find({
-      where: { status: 1, companyIdentifier: "maincompany" },
-      relations: [
-        "mainCompany",
-        "mainCompany.users",
-        "users",
-        "documents",
-        "country",
-        "regAddressCountry",
-        "companyType",
-        "billing",
-      ],
-    });
-  }
-
-  async showcompanylist(value) {
-    const companylist = await this.companyRepository.findOne({
-      where: {
-        id: value,
-      },
-      relations: ["mainCompany"],
-    });
-    return await this.companyRepository.find({
-      where: {
-        mainCompany: companylist.mainCompany.id,
-      },
-      relations: ["mainCompany"]
-    });
-  }
-
-  async showonlySubCompany() {
-    return await this.companyRepository.find({
-      where: { status: 1, mainCompany: Not(IsNull()) },
-      relations: [
-        "mainCompany",
-        "mainCompany.users",
-        "users",
-        "documents",
-        "country",
-        "regAddressCountry",
-        "companyType",
-        "billing",
-      ],
-    });
-  }
-
-  async showonlyActivemainCompany(value) {
-    return await this.companyRepository.find({
-      where: { status: 1, compstatus: value },
-      relations: [
-        "mainCompany",
-        "mainCompany.users",
-        "users",
-        "documents",
-        "country",
-        "regAddressCountry",
-        "companyType",
-        "billing",
-      ],
-      order: {
-        mainCompany: "ASC",
-      },
-    });
-  }
-
-  async showonlyActivesubCompany(value) {
-    return await this.companyRepository.find({
-      where: { status: 1, companyIdentifier: "subcompany", compstatus: value },
-      relations: [
-        "mainCompany",
-        "mainCompany.users",
-        "users",
-        "documents",
-        "country",
-        "regAddressCountry",
-        "companyType",
-        "billing",
-      ],
-    });
-  }
-
-  async getcompanyType() {
-    const companyTypeList = await this.companytyperepo.find();
-    // const companyTypeList = await this.connection.query(query);
-    return companyTypeList;
-  }
-
-  async getcountry() {
-    const countryList = await this.countryrepo.find();
-    return countryList;
-  }
-
-  async showSubAll(mainCompanyId: number): Promise<CompaniesEntity[]> {
-    return await this.companyRepository.find({
-      where: {
-        status: 1,
-        mainCompany: {
-          id: mainCompanyId,
-        },
-      },
-      relations: [
-        "mainCompany",
-        "mainCompany.users",
-        "users",
-        "documents",
-        "country",
-        "regAddressCountry",
-        "companyType",
-        "billing",
-      ],
-    });
-  }
 
   async create(companyData, base_url) {
-    const existingcompanyname = await this.companyRepository.findOne({
+    const existingcompanyname = await this.companyinfoRepository.findOne({
       where: {
         companyName: companyData.companyName,
         registrationNumber: companyData.registrationNumber,
@@ -198,6 +101,8 @@ export class CompaniesService {
     if (existingcompanyname) {
       return "company name exist";
     }
+
+
     const response = await this.systemcodeService.findOne("company");
     const companyCode = response.code + "" + response.startValue;
     const newstartvalue = {
@@ -223,13 +128,12 @@ export class CompaniesService {
       }
     }
     let dataCompany;
-
+let mainDataCompany;
     if (companyData.parentCompany && companyData.parentCompany != "") {
       const users = [];
       const company = await this.companyRepository.findOne(
-        companyData.parentCompany,
-        {
-          relations: ["users"],
+        companyData.parentCompany,{
+          relations: ["linkedcompany","users"],
         }
       );
       if (!company) {
@@ -238,7 +142,6 @@ export class CompaniesService {
         );
       }
       const userIds = [];
-
       if (companyData.sameParentCompanyAdmin == "false") {
 
 
@@ -258,18 +161,15 @@ export class CompaniesService {
         let adminUser;
         let userId;
         adminUser = await this.userRepository.findByIds(userIds);
-        // console.log(adminUser, 88889)
         for (var i = 0; i < adminUser.length; i++) {
           users.push(adminUser[i]);
-          await this.mailservice.shareaccesstochildcompany(adminUser[i].email, companyData.companyName, adminUser[i].firstName, company.companyName);
+          await this.mailservice.shareaccesstochildcompany(adminUser[i].email, companyData.companyName, adminUser[i].firstName, company.linkedcompany[0].companyName);
         }
-        // console.log(users, 999)
         for (const admin of adminUsers) {
           existing = await this.userservice.findByEmailexist(admin.email);
           if (existing) {
             return "account exist";
           }
-          // console.log(admin, 7890);
           profilethumbUrl = admin.profileImage
             ? await this.imageUploadService.uploadThumbnailToS3(
               admin.profileImage
@@ -285,41 +185,26 @@ export class CompaniesService {
             phone: admin.phone,
             email: admin.email,
           };
-
           adminResponse = await this.userservice.create(adminData);
-
-
           await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password, base_url);
-
           // userIds.push(adminResponse.id.toString());
           const userId = adminResponse.id.toString();
           // userIds.push(adminResponse.id.toString());
           const adminUser = await this.userRepository.findByIds(userId);
-          // console.log(adminUser)
           users.push(adminUser[0]);
           // userId = adminResponse.id.toString();
-          // console.log(userId,5678)
-
-          // console.log(adminUser,5678)
-
-          // console.log(dataCompany,678)
         }
       } else {
 
         if (companyData.parentCompanyAdmin) {
           for (const value of companyData.parentCompanyAdmin) {
-            // console.log(value, 77777);
             userIds.push(value);
           }
           let adminUser;
           adminUser = await this.userRepository.findByIds(userIds);
-          // console.log(userIds, 99090)
-          // console.log(adminUser, 88889)
           for (var i = 0; i < adminUser.length; i++) {
             users.push(adminUser[i]);
-            console.log(adminUser[i], 99900909099990)
-            console.log(adminUser[i].email, 99900909099990)
-            await this.mailservice.shareaccesstochildcompany(adminUser[i].email, companyData.companyName, adminUser[i].firstName, company.companyName);
+            await this.mailservice.shareaccesstochildcompany(adminUser[i].email, companyData.companyName, adminUser[i].firstName,  company.linkedcompany[0].companyName);
           }
 
           // console.log(users, 999)
@@ -335,7 +220,6 @@ export class CompaniesService {
           companyData.email != ""
         ) {
           const adminUsers = companyData.admins;
-
           for (const admin of adminUsers) {
             const existing = await this.userservice.findByEmailexist(admin.email);
             if (existing) {
@@ -364,9 +248,7 @@ export class CompaniesService {
             const userId = adminResponse.id.toString();
             // userIds.push(adminResponse.id.toString());
             const adminUser = await this.userRepository.findByIds(userId);
-            // console.log(adminUser)
             users.push(adminUser[0]);
-            // console.log(users, 90090099090099009)
             // adminUser = await this.userRepository.findByIds([userId]);
             // users.push(adminUser[0]);
           }
@@ -375,22 +257,28 @@ export class CompaniesService {
         }
       }
       // const users = await this.userRepository.findByIds(userIds);
-      // console.log(userIds, 56789)/
-      // console.log(users,56789)
-
-      // console.log(users, 67890)
       if (!companyData.sameTradingAddress) {
+        
+        mainDataCompany={
+          company_code: companyCode,
+          documents: files,
+          users: users,
+        }
         dataCompany = {
           ...companyData,
           companyLogo: companyData.logoImg,
           companyLogoThumb: companythumbUrl,
-          companyCode: companyCode,
-          users: users,
           mainCompany: companyData.parentCompany,
-          documents: files,
           companyIdentifier: "subcompany"
         }
       } else {
+
+        mainDataCompany={
+          company_code: companyCode,
+          documents: files,
+          users: users,
+        }
+
         dataCompany = {
           ...companyData,
           regAddressNo: companyData.number,
@@ -400,18 +288,12 @@ export class CompaniesService {
           regAddressCountry: companyData.country,
           companyLogo: companyData.logoImg,
           companyLogoThumb: companythumbUrl,
-          companyCode: companyCode,
-          users: users,
           mainCompany: companyData.parentCompany,
-          documents: files,
           companyIdentifier: "subcompany"
         }
       }
-
-      // console.log(dataCompany, 45678);
     } else {
       const adminUsers = companyData.admins;
-
       const users = [];
       for (const admin of adminUsers) {
         const existing = await this.userservice.findByEmailexist(admin.email);
@@ -437,23 +319,30 @@ export class CompaniesService {
         const adminResponse = await this.userservice.create(adminData);
 
         await this.mailservice.newadminadded(admin.email, companyData.companyName, admin.firstName, admin.password, base_url);
-
-
         const userId = adminResponse.id.toString();
         const adminUser = await this.userRepository.findByIds([userId]);
         users.push(adminUser[0]);
       }
       if (!companyData.sameTradingAddress) {
+        mainDataCompany={
+          company_code: companyCode,
+          documents: files,
+          users: users,
+        }
         dataCompany = {
           ...companyData,
           companyLogo: companyData.logoImg,
           companyLogoThumb: companythumbUrl,
-          companyCode: companyCode,
-          users: users,
-          documents: files,
           companyIdentifier: "maincompany",
         };
       } else {
+
+        mainDataCompany={
+          company_code: companyCode,
+          documents: files,
+          users: users,
+        }
+
         dataCompany = {
           ...companyData,
           regAddressNo: companyData.number,
@@ -463,9 +352,6 @@ export class CompaniesService {
           regAddressCountry: companyData.country,
           companyLogo: companyData.logoImg,
           companyLogoThumb: companythumbUrl,
-          companyCode: companyCode,
-          users: users,
-          documents: files,
           companyIdentifier: "maincompany",
         };
       }
@@ -473,23 +359,27 @@ export class CompaniesService {
 
     await this.systemcodeService.update(response.id, newstartvalue);
     const trialpackagedata = await this.pkgrepository.findOne({ where: { packagename: "Trial", validity: 0, enddate: null }, relations: ['packagedetails', 'packagedetails.packages', 'packagedetails.module'] })
-    console.log(trialpackagedata, 56)
     dataCompany.package = trialpackagedata.packagedetails;
     dataCompany.contractagreement = 0;
     const currentDateTime = new Date();
     const validtimeTime = new Date();
-    console.log(validtimeTime, 99)
     validtimeTime.setDate(validtimeTime.getDate() + parseInt(trialpackagedata.numberOfDays));
-    console.log(validtimeTime, 98898998989898)
     validtimeTime.setMilliseconds(0);
-    dataCompany.validityperiod = validtimeTime;
+    // dataCompany.validityperiod = validtimeTime;
     // dataCompany.validityperiod=new Date(validtimeTime.split('.')[0]);
+const maintableinsert=await this.companyRepository.create(mainDataCompany)
+const maintableinsertsave=await this.companyRepository.save(maintableinsert)
+dataCompany.company=maintableinsertsave["id"];
+    const newCompany = await this.companyinfoRepository.create(dataCompany);
+    const responsesave = await this.companyinfoRepository.save(newCompany);
 
-    const newCompany = await this.companyRepository.create(dataCompany);
-    const responsesave = await this.companyRepository.save(newCompany);
+    const jsonData = JSON.stringify({
+      bn: "company",
+      responsesaveId: responsesave["id"]
+    });
+    
 
-
-    const responsehistory = await this.datahistoryrepo.create({ type: "company-history", data: JSON.stringify(dataCompany), company: responsesave["id"] });
+    const responsehistory = await this.companyhistoryRepository.create({ history_data_type: "company-history", history_data: dataCompany, company: responsesave["id"] });
     const res = await this.datahistoryrepo.save(responsehistory);
 
 
@@ -561,6 +451,133 @@ export class CompaniesService {
     // return ;
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
+  async showAll() {
+    return await this.companyRepository.find({
+      where: { status: 1, companyIdentifier: "maincompany" },
+      relations: [
+        "mainCompany",
+        "mainCompany.users",
+        "users",
+        "documents",
+        "country",
+        "regAddressCountry",
+        "companyType",
+        "billing",
+      ],
+    });
+  }
+
+  async showcompanylist(value) {
+    const companylist = await this.companyRepository.findOne({
+      where: {
+        id: value,
+      },
+      relations: ["linkedcompany.mainCompany"],
+    });
+    return await this.companyinfoRepository.find({
+      where: {
+        mainCompany: companylist.linkedcompany[0].mainCompany.id,
+      },
+      relations: ["mainCompany"]
+    });
+  }
+
+  async showonlySubCompany() {
+    return await this.companyRepository.find({
+      where: {  mainCompany: Not(IsNull()) },
+      relations: [
+        "linkedcompany.mainCompany",
+        "linkedcompany.mainCompany.users",
+        "users",
+        "documents",
+        "linkedcompany.country",
+        "linkedcompany.regAddressCountry",
+        "linkedcompany.companyType",
+        "linkedcompany.billing",
+      ],
+    });
+  }
+
+  async showonlyActivemainCompany(value) {
+    return await this.companyinfoRepository.find({
+      where: { company_status: value },
+      relations: [
+        "mainCompany",
+        "mainCompany.users",
+        "users",
+        "documents",
+        "country",
+        "regAddressCountry",
+        "companyType",
+        "billing",
+      ],
+      order: {
+        mainCompany: "ASC",
+      },
+    });
+  }
+
+  async showonlyActivesubCompany(value) {
+    return await this.companyRepository.find({
+      where: { status: 1, companyIdentifier: "subcompany", compstatus: value },
+      relations: [
+        "mainCompany",
+        "mainCompany.users",
+        "users",
+        "documents",
+        "country",
+        "regAddressCountry",
+        "companyType",
+        "billing",
+      ],
+    });
+  }
+
+  async getcompanyType() {
+    const companyTypeList = await this.companytyperepo.find();
+    // const companyTypeList = await this.connection.query(query);
+    return companyTypeList;
+  }
+
+  async getcountry() {
+    const countryList = await this.countryrepo.find();
+    return countryList;
+  }
+
+  async showSubAll(mainCompanyId: number): Promise<CompaniesEntity[]> {
+    return await this.companyRepository.find({
+      where: {
+        status: 1,
+        mainCompany: {
+          id: mainCompanyId,
+        },
+      },
+      relations: [
+        "mainCompany",
+        "mainCompany.users",
+        "users",
+        "documents",
+        "country",
+        "regAddressCountry",
+        "companyType",
+        "billing",
+      ],
+    });
+  }
+
+ 
   async findById(id: number): Promise<CompaniesEntity> {
     return await this.companyRepository.findOne({ id });
   }
@@ -705,7 +722,7 @@ export class CompaniesService {
             companyLogo: logoImg,
             companyLogoThumb: companythumbUrl,
           };
-          await this.companyRepository.update({ id }, datalogo);
+          await this.companyinfoRepository.update({ id }, datalogo);
         }
         if (item.hasOwnProperty("files[]")) {
           documentUpload = item["files[]"];
@@ -751,7 +768,7 @@ export class CompaniesService {
 
         const master = await this.userservice.update(user.userId, passuserData);
         console.log(master.email, 567890)
-        await this.mailservice.updateemailforcompanydata(master.email, companyfind.companyName);
+        await this.mailservice.updateemailforcompanydata(master.email, companyfind.linkedcompany[0].companyName);
 
 
       }
@@ -825,18 +842,18 @@ export class CompaniesService {
   }
 
   async updateCompanyStatus(id: number, status) {
-    await this.companyRepository.update({ id }, { compstatus: () => status });
+    await this.companyinfoRepository.update({ id }, { company_status: () => status });
     return await this.companyRepository.findOne({ id });
   }
 
   async deactivatecustomerupdate(id: number, data) {
-    await this.companyRepository.update(
+    await this.companyinfoRepository.update(
       { id },
       {
-        scheduleddeactivation: data.scheduledatatime,
+        // scheduleddeactivation: data.scheduledatatime,
         deactivationreason: data.reason,
-        deactivationmethod: "scheduled",
-        deactivatedby: data.userId,
+        deactivationmethod:this.deactivationmethodvalue,
+       
       }
     );
     return await this.companyRepository.findOne({ id });
@@ -844,14 +861,12 @@ export class CompaniesService {
 
   async deactivatecustomerupdateimmediate(id: number, data) {
     const currentDateTime = new Date();
-    await this.companyRepository.update(
+    await this.companyinfoRepository.update(
       { id },
       {
-        compstatus: 2,
+        company_status: Companystatus.DEACTIVATE,
         deactivationreason: data.reason,
-        deactivatedtime: currentDateTime,
-        deactivationmethod: "immediate",
-        deactivatedby: data.userId,
+        deactivationmethod:Deactivationmethod.IMMEDIATE,
       }
     );
     return await this.companyRepository.findOne({ id });
@@ -872,11 +887,12 @@ export class CompaniesService {
     }
 
     for (const item of scheduledeactivate) {
-      await this.companyRepository.update(item.id, {
-        compstatus: 2,
-        scheduleddeactivation: null,
-        deactivatedtime: currentDateTime,
-      });
+      await this.companyinfoRepository.update(
+         item.id ,
+        {
+          company_status: Companystatus.DEACTIVATE,
+        }
+      );
     }
 
     return scheduledeactivate;
@@ -1117,137 +1133,137 @@ export class CompaniesService {
 
   async generatepaymentlink(companyId, base_url) {
 
-    const paymentid = randomstring.generate({
-      length: 4,
-      charset: 'numeric'
-    });
-    const updatecompany = await this.companyRepository.update({ id: companyId }, { paymentlinkotp: paymentid })
-    const comapny = await this.companyRepository.findOne(companyId);
-    const companyemail = comapny.companyEmail
-    return await this.mailservice.generatepaymentlink(companyemail, companyId, base_url, paymentid)
+    // const paymentid = randomstring.generate({
+    //   length: 4,
+    //   charset: 'numeric'
+    // });
+    // const updatecompany = await this.companyRepository.update({ id: companyId }, { paymentlinkotp: paymentid })
+    // const comapny = await this.companyRepository.findOne(companyId);
+    // const companyemail = comapny.companyEmail
+    // return await this.mailservice.generatepaymentlink(companyemail, companyId, base_url, paymentid)
   }
 
   async verifypaymentdetailstoken(token) {
-    const verifyresponse = await this.mailservice.verifypaymentdetailstokendecode(token);
-    if (verifyresponse["id"]) {
-      let id = verifyresponse["id"]
-      const company = await this.companyRepository.findOne(id);
-      const companyemail = company.companyEmail
-      const paymentid = company.paymentlinkotp
-      if ((verifyresponse["paymenttokenid"] == paymentid) && (verifyresponse["email"] == companyemail)) {
-        const data = {
-          id: id,
-          email: companyemail,
-        }
-        return data
-      } else {
-        return "Invalid token"
-      }
-    } else {
-      return verifyresponse
-    }
+    // const verifyresponse = await this.mailservice.verifypaymentdetailstokendecode(token);
+    // if (verifyresponse["id"]) {
+    //   let id = verifyresponse["id"]
+    //   const company = await this.companyinfoRepository.findOne(id);
+    //   const companyemail = company.companyEmail
+    //   const paymentid = company.paymentlinkotp
+    //   if ((verifyresponse["paymenttokenid"] == paymentid) && (verifyresponse["email"] == companyemail)) {
+    //     const data = {
+    //       id: id,
+    //       email: companyemail,
+    //     }
+    //     return data
+    //   } else {
+    //     return "Invalid token"
+    //   }
+    // } else {
+    //   return verifyresponse
+    // }
 
   }
 
   async paiddataupdate(token) {
-    console.log(token)
-    const verify = await this.mailservice.verifypaymentdetailstokendecode(token);
-    // const verify=await this.verifypaymentdetailstoken(token)
-    console.log(verify, 898)
-    if (verify["id"]) {
-      const updateresponse = await this.companyRepository.update({ id: verify["id"] }, { compstatus: 5, paymentlinkotp: null });
-      return "payment completed"
-    } else {
-      return "payment not complete"
-    }
+    // console.log(token)
+    // const verify = await this.mailservice.verifypaymentdetailstokendecode(token);
+    // // const verify=await this.verifypaymentdetailstoken(token)
+    // console.log(verify, 898)
+    // if (verify["id"]) {
+    //   const updateresponse = await this.companyRepository.update({ id: verify["id"] }, { compstatus: 5, paymentlinkotp: null });
+    //   return "payment completed"
+    // } else {
+    //   return "payment not complete"
+    // }
   }
 
   async changeparentadmin(id, data) {
 
-    const passdata = {
-      companyIdentifier: "maincompany",
-      mainCompany: null,
-    }
-    const response = await this.companyRepository.update({ id }, passdata);
+    // const passdata = {
+    //   companyIdentifier: "maincompany",
+    //   mainCompany: null,
+    // }
+    // const response = await this.companyRepository.update({ id }, passdata);
   }
 
   async extendtrial(data) {
-    const numofdays = data.numofdays
-    const updateDateTime = new Date(data.validitydate);
-    updateDateTime.setDate(updateDateTime.getDate() + parseInt(data.numofdays));
-    console.log(updateDateTime, 98898998989898)
-    updateDateTime.setMilliseconds(0);
+    // const numofdays = data.numofdays
+    // const updateDateTime = new Date(data.validitydate);
+    // updateDateTime.setDate(updateDateTime.getDate() + parseInt(data.numofdays));
+    // console.log(updateDateTime, 98898998989898)
+    // updateDateTime.setMilliseconds(0);
 
-    const passdata = {
-      validityperiod: updateDateTime,
-    }
-    console.log(passdata, 77)
-    const response = await this.companyRepository.update({ id: data.id }, passdata)
-    console.log(response, 88)
-    const createdbydata=await this.userRepository.findOne({where:{id:data.createdby}})
-    // Find the previous record of the employee
-    const previousRecord = await this.datahistoryrepo.findOne({
-      where: {
-        company: +data.id,
-        type: "Trial-extend-history"
-      },
-      order: { createdBy: 'DESC' },
-    });
+    // const passdata = {
+    //   validityperiod: updateDateTime,
+    // }
+    // console.log(passdata, 77)
+    // const response = await this.companyRepository.update({ id: data.id }, passdata)
+    // console.log(response, 88)
+    // const createdbydata=await this.userRepository.findOne({where:{id:data.createdby}})
+    // // Find the previous record of the employee
+    // const previousRecord = await this.datahistoryrepo.findOne({
+    //   where: {
+    //     company: +data.id,
+    //     type: "Trial-extend-history"
+    //   },
+    //   order: { createdBy: 'DESC' },
+    // });
 
-    // If a previous record exists, update its endDate
-    if (previousRecord) {
-      previousRecord.endDate = new Date(Date.now());
-      previousRecord.editedBy=createdbydata
-      await this.datahistoryrepo.save(previousRecord);
-    }
-    const responsehistory = await this.datahistoryrepo.create({ type: "Trial-extend-history", data: JSON.stringify(passdata), company:{id:data.id},createdBy:createdbydata });
-    const res = await this.datahistoryrepo.save(responsehistory);
+    // // If a previous record exists, update its endDate
+    // if (previousRecord) {
+    //   previousRecord.endDate = new Date(Date.now());
+    //   previousRecord.editedBy=createdbydata
+    //   await this.datahistoryrepo.save(previousRecord);
+    // }
+    // const responsehistory = await this.datahistoryrepo.create({ type: "Trial-extend-history", data: JSON.stringify(passdata), company:{id:data.id},createdBy:createdbydata });
+    // const res = await this.datahistoryrepo.save(responsehistory);
 
-    if (response) {
-      return "Updated"
-    } else {
-      return "Error Occured"
-    }
+    // if (response) {
+    //   return "Updated"
+    // } else {
+    //   return "Error Occured"
+    // }
   }
   async cancelrial(id,data) {
-    // createdby
-    const createdbydata=await this.userRepository.findOne({where:{id:data.createdby}})
-const currentDateTime=new Date();
-    const passdata = {
-      compstatus: 2,
-      validityperiod: null,
-      deactivationreason:"trial cancel",
-      deactivationmethod:"immediate",
-      deactivatedtime:currentDateTime,
-      deactivatedby:data.createdby
-    }
-    const response = await this.companyRepository.update({ id }, passdata)
+//     // createdby
+//     const createdbydata=await this.userRepository.findOne({where:{id:data.createdby}})
+// const currentDateTime=new Date();
+//     const passdata = {
+//       compstatus: 2,
+//       validityperiod: null,
+//       deactivationreason:"trial cancel",
+//       deactivationmethod:"immediate",
+//       deactivatedtime:currentDateTime,
+//       deactivatedby:data.createdby
+//     }
+//     const response = await this.companyRepository.update({ id }, passdata)
 
-    // Find the previous record of the employee
-    const previousRecord = await this.datahistoryrepo.findOne({
-      where: {
-        company: +id,
-        type: "cancel-trial"
-      },
-      order: { createdBy: 'DESC' },
-    });
+//     // Find the previous record of the employee
+//     const previousRecord = await this.datahistoryrepo.findOne({
+//       where: {
+//         company: +id,
+//         type: "cancel-trial"
+//       },
+//       order: { createdBy: 'DESC' },
+//     });
 
-    // If a previous record exists, update its endDate
-    if (previousRecord) {
-      previousRecord.endDate = new Date(Date.now());
-      previousRecord.editedBy=createdbydata
-      await this.datahistoryrepo.save(previousRecord);
-    }
-    const responsehistory = await this.datahistoryrepo.create({ type: "cancel-trial", data: JSON.stringify(passdata), company:{id},createdBy:createdbydata });
-    const res = await this.datahistoryrepo.save(responsehistory);
+//     // If a previous record exists, update its endDate
+//     if (previousRecord) {
+//       previousRecord.endDate = new Date(Date.now());
+//       previousRecord.editedBy=createdbydata
+//       await this.datahistoryrepo.save(previousRecord);
+//     }
+//     const responsehistory = await this.datahistoryrepo.create({ type: "cancel-trial", data: JSON.stringify(passdata), company:{id},createdBy:createdbydata });
+//     const res = await this.datahistoryrepo.save(responsehistory);
 
 
-    console.log(response, 88)
-    if (response) {
-      return "Trial Canceled"
-    } else {
-      return "Error Occured"
-    }
+//     console.log(response, 88)
+//     if (response) {
+//       return "Trial Canceled"
+//     } else {
+//       return "Error Occured"
+//     }
 
   }
 }

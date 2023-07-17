@@ -1,6 +1,6 @@
 import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { CompaniesEntity } from './companies.entity';
+import { CompaniesEntityinfo } from '../companies.entity';
 
 @Entity('companyType')
 export class companytype {
@@ -13,7 +13,7 @@ companyTypeName:string;
 @Column({ type: 'boolean', default:true})
 status: boolean;
 
-@OneToMany(() => CompaniesEntity, companytype => companytype.companyType,{ cascade: true })
-companyType: CompaniesEntity[];
+@OneToMany(() => CompaniesEntityinfo, companytype => companytype.companyType,{ cascade: true })
+companyType: CompaniesEntityinfo[];
 
 }

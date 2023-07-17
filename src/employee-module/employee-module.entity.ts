@@ -9,7 +9,7 @@ import { DrivingLicenceType } from './driving_licence_type/driving_licence_type.
 import { PaymentFrequency } from './payment_frequency/payment_frequency.entity';
 import { Bank } from './bank/bank.entity';
 import { User } from 'src/user/user.entity';
-import { country } from 'src/companies/country.entity';
+import { country } from 'src/companies/country/country.entity';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { DrivingLicenceCategory } from './driving_licence_category/driving_licence_category.entity';
 

@@ -33,6 +33,30 @@ export class CompaniesController {
     return await this.service.scheduledeactivate()
   }
 
+
+  // create company
+  @UseGuards(AuthGuard('jwt'))
+  @Post()
+  @UseInterceptors(AnyFilesInterceptor())
+  async create(@UploadedFiles() file, @Body() companyData, @Req() req) {
+    
+    const base_url=`${req.get('origin')}/`;
+    const filename = await this.imageUploadService.uploadcompany(file, "body");
+    const img = filename.find((file) => file.hasOwnProperty(`logoImg`));
+    const logoImg = img ? img['logoImg'][0] : null;
+    const document = filename.find((file) => file[`files[]`]);
+    const filesArray = document ? document[`files[]`] : null;
+    const data = {
+      ...companyData,
+      logoImg: logoImg,
+      file: filesArray,
+    }
+    return await this.service.create(data,base_url);
+   
+
+  }
+
+
 // show all companies
   @UseGuards(AuthGuard('jwt'))
   @Get()
@@ -170,33 +194,6 @@ export class CompaniesController {
   }
 
 
-// create company
-  @UseGuards(AuthGuard('jwt'))
-  @Post()
-  @UseInterceptors(AnyFilesInterceptor())
-  async create(@UploadedFiles() file, @Body() companyData, @Req() req) {
-    
-    const base_url=`${req.get('origin')}/`;
-    console.log(base_url)
-    console.log(companyData, 1234567890)
-    const filename = await this.imageUploadService.uploadcompany(file, "body");
-
-    const img = filename.find((file) => file.hasOwnProperty(`logoImg`));
-    const logoImg = img ? img['logoImg'][0] : null;
-
-    const document = filename.find((file) => file[`files[]`]);
-    const filesArray = document ? document[`files[]`] : null;
-
-    const data = {
-      ...companyData,
-      logoImg: logoImg,
-      file: filesArray,
-    }
-    console.log(data, 1111111111111111)
-    return await this.service.create(data,base_url);
-    //  return filename
-
-  }
 
   // get company type
   @UseGuards(AuthGuard('jwt'))

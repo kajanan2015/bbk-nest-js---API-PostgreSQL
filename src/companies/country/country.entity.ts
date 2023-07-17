@@ -1,6 +1,6 @@
 import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { CompaniesEntity } from './companies.entity';
+import { CompaniesEntityinfo } from '../companies.entity';
 import { EmployeeModule } from 'src/employee-module/employee-module.entity';
 
 @Entity('country')
@@ -23,11 +23,11 @@ export class country {
     @Column("varchar", {name:"currency_unit", nullable: true, length: 250, default: () => null })
     currencyUnit: string;
 
-    @OneToMany(() => CompaniesEntity, companycountry => companycountry.country, { cascade: true })
-    companyCountry: CompaniesEntity[];
+    @OneToMany(() => CompaniesEntityinfo, companycountry => companycountry.country, { cascade: true })
+    companyCountry: CompaniesEntityinfo[];
 
-    @OneToMany(() => CompaniesEntity, companyregcountry => companyregcountry.regAddressCountry, { cascade: true })
-    companyRegAddressCountry: CompaniesEntity[];
+    @OneToMany(() => CompaniesEntityinfo, companyregcountry => companyregcountry.regAddressCountry, { cascade: true })
+    companyRegAddressCountry: CompaniesEntityinfo[];
 
     @OneToMany(() => EmployeeModule, employeemodule => employeemodule.addressCountry, { cascade: true })
     employeeCountry: EmployeeModule[];

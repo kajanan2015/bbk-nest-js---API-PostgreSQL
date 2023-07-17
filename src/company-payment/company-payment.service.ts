@@ -17,12 +17,12 @@ export class CompanyPaymentService {
     private companyRepository: Repository<CompaniesEntity>
   ) { }
   async create(createCompanyPaymentDto) {
-    await this.companyRepository.update(createCompanyPaymentDto.companyId, {
-      compstatus: 3,
-    })
-    const response = this.companyPaymentRepository.create(createCompanyPaymentDto);
-    await this.companyPaymentRepository.save(response);
-    return await this.mailservice.trialpackageadded(createCompanyPaymentDto.sendedContact, "adminemail", "adminname", "", createCompanyPaymentDto.paymentLink);
+    // await this.companyRepository.update(createCompanyPaymentDto.companyId, {
+    //   com: 3,
+    // })
+    // const response = this.companyPaymentRepository.create(createCompanyPaymentDto);
+    // await this.companyPaymentRepository.save(response);
+    // return await this.mailservice.trialpackageadded(createCompanyPaymentDto.sendedContact, "adminemail", "adminname", "", createCompanyPaymentDto.paymentLink);
   }
 
   findAll() {

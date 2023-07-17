@@ -30,10 +30,12 @@ import { EmployeeDataHistoryModule } from 'src/employee-data-history/employee-da
 import { EmployeeDataHistoryService } from 'src/employee-data-history/employee-data-history.service';
 import { EmployeeModuleModule } from 'src/employee-module/employee-module.module';
 import { EmployeeModule } from 'src/employee-module/employee-module.entity';
-import { country } from 'src/companies/country.entity';
-import { companytype } from 'src/companies/companytype.entity';
+import { country } from 'src/companies/country/country.entity';
+import { companytype } from 'src/companies/company Type/companytype.entity';
+import { CompaniesEntityinfo } from 'src/companies/companies.entity';
+import { CompaniesHistorydata } from 'src/companies/companies.entity';
 @Module({
-  imports:[TypeOrmModule.forFeature([Companypackagerow,CustomizeTable, User, CompaniesEntity, PermissionRoleEntity, PagePermissionEntity, CompanyDocument, Createmodule, Createpackage, Moduledetailsofpackage, SystemCode, Paymenttype,EmployeeDataHistory,EmployeeModule,country,companytype]),EmployeeDataHistoryModule,EmployeeModuleModule],
+  imports:[TypeOrmModule.forFeature([Companypackagerow,CompaniesEntityinfo,CompaniesHistorydata,CustomizeTable, User, CompaniesEntity, PermissionRoleEntity, PagePermissionEntity, CompanyDocument, Createmodule, Createpackage, Moduledetailsofpackage, SystemCode, Paymenttype,EmployeeDataHistory,EmployeeModule,country,companytype]),EmployeeDataHistoryModule,EmployeeModuleModule],
   controllers: [CustomizeTableController],
   providers: [CustomizeTableService, UserService, CompaniesService, PermissionRoleService, PagePermissionService, CompanyDocumentService, SystemCodeService, ImageUploadService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService,CompanypackagerowService,EmployeeDataHistoryService]
 })

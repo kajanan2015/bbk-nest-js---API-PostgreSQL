@@ -35,7 +35,7 @@ import { CreatepackageModule } from 'src/createpackage/createpackage.module';
 import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetailsofpackage.entity';
 import { ModuledetailsofpackageService } from 'src/moduledetailsofpackage/moduledetailsofpackage.service';
 import { Paymenttype } from 'src/createpackage/paymenttype.entity';
-import { country } from 'src/companies/country.entity';
+import { country } from 'src/companies/country/country.entity';
 import { MailModule } from 'src/mail/mail.module';
 import { MailService } from 'src/mail/mail.service';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
@@ -46,9 +46,13 @@ import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entit
 import { CompanypackagerowService } from 'src/companypackagerow/companypackagerow.service';
 import { CompanypackagerowModule } from 'src/companypackagerow/companypackagerow.module';
 import { DrivingLicenceCategory } from './driving_licence_category/driving_licence_category.entity';
-import { companytype } from 'src/companies/companytype.entity';
+import { companytype } from 'src/companies/company Type/companytype.entity';
+
+import { CompaniesEntityinfo } from 'src/companies/companies.entity';
+import { CompaniesHistorydata } from 'src/companies/companies.entity';
+
 @Module({
-  imports: [TypeOrmModule.forFeature([Companypackagerow, EmployeeType, EmpDesignation, EmployeeModule, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency, country, Createmodule, Createpackage, Paymenttype, Moduledetailsofpackage, EmployeeDataHistory, DrivingLicenceCategory,companytype]), CompaniesModule, CreatemoduleModule, MailModule, DrivingLicenceCategory],
+  imports: [TypeOrmModule.forFeature([Companypackagerow,CompaniesEntityinfo,CompaniesHistorydata, EmployeeType, EmpDesignation, EmployeeModule, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency, country, Createmodule, Createpackage, Paymenttype, Moduledetailsofpackage, EmployeeDataHistory, DrivingLicenceCategory,companytype]), CompaniesModule, CreatemoduleModule, MailModule, DrivingLicenceCategory],
   controllers: [EmployeeModuleController, ImageUploadController],
   providers: [CompanypackagerowService, EmployeeModuleService, ImageUploadService, EmployeeDocumentService, CompaniesService, SystemCodeService, UserService, CompanyDocumentService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService, MailService, EmployeeDataHistoryService, DrivingLicenceCategory]
 })

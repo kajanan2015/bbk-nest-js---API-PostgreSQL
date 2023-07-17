@@ -245,7 +245,7 @@ export class EmployeeModuleService {
       length: 7,
       charset: 'numeric'
     });
-    let newrandomId = individualcompany.code + '-' + randomId;;
+    let newrandomId = individualcompany.company_code + '-' + randomId;;
     let response = await this.employeeModuleRepository.find({ where: { employeeId: newrandomId } });
 
     while (response.length > 0) {
@@ -253,7 +253,7 @@ export class EmployeeModuleService {
         length: 7,
         charset: 'numeric'
       });
-      newrandomId = individualcompany.code + '-' + randomId;
+      newrandomId = individualcompany.company_code + '-' + randomId;
       response = await this.employeeModuleRepository.find({ where: { employeeId: newrandomId } });
     }
     return newrandomId;

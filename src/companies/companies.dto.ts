@@ -2,7 +2,7 @@ import { PagePermissionEntity } from "src/pagepermission/pagepermission.entity";
 import { CompaniesEntity } from "./companies.entity";
 import { CompanyDocument } from "src/company-document/company-document.entity";
 import { User } from "src/user/user.entity";
-import { country } from "./country.entity";
+import { country } from "./country/country.entity";
 import { Createpackage } from "src/createpackage/createpackage.entity";
 import { Createmodule } from "src/createmodule/createmodule.entity";
 import { Moduledetailsofpackage } from "src/moduledetailsofpackage/moduledetailsofpackage.entity";

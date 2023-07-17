@@ -3,8 +3,8 @@ import { PagePermissionEntity } from 'src/pagepermission/pagepermission.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinColumn, JoinTable, OneToMany } from 'typeorm';
 import { CompanyDocument } from 'src/company-document/company-document.entity';
 import { User } from 'src/user/user.entity';
-import { country } from './country.entity';
-import { companytype } from './companytype.entity';
+import { country } from './country/country.entity';
+import { companytype } from './company Type/companytype.entity';
 import { EmployeeModule } from 'src/employee-module/employee-module.entity';
 import { Createmodule } from 'src/createmodule/createmodule.entity';
 import { Createpackage } from 'src/createpackage/createpackage.entity';
@@ -15,145 +15,110 @@ import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entit
 import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { VehicleTypeEntity } from 'src/vehicle-type/vehicle-type.entity';
+// @Entity('company_k')
+// export class CompaniesEntityssss {
+//   @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
+//   id: number;
+
+//   // // @Column("int",{ nullable: true ,  default: () => null })
+//   // // companyType: number | null;
+
+//   // // @Column("int",{ nullable: true , default: () => null })
+//   // // country: number | null;
+
+//   // // @Column("int",{ nullable: true , default: () => null })
+//   // // regAddressCountry: number;
+//   // @Column("varchar", { nullable: true, length: 250, default: () => null })
+//   // code: string;
+
+//   // @Column("tinyint", { default: 0, comment: ' 0-trial,1-12 month, 2-36 month' })
+//   // contractagreement: number;
+
+//   // @Column("timestamp", { name: "validityperiod", default: null })
+//   // validityperiod: Date;
+
+//   // @Column("varchar", { length: 100, nullable: true, default: () => null })
+//   // paymentlinkotp: string;
+
+// }
+
+
+
+export enum Companyidentifier{
+  MAIN='main',
+  SUB='sub'
+}
+
+export enum Companystatus {
+  TRIAL = 'trial',
+  ACTIVE = 'active',
+  DEACTIVATE = 'deactivate'
+}
+
+export enum Deactivationmethod {
+  SCHEDULE = 'schedule',
+  IMMEDIATE = 'immediate',
+  NOTDELETE = 'not deleted yet'
+}
+
 @Entity('company')
 export class CompaniesEntity {
-  @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
+  @PrimaryGeneratedColumn({ type: "int", name: "company_id", unsigned: true })
   id: number;
 
-  // // @Column("int",{ nullable: true ,  default: () => null })
-  // // companyType: number | null;
+  @Column("varchar", { length: 250 })
+  company_code: string | null;
 
-  // @Column("varchar", { nullable: true, length: 250, default: () => null })
-  // companyName: string | null;
+  @Column("varchar", { length: 10, comment: "to declare employee id" })
+  company_prefix: string | null;
 
-  // @Column("varchar", { nullable: true, length: 250, default: () => null })
-  // companyEmail: string | null;
+  @Column("int", { nullable: true, default: () => null })
+  created_by: number;
 
-  // @Column("varchar", { nullable: true, length: 250, default: () => null })
-  // companyPhone: string | null;
+  @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
+  created_at: Date;
 
-  // @Column("varchar", { nullable: true, length: 250, default: () => null })
-  // website: string | null;
+  @OneToMany(() => CompaniesEntityinfo, company => company.mainCompany, ({ cascade: true }))
+  parentCompany: CompaniesEntityinfo[];
 
-  // @Column("varchar", { nullable: true, length: 250, default: () => null })
-  // number: string | null;
-
-  // @Column("varchar", { nullable: true, length: 250, default: () => null })
-  // street: string | null;
-
-  // @Column("varchar", { nullable: true, length: 250, default: () => null })
-  // city: string | null;
-
-  // // @Column("int",{ nullable: true , default: () => null })
-  // // country: number | null;
-
-  // @Column("varchar", { nullable: true, length: 250, default: () => null })
-  // postalCode: string | null;
-
-  // @Column("varchar", { nullable: true, length: 250, default: () => null })
-  // vat: string | null;
-
-  // @Column("varchar", { nullable: true, length: 250, default: () => null })
-  // registrationNumber: string | null;
-
-  // @Column("varchar", { nullable: true, length: 250, default: () => null })
-  // regAddressNo: string | null;
-
-  // @Column("varchar", { nullable: true, length: 250, default: () => null })
-  // regAddressStreet: string | null;
-
-  // @Column("varchar", { nullable: true, length: 250, default: () => null })
-  // regAddressCity: string | null;
-
-  // // @Column("int",{ nullable: true , default: () => null })
-  // // regAddressCountry: number;
-
-  // @Column("varchar", { nullable: true, length: 250, default: () => null })
-  // regAddressPostalCode: string | null;
-
-  // @Column({ type: 'boolean', default: true })
-  // status: boolean;
-
-  // @Column("varchar", { length: 300, nullable: true, default: () => null })
-  // companyLogo: string;
-
-  // @Column("varchar", { length: 300, nullable: true, default: () => null })
-  // companyLogoThumb: string;
-
-  // @Column("varchar", { length: 100, nullable: true, default: () => null })
-  // companyCode: string;
-
-  // @Column("int", { nullable: true, default: () => null })
-  // createdBy: number;
-
-  // @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
-  // createdat: Date;
-
-  // @Column("timestamp", { name: "updatedat", default: () => "CURRENT_TIMESTAMP" })
-  // updatedat: Date;
-
-  // @Column("timestamp", { name: "scheduleddeactivation", default: null })
-  // scheduleddeactivation: Date;
-
-  // @Column("varchar", { name: "deactivationreason", default: null })
-  // deactivationreason: string;
-
-  // @Column("varchar", { name: "deactivationmethod", default: null, comment: 'scheduled/immediate' })
-  // deactivationmethod: string;
-
-  // @Column("timestamp", { name: "deactivatedtime", default: null })
-  // deactivatedtime: Date;
-
-  // @Column("int", { name: "deactivatedby", default: null })
-  // deactivatedby: number;
-
-  // @Column("bigint", { default: 0, comment: ' 0-trial, 1-active, 2-deactivate,3-payment pending,4-expired, 5-paid' })
-  // compstatus: number;
+  @OneToMany(() => CompaniesEntityinfo, company => company.company, ({ cascade: true }))
+  linkedcompany: CompaniesEntityinfo[];
 
 
-  // @Column("varchar", { length: 100, nullable: true, default: "maincompany" })
-  // companyIdentifier: string;
+  @OneToMany(() => CompanyWorkPattern, workpattern => workpattern.company, ({ cascade: true }))
+  workpattern: CompanyWorkPattern[];
 
-  // @Column("varchar", { nullable: true, length: 250, default: () => null })
-  // code: string;
+  @OneToMany(() => EmployeeDataHistory, compDataHistory => compDataHistory.company, { cascade: true })
+  editHistory: EmployeeDataHistory[];
+
+
+  @OneToMany(() => VehicleTypeEntity, vehicletype => vehicletype.company, ({ cascade: true }))
+  vehicleentity: VehicleTypeEntity[];
+
+
+  @OneToMany(() => CustomizeTable, customizeTable => customizeTable.company, ({ cascade: true }))
+  usertablecompany: CustomizeTable[];
+
+  @OneToMany(() => Companypackagerow, companypackagerow => companypackagerow.company, ({ cascade: true }))
+  companypackagerow: Companypackagerow[];
+
+  @OneToMany(() => EmployeeModule, employeemodule => employeemodule.company, ({ cascade: true }))
+  employedetails: EmployeeModule[];
 
   @OneToMany(() => CompanyDocument, companyDocuments => companyDocuments.company, { cascade: true })
   documents: CompanyDocument[];
 
-  @ManyToOne(() => CompaniesEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'parentCompanyId' })
-  mainCompany: CompaniesEntity;
+  
 
-  get parentCompanyId(): number {
-    return this.mainCompany ? this.mainCompany.id : 0;
-  }
-
-  set parentCompanyId(value: number) {
-  }
+  @ManyToMany(() => User, user => user.companies)
+  @JoinTable()
+  users: User[];
 
 
   @ManyToMany(() => PagePermissionEntity, (page) => page.companies)
   @JoinTable()
   pages: PagePermissionEntity[];
 
-  @ManyToMany(() => User, user => user.companies)
-  @JoinTable()
-  users: User[];
-
-  @ManyToOne(() => country, country => country.companyCountry)
-  @JoinColumn({ name: 'country' })
-  country: country;
-
-  @ManyToOne(() => country, countryreg => countryreg.companyRegAddressCountry)
-  @JoinColumn({ name: 'regAddressCountry' })
-  regAddressCountry: country;
-
-  @ManyToOne(() => companytype, companytype => companytype.companyType)
-  @JoinColumn({ name: 'companyType' })
-  companyType: companytype;
-
-  @OneToMany(() => EmployeeModule, employeemodule => employeemodule.company, ({ cascade: true }))
-  employedetails: EmployeeModule[];
 
   @ManyToMany(() => Createmodule, module => module.company)
   @JoinTable()
@@ -163,34 +128,147 @@ export class CompaniesEntity {
   @JoinTable()
   package: Moduledetailsofpackage[];
 
-  // @Column("tinyint", { default: 0, comment: ' 0-trial,1-12 month, 2-36 month' })
-  // contractagreement: number;
+}
 
-  // @Column("timestamp", { name: "validityperiod", default: null })
-  // validityperiod: Date;
+@Entity('company_info')
+export class CompaniesEntityinfo {
+  @PrimaryGeneratedColumn({ type: "int", name: "company_info_id", unsigned: true })
+  id: number;
 
+  @Column("varchar", { name: "company_name", length: 250 })
+  companyName: string | null;
+
+  @Column("varchar", { name: "company_contact_email", length: 250, })
+  companyEmail: string | null;
+
+  @Column("varchar", { name: "company_contact_phone", nullable: true, length: 250, default: () => null })
+  companyPhone: string | null;
+
+  @Column("varchar", { name: "company_contact_website", nullable: true, length: 250, default: () => null })
+  website: string | null;
+
+  @Column("varchar", { name: "company_place_number", nullable: true, length: 250, default: () => null })
+  number: string | null;
+
+  @Column("varchar", { name: "company_place_street", nullable: true, length: 250, default: () => null })
+  street: string | null;
+
+  @Column("varchar", { name: "company_place_city", nullable: true, length: 250, default: () => null })
+  city: string | null;
+
+  @ManyToOne(() => country, country => country.companyCountry)
+  @JoinColumn({ name: 'company_contact_country' })
+  country: country;
+
+  @ManyToOne(() => companytype, companytype => companytype.companyType)
+  @JoinColumn({ name: 'company_type'})
+  companyType: companytype;
+
+
+  @Column("varchar", { name: "company_place_postal_code", nullable: true, length: 250, default: () => null })
+  postalCode: string | null;
+
+  @Column("varchar", { name: "company_vat_number", nullable: true, length: 250, default: () => null })
+  vat: string | null;
+
+  @Column("varchar", { name: "company_registration_number", nullable: true, length: 250, default: () => null })
+  registrationNumber: string | null;
+
+  @Column("varchar", { name: "company_registration_address_number", nullable: true, length: 250, default: () => null })
+  regAddressNo: string | null;
+
+  @Column("varchar", { name: "company_registration_address_street", nullable: true, length: 250, default: () => null })
+  regAddressStreet: string | null;
+
+  @Column("varchar", { name: "comapny_registration_address_city", nullable: true, length: 250, default: () => null })
+  regAddressCity: string | null;
+
+  @Column("varchar", { name: "comapny_registration_postal_code", nullable: true, length: 250, default: () => null })
+  regAddressPostalCode: string | null;
+
+
+  @ManyToOne(() => country, countryreg => countryreg.companyRegAddressCountry)
+  @JoinColumn({ name: 'company_registartion_address_country' })
+  regAddressCountry: country;
+
+  @Column("varchar", { name: "company_logo", length: 300, nullable: true, default: () => null })
+  companyLogo: string;
+
+  @Column("varchar", { name: "company_logo_thumbnail", length: 300, nullable: true, default: () => null })
+  companyLogoThumb: string;
+
+  @Column("varchar", { name: "deactivation_reason", default: null })
+  deactivationreason: string;
+
+  @Column("enum", { name: "deactivation_method", enum: Deactivationmethod, default: Deactivationmethod.NOTDELETE, comment: 'scheduled/immediate/not deleted' })
+  deactivationmethod: Deactivationmethod;
+
+  @Column('enum',{name:"company_status",enum:Companystatus,default:Companystatus.TRIAL,comment:'trial/active/decativate'})
+  company_status:Companystatus;
+
+  @Column("enum", { name:"company_identifier",enum:Companyidentifier,default:Companyidentifier.MAIN,comment:"maincompany/sucompany" })
+  companyIdentifier: Companyidentifier;
+
+
+  @ManyToOne(() => CompaniesEntity, parentcompany => parentcompany.parentCompany)
+  @JoinColumn({ name: 'parent_company_id' })
+  mainCompany: CompaniesEntity;
+
+  @ManyToOne(() => CompaniesEntity, parentcompany => parentcompany.linkedcompany)
+  @JoinColumn({ name: 'company_id' })
+  company: CompaniesEntity;
+
+  @Column("int", { nullable: true, default: () => null })
+  created_by: number;
+
+  @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
+  created_at: Date;
+
+  @Column("int", { nullable: true, default: () => null })
+  updated_by: number;
+
+  @Column("timestamp", { name: "updated_at", nullable: true, default: () => null })
+  updated_at: Date;
+
+  @Column('timestamp',{name:'start_date',default:()=> "CUURENT_TIMESTAMP"})
+  start_date:Date;
+
+  @Column('timestamp',{name:'end_date',default:null,nullable:true})
+  end_date:Date;
 
   @ManyToOne(() => Paymenttype, paymenttype => paymenttype.paymentType)
   @JoinColumn({ name: 'billing' })
   billing: Paymenttype;
 
-  @OneToMany(()=>CustomizeTable,customizeTable=>customizeTable.company, ({cascade:true}))
-  usertablecompany: CustomizeTable[];
-  
-  @OneToMany(()=>Companypackagerow,companypackagerow=>companypackagerow.company, ({cascade:true}))
-  companypackagerow: Companypackagerow[];
+  @OneToMany(() => CompaniesHistorydata, historydata => historydata.company, ({ cascade: true }))
+  history: CompaniesHistorydata[];
 
-  // @Column("varchar", { length: 100, nullable: true, default: () => null })
-  // paymentlinkotp: string;
+}
 
+@Entity('company_data_history')
+export class CompaniesHistorydata{
+  @PrimaryGeneratedColumn({ type: "int", name: "company_history_id", unsigned: true })
+  id: number;
 
-  @OneToMany(() => CompanyWorkPattern, workpattern => workpattern.company, ({ cascade: true }))
-  workpattern: CompanyWorkPattern[];
+  @Column("varchar", { name: "history_data_type", length: 250 })
+  history_data_type: string | null;
 
-  @OneToMany(() => EmployeeDataHistory, compDataHistory => compDataHistory.company,{ cascade: true })
-  editHistory: EmployeeDataHistory[];
+  @Column( {type:"json", name: "history_data"})
+  history_data:  Record<string, any>;
 
+  @Column("int", { nullable: true, default: () => null })
+  created_by: number;
 
-  @OneToMany(() => VehicleTypeEntity, vehicletype => vehicletype.company, ({ cascade: true }))
-  vehicleentity: VehicleTypeEntity[];
+  @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
+  created_at: Date;
+
+  @Column("int", { nullable: true, default: () => null })
+  updated_by: number;
+
+  @Column("timestamp", { name: "updated_at", nullable: true, default: () => null })
+  updated_at: Date;
+
+  @ManyToOne(() => CompaniesEntityinfo, company => company.history)
+  @JoinColumn({ name: 'company_info_id' })
+  company: CompaniesEntityinfo;
 }
