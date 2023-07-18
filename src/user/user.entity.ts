@@ -6,7 +6,7 @@ import { CompaniesEntity } from 'src/companies/companies.entity';
 import { Createmodule } from 'src/createmodule/createmodule.entity';
 import { Createpackage } from 'src/createpackage/createpackage.entity';
 import { CompanyPayment } from 'src/company-payment/company-payment.entity';
-import { EmployeeModule } from 'src/employee-module/employee-module.entity';
+import { Employee, EmployeeInfo } from 'src/employee-module/employee-module.entity';
 import { CustomizeTable } from 'src/customize-table/customize-table.entity';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
@@ -92,20 +92,35 @@ export class User  {
   @OneToMany(()=>CompanyPayment, updatedby => updatedby.issuedBy,{cascade:true})
   issueByuser:CompanyPayment[];
 
-  @OneToMany(()=>EmployeeModule, employee => employee.addedBy,{cascade:true})
-  empAddedByuser:EmployeeModule[];
+  @OneToMany(()=>Employee, employee => employee.created_by,{cascade:true})
+  empCreatedUser:Employee[];
+
+  @OneToMany(()=>Employee, employee => employee.updated_by,{cascade:true})
+  empUpdatedUser:Employee[];
+
+  @OneToMany(()=>EmployeeInfo, employee => employee.created_by,{cascade:true})
+  empInfoCreatedUser:EmployeeInfo[];
+
+  @OneToMany(()=>EmployeeInfo, employee => employee.updated_by,{cascade:true})
+  empInfoUpdatedUser:EmployeeInfo[];
 
   @OneToMany(()=>CustomizeTable, customizeTable => customizeTable.user,{cascade:true})
   tableUser:CustomizeTable[];
 
-  @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.editedBy,{cascade:true})
-  empEditedUser:CustomizeTable[];
+  // @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.editedBy,{cascade:true})
+  // empEditedUser:CustomizeTable[];
 
-  @OneToMany(()=>EmployeeDocument, document => document.addedBy,{cascade:true})
-  empDocEditedUser:EmployeeDocument[];
+  @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.updatedBy,{cascade:true})
+  empHistoryUpdatedBy:EmployeeDataHistory[];
 
   @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.createdBy,{cascade:true})
-  empCreatedUser:CustomizeTable[];
+  empHistoryCreatedBy:EmployeeDataHistory[];
+
+  @OneToMany(()=>EmployeeDocument, document => document.created_by,{cascade:true})
+  empDocEditedUser:EmployeeDocument[];
+
+  // @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.createdBy,{cascade:true})
+  // empCreatedUser:CustomizeTable[];
 
   @Column({ type: 'boolean', default:false})
   activate: Boolean|null;

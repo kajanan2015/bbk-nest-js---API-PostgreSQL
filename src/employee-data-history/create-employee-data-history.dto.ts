@@ -1,9 +1,9 @@
-import { EmployeeModule } from "src/employee-module/employee-module.entity";
+import { EmployeeInfo } from "src/employee-module/employee-module.entity";
 import { User } from "src/user/user.entity";
 
 export class CreateEmployeeDataHistoryDto {
     id:number;
-    employee:EmployeeModule[];
+    employee:EmployeeInfo[];
     type:string;
     data:string;
     editedBy:User[];

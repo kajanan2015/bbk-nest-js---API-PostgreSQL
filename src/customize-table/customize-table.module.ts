@@ -29,14 +29,14 @@ import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-his
 import { EmployeeDataHistoryModule } from 'src/employee-data-history/employee-data-history.module';
 import { EmployeeDataHistoryService } from 'src/employee-data-history/employee-data-history.service';
 import { EmployeeModuleModule } from 'src/employee-module/employee-module.module';
-import { EmployeeModule } from 'src/employee-module/employee-module.entity';
+import { Employee, EmployeeInfo } from 'src/employee-module/employee-module.entity';
 import { country } from 'src/companies/country/country.entity';
 import { companytype } from 'src/companies/company Type/companytype.entity';
 import { CompaniesEntityinfo } from 'src/companies/companies.entity';
 import { CompaniesHistorydata } from 'src/companies/companies.entity';
 @Module({
-  imports:[TypeOrmModule.forFeature([Companypackagerow,CompaniesEntityinfo,CompaniesHistorydata,CustomizeTable, User, CompaniesEntity, PermissionRoleEntity, PagePermissionEntity, CompanyDocument, Createmodule, Createpackage, Moduledetailsofpackage, SystemCode, Paymenttype,EmployeeDataHistory,EmployeeModule,country,companytype]),EmployeeDataHistoryModule,EmployeeModuleModule],
+  imports:[TypeOrmModule.forFeature([Companypackagerow,CompaniesEntityinfo,CompaniesHistorydata,CustomizeTable, User, CompaniesEntity, PermissionRoleEntity, PagePermissionEntity, CompanyDocument, Createmodule, Createpackage, Moduledetailsofpackage, SystemCode, Paymenttype,EmployeeDataHistory,Employee, EmployeeInfo,country,companytype]),EmployeeDataHistoryModule,EmployeeModuleModule],
   controllers: [CustomizeTableController],
-  providers: [CustomizeTableService, UserService, CompaniesService, PermissionRoleService, PagePermissionService, CompanyDocumentService, SystemCodeService, ImageUploadService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService,CompanypackagerowService,EmployeeDataHistoryService]
+  providers: [CustomizeTableService, UserService, CompaniesService, PermissionRoleService, PagePermissionService, CompanyDocumentService, SystemCodeService, ImageUploadService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService, CompanypackagerowService, EmployeeDataHistoryService]
 })
-export class CustomizeTableModule {}
+export class CustomizeTableModule { }

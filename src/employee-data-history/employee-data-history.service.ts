@@ -3,7 +3,7 @@ import { UpdateEmployeeDataHistoryDto } from './update-employee-data-history.dto
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EmployeeDataHistory } from './employee-data-history.entity';
-import { EmployeeModule } from 'src/employee-module/employee-module.entity';
+import { EmployeeInfo } from 'src/employee-module/employee-module.entity';
 
 @Injectable()
 export class EmployeeDataHistoryService {
@@ -11,8 +11,8 @@ export class EmployeeDataHistoryService {
   constructor(
     @InjectRepository(EmployeeDataHistory)
     private empDataHistoryRepository: Repository<EmployeeDataHistory>,
-    @InjectRepository(EmployeeModule)
-    private employeeModuleRepository: Repository<EmployeeModule>,
+    @InjectRepository(EmployeeInfo)
+    private employeeModuleRepository: Repository<EmployeeInfo>,
   ) { }
 
   async create(createEmployeeDataHistoryDto) {
@@ -29,35 +29,35 @@ export class EmployeeDataHistoryService {
     });
 
     // If a previous record exists, update its endDate
-    if (previousRecord) {
-      previousRecord.endDate = createEmployeeDataHistoryDto.startDate;
-      previousRecord.editedBy = createEmployeeDataHistoryDto.createdBy;
-      await this.empDataHistoryRepository.save(previousRecord);
-    }
+    // if (previousRecord) {
+    //   previousRecord.endDate = createEmployeeDataHistoryDto.startDate;
+    //   previousRecord.editedBy = createEmployeeDataHistoryDto.createdBy;
+    //   await this.empDataHistoryRepository.save(previousRecord);
+    // }
 
     return await this.empDataHistoryRepository.save(response);
 
   }
 
   async findEmpDataHistory(createEmployeeDataHistoryDto) {
-    const [results, totalCount] = await this.empDataHistoryRepository.findAndCount({
-      where: {
-        employee: createEmployeeDataHistoryDto.employee,
-        type: createEmployeeDataHistoryDto.type,
-      },
-      relations: ['editedBy', 'createdBy'],
-      order: {
-        startDate: 'DESC',
-      },
-      skip: createEmployeeDataHistoryDto.page * createEmployeeDataHistoryDto.pageSize,
-      take: createEmployeeDataHistoryDto.pageSize, 
-    });
+  //   const [results, totalCount] = await this.empDataHistoryRepository.findAndCount({
+  //     where: {
+  //       employee: createEmployeeDataHistoryDto.employee,
+  //       type: createEmployeeDataHistoryDto.type,
+  //     },
+  //     relations: ['editedBy', 'createdBy'],
+  //     order: {
+  //       startDate: 'DESC',
+  //     },
+  //     skip: createEmployeeDataHistoryDto.page * createEmployeeDataHistoryDto.pageSize,
+  //     take: createEmployeeDataHistoryDto.pageSize, 
+  //   });
 
-  return {
-    historyList : results,
-    totalCount,
-    totalPages: Math.ceil(totalCount / createEmployeeDataHistoryDto.pageSize),  // Calculate the total number of pages
-  };
+  // return {
+  //   historyList : results,
+  //   totalCount,
+  //   totalPages: Math.ceil(totalCount / createEmployeeDataHistoryDto.pageSize),  // Calculate the total number of pages
+  // };
   }
 
   findOne(id: number) {

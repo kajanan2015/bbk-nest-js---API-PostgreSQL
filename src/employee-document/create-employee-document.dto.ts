@@ -1,9 +1,9 @@
-import { EmployeeModule } from "src/employee-module/employee-module.entity"
-import { EmployeeDocument } from "./employee-document.entity"
+
+import { Employee } from "src/employee-module/employee-module.entity"
 
 export class CreateEmployeeDocumentDto {
     id: number
-    empid: EmployeeModule
+    empid: Employee
     docPath: string
     docType: string
     description:string   

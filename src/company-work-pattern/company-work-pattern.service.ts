@@ -28,15 +28,15 @@ export class CompanyWorkPatternService {
     const withputtimepattern = await this.patternrepository.save(response);
 
     
-    const responsehistorywithputtime = await this.employedatahistory.create({ type:"work-pattern-history", data: JSON.stringify(response), company:createCompanyWorkPatternDto.company,createdBy:createCompanyWorkPatternDto.patterncreate,workpattern:withputtimepattern});
+    //const responsehistorywithputtime = await this.employedatahistory.create({ type:"work-pattern-history", data: JSON.stringify(response), company:createCompanyWorkPatternDto.company,createdBy:createCompanyWorkPatternDto.patterncreate,workpattern:withputtimepattern});
 
-    const reswithputtime = await this.employedatahistory.save(responsehistorywithputtime);
+    //const reswithputtime = await this.employedatahistory.save(responsehistorywithputtime);
     createCompanyWorkPatternDto.workType = 1;
     const response2 = await this.patternrepository.create(createCompanyWorkPatternDto)
     const withtimepattern = await this.patternrepository.save(response2)
     await this.systemcodeService.update(responsesystemcode.id, newstartvalue);
-    const responsehistorywithouttime = await this.employedatahistory.create({ type:"work-pattern-history", data: JSON.stringify(response2), company:createCompanyWorkPatternDto.company,createdBy:createCompanyWorkPatternDto.patterncreate, workpattern: withtimepattern});
-    const reswithouttime = await this.employedatahistory.save(responsehistorywithouttime);
+    //const responsehistorywithouttime = await this.employedatahistory.create({ type:"work-pattern-history", data: JSON.stringify(response2), company:createCompanyWorkPatternDto.company,createdBy:createCompanyWorkPatternDto.patterncreate, workpattern: withtimepattern});
+   // const reswithouttime = await this.employedatahistory.save(responsehistorywithouttime);
     if (withputtimepattern && withtimepattern) {
       return "successfully created"
     } else {
@@ -49,10 +49,10 @@ export class CompanyWorkPatternService {
   }
 
   async findbypattername(name: string, companyId) {
-    const pattern = await this.patternrepository.find({ where: { workPatternName: name, company: companyId } });
-    if (pattern.length > 0) {
-      return "name exist"
-    }
+   // const pattern = await this.patternrepository.find({ where: { workPatternName: name, company: companyId } });
+    // if (pattern.length > 0) {
+    //   return "name exist"
+    // }
   }
 
   async findOne(id: number) {
@@ -83,11 +83,11 @@ export class CompanyWorkPatternService {
             });
         
             // If a previous record exists, update its endDate
-            if (previousRecord) {
-              previousRecord.endDate = new Date(Date.now());
-              previousRecord.editedBy=updateCompanyWorkPatternDto.patternupdate;
-              await this.employedatahistory.save(previousRecord);
-            }
+            // if (previousRecord) {
+            //   previousRecord.endDate = new Date(Date.now());
+            //   previousRecord.editedBy=updateCompanyWorkPatternDto.patternupdate;
+            //   await this.employedatahistory.save(previousRecord);
+            // }
             // const updateresponse = await this.employedatahistory.create({ type:"work-pattern-history", data: JSON.stringify(updateCompanyWorkPatternDto), company:data['company'].id,createdBy:updateCompanyWorkPatternDto.patternupdate, workpattern: data['id']});
             // const res = await this.employedatahistory.save(updateresponse);
 

@@ -3,9 +3,11 @@ import { PagePermissionEntity } from 'src/pagepermission/pagepermission.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinColumn, JoinTable, OneToMany } from 'typeorm';
 import { CompanyDocument } from 'src/company-document/company-document.entity';
 import { User } from 'src/user/user.entity';
+
 import { country } from './country/country.entity';
 import { companytype } from './company Type/companytype.entity';
-import { EmployeeModule } from 'src/employee-module/employee-module.entity';
+import { Employee } from 'src/employee-module/employee-module.entity';
+
 import { Createmodule } from 'src/createmodule/createmodule.entity';
 import { Createpackage } from 'src/createpackage/createpackage.entity';
 import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetailsofpackage.entity';
@@ -102,8 +104,8 @@ export class CompaniesEntity {
   @OneToMany(() => Companypackagerow, companypackagerow => companypackagerow.company, ({ cascade: true }))
   companypackagerow: Companypackagerow[];
 
-  @OneToMany(() => EmployeeModule, employeemodule => employeemodule.company, ({ cascade: true }))
-  employedetails: EmployeeModule[];
+  @OneToMany(() => Employee, employeemodule => employeemodule.company, ({ cascade: true }))
+  employedetails: Employee[];
 
   @OneToMany(() => CompanyDocument, companyDocuments => companyDocuments.company, { cascade: true })
   documents: CompanyDocument[];
@@ -118,7 +120,6 @@ export class CompaniesEntity {
   @ManyToMany(() => PagePermissionEntity, (page) => page.companies)
   @JoinTable()
   pages: PagePermissionEntity[];
-
 
   @ManyToMany(() => Createmodule, module => module.company)
   @JoinTable()

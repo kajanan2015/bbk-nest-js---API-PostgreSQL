@@ -3,8 +3,6 @@ import { EmployeeDocumentService } from './employee-document.service';
 import { EmployeeDocumentController } from './employee-document.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmployeeDocument } from './employee-document.entity';
-import { EmployeeModule } from 'src/employee-module/employee-module.entity';
-import { EmployeeModuleModule } from 'src/employee-module/employee-module.module';
 import { EmployeeModuleService } from 'src/employee-module/employee-module.service';
 import { CompaniesService } from 'src/companies/companies.service';
 import { PagePermissionEntity } from 'src/pagepermission/pagepermission.entity';
@@ -40,13 +38,13 @@ import { DrivingLicenceType } from 'src/employee-module/driving_licence_type/dri
 import { PaymentFrequency } from 'src/employee-module/payment_frequency/payment_frequency.entity';
 import { country } from 'src/companies/country/country.entity';
 import { companytype } from 'src/companies/company Type/companytype.entity';
-
+import { Employee, EmployeeInfo } from 'src/employee-module/employee-module.entity';
 import { CompaniesEntityinfo } from 'src/companies/companies.entity';
 import { CompaniesHistorydata } from 'src/companies/companies.entity';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([Companypackagerow,EmployeeDocument, CompaniesEntityinfo,CompaniesHistorydata,DrivingLicenceType, PaymentFrequency, MaritalStatus, EmpDesignation, Gender, EmployeeType, PagePermissionEntity,EmployeeModule,CompanyDocument , SystemCode , User,PermissionRoleEntity ,CompaniesEntity,Createmodule,Createpackage, Bank, Moduledetailsofpackage,EmployeeDataHistory, DrivingLicenceCategory, country,companytype]), CompaniesModule, CreatemoduleModule,EmployeeDataHistoryModule],
+  imports:[TypeOrmModule.forFeature([Companypackagerow,EmployeeDocument, CompaniesEntityinfo,CompaniesHistorydata,DrivingLicenceType, PaymentFrequency, MaritalStatus, EmpDesignation, Gender, EmployeeType, PagePermissionEntity,EmployeeInfo, Employee,CompanyDocument , SystemCode , User,PermissionRoleEntity ,CompaniesEntity,Createmodule,Createpackage, Bank, Moduledetailsofpackage,EmployeeDataHistory, DrivingLicenceCategory, country,companytype]), CompaniesModule, CreatemoduleModule,EmployeeDataHistoryModule],
   controllers: [EmployeeDocumentController],
-  providers: [CompanypackagerowService,EmployeeDocumentService, EmployeeModuleService, CompaniesService, CompanyDocumentService,UserService,SystemCodeService,ImageUploadService,CreatemoduleService,EmployeeDataHistoryService]
+  providers: [CompanypackagerowService, EmployeeDocumentService, EmployeeModuleService, CompaniesService, CompanyDocumentService, UserService, SystemCodeService, ImageUploadService, CreatemoduleService, EmployeeDataHistoryService]
 })
-export class EmployeeDocumentModule {}
+export class EmployeeDocumentModule { }

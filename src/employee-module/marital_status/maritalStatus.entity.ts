@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { EmployeeModule } from "../employee-module.entity";
+import { EmployeeInfo } from "../employee-module.entity";
 
 @Entity('marital_status')
 export class MaritalStatus {
@@ -12,6 +12,6 @@ export class MaritalStatus {
     @Column({ type: 'boolean', default:true})
     status: boolean;
 
-    @OneToMany(()=>EmployeeModule,employeemodule=>employeemodule.maritalStatus, ({cascade:true}))
-    employee: EmployeeModule;  
+    @OneToMany(()=>EmployeeInfo, employee=>employee.maritalStatus, ({cascade:true}))
+    employee: EmployeeInfo;  
 }
