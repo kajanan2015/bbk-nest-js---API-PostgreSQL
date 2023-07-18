@@ -75,6 +75,9 @@ export class Employee {
 
     @OneToMany(() => EmployeePayrollInfo, employee => employee.employee, ({ cascade: true }))
     linkedEmployeePayroll: EmployeePayrollInfo[];
+
+    @OneToMany(() => EmployeeDocument, empDocuments => empDocuments.empid, { cascade: true })
+    documents: EmployeeDocument[];
 }
 
 @Entity('employee-info')
@@ -313,9 +316,6 @@ export class EmployeeInfo {
 
     @Column({ name: 'status', type: 'boolean', default: true })
     status: boolean;
-
-    @OneToMany(() => EmployeeDocument, empDocuments => empDocuments.empid, { cascade: true })
-    documents: EmployeeDocument[];
 
     @ManyToOne(() => PaymentFrequency, paymentFrequency => paymentFrequency.employee)
     @JoinColumn({ name: 'payment_frequency' })

@@ -1,5 +1,5 @@
 
-import { EmployeeInfo } from "src/employee-module/employee-module.entity";
+import { Employee, EmployeeInfo } from "src/employee-module/employee-module.entity";
 import { User } from "src/user/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -8,7 +8,7 @@ export class EmployeeDocument {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => EmployeeInfo, employee => employee.documents)
+    @ManyToOne(() => Employee, employee => employee.documents)
     @JoinColumn({ name: 'employee_id' })
     empid: EmployeeInfo;
 

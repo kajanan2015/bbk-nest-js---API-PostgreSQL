@@ -18,7 +18,6 @@ import { MaritalStatus } from './marital_status/maritalStatus.entity';
 import { DrivingLicenceType } from './driving_licence_type/driving_licence_type.entity';
 import { PaymentFrequency } from './payment_frequency/payment_frequency.entity';
 import { Employee, EmployeeInfo } from './employee-module.entity';
-import { EmployeeModule } from 'src/employee/employee.module';
 // import randomstring from 'randomstring';
 const randomstring = require("randomstring");
 
@@ -62,7 +61,7 @@ export class EmployeeModuleService {
   ) { }
 
   async create(createEmployeeModuleDto) {
-    const existingEmployee = await this.employeeInfoRepository.findOne({ where: { employeeId: createEmployeeModuleDto.employeeId } });
+    const existingEmployee = await this.employeeRepository.findOne({ where: { employeeCode: createEmployeeModuleDto.employeeCode } });
     if (existingEmployee) {
       const { providedCopyUrl, empProvidedCopyUrl, filenames, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
       const data = {
@@ -106,19 +105,25 @@ export class EmployeeModuleService {
       });
 
     } else {
-      const existingEmployee = await this.employeeInfoRepository.findOne({ where: { email: createEmployeeModuleDto.email, company: createEmployeeModuleDto.company } });
+      const existingEmployeeInfo = await this.employeeInfoRepository.findOne({ where: { email: createEmployeeModuleDto.email } });
+      const existingEmployee = await this.employeeRepository.findOne({ where: { company: createEmployeeModuleDto.company } });
 
-      if (existingEmployee) {
+      if (existingEmployee && existingEmployeeInfo) {
         return {
           statusCode: HttpStatus.CONFLICT,
           message: "User already exists!",
         };
       }
 
-      const { providedCopyUrl, empProvidedCopyUrl, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
-      const response = await this.employeeInfoRepository.create(dataWithouturl);
-      const res = await this.employeeInfoRepository.save(response);
+      //const { providedCopyUrl, empProvidedCopyUrl, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
+      const { profilePicUrl, employeeCode, company, ...infoData } = createEmployeeModuleDto;
 
+      const responseInfo = await this.employeeRepository.create({ employeeCode, company });
+      const resInfo = await this.employeeRepository.save(responseInfo);
+
+      const response = await this.employeeInfoRepository.create(infoData);
+      const res = await this.employeeInfoRepository.save(response) 
+      
       const documents = createEmployeeModuleDto['filenames'];
 
       //  to create account login account for user
@@ -137,7 +142,7 @@ export class EmployeeModuleService {
         profilePicThumb: createEmployeeModuleDto.profilePicThumb,
         password: employeerandompassword,
         phone: createEmployeeModuleDto.mobilePhone,
-        email: createEmployeeModuleDto.employeeId,
+        email: createEmployeeModuleDto.employeeCode,
         activate: 1,
         activated_time: currentDateTime
       };
@@ -145,7 +150,7 @@ export class EmployeeModuleService {
       const adminResponse = await this.userservice.create(employeeaccountcreationdata);
 
       // added for send email and password to the user 
-      await this.mailservice.sendemailtoemployeeregistration(createEmployeeModuleDto.email, "ABC", createEmployeeModuleDto.firstName, employeerandompassword, createEmployeeModuleDto.employeeId)
+      await this.mailservice.sendemailtoemployeeregistration(createEmployeeModuleDto.email, "ABC", createEmployeeModuleDto.firstName, employeerandompassword, createEmployeeModuleDto.employeeCode)
 
 
       if (documents.length > 0) {
@@ -175,8 +180,9 @@ export class EmployeeModuleService {
           }
         }
       }
-      return await this.employeeInfoRepository.findOne({
-        where: { employeeId: createEmployeeModuleDto.employeeId },
+
+      return await this.employeeRepository.findOne({
+        //where: { employeeCode: createEmployeeModuleDto.employeeCode },
         relations: ['drivingLicenceCategory', 'documents']
       });
     }
@@ -280,7 +286,7 @@ export class EmployeeModuleService {
       ...UpdateEmployeeModuleDto
     }
 
-    const employeerowid = await this.employeeInfoRepository.findOne({ where: { employeeId: id }, relations: ['drivingLicenceCategory'] });
+    const employeerowid = await this.employeeInfoRepository.findOne({ where: { employeeCode: id }, relations: ['drivingLicenceCategory'] });
     if (data.hasOwnProperty("drivingLicenceCategory")) {
       const drivingLicenceCategories = data.drivingLicenceCategory;
       let drivinglicensecategoryId = [];
