@@ -75,7 +75,7 @@ export class CompaniesEntity {
   @Column("int", { nullable: true, default: () => null })
   created_by: number;
 
-  @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
+  @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
   created_at: Date;
 
   @OneToMany(() => CompaniesEntityinfo, company => company.mainCompany, ({ cascade: true }))
