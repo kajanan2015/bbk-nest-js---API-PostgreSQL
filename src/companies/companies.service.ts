@@ -649,10 +649,10 @@ export class CompaniesService {
       });
 
       // If a previous record exists, update its endDate
-      if (previousRecord) {
-        previousRecord.endDate = new Date(Date.now());
-        await this.datahistoryrepo.save(previousRecord);
-      }
+      // if (previousRecord) {
+      //   previousRecord.endDate = new Date(Date.now());
+      //   await this.datahistoryrepo.save(previousRecord);
+      // }
       const historyresponse = {
         users: companyfind.users
       }
@@ -803,10 +803,10 @@ export class CompaniesService {
       });
 
       // If a previous record exists, update its endDate
-      if (previousRecord) {
-        previousRecord.endDate = new Date(Date.now());
-        await this.datahistoryrepo.save(previousRecord);
-      }
+      // if (previousRecord) {
+      //   previousRecord.endDate = new Date(Date.now());
+      //   await this.datahistoryrepo.save(previousRecord);
+      // }
       const responsehistory = await this.datahistoryrepo.create({ type: "company-history", data: JSON.stringify(passcompanyData), company: { id } });
       const res = await this.datahistoryrepo.save(responsehistory);
     }
@@ -1195,11 +1195,11 @@ export class CompaniesService {
     });
 
     // If a previous record exists, update its endDate
-    if (previousRecord) {
-      previousRecord.endDate = new Date(Date.now());
-      previousRecord.editedBy=createdbydata
-      await this.datahistoryrepo.save(previousRecord);
-    }
+    // if (previousRecord) {
+    //   previousRecord.updatedAt = new Date(Date.now());
+    //   previousRecord.updatedBy =createdbydata
+    //   await this.datahistoryrepo.save(previousRecord);
+    // }
     const responsehistory = await this.datahistoryrepo.create({ type: "Trial-extend-history", data: JSON.stringify(passdata), company:{id:data.id},createdBy:createdbydata });
     const res = await this.datahistoryrepo.save(responsehistory);
 
@@ -1233,11 +1233,11 @@ const currentDateTime=new Date();
     });
 
     // If a previous record exists, update its endDate
-    if (previousRecord) {
-      previousRecord.endDate = new Date(Date.now());
-      previousRecord.editedBy=createdbydata
-      await this.datahistoryrepo.save(previousRecord);
-    }
+    // if (previousRecord) {
+    //   previousRecord.endDate = new Date(Date.now());
+    //   previousRecord.editedBy=createdbydata
+    //   await this.datahistoryrepo.save(previousRecord);
+    // }
     const responsehistory = await this.datahistoryrepo.create({ type: "cancel-trial", data: JSON.stringify(passdata), company:{id},createdBy:createdbydata });
     const res = await this.datahistoryrepo.save(responsehistory);
 

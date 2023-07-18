@@ -44,13 +44,43 @@ enum officialDoc {
     birthCertificate = 'birthCertificate'
 }
 
-@Entity()
-export class EmployeeModule {
+@Entity('employee')
+export class Employee {
     @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
     id: number;
 
-    @Column("varchar", { name: 'employee_id', nullable: true, default: () => null })
-    employeeId: string;
+    @Column("varchar", { name: 'employee_code', nullable: true, default: () => null })
+    employeeCode: string;
+
+    @ManyToOne(() => CompaniesEntity, company => company.employedetails)
+    @JoinColumn({ name: 'company_id' })
+    company: CompaniesEntity;
+
+    @Column("timestamp", { name:'created_at', default: () => "CURRENT_TIMESTAMP" })
+    created_at: Date;
+
+    @ManyToOne(() => User, user => user.empCreatedUser)
+    @JoinColumn({ name: 'created_by' })
+    created_by: User;
+
+    @Column("timestamp", { name:'updated_at', default: () => null })
+    updated_at: Date;    
+
+    @ManyToOne(() => User, user => user.empUpdatedUser)
+    @JoinColumn({ name: 'updated_by' })
+    updated_by: User;
+
+    @OneToMany(() => EmployeeInfo, employee => employee.employee, ({ cascade: true }))
+    linkedEmployee: EmployeeInfo[];
+
+    @OneToMany(() => EmployeePayrollInfo, employee => employee.employee, ({ cascade: true }))
+    linkedEmployeePayroll: EmployeePayrollInfo[];
+}
+
+@Entity('employee-info')
+export class EmployeeInfo {
+    @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
+    id: number;
 
     @ManyToOne(() => EmployeeType, employeetype => employeetype.employeType)
     @JoinColumn({ name: 'employee_type' })
@@ -58,11 +88,7 @@ export class EmployeeModule {
 
     @ManyToOne(() => EmpDesignation, designation => designation.designation)
     @JoinColumn({ name: 'employee_designation' })
-    designation: EmpDesignation;
-
-    @ManyToOne(() => CompaniesEntity, company => company.employedetails)
-    @JoinColumn({ name: 'company_id' })
-    company: CompaniesEntity;
+    designation: EmpDesignation;    
 
     @Column("varchar", { name: 'first_name', nullable: true, default: () => null })
     firstName: string | null;
@@ -81,10 +107,10 @@ export class EmployeeModule {
     @JoinColumn({ name: 'marital_status' })
     maritalStatus: MaritalStatus;
 
-    @Column("varchar", { name: 'profile_pic', nullable: true, length: 500, default: () => null })
+    @Column("varchar", { name: 'profile_picture', nullable: true, length: 500, default: () => null })
     profilePic: string | null;
 
-    @Column("varchar", { name: 'profile_pic_thumb', nullable: true, length: 500, default: () => null })
+    @Column("varchar", { name: 'profile_picture_thumb', nullable: true, length: 500, default: () => null })
     profilePicThumb: string | null;
 
     @Column("varchar", { name: 'mobile_phone', nullable: true, length: 250, default: () => null })
@@ -96,29 +122,29 @@ export class EmployeeModule {
     @Column("varchar", { name: 'email', nullable: true, length: 250, default: () => null })
     email: string | null;
 
-    @Column("varchar", { name: 'emerg_contact_name', nullable: true, length: 250, default: () => null })
+    @Column("varchar", { name: 'emergency_contact_name', nullable: true, length: 250, default: () => null })
     emergContactName: string | null;
 
-    @Column("varchar", { name: 'emerg_contact_no', nullable: true, length: 250, default: () => null })
+    @Column("varchar", { name: 'emergency_contact_no', nullable: true, length: 250, default: () => null })
     emergeContactNo: string | null;
 
-    @Column("varchar", { name: 'address_name', nullable: true, length: 250, default: () => null })
+    @Column("varchar", { name: 'employee_address_name', nullable: true, length: 250, default: () => null })
     addressName: string | null;
 
-    @Column("varchar", { name: 'address_street', nullable: true, length: 250, default: () => null })
+    @Column("varchar", { name: 'employee_address_street', nullable: true, length: 250, default: () => null })
     addressStreet: string | null;
 
-    @Column("varchar", { name: 'address_city', nullable: true, length: 250, default: () => null })
+    @Column("varchar", { name: 'employee_address_city', nullable: true, length: 250, default: () => null })
     addressCity: string | null;
 
-    @Column("varchar", { name: 'address_state', nullable: true, length: 250, default: () => null })
+    @Column("varchar", { name: 'employee_address_state', nullable: true, length: 250, default: () => null })
     addressState: string | null;
 
-    @Column("varchar", { name: 'address_postal', nullable: true, length: 250, default: () => null })
+    @Column("varchar", { name: 'employee_address_postal', nullable: true, length: 250, default: () => null })
     addressPostal: string | null;
 
     @ManyToOne(() => country, country => country.employeeCountry)
-    @JoinColumn({ name: 'address_country' })
+    @JoinColumn({ name: 'employee_address_country' })
     addressCountry: country;
 
     @Column({
@@ -172,14 +198,14 @@ export class EmployeeModule {
     @Column({ name: 'visa_expire_date', nullable: true, default: () => null })
     visaExpireDate: Date | null;
 
-    @Column({ name: 'contract_submit', type: 'boolean', default: null })
-    contract: boolean;
+    // @Column({ name: 'contract_submit', type: 'boolean', default: null })
+    // contract: boolean;
 
-    @Column({ name: 'offer_letter_submit', type: 'boolean', default: null })
-    offerLetter: boolean;
+    // @Column({ name: 'offer_letter_submit', type: 'boolean', default: null })
+    // offerLetter: boolean;
 
-    @Column({ name: 'reference_check_submit', type: 'boolean', default: null })
-    referenceCheck: boolean;
+    // @Column({ name: 'reference_check_submit', type: 'boolean', default: null })
+    // referenceCheck: boolean;
 
     @Column("varchar", { name: 'reference_name', nullable: true, length: 250, default: () => null })
     refName: string | null;
@@ -218,8 +244,8 @@ export class EmployeeModule {
     @JoinColumn({ name: 'reference_company_address_country' })
     refCompAddressCountry: country;
 
-    @Column({ name: 'driving_licence_submit', type: 'boolean', default: null })
-    drivingLicence: boolean;
+    // @Column({ name: 'driving_licence_submit', type: 'boolean', default: null })
+    // drivingLicence: boolean;
 
     // @Column("varchar", { nullable: true, length: 250, default: () => null })
     // drivingLicenceType: string | null;
@@ -229,6 +255,10 @@ export class EmployeeModule {
 
     // @Column("varchar", { nullable: true, length: 250, default: () => null })
     // drivingLicenceCategory: string | null;
+
+    @ManyToOne(() => DrivingLicenceType, drivingLicenceType => drivingLicenceType.employee)
+    @JoinColumn({ name: 'driving_licence_type' })
+    drivingLicenceType: DrivingLicenceType;
 
     @Column({ name: 'driving_licence_issue_date', nullable: true, default: () => null })
     drivingLicenceIssue: Date | null;
@@ -242,8 +272,8 @@ export class EmployeeModule {
     @Column({ name: 'driving_licence_catd_expire_date', nullable: true, default: () => null })
     drivingLicenceCatDExpire: Date | null;
 
-    @Column({ name: 'tacho_card_submit', type: 'boolean', default: null })
-    tachoCard: boolean;
+    // @Column({ name: 'tacho_card_submit', type: 'boolean', default: null })
+    // tachoCard: boolean;
 
     @Column("varchar", { name: 'tacho_no', nullable: true, length: 250, default: () => null })
     tachoNo: string | null;
@@ -254,8 +284,8 @@ export class EmployeeModule {
     @Column({ name: 'tacho_expire_date', nullable: true, default: () => null })
     tachoExpireDate: Date | null;
 
-    @Column({ name: 'cpc_submit', type: 'boolean', default: null })
-    cpcCard: boolean;
+    // @Column({ name: 'cpc_submit', type: 'boolean', default: null })
+    // cpcCard: boolean;
 
     @Column("varchar", { name: 'cpc_no', nullable: true, length: 250, default: () => null })
     cpcCardNo: string | null;
@@ -266,8 +296,8 @@ export class EmployeeModule {
     @Column({ name: 'cpc_expire_date', nullable: true, default: () => null })
     cpcCardExpireDate: Date | null;
 
-    @Column({ name: 'crb_submit', type: 'boolean', default: null })
-    crbCheckCard: boolean;
+    // @Column({ name: 'crb_submit', type: 'boolean', default: null })
+    // crbCheckCard: boolean;
 
     @Column("varchar", { name: 'crb_no', nullable: true, length: 250, default: () => null })
     crbCardNo: string | null;
@@ -278,8 +308,8 @@ export class EmployeeModule {
     @Column({ name: 'crb_expire_date', nullable: true, default: () => null })
     crbCardExpireDate: Date | null;
 
-    @Column({ name: 'additional_doc_submit', type: 'boolean', default: null })
-    additionalDocs: boolean;
+    // @Column({ name: 'additional_doc_submit', type: 'boolean', default: null })
+    // additionalDocs: boolean;
 
     @Column({ name: 'status', type: 'boolean', default: true })
     status: boolean;
@@ -287,16 +317,12 @@ export class EmployeeModule {
     @OneToMany(() => EmployeeDocument, empDocuments => empDocuments.empid, { cascade: true })
     documents: EmployeeDocument[];
 
-    @ManyToOne(() => DrivingLicenceType, drivingLicenceType => drivingLicenceType.employee)
-    @JoinColumn({ name: 'driving_licence_type' })
-    drivingLicenceType: DrivingLicenceType;
-
     @ManyToOne(() => PaymentFrequency, paymentFrequency => paymentFrequency.employee)
     @JoinColumn({ name: 'payment_frequency' })
     paymentFrequency: PaymentFrequency;
 
-    @ManyToOne(() => Bank, bankName => bankName.employee)
-    @JoinColumn({ name: 'bank_name' })
+    @ManyToOne(() => Bank, bank => bank.employee)
+    @JoinColumn({ name: 'bank_id' })
     bankName: Bank;
 
     @Column("varchar", { name: 'bank_account_name', nullable: true, length: 250, default: () => null })
@@ -311,6 +337,56 @@ export class EmployeeModule {
     @Column("varchar", { name: 'additional_details', nullable: true, length: 250, default: () => null })
     additionalDetails: string | null;
 
+    @Column({ name: 'leave_date', nullable: true, default: () => null })
+    leaveDate: Date | null;
+
+    // @Column({ name: 'former', type: 'boolean', default: false })
+    // former: boolean;
+
+    // @ManyToOne(() => User, user => user.empAddedByuser)
+    // @JoinColumn({ name: 'added_by' })
+    // addedBy: User;
+
+    @OneToMany(() => EmployeeDataHistory, empDataHistory => empDataHistory.employee, { cascade: true })
+    editHistory: EmployeeDataHistory[];
+
+    @Column({ name: 'active', type: 'boolean', default: false })
+    active: boolean;
+
+    @ManyToMany(() => DrivingLicenceCategory, category => category.empDlCategory, { cascade: true })
+    @JoinTable()
+    drivingLicenceCategory: DrivingLicenceCategory[];
+
+    @Column("timestamp", { name: 'created_at', default: () => "CURRENT_TIMESTAMP" })
+    created_at: Date;
+
+    @ManyToOne(() => User, user => user.empInfoCreatedUser)
+    @JoinColumn({ name: 'created_by' })
+    created_by: User;
+
+    @Column("timestamp", { name: 'updated_at', default: () => null })
+    updated_at: Date;    
+
+    @ManyToOne(() => User, user => user.empInfoUpdatedUser)
+    @JoinColumn({ name: 'updated_by' })
+    updated_by: User;
+
+    @Column("timestamp", { name: "start_date", default: () => "CURRENT_TIMESTAMP" })
+    startDate: Date;
+
+    @Column("timestamp", { name: "end_date", default: null })
+    endDate: Date;
+
+    @ManyToOne(() => Employee, employee => employee.linkedEmployee)
+    @JoinColumn({ name: 'employee_id' })
+    employee: Employee;
+}
+
+@Entity('employee_payroll_info')
+export class EmployeePayrollInfo {
+    @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
+    id: number;
+
     @Column({
         type: 'enum',
         enum: salaryType,
@@ -320,14 +396,11 @@ export class EmployeeModule {
     })
     salaryType: salaryType | null;
 
-    @Column("int", { name: 'salary_rate_per_hour', nullable: true, default: () => null })
-    slryRatePerHour: number;
+    @Column("int", { name: 'salary_rate', nullable: true, default: () => null })
+    slryRate: number;
 
     @Column("int", { name: 'work_hours_per_week', nullable: true, default: () => null })
-    workHoursPerWeek: number;
-
-    @Column("int", { name: 'salary_rate_per_day', nullable: true, default: () => null })
-    slryRatePerDay: number;
+    workHoursPerWeek: number;    
 
     @Column("int", { name: 'shift_hours_per_day', nullable: true, default: () => null })
     shiftHoursPerDay: number;
@@ -368,27 +441,27 @@ export class EmployeeModule {
     @Column("int", { name: 'salary_sick_rate', nullable: true, default: () => null })
     slrySickRate: number;
 
-    @Column({ name: 'leave_date', nullable: true, default: () => null })
-    leaveDate: Date | null;
+    @Column("timestamp", { default: () => "CURRENT_TIMESTAMP" })
+    created_at: Date;
 
-    @Column({ name: 'former', type: 'boolean', default: false })
-    former: boolean;
+    @ManyToOne(() => User, user => user.empCreatedUser)
+    @JoinColumn({ name: 'created_by' })
+    created_by: User;
 
-    @Column("timestamp", { name: "create_date", default: () => "CURRENT_TIMESTAMP" })
-    createdat: Date;
+    @Column("timestamp", { default: () => null })
+    updated_at: Date;    
 
-    @ManyToOne(() => User, user => user.empAddedByuser)
-    @JoinColumn({ name: 'added_by' })
-    addedBy: User;
+    @ManyToOne(() => User, user => user.empUpdatedUser)
+    @JoinColumn({ name: 'updated_by' })
+    updated_by: User;
 
-    @OneToMany(() => EmployeeDataHistory, empDataHistory => empDataHistory.employee, { cascade: true })
-    editHistory: EmployeeDataHistory[];
+    @Column("timestamp", { name: "start_date", default: () => "CURRENT_TIMESTAMP" })
+    startDate: Date;
 
-    @Column({ name: 'active', type: 'boolean', default: false })
-    active: boolean;
+    @Column("timestamp", { name: "end_date", default: null })
+    endDate: Date;
 
-    @ManyToMany(() => DrivingLicenceCategory, category => category.empDlCategory, { cascade: true })
-    @JoinTable()
-    drivingLicenceCategory: DrivingLicenceCategory[];
-
+    @ManyToOne(() => Employee, employee => employee.linkedEmployee)
+    @JoinColumn({ name: 'employee_id' })
+    employee: Employee;
 }

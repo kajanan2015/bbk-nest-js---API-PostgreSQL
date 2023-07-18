@@ -5,7 +5,7 @@ import { CompanyDocument } from 'src/company-document/company-document.entity';
 import { User } from 'src/user/user.entity';
 import { country } from './country.entity';
 import { companytype } from './companytype.entity';
-import { EmployeeModule } from 'src/employee-module/employee-module.entity';
+import { Employee } from 'src/employee-module/employee-module.entity';
 import { Createmodule } from 'src/createmodule/createmodule.entity';
 import { Createpackage } from 'src/createpackage/createpackage.entity';
 import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetailsofpackage.entity';
@@ -152,8 +152,8 @@ export class CompaniesEntity {
   @JoinColumn({ name: 'companyType' })
   companyType: companytype;
 
-  @OneToMany(() => EmployeeModule, employeemodule => employeemodule.company, ({ cascade: true }))
-  employedetails: EmployeeModule[];
+  @OneToMany(() => Employee, employee => employee.company, ({ cascade: true }))
+  employedetails: Employee[];
 
   @ManyToMany(() => Createmodule, module => module.company)
   @JoinTable()

@@ -49,6 +49,6 @@ export class CompanyWorkPattern {
     @JoinColumn({ name: 'updatedBy' })
     patternupdate: User;
 
-    @OneToMany(() => EmployeeDataHistory, patternDataHistory => patternDataHistory.workpattern,{ cascade: true })
-    editHistory: EmployeeDataHistory[];
+    // @OneToMany(() => EmployeeDataHistory, patternDataHistory => patternDataHistory.workpattern,{ cascade: true })
+    // editHistory: EmployeeDataHistory[];
 }

@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { EmployeeModuleService } from './employee-module.service';
 import { EmployeeModuleController } from './employee-module.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EmployeeModule } from './employee-module.entity';
 import { EmployeeType } from './employee_type/employee-type.entity';
 import { EmpDesignation } from './designation/employee-designation.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
@@ -47,8 +46,9 @@ import { CompanypackagerowService } from 'src/companypackagerow/companypackagero
 import { CompanypackagerowModule } from 'src/companypackagerow/companypackagerow.module';
 import { DrivingLicenceCategory } from './driving_licence_category/driving_licence_category.entity';
 import { companytype } from 'src/companies/companytype.entity';
+import { Employee, EmployeeInfo } from './employee-module.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([Companypackagerow, EmployeeType, EmpDesignation, EmployeeModule, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency, country, Createmodule, Createpackage, Paymenttype, Moduledetailsofpackage, EmployeeDataHistory, DrivingLicenceCategory,companytype]), CompaniesModule, CreatemoduleModule, MailModule, DrivingLicenceCategory],
+  imports: [TypeOrmModule.forFeature([Companypackagerow, EmployeeInfo, Employee, EmployeeType, EmpDesignation, EmployeeInfo, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency, country, Createmodule, Createpackage, Paymenttype, Moduledetailsofpackage, EmployeeDataHistory, DrivingLicenceCategory,companytype]), CompaniesModule, CreatemoduleModule, MailModule, DrivingLicenceCategory],
   controllers: [EmployeeModuleController, ImageUploadController],
   providers: [CompanypackagerowService, EmployeeModuleService, ImageUploadService, EmployeeDocumentService, CompaniesService, SystemCodeService, UserService, CompanyDocumentService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService, MailService, EmployeeDataHistoryService, DrivingLicenceCategory]
 })
