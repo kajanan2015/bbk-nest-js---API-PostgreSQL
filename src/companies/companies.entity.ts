@@ -230,7 +230,7 @@ export class CompaniesEntityinfo {
   @Column("timestamp", { name: "updated_at", nullable: true, default: () => null })
   updated_at: Date;
 
-  @Column('timestamp',{name:'start_date',default:()=> "CUURENT_TIMESTAMP"})
+  @Column('timestamp',{name:'start_date', default: () => "CURRENT_TIMESTAMP"})
   start_date:Date;
 
   @Column('timestamp',{name:'end_date',default:null,nullable:true})
