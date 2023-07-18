@@ -18,9 +18,9 @@ export class UserService {
     private readonly permissionRoleRepository: Repository<PermissionRoleEntity>,
   ) { }
 
-  async getCompaniesByUserId(userId: number): Promise<CompaniesEntity[]> {
+  async getCompaniesByUserId(userId: number){
     const user = await this.userRepository.findOne(userId, {
-      relations: ['companies', 'companies.country'],
+      relations: ['companies', 'companies.linkedcompany','companies.linkedcompany.country'],
     });
     return user.companies;
   }

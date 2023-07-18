@@ -19,9 +19,7 @@ export class AuthService {
   ) { }
 
   async signIn(email: string, password: string): Promise<User> {
-    console.log('hiiii')
     const user = await this.userService.findByEmail(email);
-    console.log(user,8787878)
     if (!user) {
       console.log('master')
       throw new BadRequestException('auth/account-not-found');
@@ -35,7 +33,6 @@ export class AuthService {
       });
     }
     delete user.password;
-    console.log(user,9898)
     return user;
   }
 
@@ -79,8 +76,6 @@ export class AuthService {
 
   async account(token: string) {
     const user = await this.jwtService.verify(token);
-
-    console.log(user, 787878787787)
     return {
       user
     };
@@ -92,7 +87,6 @@ export class AuthService {
       ipAddress: ip,
       userid: user.id
     };
-    console.log(user, 8889898)
     await this.authRepository.save(data)
     const payload = { utype: user.uType, name: user.firstName, email: user.email, sub: user.id, firstpasswordset: user.firsttimepasswordchange };
 

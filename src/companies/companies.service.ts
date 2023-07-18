@@ -13,6 +13,8 @@ import {
   MoreThanOrEqual,
   Not,
   Repository,
+  SelectQueryBuilder,
+  getConnection,
 } from "typeorm";
 import { CompaniesDTO } from "./companies.dto";
 import { CompaniesEntity } from "./companies.entity";
@@ -44,6 +46,7 @@ import { companytype } from "./company Type/companytype.entity";
 
 import { Deactivationmethod } from "./companies.entity";
 import { Companystatus } from "./companies.entity";
+import { Companyidentifier } from "./companies.entity";
 @Injectable()
 export class CompaniesService {
 
@@ -90,6 +93,8 @@ export class CompaniesService {
 
 
   async create(companyData, base_url) {
+
+    console.log(companyData,4567890)
     const existingcompanyname = await this.companyinfoRepository.findOne({
       where: {
         companyName: companyData.companyName,
@@ -261,6 +266,7 @@ let mainDataCompany;
         
         mainDataCompany={
           company_code: companyCode,
+          company_prefix:companyData.code,
           documents: files,
           users: users,
         }
@@ -269,12 +275,13 @@ let mainDataCompany;
           companyLogo: companyData.logoImg,
           companyLogoThumb: companythumbUrl,
           mainCompany: companyData.parentCompany,
-          companyIdentifier: "subcompany"
+          companyIdentifier: Companyidentifier.SUB
         }
       } else {
 
         mainDataCompany={
           company_code: companyCode,
+          company_prefix:companyData.code,
           documents: files,
           users: users,
         }
@@ -289,7 +296,7 @@ let mainDataCompany;
           companyLogo: companyData.logoImg,
           companyLogoThumb: companythumbUrl,
           mainCompany: companyData.parentCompany,
-          companyIdentifier: "subcompany"
+          companyIdentifier: Companyidentifier.SUB
         }
       }
     } else {
@@ -326,6 +333,7 @@ let mainDataCompany;
       if (!companyData.sameTradingAddress) {
         mainDataCompany={
           company_code: companyCode,
+          company_prefix:companyData.code,
           documents: files,
           users: users,
         }
@@ -333,12 +341,13 @@ let mainDataCompany;
           ...companyData,
           companyLogo: companyData.logoImg,
           companyLogoThumb: companythumbUrl,
-          companyIdentifier: "maincompany",
+          companyIdentifier: Companyidentifier.MAIN,
         };
       } else {
 
         mainDataCompany={
           company_code: companyCode,
+          company_prefix:companyData.code,
           documents: files,
           users: users,
         }
@@ -352,7 +361,7 @@ let mainDataCompany;
           regAddressCountry: companyData.country,
           companyLogo: companyData.logoImg,
           companyLogoThumb: companythumbUrl,
-          companyIdentifier: "maincompany",
+          companyIdentifier: Companyidentifier.MAIN,
         };
       }
     }
@@ -417,12 +426,12 @@ dataCompany.company=maintableinsertsave["id"];
 
     console.log(dataCompany, 453)
     console.log(newCompany, 43534)
-    await this.mailservice.companycreationsuccess(dataCompany.companyEmail, "adminemail", "adminname", dataCompany.companyName, process.env.main_url);
-    if (dataCompany.companyIdentifier == "maincompany") {
+    // await this.mailservice.companycreationsuccess(dataCompany.companyEmail, "adminemail", "adminname", dataCompany.companyName, process.env.main_url);
+    if (dataCompany.companyIdentifier == Companyidentifier.MAIN) {
       const query = `
-   UPDATE company
-   SET parentCompanyId = '${responsesave["id"]}'
-   WHERE id = '${responsesave["id"]}'
+   UPDATE company_info
+   SET parent_company_id = '${maintableinsertsave["id"]}'
+   WHERE company_info_id = '${responsesave["id"]}'
  `;
       const hi = await this.connection.query(query);
     }
@@ -463,28 +472,88 @@ dataCompany.company=maintableinsertsave["id"];
 
 
 
+  // async showAll() {
+  //   return await this.companyRepository.find({
+  //     where: { linkedcompany:{
+  //       companyIdentifier:"main"}},
+  //     relations: [
+  //       "users",
+  //       "documents",
+  //       "linkedcompany",
+  //       "linkedcompany.mainCompany",
+  //       "linkedcompany.mainCompany.users",
+  //       "linkedcompany.country",
+  //       "linkedcompany.regAddressCountry",
+  //       "linkedcompany.companyType",
+  //       "linkedcompany.billing",
+  //     ],
+      
+  //   });
+  // }
+
+
   async showAll() {
-    return await this.companyRepository.find({
-      where: { status: 1, companyIdentifier: "maincompany" },
-      relations: [
-        "mainCompany",
-        "mainCompany.users",
-        "users",
-        "documents",
-        "country",
-        "regAddressCountry",
-        "companyType",
-        "billing",
-      ],
-    });
+    const query: SelectQueryBuilder<CompaniesEntity> = getConnection()
+      .getRepository(CompaniesEntity)
+      .createQueryBuilder("company")
+      .leftJoinAndSelect("company.users", "users")
+      .leftJoinAndSelect("company.documents", "documents")
+      .leftJoinAndSelect("company.linkedcompany", "linkedcompany")
+      .leftJoinAndSelect("linkedcompany.mainCompany", "mainCompany")
+      .leftJoinAndSelect("linkedcompany.country", "country")
+      .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
+      .leftJoinAndSelect("linkedcompany.companyType", "companyType")
+      .leftJoinAndSelect("linkedcompany.billing", "billing")
+      .where("linkedcompany.companyIdentifier = :identifier", { identifier: "main" });
+    const data= await query.getMany();
+ let passdata;
+console.log(data,456789)
+ const newdata=[];
+ 
+ for (var i = 0; i < data.length; i++) {
+  passdata={
+    id:data[i].id,
+    companyName:data[i].linkedcompany[0].companyName,
+    companyEmail:data[i].linkedcompany[0].companyEmail,
+    companyPhone:data[i].linkedcompany[0].companyPhone,
+    website:data[i].linkedcompany[0].website,
+    number:data[i].linkedcompany[0].number,
+    street:data[i].linkedcompany[0].street,
+    city:data[i].linkedcompany[0].city,
+    postalCode:data[i].linkedcompany[0].postalCode,
+    vat:data[i].linkedcompany[0].vat,
+    registrationNumber:data[0].linkedcompany[0].registrationNumber,
+    regAddressNo:data[i].linkedcompany[0].regAddressNo,
+    regAddressStreet:data[i].linkedcompany[0].regAddressStreet,
+    regAddressCity:data[i].linkedcompany[0].regAddressCity,
+    regAddressPostalCode:data[i].linkedcompany[0].regAddressPostalCode,
+    companyLogo:data[i].linkedcompany[0].companyLogo,
+    companyLogoThumb:data[i].linkedcompany[0].companyLogoThumb,
+    companyCode:data[i].company_code,
+    companyIdentifier:data[i].linkedcompany[0].companyIdentifier,
+    code:data[i].company_prefix,
+    mainCompany:data[i].linkedcompany[0].mainCompany,
+    users:data[i].users,
+    documents:data[i].documents,
+    country:data[i].linkedcompany[0].country,
+    regAddressCountry:data[i].linkedcompany[0].regAddressCountry,
+    companyType:data[i].linkedcompany[0].companyType,
+    billing:data[i].linkedcompany[0].billing,
+
+ }
+
+ newdata.push(passdata)
+}
+    return newdata;
   }
+  
 
   async showcompanylist(value) {
     const companylist = await this.companyRepository.findOne({
       where: {
         id: value,
       },
-      relations: ["linkedcompany.mainCompany"],
+      relations: ["linkedcompany","linkedcompany.mainCompany"],
     });
     return await this.companyinfoRepository.find({
       where: {
@@ -507,44 +576,156 @@ dataCompany.company=maintableinsertsave["id"];
         "linkedcompany.companyType",
         "linkedcompany.billing",
       ],
+      
     });
   }
 
   async showonlyActivemainCompany(value) {
-    return await this.companyinfoRepository.find({
-      where: { company_status: value },
-      relations: [
-        "mainCompany",
-        "mainCompany.users",
-        "users",
-        "documents",
-        "country",
-        "regAddressCountry",
-        "companyType",
-        "billing",
-      ],
-      order: {
-        mainCompany: "ASC",
-      },
-    });
+ let statusvalue;
+    if(value==0){
+      statusvalue='trial'
+    }else if(value==1){
+      statusvalue='active'
+    }else{
+      statusvalue='deactivate'
+    }
+    const query: SelectQueryBuilder<CompaniesEntity> = getConnection()
+    .getRepository(CompaniesEntity)
+    .createQueryBuilder("company")
+    .leftJoinAndSelect("company.users", "users")
+    .leftJoinAndSelect("company.documents", "documents")
+    .leftJoinAndSelect("company.linkedcompany", "linkedcompany")
+    .leftJoinAndSelect("linkedcompany.mainCompany", "mainCompany")
+    .leftJoinAndSelect("linkedcompany.country", "country")
+    .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
+    .leftJoinAndSelect("linkedcompany.companyType", "companyType")
+    .leftJoinAndSelect("linkedcompany.billing", "billing")
+    .where("linkedcompany.company_status = :status", { status: value })
+    .orderBy("linkedcompany.mainCompany", "ASC");;
+    const data= await query.getMany();
+    let passdata;
+    console.log(data,456789)
+    const newdata=[];
+
+for (var i = 0; i < data.length; i++) {
+passdata={
+  id:data[i].id,
+  companyName:data[i].linkedcompany[0].companyName,
+  companyEmail:data[i].linkedcompany[0].companyEmail,
+  companyPhone:data[i].linkedcompany[0].companyPhone,
+  website:data[i].linkedcompany[0].website,
+  number:data[i].linkedcompany[0].number,
+  street:data[i].linkedcompany[0].street,
+  city:data[i].linkedcompany[0].city,
+  postalCode:data[i].linkedcompany[0].postalCode,
+  vat:data[i].linkedcompany[0].vat,
+  registrationNumber:data[0].linkedcompany[0].registrationNumber,
+  regAddressNo:data[i].linkedcompany[0].regAddressNo,
+  regAddressStreet:data[i].linkedcompany[0].regAddressStreet,
+  regAddressCity:data[i].linkedcompany[0].regAddressCity,
+  regAddressPostalCode:data[i].linkedcompany[0].regAddressPostalCode,
+  companyLogo:data[i].linkedcompany[0].companyLogo,
+  companyLogoThumb:data[i].linkedcompany[0].companyLogoThumb,
+  companyCode:data[i].company_code,
+  companyIdentifier:data[i].linkedcompany[0].companyIdentifier,
+  code:data[i].company_prefix,
+  mainCompany:data[i].linkedcompany[0].mainCompany,
+  users:data[i].users,
+  documents:data[i].documents,
+  country:data[i].linkedcompany[0].country,
+  regAddressCountry:data[i].linkedcompany[0].regAddressCountry,
+  companyType:data[i].linkedcompany[0].companyType,
+  billing:data[i].linkedcompany[0].billing,
+
+}
+
+newdata.push(passdata)
+}
+  return newdata;
   }
 
   async showonlyActivesubCompany(value) {
-    return await this.companyRepository.find({
-      where: { status: 1, companyIdentifier: "subcompany", compstatus: value },
-      relations: [
-        "mainCompany",
-        "mainCompany.users",
-        "users",
-        "documents",
-        "country",
-        "regAddressCountry",
-        "companyType",
-        "billing",
-      ],
-    });
-  }
+    // return await this.companyRepository.find({
+    //   where: { status: 1, companyIdentifier: "subcompany", compstatus: value },
+    //   // relations: [
+    //   //   "users",
+    //   //   "documents",
+    //   //   "linkedcompany",
+    //   //   "linkedcompany.mainCompany",
+    //   //   "linkedcompany.mainCompany.users",
+    //   //   "linkedcompany.country",
+    //   //   "linkedcompany.regAddressCountry",
+    //   //   "linkedcompany.companyType",
+    //   //   "linkedcompany.billing",
+    //   // ],
+    // });
 
+    let statusvalue;
+    if(value==0){
+      statusvalue='trial'
+    }else if(value==1){
+      statusvalue='active'
+    }else{
+      statusvalue='deactivate'
+    }
+    console.log(statusvalue,88888989)
+    const query: SelectQueryBuilder<CompaniesEntity> = getConnection()
+    .getRepository(CompaniesEntity)
+    .createQueryBuilder("company")
+    .leftJoinAndSelect("company.users", "users")
+    .leftJoinAndSelect("company.documents", "documents")
+    .leftJoinAndSelect("company.linkedcompany", "linkedcompany")
+    .leftJoinAndSelect("linkedcompany.mainCompany", "mainCompany")
+    .leftJoinAndSelect("linkedcompany.country", "country")
+    .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
+    .leftJoinAndSelect("linkedcompany.companyType", "companyType")
+    .leftJoinAndSelect("linkedcompany.billing", "billing")
+    .where("linkedcompany.company_status = :status", { status: value })
+    .andWhere("linkedcompany.companyIdentifier = :identifier", { identifier: "sub" });
+    const data= await query.getMany();
+    let passdata;
+    console.log(data,456789)
+    const newdata=[];
+
+for (var i = 0; i < data.length; i++) {
+passdata={
+  id:data[i].id,
+  companyName:data[i].linkedcompany[0].companyName,
+  companyEmail:data[i].linkedcompany[0].companyEmail,
+  companyPhone:data[i].linkedcompany[0].companyPhone,
+  website:data[i].linkedcompany[0].website,
+  number:data[i].linkedcompany[0].number,
+  street:data[i].linkedcompany[0].street,
+  city:data[i].linkedcompany[0].city,
+  postalCode:data[i].linkedcompany[0].postalCode,
+  vat:data[i].linkedcompany[0].vat,
+  registrationNumber:data[0].linkedcompany[0].registrationNumber,
+  regAddressNo:data[i].linkedcompany[0].regAddressNo,
+  regAddressStreet:data[i].linkedcompany[0].regAddressStreet,
+  regAddressCity:data[i].linkedcompany[0].regAddressCity,
+  regAddressPostalCode:data[i].linkedcompany[0].regAddressPostalCode,
+  companyLogo:data[i].linkedcompany[0].companyLogo,
+  companyLogoThumb:data[i].linkedcompany[0].companyLogoThumb,
+  companyCode:data[i].company_code,
+  companyIdentifier:data[i].linkedcompany[0].companyIdentifier,
+  code:data[i].company_prefix,
+  mainCompany:data[i].linkedcompany[0].mainCompany,
+  users:data[i].users,
+  documents:data[i].documents,
+  country:data[i].linkedcompany[0].country,
+  regAddressCountry:data[i].linkedcompany[0].regAddressCountry,
+  companyType:data[i].linkedcompany[0].companyType,
+  billing:data[i].linkedcompany[0].billing,
+
+}
+
+newdata.push(passdata)
+}
+  return newdata;
+
+
+
+  }
   async getcompanyType() {
     const companyTypeList = await this.companytyperepo.find();
     // const companyTypeList = await this.connection.query(query);
@@ -589,18 +770,19 @@ dataCompany.company=maintableinsertsave["id"];
     });
   }
 
-  async read(id: number): Promise<CompaniesEntity> {
+  async read(id: number) {
     return await this.companyRepository.findOne(id, {
-      relations: [
-        "mainCompany",
-        "mainCompany.users",
-        "users",
-        "documents",
-        "country",
-        "regAddressCountry",
-        "companyType",
-        "billing",
-      ],
+      // relations: [
+      //   "users",
+      //   "documents",
+      //   "linkedcompany",
+      //   "linkedcompany.mainCompany",
+      //   "linkedcompany.mainCompany.users",
+      //   "linkedcompany.country",
+      //   "linkedcompany.regAddressCountry",
+      //   "linkedcompany.companyType",
+      //   "linkedcompany.billing",
+      // ],
     });
   }
 
@@ -829,15 +1011,17 @@ dataCompany.company=maintableinsertsave["id"];
     }
 
     return await this.companyRepository.findOne(id, {
-      relations: [
-        "mainCompany",
-        "users",
-        "documents",
-        "country",
-        "regAddressCountry",
-        "companyType",
-        "billing",
-      ],
+      // relations: [
+      //   "users",
+      //   "documents",
+      //   "linkedcompany",
+      //   "linkedcompany.mainCompany",
+      //   "linkedcompany.mainCompany.users",
+      //   "linkedcompany.country",
+      //   "linkedcompany.regAddressCountry",
+      //   "linkedcompany.companyType",
+      //   "linkedcompany.billing",
+      // ],
     });
   }
 
@@ -1099,7 +1283,7 @@ dataCompany.company=maintableinsertsave["id"];
   // company code check exist 0r not
   async checkcompanycode(code) {
     const checkcodeexist = await this.companyRepository.find({
-      where: { code },
+      where: { company_code:code },
     });
     if (checkcodeexist.length > 0) {
       return 1;

@@ -17,7 +17,7 @@ companyName: string;
 companyEmail: string;
 companyPhone: string;
 website: string;
-code: string;
+company_code: string;
 number: string;
 street: string;
 city: string;

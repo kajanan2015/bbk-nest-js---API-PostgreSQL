@@ -29,7 +29,6 @@ export class AuthController {
   @UseGuards(AuthGuard("local-sign-in"))
   @Post("sign-in")
   async login(@Req() req: Request, @RealIP() ip: string) {
-    console.log('hiiiiiii')
     return this.authService.login(req.user as User, ip);
   }
   @UseGuards(AuthGuard('jwt'))
