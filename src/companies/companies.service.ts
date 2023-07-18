@@ -848,10 +848,10 @@ newdata.push(passdata)
       });
 
       // If a previous record exists, update its endDate
-      if (previousRecord) {
-        previousRecord.endDate = new Date(Date.now());
-        await this.datahistoryrepo.save(previousRecord);
-      }
+      // if (previousRecord) {
+      //   previousRecord.endDate = new Date(Date.now());
+      //   await this.datahistoryrepo.save(previousRecord);
+      // }
       const historyresponse = {
         users: companyfind.users
       }
@@ -1002,10 +1002,10 @@ newdata.push(passdata)
       });
 
       // If a previous record exists, update its endDate
-      if (previousRecord) {
-        previousRecord.endDate = new Date(Date.now());
-        await this.datahistoryrepo.save(previousRecord);
-      }
+      // if (previousRecord) {
+      //   previousRecord.endDate = new Date(Date.now());
+      //   await this.datahistoryrepo.save(previousRecord);
+      // }
       const responsehistory = await this.datahistoryrepo.create({ type: "company-history", data: JSON.stringify(passcompanyData), company: { id } });
       const res = await this.datahistoryrepo.save(responsehistory);
     }

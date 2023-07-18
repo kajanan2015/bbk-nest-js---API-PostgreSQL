@@ -22,7 +22,6 @@ import { MailService } from 'src/mail/mail.service';
 import { CompanyDocumentModule } from 'src/company-document/company-document.module';
 import { CompanyDocumentService } from 'src/company-document/company-document.service';
 import { companytype } from './company Type/companytype.entity';
-import { EmployeeModule } from 'src/employee-module/employee-module.entity';
 import { Createmodule } from 'src/createmodule/createmodule.entity';
 import { CreatemoduleService } from 'src/createmodule/createmodule.service';
 import { CreatemoduleModule } from 'src/createmodule/createmodule.module';
@@ -37,10 +36,11 @@ import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-his
 import { EmployeeDataHistoryModule } from 'src/employee-data-history/employee-data-history.module';
 import { EmployeeDataHistoryService } from 'src/employee-data-history/employee-data-history.service';
 import { VehicleTypeEntity } from 'src/vehicle-type/vehicle-type.entity';
+import { Employee, EmployeeInfo } from 'src/employee-module/employee-module.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CompaniesEntity,CompaniesEntityinfo,CompaniesHistorydata, PagePermissionEntity, SystemCode,CompanyDocument,User,country, companytype, EmployeeModule,Createmodule, Createpackage,Moduledetailsofpackage, Paymenttype,Companypackagerow,CompanyWorkPattern,EmployeeDataHistory,VehicleTypeEntity]), PagePermissionModule,SystemCodeModule, UserModule, MailModule, CompanyDocumentModule, CreatemoduleModule],
+  imports: [TypeOrmModule.forFeature([CompaniesEntity, CompaniesEntityinfo, CompaniesHistorydata, PagePermissionEntity, SystemCode, CompanyDocument, User, country, companytype, Employee, EmployeeInfo, Createmodule, Createpackage, Moduledetailsofpackage, Paymenttype, Companypackagerow, CompanyWorkPattern, EmployeeDataHistory, VehicleTypeEntity]), PagePermissionModule, SystemCodeModule, UserModule, MailModule, CompanyDocumentModule, CreatemoduleModule],
   controllers: [CompaniesController],
-  providers: [CompanypackagerowService,CompaniesService, ImageUploadService, PagePermissionService,SystemCodeService, UserService,MailService, CompanyDocumentService,CreatemoduleService,EmployeeDataHistoryService],
+  providers: [CompanypackagerowService, CompaniesService, ImageUploadService, PagePermissionService, SystemCodeService, UserService, MailService, CompanyDocumentService, CreatemoduleService, EmployeeDataHistoryService],
 })
-export class CompaniesModule {}
+export class CompaniesModule { }

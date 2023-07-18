@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { EmployeeModule } from '../employee-module.entity';
+import { EmployeeInfo } from '../employee-module.entity';
 
 @Entity('bank')
 export class Bank {
@@ -12,13 +12,12 @@ export class Bank {
     @Column("varchar", { nullable: true, length: 250, default: () => null })
     sortCode: string;
 
-    @OneToMany(() => EmployeeModule, employeemodule => employeemodule.bankName, ({ cascade: true }))
-    employee: EmployeeModule;
+    @OneToMany(() => EmployeeInfo, employee => employee.bankName, ({ cascade: true }))
+    employee: EmployeeInfo;
 
     @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
     createdat: Date;
 
     @Column({ type: 'boolean', default: true })
     status: boolean;
-
 }

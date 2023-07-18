@@ -1,37 +1,37 @@
 
-import { EmployeeModule } from "src/employee-module/employee-module.entity";
+import { Employee, EmployeeInfo } from "src/employee-module/employee-module.entity";
 import { User } from "src/user/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity()
+@Entity('employee_document')
 export class EmployeeDocument {
     @PrimaryGeneratedColumn()
-    id:number;
+    id: number;
 
-    @ManyToOne(() => EmployeeModule, employee => employee.documents )
-    @JoinColumn({ name: 'empid' })
-    empid: EmployeeModule;
+    @ManyToOne(() => Employee, employee => employee.documents)
+    @JoinColumn({ name: 'employee_id' })
+    empid: EmployeeInfo;
 
-    @Column("varchar",{nullable:true})
-    docPath:String;
+    @Column("varchar", { name: 'document_path', nullable: true })
+    docPath: String;
 
-    @Column("varchar",{nullable:true})
-    docType:String;
+    @Column("varchar", { name:'document_type', nullable: true })
+    docType: String;
 
-    @Column("varchar",{nullable:true})
-    description:String;
+    @Column("varchar", { name:'description', nullable: true })
+    description: String;
 
-    @Column({ type: 'boolean', default:true})
+    @Column({ name:'status', type: 'boolean', default: true })
     status: Boolean;
 
-    @Column({ type: 'boolean', default:true})
+    @Column({ type: 'boolean', default: true })
     active: Boolean;
 
     @ManyToOne(() => User, user => user.empDocEditedUser)
-    @JoinColumn({ name: 'addedBy' })
-    addedBy: User;
+    @JoinColumn({ name: 'created_by' })
+    created_by: User;
 
-    @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
-    createdat: Date;
+    @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
+    created_at: Date;
 
 }

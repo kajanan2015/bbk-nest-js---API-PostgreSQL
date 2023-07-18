@@ -3,8 +3,6 @@ import { EmployeeDataHistoryService } from './employee-data-history.service';
 import { EmployeeDataHistoryController } from './employee-data-history.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EmployeeDataHistory } from './employee-data-history.entity';
-import { EmployeeModule } from 'src/employee-module/employee-module.entity';
-import { EmployeeModuleModule } from 'src/employee-module/employee-module.module';
 import { EmployeeModuleService } from 'src/employee-module/employee-module.service';
 import { EmployeeDocumentService } from 'src/employee-document/employee-document.service';
 import { CompaniesService } from 'src/companies/companies.service';
@@ -26,7 +24,6 @@ import { CompanypackagerowService } from 'src/companypackagerow/companypackagero
 import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entity';
 import { SystemCode } from 'src/system-code/system-code.entity';
 import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
-import { EmployeeDocumentModule } from 'src/employee-document/employee-document.module';
 import { Bank } from 'src/employee-module/bank/bank.entity';
 import { EmployeeType } from 'src/employee-module/employee_type/employee-type.entity';
 import { Gender } from 'src/employee-module/gender/gender.entity';
@@ -34,12 +31,15 @@ import { EmpDesignation } from 'src/employee-module/designation/employee-designa
 import { MaritalStatus } from 'src/employee-module/marital_status/maritalStatus.entity';
 import { DrivingLicenceType } from 'src/employee-module/driving_licence_type/driving_licence_type.entity';
 import { PaymentFrequency } from 'src/employee-module/payment_frequency/payment_frequency.entity';
+
 import { country } from 'src/companies/country/country.entity';
 import { companytype } from 'src/companies/company Type/companytype.entity';
 import { CompaniesEntityinfo } from 'src/companies/companies.entity';
 import { CompaniesHistorydata } from 'src/companies/companies.entity';
+import { Employee, EmployeeInfo } from 'src/employee-module/employee-module.entity';
 @Module({
-  imports:[TypeOrmModule.forFeature([EmployeeDataHistory,CompaniesHistorydata,CompaniesEntityinfo, Bank, DrivingLicenceType, PaymentFrequency, Gender, MaritalStatus, EmpDesignation, Companypackagerow, SystemCode, Moduledetailsofpackage, EmployeeModule, EmployeeDocument, Createmodule, Createpackage, DrivingLicenceCategory, CompaniesEntity, User, PermissionRoleEntity, PagePermissionEntity, Bank, EmployeeType, CompanyDocument,CompanyWorkPattern,country,companytype] )],
+  imports:[TypeOrmModule.forFeature([EmployeeDataHistory,CompaniesHistorydata,CompaniesEntityinfo, Bank, DrivingLicenceType, PaymentFrequency, Gender, MaritalStatus, EmpDesignation, Companypackagerow, SystemCode, Moduledetailsofpackage, Employee, EmployeeInfo, EmployeeDocument, Createmodule, Createpackage, DrivingLicenceCategory, CompaniesEntity, User, PermissionRoleEntity, PagePermissionEntity, Bank, EmployeeType, CompanyDocument,CompanyWorkPattern,country,companytype] )],
+
   controllers: [EmployeeDataHistoryController],
   providers: [EmployeeDataHistoryService, CompanypackagerowService, EmployeeModuleService, EmployeeDocumentService, UserService, CompaniesService, ImageUploadService, EmployeeDocumentService, SystemCodeService, CompanyDocumentService]
 })
