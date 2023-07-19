@@ -110,10 +110,10 @@ export class User  {
   // @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.editedBy,{cascade:true})
   // empEditedUser:CustomizeTable[];
 
-  @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.updatedBy,{cascade:true})
+  @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.updated_by,{cascade:true})
   empHistoryUpdatedBy:EmployeeDataHistory[];
 
-  @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.createdBy,{cascade:true})
+  @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.created_by,{cascade:true})
   empHistoryCreatedBy:EmployeeDataHistory[];
 
   @OneToMany(()=>EmployeeDocument, document => document.created_by,{cascade:true})

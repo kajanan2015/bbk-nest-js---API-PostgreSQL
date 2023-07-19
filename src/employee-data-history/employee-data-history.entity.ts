@@ -24,14 +24,20 @@ export class EmployeeDataHistory {
 
     @ManyToOne(() => User, user => user.empHistoryCreatedBy)
     @JoinColumn({ name: 'created_by' })
-    createdBy: User;
+    created_by: User;
 
     @Column("timestamp", { name: "created_at", default: null })
-    updatedAt: Date;
+    created_at: Date;
 
     @ManyToOne(() => User, user => user.empHistoryUpdatedBy)
     @JoinColumn({ name: 'updated_by' })
-    updatedBy: User;
+    updated_by: User;
+
+    @Column("timestamp", { name: "updated_at", default: null })
+    updated_at: Date;
+
+    @Column("timestamp", { name: "start_date", default: null })
+    start_date: Date;
 
     @Column({ type: 'boolean', default: true })
     status: boolean;

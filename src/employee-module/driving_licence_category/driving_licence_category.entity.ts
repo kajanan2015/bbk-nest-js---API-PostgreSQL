@@ -13,7 +13,7 @@ export class DrivingLicenceCategory {
     status: Boolean;
 
     @ManyToMany(() => EmployeeInfo, employeemodule => employeemodule.drivingLicenceCategory)
-    @JoinTable()
+    // @JoinTable()
     empDlCategory: EmployeeInfo[];
 
 }

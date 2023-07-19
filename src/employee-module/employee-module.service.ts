@@ -63,13 +63,18 @@ export class EmployeeModuleService {
   async create(createEmployeeModuleDto) {
     const existingEmployee = await this.employeeRepository.findOne({ where: { employeeCode: createEmployeeModuleDto.employeeCode } });
     if (existingEmployee) {
+      
       const { providedCopyUrl, empProvidedCopyUrl, filenames, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
       const data = {
         ...dataWithouturl
       }
 
       const documents = createEmployeeModuleDto['filenames'];
-      const res = await this.employeeInfoRepository.update({ id: existingEmployee.id }, data);
+
+      const { employeeCode, company, ...infoData } = data
+
+      const existingEmployeeInfo = await this.employeeInfoRepository.findOne({ where: { employee: existingEmployee.id } });
+      const res = await this.employeeInfoRepository.update({ id: existingEmployeeInfo.id }, infoData);
 
       if (documents.length > 0) {
         for (let document in documents) {
@@ -84,13 +89,13 @@ export class EmployeeModuleService {
             if (empExsistDocRow) {
               const empdocs = []
               for (const url in docUrls as {}) {
-                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee['id'], addedBy: data.addedBy  })
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee['id'], created_by: data.addedBy  })
               };
               await this.employeedocumentservice.update(+empExsistDocRow.id, empdocs[0])
             } else {
               const empdocs = []
               for (const url in docUrls as {}) {
-                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee['id'], addedBy: data.addedBy  })
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee['id'], created_by: data.addedBy  })
               };
               await this.employeedocumentservice.create(empdocs)
             }
@@ -99,10 +104,12 @@ export class EmployeeModuleService {
         }
       }
 
-      return await this.employeeInfoRepository.findOne({
+      const returnData = await this.employeeRepository.findOne({
         where: { id: existingEmployee.id },
-        relations: ['drivingLicenceCategory', 'documents']
+        relations: ['documents']
       });
+
+      return { infoId: existingEmployeeInfo.id, ...returnData }
 
     } else {
       const existingEmployeeInfo = await this.employeeInfoRepository.findOne({ where: { email: createEmployeeModuleDto.email } });
@@ -118,11 +125,11 @@ export class EmployeeModuleService {
       //const { providedCopyUrl, empProvidedCopyUrl, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
       const { profilePicUrl, employeeCode, company, ...infoData } = createEmployeeModuleDto;
 
-      const responseInfo = await this.employeeRepository.create({ employeeCode, company });
-      const resInfo = await this.employeeRepository.save(responseInfo);
+      const response = await this.employeeRepository.create({ employeeCode, company, linkedEmployee: infoData});
+      const res = await this.employeeRepository.save(response);
 
-      const response = await this.employeeInfoRepository.create(infoData);
-      const res = await this.employeeInfoRepository.save(response) 
+      const responseInfo= await this.employeeInfoRepository.create({...infoData, employee: res.id});
+      const resInfo = await this.employeeInfoRepository.save(responseInfo) 
       
       const documents = createEmployeeModuleDto['filenames'];
 
@@ -166,13 +173,13 @@ export class EmployeeModuleService {
             if (empExsistDocRow) {
               const empdocs = []
               for (const url in docUrls as {}) {
-                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +res['id'], addedBy: createEmployeeModuleDto.addedBy  })
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +res['id'], created_by: createEmployeeModuleDto.addedBy  })
               };
               await this.employeedocumentservice.update(+empExsistDocRow.id, empdocs[0])
             } else {
               const empdocs = []
               for (const url in docUrls as {}) {
-                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +res['id'], addedBy: createEmployeeModuleDto.addedBy })
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +res['id'], created_by: createEmployeeModuleDto.addedBy })
               };
               await this.employeedocumentservice.create(empdocs)
             }
@@ -181,10 +188,12 @@ export class EmployeeModuleService {
         }
       }
 
-      return await this.employeeRepository.findOne({
-        //where: { employeeCode: createEmployeeModuleDto.employeeCode },
-        relations: ['drivingLicenceCategory', 'documents']
+      const returnData = await this.employeeRepository.findOne({
+        where: { employeeCode: createEmployeeModuleDto.employeeCode },
+        relations: ['documents']
       });
+
+      return { infoId: resInfo['id'], ...returnData }
     }
   }
 
@@ -273,7 +282,7 @@ export class EmployeeModuleService {
   async findById(id: number) {
     return await this.employeeInfoRepository.findOne({
       where: { id: +id },
-      relations: ['drivingLicenceCategory', 'documents', 'drivingLicenceType', 'employeeType', 'addedBy', 'designation', 'company', 'gender', 'maritalStatus', 'bankName', 'paymentFrequency', 'addressCountry', 'refCompAddressCountry']
+      relations: ['drivingLicenceCategory', 'documents', 'drivingLicenceType', 'employeeType', 'created_by', 'designation', 'company', 'gender', 'maritalStatus', 'bankName', 'paymentFrequency', 'addressCountry', 'refCompAddressCountry']
     });
   }
 
@@ -467,7 +476,7 @@ export class EmployeeModuleService {
         employee: +UpdateEmployeeModuleDto.employee,
         type: UpdateEmployeeModuleDto.type
       },
-      order: { createdBy: 'DESC' },
+      order: { created_by: 'DESC' },
     });
 
     // If a previous record exists, update its endDate

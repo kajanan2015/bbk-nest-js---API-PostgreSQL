@@ -25,39 +25,39 @@ export class EmployeeDataHistoryService {
         employee: +createEmployeeDataHistoryDto.employee,
         type: createEmployeeDataHistoryDto.type
       },
-      order: { createdBy: 'DESC' },
+      order: { created_at: 'DESC' },
     });
 
     // If a previous record exists, update its endDate
-    // if (previousRecord) {
-    //   previousRecord.endDate = createEmployeeDataHistoryDto.startDate;
-    //   previousRecord.editedBy = createEmployeeDataHistoryDto.createdBy;
-    //   await this.empDataHistoryRepository.save(previousRecord);
-    // }
+    if (previousRecord) {
+      previousRecord.updated_at = createEmployeeDataHistoryDto.created_at;
+      previousRecord.updated_by = createEmployeeDataHistoryDto.created_by;
+      await this.empDataHistoryRepository.save(previousRecord);
+    }
 
     return await this.empDataHistoryRepository.save(response);
 
   }
 
   async findEmpDataHistory(createEmployeeDataHistoryDto) {
-  //   const [results, totalCount] = await this.empDataHistoryRepository.findAndCount({
-  //     where: {
-  //       employee: createEmployeeDataHistoryDto.employee,
-  //       type: createEmployeeDataHistoryDto.type,
-  //     },
-  //     relations: ['editedBy', 'createdBy'],
-  //     order: {
-  //       startDate: 'DESC',
-  //     },
-  //     skip: createEmployeeDataHistoryDto.page * createEmployeeDataHistoryDto.pageSize,
-  //     take: createEmployeeDataHistoryDto.pageSize, 
-  //   });
+    const [results, totalCount] = await this.empDataHistoryRepository.findAndCount({
+      where: {
+        employee: createEmployeeDataHistoryDto.employee,
+        type: createEmployeeDataHistoryDto.type,
+      },
+      relations: ['updated_by', 'created_by'],
+      order: {
+        start_date: 'DESC',
+      },
+      skip: createEmployeeDataHistoryDto.page * createEmployeeDataHistoryDto.pageSize,
+      take: createEmployeeDataHistoryDto.pageSize, 
+    });
 
-  // return {
-  //   historyList : results,
-  //   totalCount,
-  //   totalPages: Math.ceil(totalCount / createEmployeeDataHistoryDto.pageSize),  // Calculate the total number of pages
-  // };
+  return {
+    historyList : results,
+    totalCount,
+    totalPages: Math.ceil(totalCount / createEmployeeDataHistoryDto.pageSize),  // Calculate the total number of pages
+  };
   }
 
   findOne(id: number) {

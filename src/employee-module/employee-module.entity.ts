@@ -56,7 +56,7 @@ export class Employee {
     @JoinColumn({ name: 'company_id' })
     company: CompaniesEntity;
 
-    @Column("timestamp", { name:'created_at', default: () => "CURRENT_TIMESTAMP" })
+    @Column("timestamp", { name:'created_at', default: () => null })
     created_at: Date;
 
     @ManyToOne(() => User, user => user.empCreatedUser)
@@ -357,7 +357,7 @@ export class EmployeeInfo {
     @JoinTable()
     drivingLicenceCategory: DrivingLicenceCategory[];
 
-    @Column("timestamp", { name: 'created_at', default: () => "CURRENT_TIMESTAMP" })
+    @Column("timestamp", { name: 'created_at', default: () => null })
     created_at: Date;
 
     @ManyToOne(() => User, user => user.empInfoCreatedUser)
@@ -371,7 +371,7 @@ export class EmployeeInfo {
     @JoinColumn({ name: 'updated_by' })
     updated_by: User;
 
-    @Column("timestamp", { name: "start_date", default: () => "CURRENT_TIMESTAMP" })
+    @Column("timestamp", { name: "start_date", default: () => null })
     startDate: Date;
 
     @Column("timestamp", { name: "end_date", default: null })
@@ -441,7 +441,7 @@ export class EmployeePayrollInfo {
     @Column("int", { name: 'salary_sick_rate', nullable: true, default: () => null })
     slrySickRate: number;
 
-    @Column("timestamp", { default: () => "CURRENT_TIMESTAMP" })
+    @Column("timestamp", { default: () => null })
     created_at: Date;
 
     @ManyToOne(() => User, user => user.empCreatedUser)
@@ -455,7 +455,7 @@ export class EmployeePayrollInfo {
     @JoinColumn({ name: 'updated_by' })
     updated_by: User;
 
-    @Column("timestamp", { name: "start_date", default: () => "CURRENT_TIMESTAMP" })
+    @Column("timestamp", { name: "start_date", default: () => null })
     startDate: Date;
 
     @Column("timestamp", { name: "end_date", default: null })

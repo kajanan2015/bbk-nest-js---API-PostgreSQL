@@ -31,7 +31,7 @@ export class EmployeeDocument {
     @JoinColumn({ name: 'created_by' })
     created_by: User;
 
-    @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
+    @Column("timestamp", { name: "created_at", default: () => null })
     created_at: Date;
 
 }
