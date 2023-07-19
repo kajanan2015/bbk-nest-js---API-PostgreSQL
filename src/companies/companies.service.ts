@@ -105,6 +105,7 @@ export class CompaniesService {
     if (existingcompanyname) {
       return "company name exist";
     }
+  
 
 
     const response = await this.systemcodeService.findOne("company");
@@ -475,16 +476,6 @@ export class CompaniesService {
 
     // return ;
   }
-
-
-
-
-
-
-
-
-
-
 
 
 
