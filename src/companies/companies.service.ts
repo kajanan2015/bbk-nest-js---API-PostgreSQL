@@ -603,6 +603,7 @@ newdata.push(passdata)
   }
 
   async showonlyActivemainCompany(value) {
+    const date=new Date();
  let statusvalue;
     if(value==0){
       statusvalue='trial'
@@ -623,7 +624,12 @@ newdata.push(passdata)
     .leftJoinAndSelect("linkedcompany.companyType", "companyType")
     .leftJoinAndSelect("linkedcompany.billing", "billing")
     .where("linkedcompany.company_status = :status", { status: statusvalue })
-    .orderBy("linkedcompany.mainCompany", "ASC");;
+    .andWhere("linkedcompany.start_date < :date", { date })
+      .andWhere(
+        "linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date",
+        { date }
+      )
+    .orderBy("linkedcompany.mainCompany", "ASC");
     const data= await query.getMany();
     let passdata;
     console.log(data,456789)
@@ -693,7 +699,7 @@ newdata.push(passdata)
     //   //   "linkedcompany.billing",
     //   // ],
     // });
-
+const date=new Date();
     let statusvalue;
     if(value==0){
       statusvalue='trial'
@@ -715,7 +721,12 @@ newdata.push(passdata)
     .leftJoinAndSelect("linkedcompany.companyType", "companyType")
     .leftJoinAndSelect("linkedcompany.billing", "billing")
     .where("linkedcompany.company_status = :status", { status: statusvalue })
-    .andWhere("linkedcompany.companyIdentifier = :identifier", { identifier: "sub" });
+    .andWhere("linkedcompany.companyIdentifier = :identifier", { identifier: "sub" })
+    .andWhere("linkedcompany.start_date < :date", { date })
+    .andWhere(
+        "linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date",
+        { date }
+      );;
     const data= await query.getMany();
     let passdata;
     console.log(data,456789)
