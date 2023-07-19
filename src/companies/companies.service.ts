@@ -493,6 +493,7 @@ dataCompany.company=maintableinsertsave["id"];
 
 
   async showAll() {
+    const date=new Date();
     const query: SelectQueryBuilder<CompaniesEntity> = getConnection()
       .getRepository(CompaniesEntity)
       .createQueryBuilder("company")
@@ -504,20 +505,29 @@ dataCompany.company=maintableinsertsave["id"];
       .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
       .leftJoinAndSelect("linkedcompany.companyType", "companyType")
       .leftJoinAndSelect("linkedcompany.billing", "billing")
-      .where("linkedcompany.companyIdentifier = :identifier", { identifier: "main" });
+      .where("linkedcompany.companyIdentifier = :identifier", { identifier: "main" })
+      .andWhere("linkedcompany.start_date < :date", { date })
+      .andWhere(
+        "linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date",
+        { date }
+      );
+    
     const data= await query.getMany();
  let passdata;
 console.log(data,456789)
  const newdata=[];
  let companystatusvalue;
  for (var i = 0; i < data.length; i++) {
+  
   if(data[i].linkedcompany[0].company_status=='trial'){
+    console.log(data[i].linkedcompany[0].company_status,8898)
     companystatusvalue=0
   }else if(data[i].linkedcompany[0].company_status=='active'){
     companystatusvalue=1
   }else{
     companystatusvalue=2
   }
+
 passdata={
   id:data[i].id,
   companyName:data[i].linkedcompany[0].companyName,
