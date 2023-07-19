@@ -382,18 +382,19 @@ export class CompaniesService {
     const newCompany = await this.companyinfoRepository.create(dataCompany);
     const responsesave = await this.companyinfoRepository.save(newCompany);
 
+console.log(responsesave,8989898)
     const historydate = {
       history_data_type: Historydatatype.COMPANY,
-      history_data: dataCompany,
+      history_data: JSON.stringify(dataCompany),
       created_at: dataCompany.created_at,
       created_by: dataCompany.created_by,
       updated_at: dataCompany.updated_at ? dataCompany.updated_at : null,
       updated_by: dataCompany.updated_by ? dataCompany.updated_by : null,
-      companyinfo: responsesave["id"],
+      companyinfo: responsesave["company_info_id"],
       company: maintableinsertsave["id"],
       start_date: dataCompany.start_date
     }
-
+console.log
     const addhistory = await this.companyhistoryRepository.create(historydate)
     const savehistory = await this.companyhistoryRepository.save(addhistory)
 
@@ -407,7 +408,7 @@ export class CompaniesService {
 
     let newcompassigndata;
 
-    const newlycreatedcompany = responsesave["id"];
+    const newlycreatedcompany = responsesave["company_info_id"];
     await this.companypackagerowrepository
       .createQueryBuilder()
       .update(Companypackagerow)
@@ -424,7 +425,7 @@ export class CompaniesService {
         module: trialpackagerowvalue.module.id,
         packages: trialpackagerowvalue.packages.id,
         moduledetails: trialpackagerowvalue.id,
-        company: parseInt(responsesave["id"]),
+        company: parseInt(responsesave["company_info_id"]),
         trialpackageidentifier: '1'
       }
       console.log(newcompassigndata, 5236565)
@@ -441,7 +442,7 @@ export class CompaniesService {
       const query = `
    UPDATE company_info
    SET parent_company_id = '${maintableinsertsave["id"]}'
-   WHERE company_info_id = '${responsesave["id"]}'
+   WHERE company_info_id = '${responsesave["company_info_id"]}'
  `;
       const hi = await this.connection.query(query);
     }
@@ -826,6 +827,50 @@ export class CompaniesService {
   }
 
 
+  async companyinfoget(companyID) {
+    const currentDate = new Date();
+    //   const data= await this.companyRepository.findOne(companyID,{relations:['linkedcompany']})
+    //  console.log(data,343434)
+    const company = await getConnection()
+      .getRepository(CompaniesEntity)
+      .createQueryBuilder("company")
+      .leftJoinAndSelect("company.linkedcompany", "linkedcompany")
+      .where("company.id = :companyID", { companyID })
+      .andWhere("linkedcompany.start_date < :currentDate", { currentDate })
+      .andWhere(
+        "linkedcompany.end_date IS NULL OR linkedcompany.end_date > :currentDate",
+        { currentDate }
+      )
+      .getOne();
+console.log(company)
+    const data = {
+      ...company,
+      ...company.linkedcompany[0]
+    }
+    delete data.linkedcompany;
+    return data;
+
+  }
+
+  async getcompnyhistory(id,data){
+    let type;
+    if(data.type=='info'){  
+      type=Historydatatype.COMPANYINFO
+    }
+    const companyid=id;
+    const companyinfoid=data.company_info_id;
+    const initialtype=Historydatatype.COMPANY
+    const currentDate=new Date();
+    const company = await getConnection()
+    .getRepository(CompaniesHistorydata)
+    .createQueryBuilder("company_data_history")
+    .where("company_data_history.company_info_id = :companyinfoid", { companyinfoid })
+    .andWhere("company_data_history.start_date <= :currentDate", { currentDate })
+    .andWhere( "company_data_history.history_data_type=:type",{type})
+    .getOne();
+    console.log(company,7778787)
+  }
+
   async findById(id: number): Promise<CompaniesEntity> {
     return await this.companyRepository.findOne({ id });
   }
@@ -971,7 +1016,7 @@ export class CompaniesService {
             companyLogo: logoImg,
             companyLogoThumb: companythumbUrl,
           };
-          await this.companyinfoRepository.update({ id }, datalogo);
+          await this.companyinfoRepository.update({ company_info_id: id }, datalogo);
         }
         if (item.hasOwnProperty("files[]")) {
           documentUpload = item["files[]"];
@@ -1093,13 +1138,13 @@ export class CompaniesService {
   }
 
   async updateCompanyStatus(id: number, status) {
-    await this.companyinfoRepository.update({ id }, { company_status: () => status });
+    await this.companyinfoRepository.update({ company_info_id: id }, { company_status: () => status });
     return await this.companyRepository.findOne({ id });
   }
 
   async deactivatecustomerupdate(id: number, data) {
     await this.companyinfoRepository.update(
-      { id },
+      { company_info_id: id },
       {
         // scheduleddeactivation: data.scheduledatatime,
         deactivationreason: data.reason,
@@ -1113,7 +1158,7 @@ export class CompaniesService {
   async deactivatecustomerupdateimmediate(id: number, data) {
     const currentDateTime = new Date();
     await this.companyinfoRepository.update(
-      { id },
+      { company_info_id: id },
       {
         company_status: Companystatus.DEACTIVATE,
         deactivationreason: data.reason,

@@ -135,14 +135,14 @@ export class CompaniesEntity {
   package: Moduledetailsofpackage[];
 
   @OneToMany(() => CompaniesHistorydata, historydata => historydata.company, ({ cascade: true }))
-  history: CompaniesHistorydata[];
+  historydata: CompaniesHistorydata[];
 
 }
 
 @Entity('company_info')
 export class CompaniesEntityinfo {
   @PrimaryGeneratedColumn({ type: "int", name: "company_info_id", unsigned: true })
-  id: number;
+  company_info_id: number;
 
   @Column("varchar", { name: "company_name", length: 250 })
   companyName: string | null;
@@ -262,8 +262,8 @@ export class CompaniesHistorydata{
   @Column("enum", { name: "history_data_type",enum:Historydatatype,default:Historydatatype.COMPANY,comment:"company initial data/company info"})
   history_data_type: Historydatatype;
 
-  @Column( {type:"json", name: "history_data"})
-  history_data:  Record<string, any>;
+  @Column( {type:"text", name: "history_data"})
+  history_data:  String;
 
   @Column("int", { nullable: true, default: () => null })
   created_by: number;
@@ -281,7 +281,7 @@ export class CompaniesHistorydata{
   @JoinColumn({ name: 'company_info_id' })
   companyinfo: CompaniesEntityinfo;
 
-  @ManyToOne(() => CompaniesEntity, company => company.history)
+  @ManyToOne(() => CompaniesEntity, company => company.historydata,)
   @JoinColumn({ name: 'company_id' })
   company: CompaniesEntity;
 

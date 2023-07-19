@@ -267,6 +267,41 @@ export class CompaniesController {
     return await this.service.update(id, data);
   }
 
+
+// get companyinfo one by one
+@UseGuards(AuthGuard('jwt'))
+@Get('/companyinfo/:id')
+async getcompnyinfo(@Param('id') companyid: number){
+  return await this.service.companyinfoget(companyid);
+}
+
+
+// get history data
+@UseGuards(AuthGuard('jwt'))
+@Post('/get_history_data/:id')
+async getcompnyhistory(@Param('id') companyid: number , @Body() data){
+  return await this.service.getcompnyhistory(companyid,data);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
   // @Put('/edit/:id')
   // @UseInterceptors(AnyFilesInterceptor())
   // async updateStatus(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
