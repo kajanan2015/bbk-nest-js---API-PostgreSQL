@@ -231,6 +231,7 @@ export class CompaniesController {
   @Get(':id')
   async read(@Param('id') id: number) {
     const company = await this.service.read(id);
+    console.log(company,888)
     return {
       statusCode: HttpStatus.OK,
       company,

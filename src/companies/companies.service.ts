@@ -843,12 +843,11 @@ console.log
       )
       .getOne();
 console.log(company)
-    const data = {
-      ...company,
-      ...company.linkedcompany[0]
-    }
-    delete data.linkedcompany;
-    return data;
+
+const {linkedcompany, ...data} = company
+const a = {...linkedcompany, ...data}
+    
+    return a[0];
 
   }
 
@@ -883,7 +882,7 @@ console.log(company)
   }
 
   async read(id: number) {
-    return await this.companyRepository.findOne(id, {
+    const data= await this.companyRepository.findOne(id, {
       relations: [
         "users",
         "documents",
@@ -896,6 +895,16 @@ console.log(company)
         "linkedcompany.billing",
       ],
     });
+
+    console.log(data,7777)
+// const passdata={
+//   ...data.linkedcompany
+// }
+
+const {linkedcompany, ...sss} = data
+const a = {...linkedcompany, ...sss}
+
+    return a[0];
   }
 
   async update(id: number, data) {
