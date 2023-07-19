@@ -47,8 +47,8 @@ import { VehicleTypeEntity } from 'src/vehicle-type/vehicle-type.entity';
 
 
 export enum Companyidentifier{
-  MAIN='main',
-  SUB='sub'
+  MAIN='maincompany',
+  SUB='subcompany'
 }
 
 export enum Companystatus {

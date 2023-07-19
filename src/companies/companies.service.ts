@@ -48,6 +48,7 @@ import { Deactivationmethod } from "./companies.entity";
 import { Companystatus } from "./companies.entity";
 import { Companyidentifier } from "./companies.entity";
 import { Historydatatype } from "./companies.entity";
+
 @Injectable()
 export class CompaniesService {
 
@@ -105,7 +106,6 @@ export class CompaniesService {
     if (existingcompanyname) {
       return "company name exist";
     }
-  
 
 
     const response = await this.systemcodeService.findOne("company");
@@ -382,35 +382,28 @@ export class CompaniesService {
     const newCompany = await this.companyinfoRepository.create(dataCompany);
     const responsesave = await this.companyinfoRepository.save(newCompany);
 
-    const historydate={
-      history_data_type:Historydatatype.COMPANY,
-      history_data:dataCompany,
-      created_at:dataCompany.created_at,
-      created_by:dataCompany.created_by,
-      updated_at:dataCompany.updated_at?dataCompany.updated_at:null,
-      updated_by:dataCompany.updated_by?dataCompany.updated_by:null,
-      companyinfo:responsesave["id"],
-      company:maintableinsertsave["id"],
-      start_date:dataCompany.start_date
+    const historydate = {
+      history_data_type: Historydatatype.COMPANY,
+      history_data: dataCompany,
+      created_at: dataCompany.created_at,
+      created_by: dataCompany.created_by,
+      updated_at: dataCompany.updated_at ? dataCompany.updated_at : null,
+      updated_by: dataCompany.updated_by ? dataCompany.updated_by : null,
+      companyinfo: responsesave["id"],
+      company: maintableinsertsave["id"],
+      start_date: dataCompany.start_date
     }
-    const addhistory=await this.companyhistoryRepository.create(historydate)
-    const savehistory=await this.companyhistoryRepository.save(addhistory)
 
-
-
+    const addhistory = await this.companyhistoryRepository.create(historydate)
+    const savehistory = await this.companyhistoryRepository.save(addhistory)
 
     // const jsonData = JSON.stringify({
     //   bn: "company",
     //   responsesaveId: responsesave["id"]
     // });
-    
 
     // const responsehistory = await this.companyhistoryRepository.create({ history_data_type: "company-history", history_data: dataCompany, company: responsesave["id"] });
     // const res = await this.datahistoryrepo.save(responsehistory);
-
-
-
-
 
     let newcompassigndata;
 
@@ -479,6 +472,16 @@ export class CompaniesService {
 
 
 
+
+
+
+
+
+
+
+
+
+
   // async showAll() {
   //   return await this.companyRepository.find({
   //     where: { linkedcompany:{
@@ -512,7 +515,7 @@ export class CompaniesService {
       .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
       .leftJoinAndSelect("linkedcompany.companyType", "companyType")
       .leftJoinAndSelect("linkedcompany.billing", "billing")
-      .where("linkedcompany.companyIdentifier = :identifier", { identifier: "main" })
+      .where("linkedcompany.companyIdentifier = :identifier", { identifier: "maincompany" })
       .andWhere("linkedcompany.start_date < :date", { date })
       .andWhere(
         "linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date",
@@ -524,9 +527,7 @@ export class CompaniesService {
     console.log(data, 456789)
     const newdata = [];
     let companystatusvalue;
-    let companyIdentifier;
     for (var i = 0; i < data.length; i++) {
-      companyIdentifier = data[i].linkedcompany[0].companyIdentifier == "main" ? "maincompany" : "subcompany"
       if (data[i].linkedcompany[0].company_status == 'trial') {
         console.log(data[i].linkedcompany[0].company_status, 8898)
         companystatusvalue = 0
@@ -559,7 +560,7 @@ export class CompaniesService {
         createdat: data[i].created_at,
         updatedat: data[i].linkedcompany[0].updated_at,
         updatedBy: data[i].linkedcompany[0].updated_by,
-        companyIdentifier: companyIdentifier,
+        companyIdentifier: data[i].linkedcompany[0].companyIdentifier,
         code: data[i].company_prefix,
         mainCompany: data[i].linkedcompany[0].mainCompany,
         users: data[i].users,
@@ -569,9 +570,7 @@ export class CompaniesService {
         companyType: data[i].linkedcompany[0].companyType,
         billing: data[i].linkedcompany[0].billing,
         compstatus: companystatusvalue
-
       }
-
       newdata.push(passdata)
     }
     return newdata;
@@ -645,9 +644,7 @@ export class CompaniesService {
     let passdata;
     const newdata = [];
     let companystatusvalue;
-    let companyIdentifier;
     for (var i = 0; i < data.length; i++) {
-      companyIdentifier = data[i].linkedcompany[0].companyIdentifier == "main" ? "maincompany" : "subcompany"
       if (data[i].linkedcompany[0].company_status == 'trial') {
         companystatusvalue = 0
       } else if (data[i].linkedcompany[0].company_status == 'active') {
@@ -679,7 +676,7 @@ export class CompaniesService {
         createdat: data[i].created_at,
         updatedat: data[i].linkedcompany[0].updated_at,
         updatedBy: data[i].linkedcompany[0].updated_by,
-        companyIdentifier: companyIdentifier,
+        companyIdentifier: data[i].linkedcompany[0].companyIdentifier,
         code: data[i].company_prefix,
         mainCompany: data[i].linkedcompany[0].mainCompany,
         users: data[i].users,
@@ -734,7 +731,7 @@ export class CompaniesService {
       .leftJoinAndSelect("linkedcompany.companyType", "companyType")
       .leftJoinAndSelect("linkedcompany.billing", "billing")
       .where("linkedcompany.company_status = :status", { status: statusvalue })
-      .andWhere("linkedcompany.companyIdentifier = :identifier", { identifier: "sub" })
+      .andWhere("linkedcompany.companyIdentifier = :identifier", { identifier: "subcompany" })
       .andWhere("linkedcompany.start_date < :date", { date })
       .andWhere(
         "linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date",
@@ -745,9 +742,7 @@ export class CompaniesService {
     console.log(data, 456789)
     const newdata = [];
     let companystatusvalue;
-    let companyIdentifier;
     for (var i = 0; i < data.length; i++) {
-      companyIdentifier = data[i].linkedcompany[0].companyIdentifier == "main" ? "maincompany" : "subcompany"
       if (data[i].linkedcompany[0].company_status == 'trial') {
         companystatusvalue = 0
       } else if (data[i].linkedcompany[0].company_status == 'active') {
@@ -778,7 +773,7 @@ export class CompaniesService {
         createdat: data[i].created_at,
         updatedat: data[i].linkedcompany[0].updated_at,
         updatedBy: data[i].linkedcompany[0].updated_by,
-        companyIdentifier: companyIdentifier,
+        companyIdentifier: data[i].linkedcompany[0].companyIdentifier,
         code: data[i].company_prefix,
         mainCompany: data[i].linkedcompany[0].mainCompany,
         users: data[i].users,
@@ -844,17 +839,17 @@ export class CompaniesService {
 
   async read(id: number) {
     return await this.companyRepository.findOne(id, {
-      // relations: [
-      //   "users",
-      //   "documents",
-      //   "linkedcompany",
-      //   "linkedcompany.mainCompany",
-      //   "linkedcompany.mainCompany.users",
-      //   "linkedcompany.country",
-      //   "linkedcompany.regAddressCountry",
-      //   "linkedcompany.companyType",
-      //   "linkedcompany.billing",
-      // ],
+      relations: [
+        "users",
+        "documents",
+        "linkedcompany",
+        "linkedcompany.mainCompany",
+        "linkedcompany.mainCompany.users",
+        "linkedcompany.country",
+        "linkedcompany.regAddressCountry",
+        "linkedcompany.companyType",
+        "linkedcompany.billing",
+      ],
     });
   }
 
