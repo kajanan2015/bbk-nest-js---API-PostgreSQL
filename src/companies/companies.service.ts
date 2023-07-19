@@ -509,40 +509,52 @@ dataCompany.company=maintableinsertsave["id"];
  let passdata;
 console.log(data,456789)
  const newdata=[];
- 
+ let companystatusvalue;
  for (var i = 0; i < data.length; i++) {
-  passdata={
-    id:data[i].id,
-    companyName:data[i].linkedcompany[0].companyName,
-    companyEmail:data[i].linkedcompany[0].companyEmail,
-    companyPhone:data[i].linkedcompany[0].companyPhone,
-    website:data[i].linkedcompany[0].website,
-    number:data[i].linkedcompany[0].number,
-    street:data[i].linkedcompany[0].street,
-    city:data[i].linkedcompany[0].city,
-    postalCode:data[i].linkedcompany[0].postalCode,
-    vat:data[i].linkedcompany[0].vat,
-    registrationNumber:data[0].linkedcompany[0].registrationNumber,
-    regAddressNo:data[i].linkedcompany[0].regAddressNo,
-    regAddressStreet:data[i].linkedcompany[0].regAddressStreet,
-    regAddressCity:data[i].linkedcompany[0].regAddressCity,
-    regAddressPostalCode:data[i].linkedcompany[0].regAddressPostalCode,
-    companyLogo:data[i].linkedcompany[0].companyLogo,
-    companyLogoThumb:data[i].linkedcompany[0].companyLogoThumb,
-    companyCode:data[i].company_code,
-    companyIdentifier:data[i].linkedcompany[0].companyIdentifier,
-    code:data[i].company_prefix,
-    mainCompany:data[i].linkedcompany[0].mainCompany,
-    users:data[i].users,
-    documents:data[i].documents,
-    country:data[i].linkedcompany[0].country,
-    regAddressCountry:data[i].linkedcompany[0].regAddressCountry,
-    companyType:data[i].linkedcompany[0].companyType,
-    billing:data[i].linkedcompany[0].billing,
+  if(data[i].linkedcompany[0].company_status=='trial'){
+    companystatusvalue=0
+  }else if(data[i].linkedcompany[0].company_status=='active'){
+    companystatusvalue=1
+  }else{
+    companystatusvalue=2
+  }
+passdata={
+  id:data[i].id,
+  companyName:data[i].linkedcompany[0].companyName,
+  companyEmail:data[i].linkedcompany[0].companyEmail,
+  companyPhone:data[i].linkedcompany[0].companyPhone,
+  website:data[i].linkedcompany[0].website,
+  number:data[i].linkedcompany[0].number,
+  street:data[i].linkedcompany[0].street,
+  city:data[i].linkedcompany[0].city,
+  postalCode:data[i].linkedcompany[0].postalCode,
+  vat:data[i].linkedcompany[0].vat,
+  registrationNumber:data[0].linkedcompany[0].registrationNumber,
+  regAddressNo:data[i].linkedcompany[0].regAddressNo,
+  regAddressStreet:data[i].linkedcompany[0].regAddressStreet,
+  regAddressCity:data[i].linkedcompany[0].regAddressCity,
+  regAddressPostalCode:data[i].linkedcompany[0].regAddressPostalCode,
+  companyLogo:data[i].linkedcompany[0].companyLogo,
+  companyLogoThumb:data[i].linkedcompany[0].companyLogoThumb,
+  companyCode:data[i].company_code,
+  createdBy:data[i].created_by,
+  createdat:data[i].created_at,
+  updatedat:data[i].linkedcompany[0].updated_at,
+  updatedBy:data[i].linkedcompany[0].updated_by,
+  companyIdentifier:data[i].linkedcompany[0].companyIdentifier,
+  code:data[i].company_prefix,
+  mainCompany:data[i].linkedcompany[0].mainCompany,
+  users:data[i].users,
+  documents:data[i].documents,
+  country:data[i].linkedcompany[0].country,
+  regAddressCountry:data[i].linkedcompany[0].regAddressCountry,
+  companyType:data[i].linkedcompany[0].companyType,
+  billing:data[i].linkedcompany[0].billing,
+  compstatus:companystatusvalue
 
- }
+}
 
- newdata.push(passdata)
+newdata.push(passdata)
 }
     return newdata;
   }
@@ -600,14 +612,21 @@ console.log(data,456789)
     .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
     .leftJoinAndSelect("linkedcompany.companyType", "companyType")
     .leftJoinAndSelect("linkedcompany.billing", "billing")
-    .where("linkedcompany.company_status = :status", { status: value })
+    .where("linkedcompany.company_status = :status", { status: statusvalue })
     .orderBy("linkedcompany.mainCompany", "ASC");;
     const data= await query.getMany();
     let passdata;
     console.log(data,456789)
     const newdata=[];
-
+let companystatusvalue;
 for (var i = 0; i < data.length; i++) {
+  if(data[i].linkedcompany[0].company_status=='trial'){
+    companystatusvalue=0
+  }else if(data[i].linkedcompany[0].company_status=='active'){
+    companystatusvalue=1
+  }else{
+    companystatusvalue=2
+  }
 passdata={
   id:data[i].id,
   companyName:data[i].linkedcompany[0].companyName,
@@ -627,6 +646,10 @@ passdata={
   companyLogo:data[i].linkedcompany[0].companyLogo,
   companyLogoThumb:data[i].linkedcompany[0].companyLogoThumb,
   companyCode:data[i].company_code,
+  createdBy:data[i].created_by,
+  createdat:data[i].created_at,
+  updatedat:data[i].linkedcompany[0].updated_at,
+  updatedBy:data[i].linkedcompany[0].updated_by,
   companyIdentifier:data[i].linkedcompany[0].companyIdentifier,
   code:data[i].company_prefix,
   mainCompany:data[i].linkedcompany[0].mainCompany,
@@ -636,6 +659,7 @@ passdata={
   regAddressCountry:data[i].linkedcompany[0].regAddressCountry,
   companyType:data[i].linkedcompany[0].companyType,
   billing:data[i].linkedcompany[0].billing,
+  compstatus:companystatusvalue
 
 }
 
@@ -680,14 +704,21 @@ newdata.push(passdata)
     .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
     .leftJoinAndSelect("linkedcompany.companyType", "companyType")
     .leftJoinAndSelect("linkedcompany.billing", "billing")
-    .where("linkedcompany.company_status = :status", { status: value })
+    .where("linkedcompany.company_status = :status", { status: statusvalue })
     .andWhere("linkedcompany.companyIdentifier = :identifier", { identifier: "sub" });
     const data= await query.getMany();
     let passdata;
     console.log(data,456789)
     const newdata=[];
-
+let companystatusvalue;
 for (var i = 0; i < data.length; i++) {
+  if(data[i].linkedcompany[0].company_status=='trial'){
+    companystatusvalue=0
+  }else if(data[i].linkedcompany[0].company_status=='active'){
+    companystatusvalue=1
+  }else{
+    companystatusvalue=2
+  }
 passdata={
   id:data[i].id,
   companyName:data[i].linkedcompany[0].companyName,
@@ -707,6 +738,10 @@ passdata={
   companyLogo:data[i].linkedcompany[0].companyLogo,
   companyLogoThumb:data[i].linkedcompany[0].companyLogoThumb,
   companyCode:data[i].company_code,
+  createdBy:data[i].created_by,
+  createdat:data[i].created_at,
+  updatedat:data[i].linkedcompany[0].updated_at,
+  updatedBy:data[i].linkedcompany[0].updated_by,
   companyIdentifier:data[i].linkedcompany[0].companyIdentifier,
   code:data[i].company_prefix,
   mainCompany:data[i].linkedcompany[0].mainCompany,
@@ -716,6 +751,7 @@ passdata={
   regAddressCountry:data[i].linkedcompany[0].regAddressCountry,
   companyType:data[i].linkedcompany[0].companyType,
   billing:data[i].linkedcompany[0].billing,
+  compstatus:companystatusvalue
 
 }
 
