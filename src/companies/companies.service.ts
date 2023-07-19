@@ -47,11 +47,13 @@ import { companytype } from "./company Type/companytype.entity";
 import { Deactivationmethod } from "./companies.entity";
 import { Companystatus } from "./companies.entity";
 import { Companyidentifier } from "./companies.entity";
+import { Historydatatype } from "./companies.entity";
+
 @Injectable()
 export class CompaniesService {
 
-  deactivationmethodvalue=Deactivationmethod.IMMEDIATE;
-  companystatusvalue=Companystatus.DEACTIVATE;
+  deactivationmethodvalue = Deactivationmethod.IMMEDIATE;
+  companystatusvalue = Companystatus.DEACTIVATE;
   constructor(
     @InjectRepository(CompaniesEntity)
     private companyRepository: Repository<CompaniesEntity>,
@@ -93,8 +95,6 @@ export class CompaniesService {
 
 
   async create(companyData, base_url) {
-
-    console.log(companyData,4567890)
     const existingcompanyname = await this.companyinfoRepository.findOne({
       where: {
         companyName: companyData.companyName,
@@ -133,13 +133,13 @@ export class CompaniesService {
       }
     }
     let dataCompany;
-let mainDataCompany;
+    let mainDataCompany;
     if (companyData.parentCompany && companyData.parentCompany != "") {
       const users = [];
       const company = await this.companyRepository.findOne(
-        companyData.parentCompany,{
-          relations: ["linkedcompany","users"],
-        }
+        companyData.parentCompany, {
+        relations: ["linkedcompany", "users"],
+      }
       );
       if (!company) {
         throw new NotFoundException(
@@ -209,7 +209,7 @@ let mainDataCompany;
           adminUser = await this.userRepository.findByIds(userIds);
           for (var i = 0; i < adminUser.length; i++) {
             users.push(adminUser[i]);
-            await this.mailservice.shareaccesstochildcompany(adminUser[i].email, companyData.companyName, adminUser[i].firstName,  company.linkedcompany[0].companyName);
+            await this.mailservice.shareaccesstochildcompany(adminUser[i].email, companyData.companyName, adminUser[i].firstName, company.linkedcompany[0].companyName);
           }
 
           // console.log(users, 999)
@@ -263,10 +263,10 @@ let mainDataCompany;
       }
       // const users = await this.userRepository.findByIds(userIds);
       if (!companyData.sameTradingAddress) {
-        
-        mainDataCompany={
+
+        mainDataCompany = {
           company_code: companyCode,
-          company_prefix:companyData.code,
+          company_prefix: companyData.code,
           documents: files,
           users: users,
         }
@@ -279,9 +279,9 @@ let mainDataCompany;
         }
       } else {
 
-        mainDataCompany={
+        mainDataCompany = {
           company_code: companyCode,
-          company_prefix:companyData.code,
+          company_prefix: companyData.code,
           documents: files,
           users: users,
         }
@@ -331,9 +331,9 @@ let mainDataCompany;
         users.push(adminUser[0]);
       }
       if (!companyData.sameTradingAddress) {
-        mainDataCompany={
+        mainDataCompany = {
           company_code: companyCode,
-          company_prefix:companyData.code,
+          company_prefix: companyData.code,
           documents: files,
           users: users,
         }
@@ -345,9 +345,9 @@ let mainDataCompany;
         };
       } else {
 
-        mainDataCompany={
+        mainDataCompany = {
           company_code: companyCode,
-          company_prefix:companyData.code,
+          company_prefix: companyData.code,
           documents: files,
           users: users,
         }
@@ -376,24 +376,34 @@ let mainDataCompany;
     validtimeTime.setMilliseconds(0);
     // dataCompany.validityperiod = validtimeTime;
     // dataCompany.validityperiod=new Date(validtimeTime.split('.')[0]);
-const maintableinsert=await this.companyRepository.create(mainDataCompany)
-const maintableinsertsave=await this.companyRepository.save(maintableinsert)
-dataCompany.company=maintableinsertsave["id"];
+    const maintableinsert = await this.companyRepository.create(mainDataCompany)
+    const maintableinsertsave = await this.companyRepository.save(maintableinsert)
+    dataCompany.company = maintableinsertsave["id"];
     const newCompany = await this.companyinfoRepository.create(dataCompany);
     const responsesave = await this.companyinfoRepository.save(newCompany);
 
-    const jsonData = JSON.stringify({
-      bn: "company",
-      responsesaveId: responsesave["id"]
-    });
-    
+    const historydate = {
+      history_data_type: Historydatatype.COMPANY,
+      history_data: dataCompany,
+      created_at: dataCompany.created_at,
+      created_by: dataCompany.created_by,
+      updated_at: dataCompany.updated_at ? dataCompany.updated_at : null,
+      updated_by: dataCompany.updated_by ? dataCompany.updated_by : null,
+      companyinfo: responsesave["id"],
+      company: maintableinsertsave["id"],
+      start_date: dataCompany.start_date
+    }
 
-    const responsehistory = await this.companyhistoryRepository.create({ history_data_type: "company-history", history_data: dataCompany, company: responsesave["id"] });
-    const res = await this.datahistoryrepo.save(responsehistory);
+    const addhistory = await this.companyhistoryRepository.create(historydate)
+    const savehistory = await this.companyhistoryRepository.save(addhistory)
 
+    // const jsonData = JSON.stringify({
+    //   bn: "company",
+    //   responsesaveId: responsesave["id"]
+    // });
 
-
-
+    // const responsehistory = await this.companyhistoryRepository.create({ history_data_type: "company-history", history_data: dataCompany, company: responsesave["id"] });
+    // const res = await this.datahistoryrepo.save(responsehistory);
 
     let newcompassigndata;
 
@@ -487,12 +497,13 @@ dataCompany.company=maintableinsertsave["id"];
   //       "linkedcompany.companyType",
   //       "linkedcompany.billing",
   //     ],
-      
+
   //   });
   // }
 
 
   async showAll() {
+    const date = new Date();
     const query: SelectQueryBuilder<CompaniesEntity> = getConnection()
       .getRepository(CompaniesEntity)
       .createQueryBuilder("company")
@@ -504,56 +515,74 @@ dataCompany.company=maintableinsertsave["id"];
       .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
       .leftJoinAndSelect("linkedcompany.companyType", "companyType")
       .leftJoinAndSelect("linkedcompany.billing", "billing")
-      .where("linkedcompany.companyIdentifier = :identifier", { identifier: "main" });
-    const data= await query.getMany();
- let passdata;
-console.log(data,456789)
- const newdata=[];
- 
- for (var i = 0; i < data.length; i++) {
-  passdata={
-    id:data[i].id,
-    companyName:data[i].linkedcompany[0].companyName,
-    companyEmail:data[i].linkedcompany[0].companyEmail,
-    companyPhone:data[i].linkedcompany[0].companyPhone,
-    website:data[i].linkedcompany[0].website,
-    number:data[i].linkedcompany[0].number,
-    street:data[i].linkedcompany[0].street,
-    city:data[i].linkedcompany[0].city,
-    postalCode:data[i].linkedcompany[0].postalCode,
-    vat:data[i].linkedcompany[0].vat,
-    registrationNumber:data[0].linkedcompany[0].registrationNumber,
-    regAddressNo:data[i].linkedcompany[0].regAddressNo,
-    regAddressStreet:data[i].linkedcompany[0].regAddressStreet,
-    regAddressCity:data[i].linkedcompany[0].regAddressCity,
-    regAddressPostalCode:data[i].linkedcompany[0].regAddressPostalCode,
-    companyLogo:data[i].linkedcompany[0].companyLogo,
-    companyLogoThumb:data[i].linkedcompany[0].companyLogoThumb,
-    companyCode:data[i].company_code,
-    companyIdentifier:data[i].linkedcompany[0].companyIdentifier,
-    code:data[i].company_prefix,
-    mainCompany:data[i].linkedcompany[0].mainCompany,
-    users:data[i].users,
-    documents:data[i].documents,
-    country:data[i].linkedcompany[0].country,
-    regAddressCountry:data[i].linkedcompany[0].regAddressCountry,
-    companyType:data[i].linkedcompany[0].companyType,
-    billing:data[i].linkedcompany[0].billing,
+      .where("linkedcompany.companyIdentifier = :identifier", { identifier: "maincompany" })
+      .andWhere("linkedcompany.start_date < :date", { date })
+      .andWhere(
+        "linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date",
+        { date }
+      );
 
- }
+    const data = await query.getMany();
+    let passdata;
+    console.log(data, 456789)
+    const newdata = [];
+    let companystatusvalue;
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].linkedcompany[0].company_status == 'trial') {
+        console.log(data[i].linkedcompany[0].company_status, 8898)
+        companystatusvalue = 0
+      } else if (data[i].linkedcompany[0].company_status == 'active') {
+        companystatusvalue = 1
+      } else {
+        companystatusvalue = 2
+      }
 
- newdata.push(passdata)
-}
+      passdata = {
+        id: data[i].id,
+        companyName: data[i].linkedcompany[0].companyName,
+        companyEmail: data[i].linkedcompany[0].companyEmail,
+        companyPhone: data[i].linkedcompany[0].companyPhone,
+        website: data[i].linkedcompany[0].website,
+        number: data[i].linkedcompany[0].number,
+        street: data[i].linkedcompany[0].street,
+        city: data[i].linkedcompany[0].city,
+        postalCode: data[i].linkedcompany[0].postalCode,
+        vat: data[i].linkedcompany[0].vat,
+        registrationNumber: data[0].linkedcompany[0].registrationNumber,
+        regAddressNo: data[i].linkedcompany[0].regAddressNo,
+        regAddressStreet: data[i].linkedcompany[0].regAddressStreet,
+        regAddressCity: data[i].linkedcompany[0].regAddressCity,
+        regAddressPostalCode: data[i].linkedcompany[0].regAddressPostalCode,
+        companyLogo: data[i].linkedcompany[0].companyLogo,
+        companyLogoThumb: data[i].linkedcompany[0].companyLogoThumb,
+        companyCode: data[i].company_code,
+        createdBy: data[i].created_by,
+        createdat: data[i].created_at,
+        updatedat: data[i].linkedcompany[0].updated_at,
+        updatedBy: data[i].linkedcompany[0].updated_by,
+        companyIdentifier: data[i].linkedcompany[0].companyIdentifier,
+        code: data[i].company_prefix,
+        mainCompany: data[i].linkedcompany[0].mainCompany,
+        users: data[i].users,
+        documents: data[i].documents,
+        country: data[i].linkedcompany[0].country,
+        regAddressCountry: data[i].linkedcompany[0].regAddressCountry,
+        companyType: data[i].linkedcompany[0].companyType,
+        billing: data[i].linkedcompany[0].billing,
+        compstatus: companystatusvalue
+      }
+      newdata.push(passdata)
+    }
     return newdata;
   }
-  
+
 
   async showcompanylist(value) {
     const companylist = await this.companyRepository.findOne({
       where: {
         id: value,
       },
-      relations: ["linkedcompany","linkedcompany.mainCompany"],
+      relations: ["linkedcompany", "linkedcompany.mainCompany"],
     });
     return await this.companyinfoRepository.find({
       where: {
@@ -565,7 +594,7 @@ console.log(data,456789)
 
   async showonlySubCompany() {
     return await this.companyRepository.find({
-      where: {  mainCompany: Not(IsNull()) },
+      where: { mainCompany: Not(IsNull()) },
       relations: [
         "linkedcompany.mainCompany",
         "linkedcompany.mainCompany.users",
@@ -576,72 +605,93 @@ console.log(data,456789)
         "linkedcompany.companyType",
         "linkedcompany.billing",
       ],
-      
+
     });
   }
 
   async showonlyActivemainCompany(value) {
- let statusvalue;
-    if(value==0){
-      statusvalue='trial'
-    }else if(value==1){
-      statusvalue='active'
-    }else{
-      statusvalue='deactivate'
+    const date = new Date();
+    let statusvalue;
+    if (value == 0) {
+      statusvalue = 'trial'
+    } else if (value == 1) {
+      statusvalue = 'active'
+    } else {
+      statusvalue = 'deactivate'
     }
+
     const query: SelectQueryBuilder<CompaniesEntity> = getConnection()
-    .getRepository(CompaniesEntity)
-    .createQueryBuilder("company")
-    .leftJoinAndSelect("company.users", "users")
-    .leftJoinAndSelect("company.documents", "documents")
-    .leftJoinAndSelect("company.linkedcompany", "linkedcompany")
-    .leftJoinAndSelect("linkedcompany.mainCompany", "mainCompany")
-    .leftJoinAndSelect("linkedcompany.country", "country")
-    .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
-    .leftJoinAndSelect("linkedcompany.companyType", "companyType")
-    .leftJoinAndSelect("linkedcompany.billing", "billing")
-    .where("linkedcompany.company_status = :status", { status: value })
-    .orderBy("linkedcompany.mainCompany", "ASC");;
-    const data= await query.getMany();
+      .getRepository(CompaniesEntity)
+      .createQueryBuilder("company")
+      .leftJoinAndSelect("company.users", "users")
+      .leftJoinAndSelect("company.documents", "documents")
+      .leftJoinAndSelect("company.linkedcompany", "linkedcompany")
+      .leftJoinAndSelect("linkedcompany.mainCompany", "mainCompany")
+      .leftJoinAndSelect("linkedcompany.country", "country")
+      .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
+      .leftJoinAndSelect("linkedcompany.companyType", "companyType")
+      .leftJoinAndSelect("linkedcompany.billing", "billing")
+      .where("linkedcompany.company_status = :status", { status: statusvalue })
+      .andWhere("linkedcompany.start_date < :date", { date })
+      .andWhere(
+        "linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date",
+        { date }
+      )
+      .orderBy("linkedcompany.mainCompany", "ASC");
+
+    const data = await query.getMany();
+
     let passdata;
-    console.log(data,456789)
-    const newdata=[];
+    const newdata = [];
+    let companystatusvalue;
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].linkedcompany[0].company_status == 'trial') {
+        companystatusvalue = 0
+      } else if (data[i].linkedcompany[0].company_status == 'active') {
+        companystatusvalue = 1
+      } else {
+        companystatusvalue = 2
+      }
 
-for (var i = 0; i < data.length; i++) {
-passdata={
-  id:data[i].id,
-  companyName:data[i].linkedcompany[0].companyName,
-  companyEmail:data[i].linkedcompany[0].companyEmail,
-  companyPhone:data[i].linkedcompany[0].companyPhone,
-  website:data[i].linkedcompany[0].website,
-  number:data[i].linkedcompany[0].number,
-  street:data[i].linkedcompany[0].street,
-  city:data[i].linkedcompany[0].city,
-  postalCode:data[i].linkedcompany[0].postalCode,
-  vat:data[i].linkedcompany[0].vat,
-  registrationNumber:data[0].linkedcompany[0].registrationNumber,
-  regAddressNo:data[i].linkedcompany[0].regAddressNo,
-  regAddressStreet:data[i].linkedcompany[0].regAddressStreet,
-  regAddressCity:data[i].linkedcompany[0].regAddressCity,
-  regAddressPostalCode:data[i].linkedcompany[0].regAddressPostalCode,
-  companyLogo:data[i].linkedcompany[0].companyLogo,
-  companyLogoThumb:data[i].linkedcompany[0].companyLogoThumb,
-  companyCode:data[i].company_code,
-  companyIdentifier:data[i].linkedcompany[0].companyIdentifier,
-  code:data[i].company_prefix,
-  mainCompany:data[i].linkedcompany[0].mainCompany,
-  users:data[i].users,
-  documents:data[i].documents,
-  country:data[i].linkedcompany[0].country,
-  regAddressCountry:data[i].linkedcompany[0].regAddressCountry,
-  companyType:data[i].linkedcompany[0].companyType,
-  billing:data[i].linkedcompany[0].billing,
+      passdata = {
+        id: data[i].id,
+        companyName: data[i].linkedcompany[0].companyName,
+        companyEmail: data[i].linkedcompany[0].companyEmail,
+        companyPhone: data[i].linkedcompany[0].companyPhone,
+        website: data[i].linkedcompany[0].website,
+        number: data[i].linkedcompany[0].number,
+        street: data[i].linkedcompany[0].street,
+        city: data[i].linkedcompany[0].city,
+        postalCode: data[i].linkedcompany[0].postalCode,
+        vat: data[i].linkedcompany[0].vat,
+        registrationNumber: data[0].linkedcompany[0].registrationNumber,
+        regAddressNo: data[i].linkedcompany[0].regAddressNo,
+        regAddressStreet: data[i].linkedcompany[0].regAddressStreet,
+        regAddressCity: data[i].linkedcompany[0].regAddressCity,
+        regAddressPostalCode: data[i].linkedcompany[0].regAddressPostalCode,
+        companyLogo: data[i].linkedcompany[0].companyLogo,
+        companyLogoThumb: data[i].linkedcompany[0].companyLogoThumb,
+        companyCode: data[i].company_code,
+        createdBy: data[i].created_by,
+        createdat: data[i].created_at,
+        updatedat: data[i].linkedcompany[0].updated_at,
+        updatedBy: data[i].linkedcompany[0].updated_by,
+        companyIdentifier: data[i].linkedcompany[0].companyIdentifier,
+        code: data[i].company_prefix,
+        mainCompany: data[i].linkedcompany[0].mainCompany,
+        users: data[i].users,
+        documents: data[i].documents,
+        country: data[i].linkedcompany[0].country,
+        regAddressCountry: data[i].linkedcompany[0].regAddressCountry,
+        companyType: data[i].linkedcompany[0].companyType,
+        billing: data[i].linkedcompany[0].billing,
+        compstatus: companystatusvalue
 
-}
+      }
 
-newdata.push(passdata)
-}
-  return newdata;
+      newdata.push(passdata)
+    }
+    return newdata;
   }
 
   async showonlyActivesubCompany(value) {
@@ -659,69 +709,86 @@ newdata.push(passdata)
     //   //   "linkedcompany.billing",
     //   // ],
     // });
-
+    const date = new Date();
     let statusvalue;
-    if(value==0){
-      statusvalue='trial'
-    }else if(value==1){
-      statusvalue='active'
-    }else{
-      statusvalue='deactivate'
+    if (value == 0) {
+      statusvalue = 'trial'
+    } else if (value == 1) {
+      statusvalue = 'active'
+    } else {
+      statusvalue = 'deactivate'
     }
-    console.log(statusvalue,88888989)
+    console.log(statusvalue, 88888989)
     const query: SelectQueryBuilder<CompaniesEntity> = getConnection()
-    .getRepository(CompaniesEntity)
-    .createQueryBuilder("company")
-    .leftJoinAndSelect("company.users", "users")
-    .leftJoinAndSelect("company.documents", "documents")
-    .leftJoinAndSelect("company.linkedcompany", "linkedcompany")
-    .leftJoinAndSelect("linkedcompany.mainCompany", "mainCompany")
-    .leftJoinAndSelect("linkedcompany.country", "country")
-    .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
-    .leftJoinAndSelect("linkedcompany.companyType", "companyType")
-    .leftJoinAndSelect("linkedcompany.billing", "billing")
-    .where("linkedcompany.company_status = :status", { status: value })
-    .andWhere("linkedcompany.companyIdentifier = :identifier", { identifier: "sub" });
-    const data= await query.getMany();
+      .getRepository(CompaniesEntity)
+      .createQueryBuilder("company")
+      .leftJoinAndSelect("company.users", "users")
+      .leftJoinAndSelect("company.documents", "documents")
+      .leftJoinAndSelect("company.linkedcompany", "linkedcompany")
+      .leftJoinAndSelect("linkedcompany.mainCompany", "mainCompany")
+      .leftJoinAndSelect("linkedcompany.country", "country")
+      .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
+      .leftJoinAndSelect("linkedcompany.companyType", "companyType")
+      .leftJoinAndSelect("linkedcompany.billing", "billing")
+      .where("linkedcompany.company_status = :status", { status: statusvalue })
+      .andWhere("linkedcompany.companyIdentifier = :identifier", { identifier: "subcompany" })
+      .andWhere("linkedcompany.start_date < :date", { date })
+      .andWhere(
+        "linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date",
+        { date }
+      );;
+    const data = await query.getMany();
     let passdata;
-    console.log(data,456789)
-    const newdata=[];
+    console.log(data, 456789)
+    const newdata = [];
+    let companystatusvalue;
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].linkedcompany[0].company_status == 'trial') {
+        companystatusvalue = 0
+      } else if (data[i].linkedcompany[0].company_status == 'active') {
+        companystatusvalue = 1
+      } else {
+        companystatusvalue = 2
+      }
+      passdata = {
+        id: data[i].id,
+        companyName: data[i].linkedcompany[0].companyName,
+        companyEmail: data[i].linkedcompany[0].companyEmail,
+        companyPhone: data[i].linkedcompany[0].companyPhone,
+        website: data[i].linkedcompany[0].website,
+        number: data[i].linkedcompany[0].number,
+        street: data[i].linkedcompany[0].street,
+        city: data[i].linkedcompany[0].city,
+        postalCode: data[i].linkedcompany[0].postalCode,
+        vat: data[i].linkedcompany[0].vat,
+        registrationNumber: data[0].linkedcompany[0].registrationNumber,
+        regAddressNo: data[i].linkedcompany[0].regAddressNo,
+        regAddressStreet: data[i].linkedcompany[0].regAddressStreet,
+        regAddressCity: data[i].linkedcompany[0].regAddressCity,
+        regAddressPostalCode: data[i].linkedcompany[0].regAddressPostalCode,
+        companyLogo: data[i].linkedcompany[0].companyLogo,
+        companyLogoThumb: data[i].linkedcompany[0].companyLogoThumb,
+        companyCode: data[i].company_code,
+        createdBy: data[i].created_by,
+        createdat: data[i].created_at,
+        updatedat: data[i].linkedcompany[0].updated_at,
+        updatedBy: data[i].linkedcompany[0].updated_by,
+        companyIdentifier: data[i].linkedcompany[0].companyIdentifier,
+        code: data[i].company_prefix,
+        mainCompany: data[i].linkedcompany[0].mainCompany,
+        users: data[i].users,
+        documents: data[i].documents,
+        country: data[i].linkedcompany[0].country,
+        regAddressCountry: data[i].linkedcompany[0].regAddressCountry,
+        companyType: data[i].linkedcompany[0].companyType,
+        billing: data[i].linkedcompany[0].billing,
+        compstatus: companystatusvalue
 
-for (var i = 0; i < data.length; i++) {
-passdata={
-  id:data[i].id,
-  companyName:data[i].linkedcompany[0].companyName,
-  companyEmail:data[i].linkedcompany[0].companyEmail,
-  companyPhone:data[i].linkedcompany[0].companyPhone,
-  website:data[i].linkedcompany[0].website,
-  number:data[i].linkedcompany[0].number,
-  street:data[i].linkedcompany[0].street,
-  city:data[i].linkedcompany[0].city,
-  postalCode:data[i].linkedcompany[0].postalCode,
-  vat:data[i].linkedcompany[0].vat,
-  registrationNumber:data[0].linkedcompany[0].registrationNumber,
-  regAddressNo:data[i].linkedcompany[0].regAddressNo,
-  regAddressStreet:data[i].linkedcompany[0].regAddressStreet,
-  regAddressCity:data[i].linkedcompany[0].regAddressCity,
-  regAddressPostalCode:data[i].linkedcompany[0].regAddressPostalCode,
-  companyLogo:data[i].linkedcompany[0].companyLogo,
-  companyLogoThumb:data[i].linkedcompany[0].companyLogoThumb,
-  companyCode:data[i].company_code,
-  companyIdentifier:data[i].linkedcompany[0].companyIdentifier,
-  code:data[i].company_prefix,
-  mainCompany:data[i].linkedcompany[0].mainCompany,
-  users:data[i].users,
-  documents:data[i].documents,
-  country:data[i].linkedcompany[0].country,
-  regAddressCountry:data[i].linkedcompany[0].regAddressCountry,
-  companyType:data[i].linkedcompany[0].companyType,
-  billing:data[i].linkedcompany[0].billing,
+      }
 
-}
-
-newdata.push(passdata)
-}
-  return newdata;
+      newdata.push(passdata)
+    }
+    return newdata;
 
 
 
@@ -758,7 +825,7 @@ newdata.push(passdata)
     });
   }
 
- 
+
   async findById(id: number): Promise<CompaniesEntity> {
     return await this.companyRepository.findOne({ id });
   }
@@ -772,17 +839,17 @@ newdata.push(passdata)
 
   async read(id: number) {
     return await this.companyRepository.findOne(id, {
-      // relations: [
-      //   "users",
-      //   "documents",
-      //   "linkedcompany",
-      //   "linkedcompany.mainCompany",
-      //   "linkedcompany.mainCompany.users",
-      //   "linkedcompany.country",
-      //   "linkedcompany.regAddressCountry",
-      //   "linkedcompany.companyType",
-      //   "linkedcompany.billing",
-      // ],
+      relations: [
+        "users",
+        "documents",
+        "linkedcompany",
+        "linkedcompany.mainCompany",
+        "linkedcompany.mainCompany.users",
+        "linkedcompany.country",
+        "linkedcompany.regAddressCountry",
+        "linkedcompany.companyType",
+        "linkedcompany.billing",
+      ],
     });
   }
 
@@ -1036,8 +1103,8 @@ newdata.push(passdata)
       {
         // scheduleddeactivation: data.scheduledatatime,
         deactivationreason: data.reason,
-        deactivationmethod:this.deactivationmethodvalue,
-       
+        deactivationmethod: this.deactivationmethodvalue,
+
       }
     );
     return await this.companyRepository.findOne({ id });
@@ -1050,7 +1117,7 @@ newdata.push(passdata)
       {
         company_status: Companystatus.DEACTIVATE,
         deactivationreason: data.reason,
-        deactivationmethod:Deactivationmethod.IMMEDIATE,
+        deactivationmethod: Deactivationmethod.IMMEDIATE,
       }
     );
     return await this.companyRepository.findOne({ id });
@@ -1072,7 +1139,7 @@ newdata.push(passdata)
 
     for (const item of scheduledeactivate) {
       await this.companyinfoRepository.update(
-         item.id ,
+        item.id,
         {
           company_status: Companystatus.DEACTIVATE,
         }
@@ -1283,7 +1350,7 @@ newdata.push(passdata)
   // company code check exist 0r not
   async checkcompanycode(code) {
     const checkcodeexist = await this.companyRepository.find({
-      where: { company_code:code },
+      where: { company_code: code },
     });
     if (checkcodeexist.length > 0) {
       return 1;
@@ -1409,45 +1476,45 @@ newdata.push(passdata)
     //   return "Error Occured"
     // }
   }
-  async cancelrial(id,data) {
-//     // createdby
-//     const createdbydata=await this.userRepository.findOne({where:{id:data.createdby}})
-// const currentDateTime=new Date();
-//     const passdata = {
-//       compstatus: 2,
-//       validityperiod: null,
-//       deactivationreason:"trial cancel",
-//       deactivationmethod:"immediate",
-//       deactivatedtime:currentDateTime,
-//       deactivatedby:data.createdby
-//     }
-//     const response = await this.companyRepository.update({ id }, passdata)
+  async cancelrial(id, data) {
+    //     // createdby
+    //     const createdbydata=await this.userRepository.findOne({where:{id:data.createdby}})
+    // const currentDateTime=new Date();
+    //     const passdata = {
+    //       compstatus: 2,
+    //       validityperiod: null,
+    //       deactivationreason:"trial cancel",
+    //       deactivationmethod:"immediate",
+    //       deactivatedtime:currentDateTime,
+    //       deactivatedby:data.createdby
+    //     }
+    //     const response = await this.companyRepository.update({ id }, passdata)
 
-//     // Find the previous record of the employee
-//     const previousRecord = await this.datahistoryrepo.findOne({
-//       where: {
-//         company: +id,
-//         type: "cancel-trial"
-//       },
-//       order: { createdBy: 'DESC' },
-//     });
+    //     // Find the previous record of the employee
+    //     const previousRecord = await this.datahistoryrepo.findOne({
+    //       where: {
+    //         company: +id,
+    //         type: "cancel-trial"
+    //       },
+    //       order: { createdBy: 'DESC' },
+    //     });
 
-//     // If a previous record exists, update its endDate
-//     if (previousRecord) {
-//       previousRecord.endDate = new Date(Date.now());
-//       previousRecord.editedBy=createdbydata
-//       await this.datahistoryrepo.save(previousRecord);
-//     }
-//     const responsehistory = await this.datahistoryrepo.create({ type: "cancel-trial", data: JSON.stringify(passdata), company:{id},createdBy:createdbydata });
-//     const res = await this.datahistoryrepo.save(responsehistory);
+    //     // If a previous record exists, update its endDate
+    //     if (previousRecord) {
+    //       previousRecord.endDate = new Date(Date.now());
+    //       previousRecord.editedBy=createdbydata
+    //       await this.datahistoryrepo.save(previousRecord);
+    //     }
+    //     const responsehistory = await this.datahistoryrepo.create({ type: "cancel-trial", data: JSON.stringify(passdata), company:{id},createdBy:createdbydata });
+    //     const res = await this.datahistoryrepo.save(responsehistory);
 
 
-//     console.log(response, 88)
-//     if (response) {
-//       return "Trial Canceled"
-//     } else {
-//       return "Error Occured"
-//     }
+    //     console.log(response, 88)
+    //     if (response) {
+    //       return "Trial Canceled"
+    //     } else {
+    //       return "Error Occured"
+    //     }
 
   }
 }
