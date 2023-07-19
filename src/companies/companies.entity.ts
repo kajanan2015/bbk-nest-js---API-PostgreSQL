@@ -63,6 +63,11 @@ export enum Deactivationmethod {
   NOTDELETE = 'not deleted yet'
 }
 
+export enum Historydatatype{
+  COMPANY='company initial data',
+  COMPANYINFO='company info'
+}
+
 @Entity('company')
 export class CompaniesEntity {
   @PrimaryGeneratedColumn({ type: "int", name: "company_id", unsigned: true })
@@ -128,6 +133,9 @@ export class CompaniesEntity {
   @ManyToMany(() => Moduledetailsofpackage, packagedetails => packagedetails.company)
   @JoinTable()
   package: Moduledetailsofpackage[];
+
+  @OneToMany(() => CompaniesHistorydata, historydata => historydata.company, ({ cascade: true }))
+  history: CompaniesHistorydata[];
 
 }
 
@@ -241,7 +249,7 @@ export class CompaniesEntityinfo {
   @JoinColumn({ name: 'billing' })
   billing: Paymenttype;
 
-  @OneToMany(() => CompaniesHistorydata, historydata => historydata.company, ({ cascade: true }))
+  @OneToMany(() => CompaniesHistorydata, historydata => historydata.companyinfo, ({ cascade: true }))
   history: CompaniesHistorydata[];
 
 }
@@ -251,8 +259,8 @@ export class CompaniesHistorydata{
   @PrimaryGeneratedColumn({ type: "int", name: "company_history_id", unsigned: true })
   id: number;
 
-  @Column("varchar", { name: "history_data_type", length: 250 })
-  history_data_type: string | null;
+  @Column("enum", { name: "history_data_type",enum:Historydatatype,default:Historydatatype.COMPANY,comment:"company initial data/company info"})
+  history_data_type: Historydatatype;
 
   @Column( {type:"json", name: "history_data"})
   history_data:  Record<string, any>;
@@ -271,5 +279,12 @@ export class CompaniesHistorydata{
 
   @ManyToOne(() => CompaniesEntityinfo, company => company.history)
   @JoinColumn({ name: 'company_info_id' })
-  company: CompaniesEntityinfo;
+  companyinfo: CompaniesEntityinfo;
+
+  @ManyToOne(() => CompaniesEntity, company => company.history)
+  @JoinColumn({ name: 'company_id' })
+  company: CompaniesEntity;
+
+  @Column('timestamp',{nullable:true,name:'start_date', default: () => "CURRENT_TIMESTAMP"})
+  start_date:Date;
 }

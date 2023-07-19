@@ -47,6 +47,7 @@ import { companytype } from "./company Type/companytype.entity";
 import { Deactivationmethod } from "./companies.entity";
 import { Companystatus } from "./companies.entity";
 import { Companyidentifier } from "./companies.entity";
+import { Historydatatype } from "./companies.entity";
 @Injectable()
 export class CompaniesService {
 
@@ -93,8 +94,6 @@ export class CompaniesService {
 
 
   async create(companyData, base_url) {
-
-    console.log(companyData,4567890)
     const existingcompanyname = await this.companyinfoRepository.findOne({
       where: {
         companyName: companyData.companyName,
@@ -382,14 +381,31 @@ dataCompany.company=maintableinsertsave["id"];
     const newCompany = await this.companyinfoRepository.create(dataCompany);
     const responsesave = await this.companyinfoRepository.save(newCompany);
 
-    const jsonData = JSON.stringify({
-      bn: "company",
-      responsesaveId: responsesave["id"]
-    });
+    const historydate={
+      history_data_type:Historydatatype.COMPANY,
+      history_data:dataCompany,
+      created_at:dataCompany.created_at,
+      created_by:dataCompany.created_by,
+      updated_at:dataCompany.updated_at?dataCompany.updated_at:null,
+      updated_by:dataCompany.updated_by?dataCompany.updated_by:null,
+      companyinfo:responsesave["id"],
+      company:maintableinsertsave["id"],
+      start_date:dataCompany.start_date
+    }
+    const addhistory=await this.companyhistoryRepository.create(historydate)
+    const savehistory=await this.companyhistoryRepository.save(addhistory)
+
+
+
+
+    // const jsonData = JSON.stringify({
+    //   bn: "company",
+    //   responsesaveId: responsesave["id"]
+    // });
     
 
-    const responsehistory = await this.companyhistoryRepository.create({ history_data_type: "company-history", history_data: dataCompany, company: responsesave["id"] });
-    const res = await this.datahistoryrepo.save(responsehistory);
+    // const responsehistory = await this.companyhistoryRepository.create({ history_data_type: "company-history", history_data: dataCompany, company: responsesave["id"] });
+    // const res = await this.datahistoryrepo.save(responsehistory);
 
 
 
