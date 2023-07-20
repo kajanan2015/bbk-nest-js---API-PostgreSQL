@@ -269,6 +269,9 @@ export class CompaniesController {
   }
 
 
+
+
+
 // get companyinfo one by one
 @UseGuards(AuthGuard('jwt'))
 @Get('/companyinfo/:id')
@@ -283,6 +286,19 @@ async getcompnyinfo(@Param('id') companyid: number){
 async getcompnyhistory(@Param('id') companyid: number , @Body() data){
   return await this.service.getcompnyhistory(companyid,data);
 }
+
+// update company newly-adding history and schedule
+  @UseGuards(AuthGuard('jwt'))
+  @Patch('/updatecompany/:id')
+  @UseInterceptors(AnyFilesInterceptor())
+  async updatenew(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
+    const filename = await this.imageUploadService.uploadcompany(file, "body");
+      const data = {
+        ...companyData,
+        filename
+     }
+      return await this.service.updatenew(id, data);
+  }
 
 
 
