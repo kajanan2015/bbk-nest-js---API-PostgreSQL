@@ -549,7 +549,7 @@ export class CompaniesService {
         city: data[i].linkedcompany[0].city,
         postalCode: data[i].linkedcompany[0].postalCode,
         vat: data[i].linkedcompany[0].vat,
-        registrationNumber: data[0].linkedcompany[0].registrationNumber,
+        registrationNumber: data[i].linkedcompany[0].registrationNumber,
         regAddressNo: data[i].linkedcompany[0].regAddressNo,
         regAddressStreet: data[i].linkedcompany[0].regAddressStreet,
         regAddressCity: data[i].linkedcompany[0].regAddressCity,
@@ -665,7 +665,7 @@ export class CompaniesService {
         city: data[i].linkedcompany[0].city,
         postalCode: data[i].linkedcompany[0].postalCode,
         vat: data[i].linkedcompany[0].vat,
-        registrationNumber: data[0].linkedcompany[0].registrationNumber,
+        registrationNumber: data[i].linkedcompany[0].registrationNumber,
         regAddressNo: data[i].linkedcompany[0].regAddressNo,
         regAddressStreet: data[i].linkedcompany[0].regAddressStreet,
         regAddressCity: data[i].linkedcompany[0].regAddressCity,
@@ -762,7 +762,7 @@ export class CompaniesService {
         city: data[i].linkedcompany[0].city,
         postalCode: data[i].linkedcompany[0].postalCode,
         vat: data[i].linkedcompany[0].vat,
-        registrationNumber: data[0].linkedcompany[0].registrationNumber,
+        registrationNumber: data[i].linkedcompany[0].registrationNumber,
         regAddressNo: data[i].linkedcompany[0].regAddressNo,
         regAddressStreet: data[i].linkedcompany[0].regAddressStreet,
         regAddressCity: data[i].linkedcompany[0].regAddressCity,
@@ -845,9 +845,9 @@ export class CompaniesService {
     console.log(company)
 
     const { linkedcompany, ...data } = company
-    const a = { ...linkedcompany, ...data }
+    const a = { ...linkedcompany[0], ...data }
 
-    return a[0];
+    return a;
 
   }
 
@@ -882,36 +882,36 @@ export class CompaniesService {
   }
 
   async read(id: number) {
-    const date = new Date();
-    const data = await this.companyRepository.findOne(id, {
-      relations: [
-        "users",
-        "documents",
-        "linkedcompany",
-        "linkedcompany.mainCompany",
-        "linkedcompany.mainCompany.users",
-        "linkedcompany.country",
-        "linkedcompany.regAddressCountry",
-        "linkedcompany.companyType",
-        "linkedcompany.billing",
-      ],
-      where: {
-        linkedcompany: {
-          start_date: LessThan(date),
-          end_date: Raw(alias => '${alias} > :date OR ${alias} IS NULL', { date })
-        }
-      }
-    });
+    const date=new Date();
 
-    console.log(data, 7777)
-    // const passdata={
-    //   ...data.linkedcompany
-    // }
+    const query: SelectQueryBuilder<CompaniesEntity> = getConnection()
+      .getRepository(CompaniesEntity)
+      .createQueryBuilder("company")
+      .leftJoinAndSelect("company.users", "users")
+      .leftJoinAndSelect("company.documents", "documents")
+      .leftJoinAndSelect("company.linkedcompany", "linkedcompany")
+      .leftJoinAndSelect("linkedcompany.mainCompany", "mainCompany")
+      .leftJoinAndSelect("linkedcompany.country", "country")
+      .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
+      .leftJoinAndSelect("linkedcompany.companyType", "companyType")
+      .leftJoinAndSelect("linkedcompany.billing", "billing")
+      .where("company.id = :id", {id})
+      .andWhere("linkedcompany.start_date < :date", { date })
+      .andWhere(
+        "linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date",
+        { date }
+      );
+    const data = await query.getOne();
 
-    const { linkedcompany, ...sss } = data
-    const a = { ...linkedcompany, ...sss }
+    console.log(data,7777)
+// const passdata={
+//   ...data.linkedcompany
+// }
 
-    return a[0];
+const {linkedcompany, ...sss} = data
+const a = {...linkedcompany[0], ...sss}
+
+    return a;
   }
 
   async update(id: number, data) {
