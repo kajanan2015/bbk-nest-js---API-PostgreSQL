@@ -121,7 +121,6 @@ export class CompaniesController {
   @UseGuards(AuthGuard('jwt'))
   @Put('assignpackage')
   async assignpackage(@Body() passdata) {
-    console.log(passdata, 88)
     const data = {
       package: passdata.packages,
       customizerecord:passdata.records
@@ -187,9 +186,9 @@ export class CompaniesController {
   @Post('uploadprofileimage')
   @UseInterceptors(AnyFilesInterceptor())
   async uploadprofileimage(@UploadedFiles() file) {
-    console.log(file, 45678)
+   
     const filename = await this.imageUploadService.upload(file, "body");
-    console.log(filename, 89989)
+    
     return filename;
   }
 
@@ -231,7 +230,6 @@ export class CompaniesController {
   @Get(':id')
   async read(@Param('id') id: number) {
     const company = await this.service.read(id);
-    console.log(company,888)
     return {
       statusCode: HttpStatus.OK,
       company,
@@ -284,6 +282,7 @@ async getcompnyinfo(@Param('id') companyid: number){
 @UseGuards(AuthGuard('jwt'))
 @Post('/get_history_data/:id')
 async getcompnyhistory(@Param('id') companyid: number , @Body() data){
+  
   return await this.service.getcompnyhistory(companyid,data);
 }
 

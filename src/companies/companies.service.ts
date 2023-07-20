@@ -853,21 +853,27 @@ export class CompaniesService {
 
   async getcompnyhistory(id, data) {
     let type;
-    if (data.type == 'info') {
-      type = Historydatatype.COMPANYINFO
+
+    if (data.type == 'company details') {
+      type = Historydatatype.COMPANYDETAILS
     }
     const companyid = id;
     const companyinfoid = data.company_info_id;
     const initialtype = Historydatatype.COMPANY
+    console.log(data,666)
+    
+    
+    console.log(companyinfoid,666)
     const currentDate = new Date();
     const company = await getConnection()
       .getRepository(CompaniesHistorydata)
       .createQueryBuilder("company_data_history")
       .where("company_data_history.company_info_id = :companyinfoid", { companyinfoid })
       .andWhere("company_data_history.start_date <= :currentDate", { currentDate })
-      .andWhere("company_data_history.history_data_type IN (:...types)", { types: [type, initialtype] })
-      .getOne();
-    console.log(company, 7778787)
+      // .andWhere("company_data_history.history_data_type IN (:...types)", { types: [type, initialtype] })
+      .getMany();
+      console.log(company,88)
+    return company
   }
 
   async findById(id: number): Promise<CompaniesEntity> {

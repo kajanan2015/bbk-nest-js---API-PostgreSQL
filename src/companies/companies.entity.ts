@@ -65,7 +65,8 @@ export enum Deactivationmethod {
 
 export enum Historydatatype{
   COMPANY='company initial data',
-  COMPANYINFO='company info'
+  COMPANYINFO='company info',
+  COMPANYDETAILS='company details'
 }
 
 @Entity('company')
