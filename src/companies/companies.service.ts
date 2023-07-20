@@ -12,6 +12,7 @@ import {
   MoreThan,
   MoreThanOrEqual,
   Not,
+  Raw,
   Repository,
   SelectQueryBuilder,
   getConnection,
@@ -843,12 +844,11 @@ console.log
       )
       .getOne();
 console.log(company)
-    const data = {
-      ...company,
-      ...company.linkedcompany[0]
-    }
-    delete data.linkedcompany;
-    return data;
+
+const {linkedcompany, ...data} = company
+const a = {...linkedcompany, ...data}
+    
+    return a[0];
 
   }
 
@@ -876,14 +876,15 @@ console.log(company)
   }
 
   async getmatchsubcompany(id: number) {
-    return await this.companyRepository.find({
+    return await this.companyinfoRepository.find({
       where: { status: 1, mainCompany: id },
       // relations: ['mainCompany','users']
     });
   }
 
   async read(id: number) {
-    return await this.companyRepository.findOne(id, {
+    const date=new Date();
+    const data= await this.companyRepository.findOne(id, {
       relations: [
         "users",
         "documents",
@@ -895,7 +896,23 @@ console.log(company)
         "linkedcompany.companyType",
         "linkedcompany.billing",
       ],
+      where: {
+        linkedcompany:{
+          start_date: LessThan(date),
+          end_date: Raw(alias=>'${alias} > :date OR ${alias} IS NULL',{date})
+        }
+      }
     });
+
+    console.log(data,7777)
+// const passdata={
+//   ...data.linkedcompany
+// }
+
+const {linkedcompany, ...sss} = data
+const a = {...linkedcompany, ...sss}
+
+    return a[0];
   }
 
   async update(id: number, data) {
