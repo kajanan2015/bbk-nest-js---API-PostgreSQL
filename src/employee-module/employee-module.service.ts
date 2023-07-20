@@ -279,11 +279,52 @@ export class EmployeeModuleService {
     return newrandomId;
   }
 
+  // async findById(id: number) {
+  //   return await this.employeeInfoRepository.findOne({
+  //     where: { id: +id },
+  //     relations: ['drivingLicenceCategory', 'documents', 'drivingLicenceType', 'employeeType', 'created_by', 'designation', 'company', 'gender', 'maritalStatus', 'bankName', 'paymentFrequency', 'addressCountry', 'refCompAddressCountry']
+  //   });
+  // }
+
   async findById(id: number) {
-    return await this.employeeInfoRepository.findOne({
-      where: { id: +id },
-      relations: ['drivingLicenceCategory', 'documents', 'drivingLicenceType', 'employeeType', 'created_by', 'designation', 'company', 'gender', 'maritalStatus', 'bankName', 'paymentFrequency', 'addressCountry', 'refCompAddressCountry']
-    });
+    const date = new Date();
+      const query: SelectQueryBuilder<Employee> = getConnection()
+        .getRepository(Employee)
+        .createQueryBuilder("employee")
+        .leftJoinAndSelect("employee.company", "company")
+        // .leftJoinAndSelect("employee.documents", "documents")
+        .leftJoinAndSelect("employee.linkedEmployee", "linkedEmployee")
+        .leftJoinAndSelect("linkedEmployee.employeeType", "employeeType")
+        .leftJoinAndSelect("linkedEmployee.designation", "designation")        
+        .leftJoinAndSelect("linkedEmployee.gender", "gender")
+        .leftJoinAndSelect("linkedEmployee.maritalStatus", "maritalStatus")
+        .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
+        .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
+        .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
+        .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
+        .andWhere("employee.id = :id", { id })
+        .andWhere("linkedEmployee.start_date <= :date", { date })
+        .andWhere(
+          "linkedEmployee.end_date IS NULL OR linkedEmployee.end_date > :date",
+          { date }
+        );
+  
+      const data = await query.getMany();
+      const newdata = [];
+
+      for (var i = 0; i < data.length; i++) {
+        let passdata = {}
+        const { linkedEmployee, ...mainEmployeeData } = data[i];  
+        passdata = {
+          ...linkedEmployee[0],
+          id: mainEmployeeData.id,
+          employeeCode: mainEmployeeData.employeeCode,
+          company: mainEmployeeData.company
+        }
+        newdata.push(passdata)
+      }
+
+      return newdata;
   }
 
   // async update(id: number, UpdateEmployeeModuleDto: UpdateEmployeeModuleDto) {
@@ -558,7 +599,7 @@ export class EmployeeModuleService {
         .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
         .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
         .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
-        .andWhere("linkedEmployee.start_date < :date", { date })
+        .andWhere("linkedEmployee.start_date <= :date", { date })
         .andWhere(
           "linkedEmployee.end_date IS NULL OR linkedEmployee.end_date > :date",
           { date }
@@ -572,6 +613,7 @@ export class EmployeeModuleService {
         const { linkedEmployee, ...mainEmployeeData } = data[i];  
         passdata = {
           ...linkedEmployee[0],
+          id: mainEmployeeData.id,
           employeeCode: mainEmployeeData.employeeCode,
           company: mainEmployeeData.company
         }
@@ -581,11 +623,51 @@ export class EmployeeModuleService {
       return newdata;
   }
 
+  // async findCompanyAllEmployeesWithDoc(companyid: number) {
+  //   return await this.employeeInfoRepository.find({
+  //     where: { company: companyid, status: 1 },
+  //     relations: ['documents', 'employeeType']
+  //   });
+  // }
+
   async findCompanyAllEmployeesWithDoc(companyid: number) {
-    return await this.employeeInfoRepository.find({
-      where: { company: companyid, status: 1 },
-      relations: ['documents', 'employeeType']
-    });
+    const date = new Date();
+      const query: SelectQueryBuilder<Employee> = getConnection()
+        .getRepository(Employee)
+        .createQueryBuilder("employee")
+        .leftJoinAndSelect("employee.company", "company")
+        // .leftJoinAndSelect("employee.documents", "documents")
+        .leftJoinAndSelect("employee.linkedEmployee", "linkedEmployee")
+        .leftJoinAndSelect("linkedEmployee.employeeType", "employeeType")
+        .leftJoinAndSelect("linkedEmployee.designation", "designation")        
+        .leftJoinAndSelect("linkedEmployee.gender", "gender")
+        .leftJoinAndSelect("linkedEmployee.maritalStatus", "maritalStatus")
+        .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
+        .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
+        .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
+        .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
+        .andWhere("linkedEmployee.start_date <= :date", { date })
+        .andWhere(
+          "linkedEmployee.end_date IS NULL OR linkedEmployee.end_date > :date",
+          { date }
+        );
+  
+      const data = await query.getMany();
+      const newdata = [];
+
+      for (var i = 0; i < data.length; i++) {
+        let passdata = {}
+        const { linkedEmployee, ...mainEmployeeData } = data[i];  
+        passdata = {
+          ...linkedEmployee[0],
+          id: mainEmployeeData.id,
+          employeeCode: mainEmployeeData.employeeCode,
+          company: mainEmployeeData.company
+        }
+        newdata.push(passdata)
+      }
+
+      return newdata;
   }
 
   async generateTemporaryNumber(gender, birthday) {
