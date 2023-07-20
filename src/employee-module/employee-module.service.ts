@@ -265,7 +265,7 @@ export class EmployeeModuleService {
     });
 
     let newrandomId = individualcompany.company_code + '-' + randomId;;
-    let response = await this.employeeInfoRepository.find({ where: { employeeId: newrandomId } });
+    let response = await this.employeeRepository.find({ where: { employeeCode: newrandomId } });
 
 
     while (response.length > 0) {
@@ -274,7 +274,7 @@ export class EmployeeModuleService {
         charset: 'numeric'
       });
       newrandomId = individualcompany.company_code + '-' + randomId;
-      response = await this.employeeInfoRepository.find({ where: { employeeId: newrandomId } });
+      response = await this.employeeRepository.find({ where: { employeeCode: newrandomId } });
     }
     return newrandomId;
   }
@@ -291,11 +291,17 @@ export class EmployeeModuleService {
   //   return await this.employeeInfoRepository.findOne({ id });
   // }
   async update(id: string, UpdateEmployeeModuleDto) {
-    const data = {
+    const empdata = {
       ...UpdateEmployeeModuleDto
     }
 
-    const employeerowid = await this.employeeInfoRepository.findOne({ where: { employeeCode: id }, relations: ['drivingLicenceCategory'] });
+    const { employeeCode, ...data } = empdata;
+
+    console.log(data, 6666666666666666)
+
+    const existingEmployee = await this.employeeRepository.findOne({ where: { employeeCode: id } });
+    const employeerowid = await this.employeeInfoRepository.findOne({ where: { employee: existingEmployee.id }, relations: ['drivingLicenceCategory'] });
+
     if (data.hasOwnProperty("drivingLicenceCategory")) {
       const drivingLicenceCategories = data.drivingLicenceCategory;
       let drivinglicensecategoryId = [];
@@ -320,22 +326,22 @@ export class EmployeeModuleService {
           if (docType == "visaDoc[]" || docType == "empProvidedCopy[]" || docType == "officialDoc[]") {
             let empExsistDocRow;
             if (docType == "empProvidedCopy[]") {
-              empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'empProvidedCopy')
+              empExsistDocRow = await this.employeedocumentservice.findOne(+existingEmployee.id, 'empProvidedCopy')
             } else if (docType == "officialDoc[]") {
-              empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'officialDoc')
+              empExsistDocRow = await this.employeedocumentservice.findOne(+existingEmployee.id, 'officialDoc')
             } else if (docType == "visaDoc[]") {
-              empExsistDocRow = await this.employeedocumentservice.findOne(+employeerowid.id, 'visaDoc')
+              empExsistDocRow = await this.employeedocumentservice.findOne(+existingEmployee.id, 'visaDoc')
             }
             if (empExsistDocRow) {
               const empdocs = []
               for (const url in docUrls as {}) {
-                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +employeerowid.id, created_by: data.created_by })
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee.id, created_by: data.created_by })
               };
               await this.employeedocumentservice.update(+empExsistDocRow.id, empdocs[0])
             } else {
               const empdocs = []
               for (const url in docUrls as {}) {
-                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +employeerowid.id, created_by: data.created_by  })
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee.id, created_by: data.created_by  })
               };
               await this.employeedocumentservice.create(empdocs)
             }
@@ -345,13 +351,13 @@ export class EmployeeModuleService {
             console.log(docType)
             const empdocs = []
             for (const url in docUrls as {}) {
-              empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +employeerowid.id, created_by: data.created_by  })
+              empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee.id, created_by: data.created_by  })
             };
             await this.employeedocumentservice.create(empdocs)
           } else {
             const empdocs = []
             for (const url in docUrls as {}) {
-              empdocs.push({ docType: docType.replace('[]', ''), description: 'additional', docPath: docUrls[url], empid: +employeerowid.id, created_by: data.created_by  })
+              empdocs.push({ docType: docType.replace('[]', ''), description: 'additional', docPath: docUrls[url], empid: +existingEmployee.id, created_by: data.created_by  })
             };
             await this.employeedocumentservice.create(empdocs)
           }
@@ -376,18 +382,25 @@ export class EmployeeModuleService {
 
     await this.employeeInfoRepository.update({ id: +employeerowid.id }, data);
 
-    const updatedEmployee = await this.employeeInfoRepository.findOne({
-      where: { id: employeerowid.id }
-    });
+    // const updatedEmployee = await this.employeeInfoRepository.findOne({
+    //   where: { id: employeerowid.id }
+    // });
 
     // if (updatedEmployee.isNonNative != null && updatedEmployee.bankAccountNo != null && updatedEmployee.salaryType != null) {
     //   await this.employeeInfoRepository.update({ id: +employeerowid.id }, { active: true });
     // }
     
-    return await this.employeeInfoRepository.findOne({
-      where: { id: employeerowid.id },
-      relations: ['drivingLicenceCategory', 'documents']
+    // return await this.employeeInfoRepository.findOne({
+    //   where: { id: employeerowid.id },
+    //   relations: ['drivingLicenceCategory', 'documents']
+    // });
+
+    const returnData = await this.employeeRepository.findOne({
+      where: { employeeCode: employeeCode },
+      relations: ['documents']
     });
+
+    return { infoId: employeerowid['id'], ...returnData }
   }
 
   async updateWithHistory(id: string, UpdateEmployeeModuleDto) {
