@@ -73,14 +73,14 @@ export class CompanyWorkPatternService {
 
            await this.patternrepository.update(data['id'], updateCompanyWorkPatternDto);
             // Find the previous record of the employee
-            const previousRecord = await this.employedatahistory.findOne({
-              where: {
-                workpattern:data['id'],
-                company: data['company'].id,
-                type: "work-pattern-history"
-              },
-              order: { createdBy: 'DESC' },
-            });
+            // const previousRecord = await this.employedatahistory.findOne({
+            //   where: {
+            //     workpattern:data['id'],
+            //     company: data['company'].id,
+            //     type: "work-pattern-history"
+            //   },
+            //   order: { createdBy: 'DESC' },
+            // });
         
             // If a previous record exists, update its endDate
             // if (previousRecord) {

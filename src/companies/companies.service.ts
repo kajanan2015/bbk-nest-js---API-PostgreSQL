@@ -865,7 +865,7 @@ export class CompaniesService {
       .createQueryBuilder("company_data_history")
       .where("company_data_history.company_info_id = :companyinfoid", { companyinfoid })
       .andWhere("company_data_history.start_date <= :currentDate", { currentDate })
-      .andWhere("company_data_history.history_data_type=:type", { type })
+      .andWhere("company_data_history.history_data_type IN (:...types)", { types: [type, initialtype] })
       .getOne();
     console.log(company, 7778787)
   }
@@ -967,24 +967,24 @@ const a = {...linkedcompany[0], ...sss}
       const r1 = await this.companyRepository.save(companyfind);
 
       // Find the previous record of the employee
-      const previousRecord = await this.datahistoryrepo.findOne({
-        where: {
-          company: +id,
-          type: "company-history"
-        },
-        order: { createdBy: 'DESC' },
-      });
+      // const previousRecord = await this.datahistoryrepo.findOne({
+      //   where: {
+      //     company: +id,
+      //     type: "company-history"
+      //   },
+      //   order: { createdBy: 'DESC' },
+      // });
 
       // If a previous record exists, update its endDate
       // if (previousRecord) {
       //   previousRecord.endDate = new Date(Date.now());
       //   await this.datahistoryrepo.save(previousRecord);
       // }
-      const historyresponse = {
-        users: companyfind.users
-      }
-      const responsehistory = await this.datahistoryrepo.create({ type: "company-history", data: JSON.stringify(historyresponse), company: { id } });
-      const res = await this.datahistoryrepo.save(responsehistory);
+      // const historyresponse = {
+      //   users: companyfind.users
+      // }
+      // const responsehistory = await this.datahistoryrepo.create({ type: "company-history", data: JSON.stringify(historyresponse), company: { id } });
+      // const res = await this.datahistoryrepo.save(responsehistory);
 
 
 
@@ -1121,21 +1121,21 @@ const a = {...linkedcompany[0], ...sss}
       await this.companyRepository.update({ id }, passcompanyData);
 
       // Find the previous record of the employee
-      const previousRecord = await this.datahistoryrepo.findOne({
-        where: {
-          company: +id,
-          type: "company-history"
-        },
-        order: { createdBy: 'DESC' },
-      });
+      // const previousRecord = await this.datahistoryrepo.findOne({
+      //   where: {
+      //     company: +id,
+      //     type: "company-history"
+      //   },
+      //   order: { createdBy: 'DESC' },
+      // });
 
       // If a previous record exists, update its endDate
       // if (previousRecord) {
       //   previousRecord.endDate = new Date(Date.now());
       //   await this.datahistoryrepo.save(previousRecord);
       // }
-      const responsehistory = await this.datahistoryrepo.create({ type: "company-history", data: JSON.stringify(passcompanyData), company: { id } });
-      const res = await this.datahistoryrepo.save(responsehistory);
+      // const responsehistory = await this.datahistoryrepo.create({ type: "company-history", data: JSON.stringify(passcompanyData), company: { id } });
+      // const res = await this.datahistoryrepo.save(responsehistory);
     }
 
     return await this.companyRepository.findOne(id, {
@@ -1577,5 +1577,14 @@ const a = {...linkedcompany[0], ...sss}
     //       return "Error Occured"
     //     }
 
+  }
+
+  // update including history and schedule
+  async updatenew(id,data){
+    console.log(id);
+    console.log(data);
+    const companydata= await this.companyRepository.update({id},data)
+    const historyresponse=await this.companyhistoryRepository.create();
+    const historysaveresponse=await this.companyhistoryRepository.save(historyresponse)
   }
 }
