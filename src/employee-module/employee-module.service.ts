@@ -292,7 +292,7 @@ export class EmployeeModuleService {
         .getRepository(Employee)
         .createQueryBuilder("employee")
         .leftJoinAndSelect("employee.company", "company")
-        // .leftJoinAndSelect("employee.documents", "documents")
+        .leftJoinAndSelect("employee.documents", "documents")
         .leftJoinAndSelect("employee.linkedEmployee", "linkedEmployee")
         .leftJoinAndSelect("linkedEmployee.employeeType", "employeeType")
         .leftJoinAndSelect("linkedEmployee.designation", "designation")        
@@ -314,12 +314,14 @@ export class EmployeeModuleService {
 
       for (var i = 0; i < data.length; i++) {
         let passdata = {}
-        const { linkedEmployee, ...mainEmployeeData } = data[i];  
+        const { linkedEmployee, ...mainEmployeeData } = data[i];
+        const companyData = await this.companyservice.read(mainEmployeeData?.company?.id);
         passdata = {
           ...linkedEmployee[0],
           id: mainEmployeeData.id,
+          infoId: linkedEmployee[0].id,
           employeeCode: mainEmployeeData.employeeCode,
-          company: mainEmployeeData.company
+          company: companyData
         }
         newdata.push(passdata)
       }
@@ -588,7 +590,7 @@ export class EmployeeModuleService {
       const query: SelectQueryBuilder<Employee> = getConnection()
         .getRepository(Employee)
         .createQueryBuilder("employee")
-        .leftJoinAndSelect("employee.company", "company")
+        .leftJoinAndSelect("employee.company", "company")        
         // .leftJoinAndSelect("employee.documents", "documents")
         .leftJoinAndSelect("employee.linkedEmployee", "linkedEmployee")
         .leftJoinAndSelect("linkedEmployee.employeeType", "employeeType")
@@ -606,16 +608,18 @@ export class EmployeeModuleService {
         );
   
       const data = await query.getMany();
+
       const newdata = [];
 
       for (var i = 0; i < data.length; i++) {
         let passdata = {}
-        const { linkedEmployee, ...mainEmployeeData } = data[i];  
+        const { linkedEmployee, ...mainEmployeeData } = data[i];
+        const companyData = await this.companyservice.read(mainEmployeeData?.company?.id);
         passdata = {
           ...linkedEmployee[0],
           id: mainEmployeeData.id,
           employeeCode: mainEmployeeData.employeeCode,
-          company: mainEmployeeData.company
+          company: companyData,         
         }
         newdata.push(passdata)
       }
@@ -657,12 +661,13 @@ export class EmployeeModuleService {
 
       for (var i = 0; i < data.length; i++) {
         let passdata = {}
-        const { linkedEmployee, ...mainEmployeeData } = data[i];  
+        const { linkedEmployee, ...mainEmployeeData } = data[i];
+        const companyData = await this.companyservice.read(mainEmployeeData?.company?.id);
         passdata = {
           ...linkedEmployee[0],
           id: mainEmployeeData.id,
           employeeCode: mainEmployeeData.employeeCode,
-          company: mainEmployeeData.company
+          company: companyData
         }
         newdata.push(passdata)
       }
