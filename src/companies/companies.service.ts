@@ -1581,6 +1581,10 @@ const a = {...linkedcompany[0], ...sss}
 
   // update including history and schedule
   async updatenew(id,data){
-
+    console.log(id);
+    console.log(data);
+    const companydata= await this.companyRepository.update({id},data)
+    const historyresponse=await this.companyhistoryRepository.create();
+    const historysaveresponse=await this.companyhistoryRepository.save(historyresponse)
   }
 }
