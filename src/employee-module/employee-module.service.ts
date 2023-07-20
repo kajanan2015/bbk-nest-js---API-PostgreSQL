@@ -17,7 +17,7 @@ import { CompaniesEntity } from 'src/companies/companies.entity';
 import { MaritalStatus } from './marital_status/maritalStatus.entity';
 import { DrivingLicenceType } from './driving_licence_type/driving_licence_type.entity';
 import { PaymentFrequency } from './payment_frequency/payment_frequency.entity';
-import { Employee, EmployeeInfo } from './employee-module.entity';
+import { Employee, EmployeeInfo, EmployeePayrollInfo } from './employee-module.entity';
 // import randomstring from 'randomstring';
 const randomstring = require("randomstring");
 
@@ -32,6 +32,8 @@ export class EmployeeModuleService {
     private readonly imageUploadService: ImageUploadService,
     @InjectRepository(EmployeeInfo)
     private employeeInfoRepository: Repository<EmployeeInfo>,
+    @InjectRepository(EmployeePayrollInfo)
+    private employeePayrollRepository: Repository<EmployeeInfo>,
     @InjectRepository(EmployeeDocument)
     private employeeDocumentRepository: Repository<EmployeeDocument>,
     private readonly mailservice: MailService,
@@ -602,6 +604,7 @@ export class EmployeeModuleService {
         .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
         .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
         .andWhere("linkedEmployee.start_date <= :date", { date })
+        .andWhere("linkedEmployee.status = :status", { status:1 })
         .andWhere(
           "linkedEmployee.end_date IS NULL OR linkedEmployee.end_date > :date",
           { date }
@@ -651,6 +654,7 @@ export class EmployeeModuleService {
         .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
         .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
         .andWhere("linkedEmployee.start_date <= :date", { date })
+        .andWhere("linkedEmployee.status = :status", { status:1 })
         .andWhere(
           "linkedEmployee.end_date IS NULL OR linkedEmployee.end_date > :date",
           { date }
