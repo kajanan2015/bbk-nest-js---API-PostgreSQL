@@ -383,7 +383,6 @@ export class CompaniesService {
     const newCompany = await this.companyinfoRepository.create(dataCompany);
     const responsesave = await this.companyinfoRepository.save(newCompany);
 
-console.log(responsesave,8989898)
     const historydate = {
       history_data_type: Historydatatype.COMPANY,
       history_data: JSON.stringify(dataCompany),
@@ -395,7 +394,7 @@ console.log(responsesave,8989898)
       company: maintableinsertsave["id"],
       start_date: dataCompany.start_date
     }
-console.log
+    console.log
     const addhistory = await this.companyhistoryRepository.create(historydate)
     const savehistory = await this.companyhistoryRepository.save(addhistory)
 
@@ -590,7 +589,7 @@ console.log
       where: {
         mainCompany: companylist.linkedcompany[0].mainCompany.id,
       },
-      relations: ["mainCompany"]
+      relations: ["mainCompany", "company"]
     });
   }
 
@@ -843,32 +842,32 @@ console.log
         { currentDate }
       )
       .getOne();
-console.log(company)
+    console.log(company)
 
-const {linkedcompany, ...data} = company
-const a = {...linkedcompany, ...data}
-    
+    const { linkedcompany, ...data } = company
+    const a = { ...linkedcompany, ...data }
+
     return a[0];
 
   }
 
-  async getcompnyhistory(id,data){
+  async getcompnyhistory(id, data) {
     let type;
-    if(data.type=='info'){  
-      type=Historydatatype.COMPANYINFO
+    if (data.type == 'info') {
+      type = Historydatatype.COMPANYINFO
     }
-    const companyid=id;
-    const companyinfoid=data.company_info_id;
-    const initialtype=Historydatatype.COMPANY
-    const currentDate=new Date();
+    const companyid = id;
+    const companyinfoid = data.company_info_id;
+    const initialtype = Historydatatype.COMPANY
+    const currentDate = new Date();
     const company = await getConnection()
-    .getRepository(CompaniesHistorydata)
-    .createQueryBuilder("company_data_history")
-    .where("company_data_history.company_info_id = :companyinfoid", { companyinfoid })
-    .andWhere("company_data_history.start_date <= :currentDate", { currentDate })
-    .andWhere( "company_data_history.history_data_type=:type",{type})
-    .getOne();
-    console.log(company,7778787)
+      .getRepository(CompaniesHistorydata)
+      .createQueryBuilder("company_data_history")
+      .where("company_data_history.company_info_id = :companyinfoid", { companyinfoid })
+      .andWhere("company_data_history.start_date <= :currentDate", { currentDate })
+      .andWhere("company_data_history.history_data_type=:type", { type })
+      .getOne();
+    console.log(company, 7778787)
   }
 
   async findById(id: number): Promise<CompaniesEntity> {
@@ -883,8 +882,8 @@ const a = {...linkedcompany, ...data}
   }
 
   async read(id: number) {
-    const date=new Date();
-    const data= await this.companyRepository.findOne(id, {
+    const date = new Date();
+    const data = await this.companyRepository.findOne(id, {
       relations: [
         "users",
         "documents",
@@ -897,20 +896,20 @@ const a = {...linkedcompany, ...data}
         "linkedcompany.billing",
       ],
       where: {
-        linkedcompany:{
+        linkedcompany: {
           start_date: LessThan(date),
-          end_date: Raw(alias=>'${alias} > :date OR ${alias} IS NULL',{date})
+          end_date: Raw(alias => '${alias} > :date OR ${alias} IS NULL', { date })
         }
       }
     });
 
-    console.log(data,7777)
-// const passdata={
-//   ...data.linkedcompany
-// }
+    console.log(data, 7777)
+    // const passdata={
+    //   ...data.linkedcompany
+    // }
 
-const {linkedcompany, ...sss} = data
-const a = {...linkedcompany, ...sss}
+    const { linkedcompany, ...sss } = data
+    const a = { ...linkedcompany, ...sss }
 
     return a[0];
   }
