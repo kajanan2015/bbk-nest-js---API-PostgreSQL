@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { Connection, Repository } from 'typeorm';
+import { Connection, Repository, SelectQueryBuilder, getConnection } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmployeeDocumentService } from 'src/employee-document/employee-document.service';
 import { CompaniesService } from 'src/companies/companies.service';
@@ -535,11 +535,50 @@ export class EmployeeModuleService {
     });
   }
 
+  // async findCompanyAllEmployees(companyid: number) {
+  //   return await this.employeeInfoRepository.find({
+  //     where: { company: companyid, status: 1 },
+  //     relations: ['drivingLicenceCategory', 'employeeType', 'designation', 'company', 'gender', 'maritalStatus', 'drivingLicenceType', 'addedBy', 'addressCountry', 'refCompAddressCountry']
+  //   });
+  // }
+
   async findCompanyAllEmployees(companyid: number) {
-    return await this.employeeInfoRepository.find({
-      where: { company: companyid, status: 1 },
-      relations: ['drivingLicenceCategory', 'employeeType', 'designation', 'company', 'gender', 'maritalStatus', 'drivingLicenceType', 'addedBy', 'addressCountry', 'refCompAddressCountry']
-    });
+      const date = new Date();
+      const query: SelectQueryBuilder<Employee> = getConnection()
+        .getRepository(Employee)
+        .createQueryBuilder("employee")
+        .leftJoinAndSelect("employee.company", "company")
+        // .leftJoinAndSelect("employee.documents", "documents")
+        .leftJoinAndSelect("employee.linkedEmployee", "linkedEmployee")
+        .leftJoinAndSelect("linkedEmployee.employeeType", "employeeType")
+        .leftJoinAndSelect("linkedEmployee.designation", "designation")        
+        .leftJoinAndSelect("linkedEmployee.gender", "gender")
+        .leftJoinAndSelect("linkedEmployee.maritalStatus", "maritalStatus")
+        .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
+        .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
+        .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
+        .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
+        .andWhere("linkedEmployee.start_date < :date", { date })
+        .andWhere(
+          "linkedEmployee.end_date IS NULL OR linkedEmployee.end_date > :date",
+          { date }
+        );
+  
+      const data = await query.getMany();
+      const newdata = [];
+
+      for (var i = 0; i < data.length; i++) {
+        let passdata = {}
+        const { linkedEmployee, ...mainEmployeeData } = data[i];  
+        passdata = {
+          ...linkedEmployee[0],
+          employeeCode: mainEmployeeData.employeeCode,
+          company: mainEmployeeData.company
+        }
+        newdata.push(passdata)
+      }
+
+      return newdata;
   }
 
   async findCompanyAllEmployeesWithDoc(companyid: number) {
