@@ -1619,7 +1619,20 @@ export class CompaniesService {
       throw new NotFoundException('Entity not found');
     }
     if (start_date.getTime() >= date.getTime()) {
-      console.log(date, 7);
+      const previousentitydata={...entity}
+      const updatedpreviousdata={...entity};
+      updatedpreviousdata.updated_at=data.updatedAt,
+      updatedpreviousdata.updated_by=data.updatedBy,
+      updatedpreviousdata.end_date=start_date
+      delete entity.company_info_id;
+      delete entity.updated_at;
+      delete entity.end_date;
+      delete entity.updated_by;
+      const passvalue={
+        ...entity,...data
+      }
+      
+      await this.historytransaction.updateEntityWithScheduleTransaction(passvalue, historydata,CompaniesEntityinfo,CompaniesHistorydata,previousentitydata,updatedpreviousdata)
     } else {
       console.log('master',88)
       await this.historytransaction.updateEntityWithTransaction(entity, companyinfo, historydata,CompaniesEntityinfo,CompaniesHistorydata);

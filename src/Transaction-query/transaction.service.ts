@@ -38,18 +38,33 @@ console.log('hiiiiii')
       throw err; // Rethrow the error to be handled at the higher level
     }
   }
+
+
+  @Transaction()
   async updateEntityWithScheduleTransaction(entitydata,
     historyData,
+    entityClass,
+    historyClass,
+    previousentitydata,
+    updatedpreviousdata,
     @TransactionManager() manager?: any,
   ): Promise<void> {
     try {
-    
+    console.log(entitydata,888)
+    console.log(entitydata,888)
       // Update the entity with the new data
-      const updateresponse=manager.create(CompaniesEntityinfo, entitydata); // Using merge directly on manager
-      await manager.save(CompaniesEntityinfo, updateresponse);
-console.log('hiiiiii')
-      const createresponse= manager.create(CompaniesHistorydata, historyData); // Using merge directly on manager
-      await manager.save(CompaniesHistorydata, createresponse);
+
+       // Update the entity with the new data
+       const updateresponseprevious=manager.merge(entityClass, previousentitydata, updatedpreviousdata); // Using merge directly on manager
+       await manager.save(entityClass, updateresponseprevious);
+    
+      const updateresponse=manager.create(entityClass, entitydata); // Using merge directly on manager
+      await manager.save(entityClass, updateresponse);
+
+      console.log(updateresponse['company_info_id'],99)
+      historyData.companyinfo=updateresponse['company_info_id'];
+      const createresponse= manager.create(historyClass, historyData); // Using merge directly on manager
+      await manager.save(historyClass, createresponse);
 
       // You can add more business logic or other updates here
 
