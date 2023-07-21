@@ -49,7 +49,7 @@ import { Deactivationmethod } from "./companies.entity";
 import { Companystatus } from "./companies.entity";
 import { Companyidentifier } from "./companies.entity";
 import { Historydatatype } from "./companies.entity";
-
+import { HistoryTransactionservicedb } from "src/Transaction-query/transaction.service";
 @Injectable()
 export class CompaniesService {
 
@@ -69,6 +69,7 @@ export class CompaniesService {
     @InjectRepository(CompanyDocument)
     private companyDocumentRepository: Repository<CompanyDocument>,
     private readonly systemcodeService: SystemCodeService,
+    private readonly historytransaction: HistoryTransactionservicedb,
     private readonly userservice: UserService,
     private readonly companydocumentservice: CompanyDocumentService,
     private readonly mailservice: MailService,
@@ -1588,9 +1589,11 @@ const a = {...linkedcompany[0], ...sss}
   // update including history and schedule
   async updatenew(id,data){
     console.log(id);
-    console.log(data);
-    const companydata= await this.companyRepository.update({id},data)
-    const historyresponse=await this.companyhistoryRepository.create();
-    const historysaveresponse=await this.companyhistoryRepository.save(historyresponse)
+    console.log(data,9);
+// await this.historytransaction.updateEntityWithTransaction();
+    // const passdata={}
+    // const companydata= await this.companyRepository.update({id},data)
+    // const historyresponse=await this.companyhistoryRepository.create();
+    // const historysaveresponse=await this.companyhistoryRepository.save(historyresponse)
   }
 }

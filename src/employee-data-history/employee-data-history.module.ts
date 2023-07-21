@@ -37,10 +37,11 @@ import { companytype } from 'src/companies/company Type/companytype.entity';
 import { CompaniesEntityinfo } from 'src/companies/companies.entity';
 import { CompaniesHistorydata } from 'src/companies/companies.entity';
 import { Employee, EmployeeInfo, EmployeePayrollInfo } from 'src/employee-module/employee-module.entity';
+import { HistoryTransactionservicedb } from 'src/Transaction-query/transaction.service';
 @Module({
   imports:[TypeOrmModule.forFeature([EmployeeDataHistory,CompaniesHistorydata,CompaniesEntityinfo, EmployeePayrollInfo, Bank, DrivingLicenceType, PaymentFrequency, Gender, MaritalStatus, EmpDesignation, Companypackagerow, SystemCode, Moduledetailsofpackage, Employee, EmployeeInfo, EmployeeDocument, Createmodule, Createpackage, DrivingLicenceCategory, CompaniesEntity, User, PermissionRoleEntity, PagePermissionEntity, Bank, EmployeeType, CompanyDocument,CompanyWorkPattern,country,companytype] )],
 
   controllers: [EmployeeDataHistoryController],
-  providers: [EmployeeDataHistoryService, CompanypackagerowService, EmployeeModuleService, EmployeeDocumentService, UserService, CompaniesService, ImageUploadService, EmployeeDocumentService, SystemCodeService, CompanyDocumentService]
+  providers: [EmployeeDataHistoryService, CompanypackagerowService, EmployeeModuleService, EmployeeDocumentService, UserService, CompaniesService, ImageUploadService, EmployeeDocumentService, SystemCodeService, CompanyDocumentService,HistoryTransactionservicedb]
 })
 export class EmployeeDataHistoryModule {}

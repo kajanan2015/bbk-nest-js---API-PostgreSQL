@@ -5,7 +5,7 @@ import { Repository, Transaction, TransactionManager } from 'typeorm';
 import { CompaniesEntity } from 'src/companies/companies.entity';
 import { CompaniesHistorydata } from 'src/companies/companies.entity';
 @Injectable()
-export class FirstEntityService {
+export class HistoryTransactionservicedb {
   constructor() {} // Remove the repository injection
 
   // async findById(id: number): Promise<CompaniesEntity | undefined> {
@@ -15,6 +15,7 @@ export class FirstEntityService {
   @Transaction()
   async updateEntityWithTransaction(entity,
     updateData,
+    historyData,
     @TransactionManager() manager?: any,
   ): Promise<void> {
     try {
@@ -24,8 +25,11 @@ export class FirstEntityService {
       }
 
       // Update the entity with the new data
-      manager.merge(CompaniesEntity, entity, updateData); // Using merge directly on manager
-      await manager.save(CompaniesEntity, entity);
+      const updateresponse=manager.merge(CompaniesEntity, entity, updateData); // Using merge directly on manager
+      await manager.save(CompaniesEntity, updateresponse);
+
+      const createresponse= manager.create(CompaniesHistorydata, historyData); // Using merge directly on manager
+      await manager.save(CompaniesHistorydata, createresponse);
 
       // You can add more business logic or other updates here
 
