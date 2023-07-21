@@ -861,10 +861,10 @@ export class CompaniesService {
     const companyid = id;
     const companyinfoid = data.company_info_id;
     const initialtype = Historydatatype.COMPANY
-    console.log(data,666)
-    
-    
-    console.log(companyinfoid,666)
+    console.log(data, 666)
+
+
+    console.log(companyinfoid, 666)
     const currentDate = new Date();
     const company = await getConnection()
       .getRepository(CompaniesHistorydata)
@@ -873,7 +873,7 @@ export class CompaniesService {
       .andWhere("company_data_history.start_date <= :currentDate", { currentDate })
       // .andWhere("company_data_history.history_data_type IN (:...types)", { types: [type, initialtype] })
       .getMany();
-      console.log(company,88)
+    console.log(company, 88)
     return company
   }
 
@@ -889,7 +889,7 @@ export class CompaniesService {
   }
 
   async read(id: number) {
-    const date=new Date();
+    const date = new Date();
 
     const query: SelectQueryBuilder<CompaniesEntity> = getConnection()
       .getRepository(CompaniesEntity)
@@ -902,7 +902,7 @@ export class CompaniesService {
       .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
       .leftJoinAndSelect("linkedcompany.companyType", "companyType")
       .leftJoinAndSelect("linkedcompany.billing", "billing")
-      .where("company.id = :id", {id})
+      .where("company.id = :id", { id })
       .andWhere("linkedcompany.start_date < :date", { date })
       .andWhere(
         "linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date",
@@ -910,13 +910,13 @@ export class CompaniesService {
       );
     const data = await query.getOne();
 
-    console.log(data,7777)
-// const passdata={
-//   ...data.linkedcompany
-// }
+    console.log(data, 7777)
+    // const passdata={
+    //   ...data.linkedcompany
+    // }
 
-const {linkedcompany, ...sss} = data
-const a = {...linkedcompany[0], ...sss}
+    const { linkedcompany, ...sss } = data
+    const a = { ...linkedcompany[0], ...sss }
 
     return a;
   }
@@ -1587,10 +1587,50 @@ const a = {...linkedcompany[0], ...sss}
   }
 
   // update including history and schedule
-  async updatenew(id,data){
+  async updatenew(id, data) {
     console.log(id);
-    console.log(data,9);
-// await this.historytransaction.updateEntityWithTransaction();
+    console.log(data, 9);
+
+
+    const [day, month, year] = data.startingDate.split('-').map(Number);
+
+// Create the Date object (months are 0-indexed in JavaScript Date)
+const start_date = new Date(Date.UTC(year, month - 1, day));
+// current date
+const date= new Date()
+console.log(date,1);
+
+console.log(start_date,66666)
+    const companyinfoid = parseInt(data.companyinfoid);
+    const companyid = parseInt(id);
+    const historydata = {
+        history_data_type: Historydatatype.COMPANY,
+        history_data: JSON.stringify(data),
+        created_by: data.updatedBy,
+        created_at: data.updatedAt,
+        companyinfo: companyinfoid,
+        company: companyid,
+        start_date: start_date
+    }
+    const companyinfo = {
+      ...data,
+      updated_at: data.updatedAt,
+      updated_by: data.updatedBy
+    }
+    console.log(historydata)
+    console.log(companyinfo,4445454)
+    const entity = await this.companyinfoRepository.findOne({ company_info_id: companyinfoid })
+    if (!entity) {
+      throw new NotFoundException('Entity not found');
+    }
+    if (start_date.getTime() >= date.getTime()) {
+  console.log(date,7);
+} else {
+
+  await this.historytransaction.updateEntityWithTransaction(entity, companyinfo, historydata);
+}
+
+   
     // const passdata={}
     // const companydata= await this.companyRepository.update({id},data)
     // const historyresponse=await this.companyhistoryRepository.create();
