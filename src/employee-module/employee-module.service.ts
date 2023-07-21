@@ -604,7 +604,7 @@ export class EmployeeModuleService {
         .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
         .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
         .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
-        .andWhere("linkedEmployee.start_date <= :date", { date })
+        .andWhere("linkedEmployee.startDate <= :date", { date })
         .andWhere("linkedEmployee.status = :status", { status:1 })
         .andWhere(
           "linkedEmployee.end_date IS NULL OR linkedEmployee.end_date > :date",
