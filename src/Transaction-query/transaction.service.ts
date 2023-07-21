@@ -17,16 +17,18 @@ export class HistoryTransactionservicedb {
   async updateEntityWithTransaction(entitydata,
     updateData,
     historyData,
+    entityClass,
+    historyClass,
     @TransactionManager() manager?: any,
   ): Promise<void> {
     try {
     
       // Update the entity with the new data
-      const updateresponse=manager.merge(CompaniesEntityinfo, entitydata, updateData); // Using merge directly on manager
-      await manager.save(CompaniesEntityinfo, updateresponse);
+      const updateresponse=manager.merge(entityClass, entitydata, updateData); // Using merge directly on manager
+      await manager.save(entityClass, updateresponse);
 console.log('hiiiiii')
-      const createresponse= manager.create(CompaniesHistorydata, historyData); // Using merge directly on manager
-      await manager.save(CompaniesHistorydata, createresponse);
+      const createresponse= manager.create(historyClass, historyData); // Using merge directly on manager
+      await manager.save(historyClass, createresponse);
 
       // You can add more business logic or other updates here
 

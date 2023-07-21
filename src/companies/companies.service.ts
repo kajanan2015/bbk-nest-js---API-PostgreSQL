@@ -1593,44 +1593,39 @@ export class CompaniesService {
 
 
     const [day, month, year] = data.startingDate.split('-').map(Number);
-
-// Create the Date object (months are 0-indexed in JavaScript Date)
-const start_date = new Date(Date.UTC(year, month - 1, day));
-// current date
-const date= new Date()
-console.log(date,1);
-
-console.log(start_date,66666)
+    // Create the Date object (months are 0-indexed in JavaScript Date)
+    const start_date = new Date(Date.UTC(year, month - 1, day));
+    // current date
+    const date = new Date();
     const companyinfoid = parseInt(data.companyinfoid);
     const companyid = parseInt(id);
     const historydata = {
-        history_data_type: Historydatatype.COMPANY,
-        history_data: JSON.stringify(data),
-        created_by: data.updatedBy,
-        created_at: data.updatedAt,
-        companyinfo: companyinfoid,
-        company: companyid,
-        start_date: start_date
+      history_data_type: Historydatatype.COMPANY,
+      history_data: JSON.stringify(data),
+      created_by: data.updatedBy,
+      created_at: data.updatedAt,
+      companyinfo: companyinfoid,
+      company: companyid,
+      start_date: start_date
     }
     const companyinfo = {
       ...data,
       updated_at: data.updatedAt,
       updated_by: data.updatedBy
     }
-    console.log(historydata)
-    console.log(companyinfo,4445454)
+
     const entity = await this.companyinfoRepository.findOne({ company_info_id: companyinfoid })
     if (!entity) {
       throw new NotFoundException('Entity not found');
     }
     if (start_date.getTime() >= date.getTime()) {
-  console.log(date,7);
-} else {
+      console.log(date, 7);
+    } else {
+      console.log('master',88)
+      await this.historytransaction.updateEntityWithTransaction(entity, companyinfo, historydata,CompaniesEntityinfo,CompaniesHistorydata);
+    }
 
-  await this.historytransaction.updateEntityWithTransaction(entity, companyinfo, historydata);
-}
 
-   
     // const passdata={}
     // const companydata= await this.companyRepository.update({id},data)
     // const historyresponse=await this.companyhistoryRepository.create();
