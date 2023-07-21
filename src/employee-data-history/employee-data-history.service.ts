@@ -22,7 +22,7 @@ export class EmployeeDataHistoryService {
     // Find the previous record of the employee
     const previousRecord = await this.empDataHistoryRepository.findOne({
       where: {
-        employee: +createEmployeeDataHistoryDto.employee,
+        employeeId: +createEmployeeDataHistoryDto.employeeId,
         type: createEmployeeDataHistoryDto.type
       },
       order: { created_at: 'DESC' },
@@ -42,7 +42,7 @@ export class EmployeeDataHistoryService {
   async findEmpDataHistory(createEmployeeDataHistoryDto) {
     const [results, totalCount] = await this.empDataHistoryRepository.findAndCount({
       where: {
-        employee: createEmployeeDataHistoryDto.employee,
+        employeeId: createEmployeeDataHistoryDto.employeeId,
         type: createEmployeeDataHistoryDto.type,
       },
       relations: ['updated_by', 'created_by'],

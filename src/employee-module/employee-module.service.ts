@@ -127,7 +127,7 @@ export class EmployeeModuleService {
       //const { providedCopyUrl, empProvidedCopyUrl, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
       const { profilePicUrl, employeeCode, company, ...infoData } = createEmployeeModuleDto;
 
-      const response = await this.employeeRepository.create({ employeeCode, company, linkedEmployee: infoData});
+      const response = await this.employeeRepository.create({ employeeCode, company, linkedEmployee: infoData, created_at: infoData.created_at, created_by: infoData.created_by});
       const res = await this.employeeRepository.save(response);
 
       const responseInfo= await this.employeeInfoRepository.create({...infoData, employee: res.id});
@@ -323,7 +323,8 @@ export class EmployeeModuleService {
           id: mainEmployeeData.id,
           infoId: linkedEmployee[0].id,
           employeeCode: mainEmployeeData.employeeCode,
-          company: companyData
+          company: companyData,
+          documents: mainEmployeeData.documents
         }
         newdata.push(passdata)
       }
@@ -531,7 +532,7 @@ export class EmployeeModuleService {
     // Find the previous record of the employee
     const previousRecord = await this.employeedatahistoryrepo.findOne({
       where: {
-        employee: +UpdateEmployeeModuleDto.employee,
+        employeeId: +UpdateEmployeeModuleDto.employeeId,
         type: UpdateEmployeeModuleDto.type
       },
       order: { created_by: 'DESC' },
@@ -550,11 +551,11 @@ export class EmployeeModuleService {
     // added by nuwan for mail send employeee password should be random generate one add random string
     // await this.mailservice.sendemailtoemployeeregistration(employeeemail,companyname,employeename,employeepassword,employeeusername)
 
-    return await this.employeeInfoRepository.findOne({
+    return await this.employeeRepository.findOne({
       where: {
         id: id,
       },
-      relations: ['drivingLicenceCategory', 'documents']
+      relations: ['documents']
     });
 
     // const query = `SELECT * FROM employee_module emp INNER JOIN employee_document doc ON emp.id = doc.empid WHERE emp.id = ${id} AND doc.active = 1;`;
