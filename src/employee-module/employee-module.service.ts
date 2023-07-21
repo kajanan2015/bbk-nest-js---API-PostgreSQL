@@ -454,7 +454,9 @@ export class EmployeeModuleService {
       ...UpdateEmployeeModuleDto.data
     }
 
-    const employeerow = await this.employeeInfoRepository.findOne({ where: { id: id }, relations: ['drivingLicenceCategory'] });
+    const employeerow = await this.employeeRepository.findOne({ where: { id: UpdateEmployeeModuleDto.employeeId } });
+    const employeeInforow = await this.employeeInfoRepository.findOne({ where: { id: UpdateEmployeeModuleDto.employeeInfoId } });
+
     if (data.hasOwnProperty("drivingLicenceCategory")) {
       const drivingLicenceCategories = data.drivingLicenceCategory;
       let drivinglicensecategoryId = [];
@@ -463,18 +465,16 @@ export class EmployeeModuleService {
       }
 
       const repsonse1 = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)      
-      employeerow.drivingLicenceCategory = repsonse1;      
+      employeeInforow.drivingLicenceCategory = repsonse1;      
 
-      const response3333 = await this.employeeInfoRepository.save(employeerow)
+      const response3333 = await this.employeeInfoRepository.save(employeeInforow)
 
       delete data.drivingLicenceCategory;
     }
 
     let { visaDoc, drivingLicenceCategory, tachoDoc, officialDoc, drivingLicenceDoc, cpcCardDoc, refdoc, empProvidedCopy, ...dataWithoutDoc } = data
 
-    const employeerowid = await this.employeeInfoRepository.findOne({ where: { id: id } });
-
-    await this.employeeInfoRepository.update({ id: +id }, dataWithoutDoc);
+    await this.employeeInfoRepository.update({ id: +UpdateEmployeeModuleDto.employeeInfoId }, dataWithoutDoc);
 
     const documents = UpdateEmployeeModuleDto['filenames'];
 
@@ -520,7 +520,7 @@ export class EmployeeModuleService {
 
           const empdocs = []
           for (const url in docUrls as {}) {
-            empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +employeerowid.id, addedBy: data.addedBy })
+            empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +UpdateEmployeeModuleDto.employeeId, addedBy: data.addedBy })
           };
           await this.employeedocumentservice.create(empdocs)
           data = { ...data, [docType.replace('[]', '')]: empdocs }
