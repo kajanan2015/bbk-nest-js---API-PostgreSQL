@@ -1,4 +1,4 @@
-import { EmployeeInfo } from "src/employee-module/employee-module.entity";
+import { Employee, EmployeeInfo } from "src/employee-module/employee-module.entity";
 import { User } from "src/user/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { CompaniesEntity } from "src/companies/companies.entity";
@@ -8,9 +8,13 @@ export class EmployeeDataHistory {
     @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
     id: number;
 
+    @ManyToOne(() => Employee, employee => employee.linkedHistory)
+    @JoinColumn({ name: 'employee_id' })
+    employeeId: Employee;
+
     @ManyToOne(() => EmployeeInfo, employee => employee.editHistory)
-    @JoinColumn({ name: 'employee' })
-    employee: EmployeeInfo;
+    @JoinColumn({ name: 'employee_info_id' })
+    employeeInfoId: EmployeeInfo;
 
     @ManyToOne(() => CompaniesEntity, company => company.editHistory)
     @JoinColumn({ name: 'company' })

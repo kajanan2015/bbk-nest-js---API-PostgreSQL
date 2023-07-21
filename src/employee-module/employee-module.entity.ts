@@ -78,6 +78,9 @@ export class Employee {
 
     @OneToMany(() => EmployeeDocument, empDocuments => empDocuments.empid, { cascade: true })
     documents: EmployeeDocument[];
+
+    @OneToMany(() => EmployeeDataHistory, empDocuments => empDocuments.employeeId, { cascade: true })
+    linkedHistory: EmployeeDataHistory[];
 }
 
 @Entity('employee-info')
@@ -347,7 +350,7 @@ export class EmployeeInfo {
     // @JoinColumn({ name: 'added_by' })
     // addedBy: User;
 
-    @OneToMany(() => EmployeeDataHistory, empDataHistory => empDataHistory.employee, { cascade: true })
+    @OneToMany(() => EmployeeDataHistory, empDataHistory => empDataHistory.employeeInfoId, { cascade: true })
     editHistory: EmployeeDataHistory[];
 
     @Column({ name: 'active', type: 'boolean', default: false })
