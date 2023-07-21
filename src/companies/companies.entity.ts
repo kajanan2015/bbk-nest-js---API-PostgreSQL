@@ -63,7 +63,7 @@ export enum Deactivationmethod {
   NOTDELETE = 'not deleted yet'
 }
 
-export enum Historydatatype{
+export enum Historydatatype {
   COMPANY='company initial data',
   COMPANYINFO='company info',
   COMPANYDETAILS='company details'
@@ -260,7 +260,7 @@ export class CompaniesHistorydata{
   @PrimaryGeneratedColumn({ type: "int", name: "company_history_id", unsigned: true })
   id: number;
 
-  @Column("enum", { name: "history_data_type",enum:Historydatatype,default:Historydatatype.COMPANY,comment:"company initial data/company info"})
+  @Column("enum", { name: "history_data_type", enum:Historydatatype, default:Historydatatype.COMPANY, comment:"company initial data/company info"})
   history_data_type: Historydatatype;
 
   @Column( {type:"text", name: "history_data"})
