@@ -282,9 +282,22 @@ async getcompnyinfo(@Param('id') companyid: number){
 @UseGuards(AuthGuard('jwt'))
 @Post('/get_history_data/:id')
 async getcompnyhistory(@Param('id') companyid: number , @Body() data){
+  const historydata=await this.service.getcompnyhistory(companyid,data);
+  const  scheduleddata=await this.service.getscheduledcompanydatahistory(companyid,data)
+  return {
+    historydata,
+    scheduleddata
+  }
+}
+
+// get scheduled data
+@UseGuards(AuthGuard('jwt'))
+@Post('/get_scheduled_data/:id')
+async getscheduledcompanydatahistory(@Param('id') companyid: number , @Body() data){
   
   return await this.service.getcompnyhistory(companyid,data);
 }
+
 
 // update company newly-adding history and schedule
   @UseGuards(AuthGuard('jwt'))
@@ -296,6 +309,9 @@ async getcompnyhistory(@Param('id') companyid: number , @Body() data){
         ...companyData,
         filename
      }
+
+
+     console.log(data,990909)
       return await this.service.updatenew(id, data);
   }
 

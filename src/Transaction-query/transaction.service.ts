@@ -7,7 +7,7 @@ import { CompaniesHistorydata } from 'src/companies/companies.entity';
 import { CompaniesEntityinfo } from 'src/companies/companies.entity';
 @Injectable()
 export class HistoryTransactionservicedb {
-  constructor() {} // Remove the repository injection
+  constructor() { } // Remove the repository injection
 
   // async findById(id: number): Promise<CompaniesEntity | undefined> {
   //   return this.firstEntityRepository.findOne(id);
@@ -22,12 +22,28 @@ export class HistoryTransactionservicedb {
     @TransactionManager() manager?: any,
   ): Promise<void> {
     try {
-    
+
       // Update the entity with the new data
-      const updateresponse=manager.merge(entityClass, entitydata, updateData); // Using merge directly on manager
+      const updateresponse = await manager.merge(entityClass, entitydata, updateData); // Using merge directly on manager
       await manager.save(entityClass, updateresponse);
-console.log('hiiiiii')
-      const createresponse= manager.create(historyClass, historyData); // Using merge directly on manager
+
+      const findOptions = {
+        where: { companyinfo: historyData.companyinfo },
+        order: {
+          id: 'DESC',
+        },
+      }
+      // Find data from another entity within the transaction
+      const findresponse = await manager.findOne(historyClass, findOptions);
+      const newdata = {
+        updated_at: historyData.created_at,
+        updated_by: historyData.created_by
+      }
+      const existupdate = await manager.merge(historyClass, findresponse, newdata)
+      await manager.save(historyClass, existupdate);
+      
+      
+      const createresponse = await manager.create(historyClass, historyData); // Using merge directly on manager
       await manager.save(historyClass, createresponse);
 
       // You can add more business logic or other updates here
@@ -50,20 +66,17 @@ console.log('hiiiiii')
     @TransactionManager() manager?: any,
   ): Promise<void> {
     try {
-    console.log(entitydata,888)
-    console.log(entitydata,888)
-      // Update the entity with the new data
 
-       // Update the entity with the new data
-       const updateresponseprevious=manager.merge(entityClass, previousentitydata, updatedpreviousdata); // Using merge directly on manager
-       await manager.save(entityClass, updateresponseprevious);
-    
-      const updateresponse=manager.create(entityClass, entitydata); // Using merge directly on manager
+      // Update the entity with the new data
+      // Update the entity with the new data
+      const updateresponseprevious = manager.merge(entityClass, previousentitydata, updatedpreviousdata); // Using merge directly on manager
+      await manager.save(entityClass, updateresponseprevious);
+
+      const updateresponse = manager.create(entityClass, entitydata); // Using merge directly on manager
       await manager.save(entityClass, updateresponse);
 
-      console.log(updateresponse['company_info_id'],99)
-      historyData.companyinfo=updateresponse['company_info_id'];
-      const createresponse= manager.create(historyClass, historyData); // Using merge directly on manager
+      historyData.companyinfo = updateresponse['company_info_id'];
+      const createresponse = manager.create(historyClass, historyData); // Using merge directly on manager
       await manager.save(historyClass, createresponse);
 
       // You can add more business logic or other updates here

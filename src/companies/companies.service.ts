@@ -869,9 +869,10 @@ export class CompaniesService {
     const company = await getConnection()
       .getRepository(CompaniesHistorydata)
       .createQueryBuilder("company_data_history")
-      .where("company_data_history.company_info_id = :companyinfoid", { companyinfoid })
+      .where("company_data_history.companyinfo = :companyinfoid", { companyinfoid })
       .andWhere("company_data_history.start_date <= :currentDate", { currentDate })
       // .andWhere("company_data_history.history_data_type IN (:...types)", { types: [type, initialtype] })
+      .orderBy("company_data_history.id", "DESC") // Order by company history ID in descending order
       .getMany();
     console.log(company, 88)
     return company
@@ -1597,7 +1598,7 @@ export class CompaniesService {
     const start_date = new Date(Date.UTC(year, month - 1, day));
     // current date
     const date = new Date();
-    const companyinfoid = parseInt(data.companyinfoid);
+    const companyinfoid = parseInt(data.companyInfoId);
     const companyid = parseInt(id);
     const historydata = {
       history_data_type: Historydatatype.COMPANY,
@@ -1643,5 +1644,28 @@ export class CompaniesService {
     // const companydata= await this.companyRepository.update({id},data)
     // const historyresponse=await this.companyhistoryRepository.create();
     // const historysaveresponse=await this.companyhistoryRepository.save(historyresponse)
+  }
+
+  async getscheduledcompanydatahistory(id,data){
+    let type;
+    if (data.type == 'company details') {
+      type = Historydatatype.COMPANYDETAILS
+    }
+    const companyid = id;
+    const companyinfoid = data.companyInfoId;
+    const initialtype = Historydatatype.COMPANY
+    console.log(data, 666)
+
+    const currentDate = new Date();
+    const company = await getConnection()
+      .getRepository(CompaniesHistorydata)
+      .createQueryBuilder("company_data_history")
+      .where("company_data_history.company_id = :companyid", { companyid })
+      .andWhere("company_data_history.start_date > :currentDate", { currentDate })
+      .orderBy("company_data_history.start_date", "ASC") 
+      // .andWhere("company_data_history.history_data_type IN (:...types)", { types: [type, initialtype] })
+      .getMany();
+    console.log(company, 88)
+    return company
   }
 }
