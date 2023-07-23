@@ -520,7 +520,7 @@ export class CompaniesService {
       .where("linkedcompany.companyIdentifier = :identifier", { identifier: "maincompany" })
       .andWhere("linkedcompany.start_date < :date", { date })
       .andWhere(
-        "linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date",
+        "(linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date)",
         { date }
       );
 
@@ -636,7 +636,7 @@ export class CompaniesService {
       .where("linkedcompany.company_status = :status", { status: statusvalue })
       .andWhere("linkedcompany.start_date < :date", { date })
       .andWhere(
-        "linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date",
+        "(linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date)",
         { date }
       )
       .orderBy("linkedcompany.mainCompany", "ASC");
@@ -736,7 +736,7 @@ export class CompaniesService {
       .andWhere("linkedcompany.companyIdentifier = :identifier", { identifier: "subcompany" })
       .andWhere("linkedcompany.start_date < :date", { date })
       .andWhere(
-        "linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date",
+        "(linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date)",
         { date }
       );;
     const data = await query.getMany();
@@ -839,7 +839,7 @@ export class CompaniesService {
       .where("company.id = :companyID", { companyID })
       .andWhere("linkedcompany.start_date < :currentDate", { currentDate })
       .andWhere(
-        "linkedcompany.end_date IS NULL OR linkedcompany.end_date > :currentDate",
+        "(linkedcompany.end_date IS NULL OR linkedcompany.end_date > :currentDate)",
         { currentDate }
       )
       .getOne();
@@ -869,7 +869,7 @@ export class CompaniesService {
     const company = await getConnection()
       .getRepository(CompaniesHistorydata)
       .createQueryBuilder("company_data_history")
-      .where("company_data_history.companyinfo = :companyinfoid", { companyinfoid })
+      .where("company_data_history.company = :companyid", { companyid })
       .andWhere("company_data_history.start_date <= :currentDate", { currentDate })
       // .andWhere("company_data_history.history_data_type IN (:...types)", { types: [type, initialtype] })
       .orderBy("company_data_history.id", "DESC") // Order by company history ID in descending order
@@ -906,12 +906,12 @@ export class CompaniesService {
       .where("company.id = :id", { id })
       .andWhere("linkedcompany.start_date < :date", { date })
       .andWhere(
-        "linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date",
+        "(linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date)",
         { date }
       );
     const data = await query.getOne();
-
-    console.log(data, 7777)
+console.log(id,676767)
+    console.log(data, 345678)
     // const passdata={
     //   ...data.linkedcompany
     // }
@@ -1591,8 +1591,10 @@ export class CompaniesService {
   async updatenew(id, data) {
     console.log(id);
     console.log(data, 9);
-
-
+if(data.filename?.length>0){
+  data.companyLogo=data.filename[0]['companyLogo'][0];
+  data.companyLogoThumb=await this.imageUploadService.uploadThumbnailToS3(data.filename[0]['companyLogo'][0]);
+}
     const [day, month, year] = data.startingDate.split('-').map(Number);
     // Create the Date object (months are 0-indexed in JavaScript Date)
     const start_date = new Date(Date.UTC(year, month - 1, day));
