@@ -24,7 +24,7 @@ export class CompaniesController {
     private service: CompaniesService,
     private readonly imageUploadService: ImageUploadService) { }
 
-// decativate schedule-this call from lamda function-no need auth
+  // decativate schedule-this call from lamda function-no need auth
   @Post("scheduledeactivate")
   async scheduledeactivatecustomer() {
     const currentDateTime = new Date();
@@ -39,25 +39,57 @@ export class CompaniesController {
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   async create(@UploadedFiles() file, @Body() companyData, @Req() req) {
-    
-    const base_url=`${req.get('origin')}/`;
+
+    const base_url = `${req.get('origin')}/`;
     const filename = await this.imageUploadService.uploadcompany(file, "body");
     const img = filename.find((file) => file.hasOwnProperty(`logoImg`));
     const logoImg = img ? img['logoImg'][0] : null;
-    const document = filename.find((file) => file[`files[]`]);
-    const filesArray = document ? document[`files[]`] : null;
-    const data = {
-      ...companyData,
-      logoImg: logoImg,
-      file: filesArray,
-    }
-    return await this.service.create(data,base_url);
-   
 
+    const fileToFind = '[file][0]';
+    const document = [];
+
+    filename.forEach((file) => {
+      const keys = Object.keys(file);
+      keys.forEach((key) => {
+        if (key.endsWith(fileToFind)) {
+          document.push(file);
+        }
+      });
+    });
+
+    const documentPathsArray = [];
+
+    if (document.length > 0 && companyData.additionalDocuments && companyData.additionalDocuments.length > 0) {
+
+      for (let i = 0; i < document.length; i++) {
+        const docObj: { documentName?: string; documentPath?: string } = {};
+
+        if (i < document.length) {
+          const documentPath = document[i][Object.keys(document[i])[0]][0];
+          docObj.documentPath = documentPath;
+        }
+
+        if (i < companyData.additionalDocuments.length) {
+          const documentName = companyData.additionalDocuments[i].documentName;
+          docObj.documentName = documentName;
+        }
+
+        documentPathsArray.push(docObj);
+      }
+    }
+
+    const {additionalDocuments, ...compData} = companyData
+
+    const data = {
+      ...compData,
+      logoImg: logoImg,
+      file: documentPathsArray,
+    }
+    return await this.service.create(data, base_url);
   }
 
 
-// show all companies
+  // show all companies
   @UseGuards(AuthGuard('jwt'))
   @Get()
   async showAll() {
@@ -78,7 +110,7 @@ export class CompaniesController {
     };
   }
 
-    // show only active/inactive/deactivate main company 
+  // show only active/inactive/deactivate main company 
   @UseGuards(AuthGuard('jwt'))
   @Get('/showonlyActivemainCompany/:value')
   async showonlyActivemainCompany(@Param('value') value: number) {
@@ -123,7 +155,7 @@ export class CompaniesController {
   async assignpackage(@Body() passdata) {
     const data = {
       package: passdata.packages,
-      customizerecord:passdata.records
+      customizerecord: passdata.records
     }
     return await this.service.assignpackage(passdata.companyId, data)
   }
@@ -165,13 +197,13 @@ export class CompaniesController {
   async getassignpackage(@Param('id') id: number) {
     return await this.service.getassignpackage(id)
   }
-// get assign module to the company
+  // get assign module to the company
   @UseGuards(AuthGuard('jwt'))
   @Get('assign/:id')
   async getassignmodule(@Param('id') id: number) {
     return await this.service.getassignmodule(id)
   }
-// show all sub companuies
+  // show all sub companuies
   @UseGuards(AuthGuard('jwt'))
   @Get('/showsubcompaniesonly')
   async showSubonlyCompanies() {
@@ -181,14 +213,14 @@ export class CompaniesController {
       companies
     };
   }
-// return only upload profile image name
+  // return only upload profile image name
   @UseGuards(AuthGuard('jwt'))
   @Post('uploadprofileimage')
   @UseInterceptors(AnyFilesInterceptor())
   async uploadprofileimage(@UploadedFiles() file) {
-   
+
     const filename = await this.imageUploadService.upload(file, "body");
-    
+
     return filename;
   }
 
@@ -204,7 +236,7 @@ export class CompaniesController {
       companyType
     };
   }
-// get country and their currency
+  // get country and their currency
   @UseGuards(AuthGuard('jwt'))
   @Get('/country')
   async getcountry() {
@@ -236,7 +268,7 @@ export class CompaniesController {
     };
   }
 
-// update company
+  // update company
   @UseGuards(AuthGuard('jwt'))
   @Patch('/edit/:id')
   @UseInterceptors(AnyFilesInterceptor())
@@ -270,49 +302,49 @@ export class CompaniesController {
 
 
 
-// get companyinfo one by one
-@UseGuards(AuthGuard('jwt'))
-@Get('/companyinfo/:id')
-async getcompnyinfo(@Param('id') companyid: number){
-  return await this.service.companyinfoget(companyid);
-}
-
-
-// get history data
-@UseGuards(AuthGuard('jwt'))
-@Post('/get_history_data/:id')
-async getcompnyhistory(@Param('id') companyid: number , @Body() data){
-  const historydata=await this.service.getcompnyhistory(companyid,data);
-  const  scheduleddata=await this.service.getscheduledcompanydatahistory(companyid,data)
-  return {
-    historydata,
-    scheduleddata
+  // get companyinfo one by one
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/companyinfo/:id')
+  async getcompnyinfo(@Param('id') companyid: number) {
+    return await this.service.companyinfoget(companyid);
   }
-}
-
-// get scheduled data
-@UseGuards(AuthGuard('jwt'))
-@Post('/get_scheduled_data/:id')
-async getscheduledcompanydatahistory(@Param('id') companyid: number , @Body() data){
-  
-  return await this.service.getcompnyhistory(companyid,data);
-}
 
 
-// update company newly-adding history and schedule
+  // get history data
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/get_history_data/:id')
+  async getcompnyhistory(@Param('id') companyid: number, @Body() data) {
+    const historydata = await this.service.getcompnyhistory(companyid, data);
+    const scheduleddata = await this.service.getscheduledcompanydatahistory(companyid, data)
+    return {
+      historydata,
+      scheduleddata
+    }
+  }
+
+  // get scheduled data
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/get_scheduled_data/:id')
+  async getscheduledcompanydatahistory(@Param('id') companyid: number, @Body() data) {
+
+    return await this.service.getcompnyhistory(companyid, data);
+  }
+
+
+  // update company newly-adding history and schedule
   @UseGuards(AuthGuard('jwt'))
   @Patch('/updatecompany/:id')
   @UseInterceptors(AnyFilesInterceptor())
   async updatenew(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
     const filename = await this.imageUploadService.uploadcompany(file, "body");
-      const data = {
-        ...companyData,
-        filename
-     }
+    const data = {
+      ...companyData,
+      filename
+    }
 
 
-     console.log(data,990909)
-      return await this.service.updatenew(id, data);
+    console.log(data, 990909)
+    return await this.service.updatenew(id, data);
   }
 
 
@@ -333,7 +365,7 @@ async getscheduledcompanydatahistory(@Param('id') companyid: number , @Body() da
 
 
 
-  
+
   // @Put('/edit/:id')
   // @UseInterceptors(AnyFilesInterceptor())
   // async updateStatus(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
@@ -376,13 +408,13 @@ async getscheduledcompanydatahistory(@Param('id') companyid: number , @Body() da
   // mail testing
   @UseGuards(AuthGuard('jwt'))
   @Post('sendemail')
-  async sendemail(@Body() data ,  @Req() req) {
-    const base_url=`${req.get('origin')}/`;
+  async sendemail(@Body() data, @Req() req) {
+    const base_url = `${req.get('origin')}/`;
     console.log(base_url)
     // return await this.service.testemail();
-    return await this.service.sendverifyemail(data,base_url);
+    return await this.service.sendverifyemail(data, base_url);
   }
-  
+
 
   // deactivate compnay immediately
   @UseGuards(AuthGuard('jwt'))
@@ -406,48 +438,48 @@ async getscheduledcompanydatahistory(@Param('id') companyid: number , @Body() da
     return await this.service.checkcompanycode(code);
   }
 
-// activation email verify
+  // activation email verify
   @Get('/activate/:key')
-  async activateadmin(@Param('key') key: string){
+  async activateadmin(@Param('key') key: string) {
     return await this.service.decodemyactivatetoken(key);
   }
-// genertae payment link
+  // genertae payment link
   @UseGuards(AuthGuard('jwt'))
   @Post('generatepaymentlink/:companyid')
   async generatepaymentlink(@Param('companyid') companyid: string, @Req() req) {
-    const base_url=`${req.get('origin')}/`;
-    return await this.service.generatepaymentlink(companyid,base_url);
+    const base_url = `${req.get('origin')}/`;
+    return await this.service.generatepaymentlink(companyid, base_url);
   }
 
   @Get('verifypaymentdetailstoken/:token')
-  async verifypaymentdetailstoken(@Param('token') token){
+  async verifypaymentdetailstoken(@Param('token') token) {
     return await this.service.verifypaymentdetailstoken(token);
   }
 
   @Get('paiddataupdate/:token')
-  async paiddataupdate(@Param('token') token){
+  async paiddataupdate(@Param('token') token) {
     return await this.service.paiddataupdate(token);
   }
 
   @Post('changeparent:/id')
-  async changeparent(@Param('id') id:number, @Body() data:any){
-    return await this.service.changeparentadmin(id,data);
+  async changeparent(@Param('id') id: number, @Body() data: any) {
+    return await this.service.changeparentadmin(id, data);
   }
 
   @Put('extend-trial/:id')
-  async extendtrial(@Param('id') companyid:number,@Body() data:any){
-    console.log(companyid,555);
-    console.log(data,444)
+  async extendtrial(@Param('id') companyid: number, @Body() data: any) {
+    console.log(companyid, 555);
+    console.log(data, 444)
     return await this.service.extendtrial(data)
-   
+
 
   }
 
   @Put('cancel-trial/:id')
-  async cancelrial(@Param('id') companyid:number, @Body() data:any){
-    console.log(companyid,555);
-    return await this.service.cancelrial(companyid,data)
-   
+  async cancelrial(@Param('id') companyid: number, @Body() data: any) {
+    console.log(companyid, 555);
+    return await this.service.cancelrial(companyid, data)
+
 
   }
 

@@ -97,6 +97,8 @@ export class CompaniesService {
 
 
   async create(companyData, base_url) {
+
+    // ** Company name existing check
     const existingcompanyname = await this.companyinfoRepository.findOne({
       where: {
         companyName: companyData.companyName,
@@ -108,7 +110,6 @@ export class CompaniesService {
     if (existingcompanyname) {
       return "company name exist";
     }
-
 
     const response = await this.systemcodeService.findOne("company");
     const companyCode = response.code + "" + response.startValue;
@@ -123,17 +124,6 @@ export class CompaniesService {
       ? await this.imageUploadService.uploadThumbnailToS3(companyData.logoImg)
       : null;
 
-
-    let files = null;
-
-    if (companyData.file) {
-      files = [];
-      var documentPaths = companyData.file;
-      for (var i = 0; i < documentPaths.length; i++) {
-        var documentPath = documentPaths[i];
-        files.push({ documentPath: documentPath });
-      }
-    }
     let dataCompany;
     let mainDataCompany;
     if (companyData.parentCompany && companyData.parentCompany != "") {
@@ -151,17 +141,14 @@ export class CompaniesService {
       const userIds = [];
       if (companyData.sameParentCompanyAdmin == "false") {
 
-
         const companyusers = company.users;
         for (var i = 0; i < companyusers.length; i++) {
           var user = companyusers[i];
           userIds.push(user.id);
         }
 
-        // console.log(userIds, 78787878)
-
         const adminUsers = companyData.admins;
-        // console.log(adminUsers, 7890);
+
         let existing;
         let adminData;
         let adminResponse;
@@ -202,7 +189,6 @@ export class CompaniesService {
           // userId = adminResponse.id.toString();
         }
       } else {
-
         if (companyData.parentCompanyAdmin) {
           for (const value of companyData.parentCompanyAdmin) {
             userIds.push(value);
@@ -213,8 +199,6 @@ export class CompaniesService {
             users.push(adminUser[i]);
             await this.mailservice.shareaccesstochildcompany(adminUser[i].email, companyData.companyName, adminUser[i].firstName, company.linkedcompany[0].companyName);
           }
-
-          // console.log(users, 999)
         }
         if (
           companyData.firstName != "" &&
@@ -265,11 +249,9 @@ export class CompaniesService {
       }
       // const users = await this.userRepository.findByIds(userIds);
       if (!companyData.sameTradingAddress) {
-
         mainDataCompany = {
           company_code: companyCode,
           company_prefix: companyData.code,
-          documents: files,
           users: users,
         }
         dataCompany = {
@@ -280,11 +262,9 @@ export class CompaniesService {
           companyIdentifier: Companyidentifier.SUB
         }
       } else {
-
         mainDataCompany = {
           company_code: companyCode,
           company_prefix: companyData.code,
-          documents: files,
           users: users,
         }
 
@@ -336,7 +316,6 @@ export class CompaniesService {
         mainDataCompany = {
           company_code: companyCode,
           company_prefix: companyData.code,
-          documents: files,
           users: users,
         }
         dataCompany = {
@@ -346,11 +325,9 @@ export class CompaniesService {
           companyIdentifier: Companyidentifier.MAIN,
         };
       } else {
-
         mainDataCompany = {
           company_code: companyCode,
           company_prefix: companyData.code,
-          documents: files,
           users: users,
         }
 
@@ -380,9 +357,23 @@ export class CompaniesService {
     // dataCompany.validityperiod=new Date(validtimeTime.split('.')[0]);
     const maintableinsert = await this.companyRepository.create(mainDataCompany)
     const maintableinsertsave = await this.companyRepository.save(maintableinsert)
+
     dataCompany.company = maintableinsertsave["id"];
     const newCompany = await this.companyinfoRepository.create(dataCompany);
     const responsesave = await this.companyinfoRepository.save(newCompany);
+
+    // ** Company Documents Upload
+    let documentData;
+    for (const doc of companyData.file) {
+      documentData = {
+        documentName: doc.documentName,
+        documentPath: doc.documentPath,
+        companyDoc: maintableinsertsave["id"]
+      }
+
+      const addDocuments = await this.companyDocumentRepository.create(documentData)
+      const saveDocuments = await this.companyDocumentRepository.save(addDocuments)
+    }
 
     const historydate = {
       history_data_type: Historydatatype.COMPANY,
@@ -395,7 +386,7 @@ export class CompaniesService {
       company: maintableinsertsave["id"],
       start_date: dataCompany.start_date
     }
-    console.log
+
     const addhistory = await this.companyhistoryRepository.create(historydate)
     const savehistory = await this.companyhistoryRepository.save(addhistory)
 
@@ -526,12 +517,10 @@ export class CompaniesService {
 
     const data = await query.getMany();
     let passdata;
-    console.log(data, 456789)
     const newdata = [];
     let companystatusvalue;
     for (var i = 0; i < data.length; i++) {
       if (data[i].linkedcompany[0].company_status == 'trial') {
-        console.log(data[i].linkedcompany[0].company_status, 8898)
         companystatusvalue = 0
       } else if (data[i].linkedcompany[0].company_status == 'active') {
         companystatusvalue = 1
@@ -720,7 +709,6 @@ export class CompaniesService {
     } else {
       statusvalue = 'deactivate'
     }
-    console.log(statusvalue, 88888989)
     const query: SelectQueryBuilder<CompaniesEntity> = getConnection()
       .getRepository(CompaniesEntity)
       .createQueryBuilder("company")
@@ -741,7 +729,6 @@ export class CompaniesService {
       );;
     const data = await query.getMany();
     let passdata;
-    console.log(data, 456789)
     const newdata = [];
     let companystatusvalue;
     for (var i = 0; i < data.length; i++) {
@@ -910,8 +897,6 @@ export class CompaniesService {
         { date }
       );
     const data = await query.getOne();
-console.log(id,676767)
-    console.log(data, 345678)
     // const passdata={
     //   ...data.linkedcompany
     // }
@@ -951,7 +936,6 @@ console.log(id,676767)
         }
         : {}),
     };
-    console.log(passcompanyData, 4567890);
     let untickid = [];
     let tickedid = [];
     if (data.untikId) {
@@ -1002,18 +986,14 @@ console.log(id,676767)
 
     if (data.deletedDocument) {
       let deletedocuments = [];
-      console.log(deletedocuments, 56789);
       for (const documentUrl of data.deletedDocument) {
         console.log(documentUrl, 6666);
         deletedocuments = await this.companyDocumentRepository.find({
           where: { documentPath: documentUrl.documentPath },
         });
-        console.log(deletedocuments, 4567);
-        console.log(deletedocuments, 4569);
         await this.imageUploadService.deletedoc(documentUrl.documentPath);
         await this.companyDocumentRepository.remove(deletedocuments);
       }
-      console.log(deletedocuments, 56789);
     }
     if (data.filename && data.filename.length > 0) {
       let documentUpload = [];
@@ -1310,7 +1290,6 @@ console.log(id,676767)
       //         packages:dataf.packageId,
       //         company:parseInt(id),
       //       }  
-      // console.log(newcompassigndata,8898)
       // const compackageresponsecustomize= await this.companypackagerowrepository.create(newcompassigndata)
       //  const comppackagerowaddedcustomiza = await this.companypackagerowrepository.save(compackageresponsecustomize)
       //     }
@@ -1351,7 +1330,6 @@ console.log(id,676767)
     console.log(existmoduleid, 252435)
     // const moduleid= checkcompanypackagerow.module.id
     const result = existmoduleid.filter(value => !data.module.includes(value));
-    console.log(result, 8998988989);
 
     if (result.length > 0) {
       const currentDateTime = new Date();
@@ -1591,10 +1569,10 @@ console.log(id,676767)
   async updatenew(id, data) {
     console.log(id);
     console.log(data, 9);
-if(data.filename?.length>0){
-  data.companyLogo=data.filename[0]['companyLogo'][0];
-  data.companyLogoThumb=await this.imageUploadService.uploadThumbnailToS3(data.filename[0]['companyLogo'][0]);
-}
+    if (data.filename?.length > 0) {
+      data.companyLogo = data.filename[0]['companyLogo'][0];
+      data.companyLogoThumb = await this.imageUploadService.uploadThumbnailToS3(data.filename[0]['companyLogo'][0]);
+    }
     const [day, month, year] = data.startingDate.split('-').map(Number);
     // Create the Date object (months are 0-indexed in JavaScript Date)
     const start_date = new Date(Date.UTC(year, month - 1, day));
@@ -1622,23 +1600,23 @@ if(data.filename?.length>0){
       throw new NotFoundException('Entity not found');
     }
     if (start_date.getTime() >= date.getTime()) {
-      const previousentitydata={...entity}
-      const updatedpreviousdata={...entity};
-      updatedpreviousdata.updated_at=data.updatedAt,
-      updatedpreviousdata.updated_by=data.updatedBy,
-      updatedpreviousdata.end_date=start_date
+      const previousentitydata = { ...entity }
+      const updatedpreviousdata = { ...entity };
+      updatedpreviousdata.updated_at = data.updatedAt,
+        updatedpreviousdata.updated_by = data.updatedBy,
+        updatedpreviousdata.end_date = start_date
       delete entity.company_info_id;
       delete entity.updated_at;
       delete entity.end_date;
       delete entity.updated_by;
-      const passvalue={
-        ...entity,...data
+      const passvalue = {
+        ...entity, ...data
       }
-      
-      await this.historytransaction.updateEntityWithScheduleTransaction(passvalue, historydata,CompaniesEntityinfo,CompaniesHistorydata,previousentitydata,updatedpreviousdata)
+
+      await this.historytransaction.updateEntityWithScheduleTransaction(passvalue, historydata, CompaniesEntityinfo, CompaniesHistorydata, previousentitydata, updatedpreviousdata)
     } else {
-      console.log('master',88)
-      await this.historytransaction.updateEntityWithTransaction(entity, companyinfo, historydata,CompaniesEntityinfo,CompaniesHistorydata);
+      console.log('master', 88)
+      await this.historytransaction.updateEntityWithTransaction(entity, companyinfo, historydata, CompaniesEntityinfo, CompaniesHistorydata);
     }
 
 
@@ -1648,7 +1626,7 @@ if(data.filename?.length>0){
     // const historysaveresponse=await this.companyhistoryRepository.save(historyresponse)
   }
 
-  async getscheduledcompanydatahistory(id,data){
+  async getscheduledcompanydatahistory(id, data) {
     let type;
     if (data.type == 'company details') {
       type = Historydatatype.COMPANYDETAILS
@@ -1664,7 +1642,7 @@ if(data.filename?.length>0){
       .createQueryBuilder("company_data_history")
       .where("company_data_history.company_id = :companyid", { companyid })
       .andWhere("company_data_history.start_date > :currentDate", { currentDate })
-      .orderBy("company_data_history.start_date", "ASC") 
+      .orderBy("company_data_history.start_date", "ASC")
       // .andWhere("company_data_history.history_data_type IN (:...types)", { types: [type, initialtype] })
       .getMany();
     console.log(company, 88)

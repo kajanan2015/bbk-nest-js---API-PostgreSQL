@@ -25,7 +25,7 @@ const randomstring = require("randomstring");
 export class EmployeeModuleService {
   constructor(
     @InjectRepository(Employee)
-    private employeeRepository: Repository<Employee>,    
+    private employeeRepository: Repository<Employee>,
     private readonly connection: Connection,
     private readonly employeedocumentservice: EmployeeDocumentService,
     private companyservice: CompaniesService,
@@ -65,7 +65,7 @@ export class EmployeeModuleService {
   async create(createEmployeeModuleDto) {
     const existingEmployee = await this.employeeRepository.findOne({ where: { employeeCode: createEmployeeModuleDto.employeeCode } });
     if (existingEmployee) {
-      
+
       const { providedCopyUrl, empProvidedCopyUrl, filenames, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
       const data = {
         ...dataWithouturl
@@ -91,13 +91,13 @@ export class EmployeeModuleService {
             if (empExsistDocRow) {
               const empdocs = []
               for (const url in docUrls as {}) {
-                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee['id'], created_by: data.addedBy  })
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee['id'], created_by: data.addedBy })
               };
               await this.employeedocumentservice.update(+empExsistDocRow.id, empdocs[0])
             } else {
               const empdocs = []
               for (const url in docUrls as {}) {
-                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee['id'], created_by: data.addedBy  })
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee['id'], created_by: data.addedBy })
               };
               await this.employeedocumentservice.create(empdocs)
             }
@@ -127,12 +127,12 @@ export class EmployeeModuleService {
       //const { providedCopyUrl, empProvidedCopyUrl, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
       const { profilePicUrl, employeeCode, company, ...infoData } = createEmployeeModuleDto;
 
-      const response = await this.employeeRepository.create({ employeeCode, company, linkedEmployee: infoData, created_at: infoData.created_at, created_by: infoData.created_by});
+      const response = await this.employeeRepository.create({ employeeCode, company, linkedEmployee: infoData, created_at: infoData.created_at, created_by: infoData.created_by });
       const res = await this.employeeRepository.save(response);
 
-      const responseInfo= await this.employeeInfoRepository.create({...infoData, employee: res.id});
-      const resInfo = await this.employeeInfoRepository.save(responseInfo) 
-      
+      const responseInfo = await this.employeeInfoRepository.create({ ...infoData, employee: res.id });
+      const resInfo = await this.employeeInfoRepository.save(responseInfo)
+
       const documents = createEmployeeModuleDto['filenames'];
 
       //  to create account login account for user
@@ -175,7 +175,7 @@ export class EmployeeModuleService {
             if (empExsistDocRow) {
               const empdocs = []
               for (const url in docUrls as {}) {
-                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +res['id'], created_by: createEmployeeModuleDto.addedBy  })
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +res['id'], created_by: createEmployeeModuleDto.addedBy })
               };
               await this.employeedocumentservice.update(+empExsistDocRow.id, empdocs[0])
             } else {
@@ -290,46 +290,46 @@ export class EmployeeModuleService {
 
   async findById(id: number) {
     const date = new Date();
-      const query: SelectQueryBuilder<Employee> = getConnection()
-        .getRepository(Employee)
-        .createQueryBuilder("employee")
-        .leftJoinAndSelect("employee.company", "company")
-        .leftJoinAndSelect("employee.documents", "documents")
-        .leftJoinAndSelect("employee.linkedEmployee", "linkedEmployee")
-        .leftJoinAndSelect("linkedEmployee.employeeType", "employeeType")
-        .leftJoinAndSelect("linkedEmployee.designation", "designation")        
-        .leftJoinAndSelect("linkedEmployee.gender", "gender")
-        .leftJoinAndSelect("linkedEmployee.maritalStatus", "maritalStatus")
-        .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
-        .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
-        .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
-        .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
-        .andWhere("employee.id = :id", { id })
-        .andWhere("linkedEmployee.start_date <= :date", { date })
-        .andWhere(
-          "linkedEmployee.end_date IS NULL OR linkedEmployee.end_date > :date",
-          { date }
-        );
-  
-      const data = await query.getMany();
-      const newdata = [];
+    const query: SelectQueryBuilder<Employee> = getConnection()
+      .getRepository(Employee)
+      .createQueryBuilder("employee")
+      .leftJoinAndSelect("employee.company", "company")
+      .leftJoinAndSelect("employee.documents", "documents")
+      .leftJoinAndSelect("employee.linkedEmployee", "linkedEmployee")
+      .leftJoinAndSelect("linkedEmployee.employeeType", "employeeType")
+      .leftJoinAndSelect("linkedEmployee.designation", "designation")
+      .leftJoinAndSelect("linkedEmployee.gender", "gender")
+      .leftJoinAndSelect("linkedEmployee.maritalStatus", "maritalStatus")
+      .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
+      .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
+      .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
+      .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
+      .andWhere("employee.id = :id", { id })
+      .andWhere("linkedEmployee.start_date <= :date", { date })
+      .andWhere(
+        "(linkedEmployee.end_date IS NULL OR linkedEmployee.end_date > :date)",
+        { date }
+      );
 
-      for (var i = 0; i < data.length; i++) {
-        let passdata = {}
-        const { linkedEmployee, ...mainEmployeeData } = data[i];
-        const companyData = await this.companyservice.read(mainEmployeeData?.company?.id);
-        passdata = {
-          ...linkedEmployee[0],
-          id: mainEmployeeData.id,
-          infoId: linkedEmployee[0].id,
-          employeeCode: mainEmployeeData.employeeCode,
-          company: companyData,
-          documents: mainEmployeeData.documents
-        }
-        newdata.push(passdata)
+    const data = await query.getMany();
+    const newdata = [];
+
+    for (var i = 0; i < data.length; i++) {
+      let passdata = {}
+      const { linkedEmployee, ...mainEmployeeData } = data[i];
+      const companyData = await this.companyservice.read(mainEmployeeData?.company?.id);
+      passdata = {
+        ...linkedEmployee[0],
+        id: mainEmployeeData.id,
+        infoId: linkedEmployee[0].id,
+        employeeCode: mainEmployeeData.employeeCode,
+        company: companyData,
+        documents: mainEmployeeData.documents
       }
+      newdata.push(passdata)
+    }
 
-      return newdata;
+    return newdata;
   }
 
   // async update(id: number, UpdateEmployeeModuleDto: UpdateEmployeeModuleDto) {
@@ -387,7 +387,7 @@ export class EmployeeModuleService {
             } else {
               const empdocs = []
               for (const url in docUrls as {}) {
-                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee.id, created_by: data.created_by  })
+                empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee.id, created_by: data.created_by })
               };
               await this.employeedocumentservice.create(empdocs)
             }
@@ -397,13 +397,13 @@ export class EmployeeModuleService {
             console.log(docType)
             const empdocs = []
             for (const url in docUrls as {}) {
-              empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee.id, created_by: data.created_by  })
+              empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +existingEmployee.id, created_by: data.created_by })
             };
             await this.employeedocumentservice.create(empdocs)
           } else {
             const empdocs = []
             for (const url in docUrls as {}) {
-              empdocs.push({ docType: docType.replace('[]', ''), description: 'additional', docPath: docUrls[url], empid: +existingEmployee.id, created_by: data.created_by  })
+              empdocs.push({ docType: docType.replace('[]', ''), description: 'additional', docPath: docUrls[url], empid: +existingEmployee.id, created_by: data.created_by })
             };
             await this.employeedocumentservice.create(empdocs)
           }
@@ -435,7 +435,7 @@ export class EmployeeModuleService {
     // if (updatedEmployee.isNonNative != null && updatedEmployee.bankAccountNo != null && updatedEmployee.salaryType != null) {
     //   await this.employeeInfoRepository.update({ id: +employeerowid.id }, { active: true });
     // }
-    
+
     // return await this.employeeInfoRepository.findOne({
     //   where: { id: employeerowid.id },
     //   relations: ['drivingLicenceCategory', 'documents']
@@ -455,17 +455,17 @@ export class EmployeeModuleService {
     }
 
     const employeerow = await this.employeeRepository.findOne({ where: { id: UpdateEmployeeModuleDto.employeeId } });
-    const employeeInforow = await this.employeeInfoRepository.findOne({ where: { id: UpdateEmployeeModuleDto.employeeInfoId } });
+    const employeeInforow = await this.employeeInfoRepository.findOne({ where: { id: UpdateEmployeeModuleDto.employeeInfoId }, relations: [ 'employeeType', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'paymentFrequency', 'bankName',  'created_by', 'updated_by', 'employee' ] });
 
     if (data.hasOwnProperty("drivingLicenceCategory")) {
       const drivingLicenceCategories = data.drivingLicenceCategory;
       let drivinglicensecategoryId = [];
-      for (const categoryid of data.drivingLicenceCategory) {        
+      for (const categoryid of data.drivingLicenceCategory) {
         drivinglicensecategoryId.push(categoryid.id)
       }
 
-      const repsonse1 = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)      
-      employeeInforow.drivingLicenceCategory = repsonse1;      
+      const repsonse1 = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
+      employeeInforow.drivingLicenceCategory = repsonse1;
 
       const response3333 = await this.employeeInfoRepository.save(employeeInforow)
 
@@ -474,7 +474,35 @@ export class EmployeeModuleService {
 
     let { visaDoc, drivingLicenceCategory, tachoDoc, officialDoc, drivingLicenceDoc, cpcCardDoc, refdoc, empProvidedCopy, ...dataWithoutDoc } = data
 
-    await this.employeeInfoRepository.update({ id: +UpdateEmployeeModuleDto.employeeInfoId }, dataWithoutDoc);
+    // start date
+    const start_date = new Date(UpdateEmployeeModuleDto.start_date)
+    // current date
+    const date = new Date();
+
+    if (Math.floor(start_date.getTime() / 86400000) > Math.floor(date.getTime() / 86400000)) {
+      console.log(true, 22222222222);
+      //dataWithoutDoc.end_date=start_date
+
+      delete employeeInforow.id;
+      delete employeeInforow.updated_at;
+      delete employeeInforow.endDate;
+      delete employeeInforow.startDate;
+      delete employeeInforow.updated_by;
+
+      const passvalue = {
+        ...employeeInforow, ...dataWithoutDoc
+      }
+
+      const responseInfo = await this.employeeInfoRepository.create({ ...passvalue, startDate: UpdateEmployeeModuleDto.start_date, employee: UpdateEmployeeModuleDto.employeeId });
+      const resInfo = await this.employeeInfoRepository.save(responseInfo)
+
+      UpdateEmployeeModuleDto.employeeInfoId = resInfo["id"];
+
+    } else {
+      console.log(true, 22222222222);    
+      await this.employeeInfoRepository.update({ id: +UpdateEmployeeModuleDto.employeeInfoId }, dataWithoutDoc);
+    }
+
 
     const documents = UpdateEmployeeModuleDto['filenames'];
 
@@ -539,11 +567,11 @@ export class EmployeeModuleService {
     });
 
     // If a previous record exists, update its endDate
-    // if (previousRecord) {
-    //   previousRecord.endDate = new Date(Date.now());
-    //   previousRecord.editedBy = UpdateEmployeeModuleDto.createdBy;
-    //   await this.employeedatahistoryrepo.save(previousRecord);
-    // }
+    if (previousRecord) {
+      previousRecord.updated_at = new Date(Date.now());
+      previousRecord.updated_by = UpdateEmployeeModuleDto.created_by;
+      await this.employeedatahistoryrepo.save(previousRecord);
+    }
 
     const response = await this.employeedatahistoryrepo.create({ ...UpdateEmployeeModuleDto, data: JSON.stringify(data) });
     const res = await this.employeedatahistoryrepo.save(response);
@@ -589,46 +617,47 @@ export class EmployeeModuleService {
   // }
 
   async findCompanyAllEmployees(companyid: number) {
-      const date = new Date();
-      const query: SelectQueryBuilder<Employee> = getConnection()
-        .getRepository(Employee)
-        .createQueryBuilder("employee")
-        .leftJoinAndSelect("employee.company", "company")        
-        // .leftJoinAndSelect("employee.documents", "documents")
-        .leftJoinAndSelect("employee.linkedEmployee", "linkedEmployee")
-        .leftJoinAndSelect("linkedEmployee.employeeType", "employeeType")
-        .leftJoinAndSelect("linkedEmployee.designation", "designation")        
-        .leftJoinAndSelect("linkedEmployee.gender", "gender")
-        .leftJoinAndSelect("linkedEmployee.maritalStatus", "maritalStatus")
-        .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
-        .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
-        .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
-        .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
-        .andWhere("linkedEmployee.startDate <= :date", { date })
-        .andWhere("linkedEmployee.status = :status", { status:1 })
-        .andWhere(
-          "linkedEmployee.end_date IS NULL OR linkedEmployee.end_date > :date",
-          { date }
-        );
-  
-      const data = await query.getMany();
+    const date = new Date();
+    const query: SelectQueryBuilder<Employee> = getConnection()
+      .getRepository(Employee)
+      .createQueryBuilder("employee")
+      .leftJoinAndSelect("employee.company", "company")
+      // .leftJoinAndSelect("employee.documents", "documents")
+      .leftJoinAndSelect("employee.linkedEmployee", "linkedEmployee")
+      .leftJoinAndSelect("linkedEmployee.employeeType", "employeeType")
+      .leftJoinAndSelect("linkedEmployee.designation", "designation")
+      .leftJoinAndSelect("linkedEmployee.gender", "gender")
+      .leftJoinAndSelect("linkedEmployee.maritalStatus", "maritalStatus")
+      .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
+      .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
+      .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
+      .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
+      .andWhere("linkedEmployee.startDate <= :date", { date })
+      .andWhere("linkedEmployee.status = :status", { status: 1 })
+      .andWhere("company.id = :companyid", { companyid })
+      .andWhere(
+        "(linkedEmployee.end_date IS NULL OR linkedEmployee.end_date > :date)",
+        { date }
+      );
 
-      const newdata = [];
+    const data = await query.getMany();
 
-      for (var i = 0; i < data.length; i++) {
-        let passdata = {}
-        const { linkedEmployee, ...mainEmployeeData } = data[i];
-        const companyData = await this.companyservice.read(mainEmployeeData?.company?.id);
-        passdata = {
-          ...linkedEmployee[0],
-          id: mainEmployeeData.id,
-          employeeCode: mainEmployeeData.employeeCode,
-          company: companyData,         
-        }
-        newdata.push(passdata)
+    const newdata = [];
+
+    for (var i = 0; i < data.length; i++) {
+      let passdata = {}
+      const { linkedEmployee, ...mainEmployeeData } = data[i];
+      const companyData = await this.companyservice.read(mainEmployeeData?.company?.id);
+      passdata = {
+        ...linkedEmployee[0],
+        id: mainEmployeeData.id,
+        employeeCode: mainEmployeeData.employeeCode,
+        company: companyData,
       }
+      newdata.push(passdata)
+    }
 
-      return newdata;
+    return newdata;
   }
 
   // async findCompanyAllEmployeesWithDoc(companyid: number) {
@@ -640,44 +669,45 @@ export class EmployeeModuleService {
 
   async findCompanyAllEmployeesWithDoc(companyid: number) {
     const date = new Date();
-      const query: SelectQueryBuilder<Employee> = getConnection()
-        .getRepository(Employee)
-        .createQueryBuilder("employee")
-        .leftJoinAndSelect("employee.company", "company")
-        // .leftJoinAndSelect("employee.documents", "documents")
-        .leftJoinAndSelect("employee.linkedEmployee", "linkedEmployee")
-        .leftJoinAndSelect("linkedEmployee.employeeType", "employeeType")
-        .leftJoinAndSelect("linkedEmployee.designation", "designation")        
-        .leftJoinAndSelect("linkedEmployee.gender", "gender")
-        .leftJoinAndSelect("linkedEmployee.maritalStatus", "maritalStatus")
-        .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
-        .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
-        .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
-        .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
-        .andWhere("linkedEmployee.start_date <= :date", { date })
-        .andWhere("linkedEmployee.status = :status", { status:1 })
-        .andWhere(
-          "linkedEmployee.end_date IS NULL OR linkedEmployee.end_date > :date",
-          { date }
-        );
-  
-      const data = await query.getMany();
-      const newdata = [];
+    const query: SelectQueryBuilder<Employee> = getConnection()
+      .getRepository(Employee)
+      .createQueryBuilder("employee")
+      .leftJoinAndSelect("employee.company", "company")
+      // .leftJoinAndSelect("employee.documents", "documents")
+      .leftJoinAndSelect("employee.linkedEmployee", "linkedEmployee")
+      .leftJoinAndSelect("linkedEmployee.employeeType", "employeeType")
+      .leftJoinAndSelect("linkedEmployee.designation", "designation")
+      .leftJoinAndSelect("linkedEmployee.gender", "gender")
+      .leftJoinAndSelect("linkedEmployee.maritalStatus", "maritalStatus")
+      .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
+      .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
+      .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
+      .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
+      .andWhere("linkedEmployee.start_date <= :date", { date })
+      .andWhere("linkedEmployee.status = :status", { status: 1 })
+      .andWhere("linkedEmployee.company = :companyid", { companyid })
+      .andWhere(
+        "(linkedEmployee.end_date IS NULL OR linkedEmployee.end_date > :date)",
+        { date }
+      );
 
-      for (var i = 0; i < data.length; i++) {
-        let passdata = {}
-        const { linkedEmployee, ...mainEmployeeData } = data[i];
-        const companyData = await this.companyservice.read(mainEmployeeData?.company?.id);
-        passdata = {
-          ...linkedEmployee[0],
-          id: mainEmployeeData.id,
-          employeeCode: mainEmployeeData.employeeCode,
-          company: companyData
-        }
-        newdata.push(passdata)
+    const data = await query.getMany();
+    const newdata = [];
+
+    for (var i = 0; i < data.length; i++) {
+      let passdata = {}
+      const { linkedEmployee, ...mainEmployeeData } = data[i];
+      const companyData = await this.companyservice.read(mainEmployeeData?.company?.id);
+      passdata = {
+        ...linkedEmployee[0],
+        id: mainEmployeeData.id,
+        employeeCode: mainEmployeeData.employeeCode,
+        company: companyData
       }
+      newdata.push(passdata)
+    }
 
-      return newdata;
+    return newdata;
   }
 
   async generateTemporaryNumber(gender, birthday) {
