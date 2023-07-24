@@ -118,6 +118,11 @@ export class EmployeeModuleController {
     return this.employeeModuleService.create(data);
   }
 
+  @Post('payroll-info')
+  async createEmployeePayroll(@Body() createEmployeeModuleDto: CreateEmployeeModuleDto) {
+    return this.employeeModuleService.createPayrollInfo(createEmployeeModuleDto);
+  }
+
   @Get()
   findAll() {
     return this.employeeModuleService.find();

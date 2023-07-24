@@ -320,10 +320,6 @@ export class EmployeeInfo {
     @Column({ name: 'status', type: 'boolean', default: true })
     status: boolean;
 
-    @ManyToOne(() => PaymentFrequency, paymentFrequency => paymentFrequency.employee)
-    @JoinColumn({ name: 'payment_frequency' })
-    paymentFrequency: PaymentFrequency;
-
     @ManyToOne(() => Bank, bank => bank.employee)
     @JoinColumn({ name: 'bank_id' })
     bankName: Bank;
@@ -443,6 +439,10 @@ export class EmployeePayrollInfo {
 
     @Column("int", { name: 'salary_sick_rate', nullable: true, default: () => null })
     slrySickRate: number;
+
+    @ManyToOne(() => PaymentFrequency, paymentFrequency => paymentFrequency.employee)
+    @JoinColumn({ name: 'payment_frequency' })
+    paymentFrequency: PaymentFrequency;
 
     @Column("timestamp", { default: () => null })
     created_at: Date;

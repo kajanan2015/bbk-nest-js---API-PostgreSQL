@@ -33,7 +33,7 @@ export class EmployeeModuleService {
     @InjectRepository(EmployeeInfo)
     private employeeInfoRepository: Repository<EmployeeInfo>,
     @InjectRepository(EmployeePayrollInfo)
-    private employeePayrollRepository: Repository<EmployeeInfo>,
+    private employeePayrollRepository: Repository<EmployeePayrollInfo>,
     @InjectRepository(EmployeeDocument)
     private employeeDocumentRepository: Repository<EmployeeDocument>,
     private readonly mailservice: MailService,
@@ -197,6 +197,43 @@ export class EmployeeModuleService {
 
       return { infoId: resInfo['id'], ...returnData }
     }
+  }
+
+  async createPayrollInfo(createEmployeeModuleDto){
+
+      const employee = await this.employeeRepository.findOne({ where: { employeeCode: createEmployeeModuleDto.employeeCode } });
+
+      const { employeeCode, ...data } = createEmployeeModuleDto;
+
+      const existingRecord = await this.employeePayrollRepository.findOne({ where: { employee: employee['id'] } });
+
+      if(!existingRecord){
+
+        const response = await this.employeePayrollRepository.create({ employee: employee['id'], ...data});
+        const res = await this.employeePayrollRepository.save(response);
+
+        const returnData = await this.employeePayrollRepository.findOne({
+          where: { employee: employee.id },
+        });
+  
+        return returnData
+
+      }else{
+
+        const res = await this.employeePayrollRepository.update({ id: existingRecord['id'] }, data);
+
+        const returnData = await this.employeePayrollRepository.findOne({
+          where: { employee: employee['id'] },
+        });
+  
+        return returnData
+
+      }
+
+      
+
+      
+
   }
 
   async getGender() {
@@ -429,13 +466,15 @@ export class EmployeeModuleService {
 
     await this.employeeInfoRepository.update({ id: +employeerowid.id }, data);
 
-    // const updatedEmployee = await this.employeeInfoRepository.findOne({
-    //   where: { id: employeerowid.id }
-    // });
+    const updatedEmployee = await this.employeeInfoRepository.findOne({
+      where: { id: employeerowid.id }
+    });
 
-    // if (updatedEmployee.isNonNative != null && updatedEmployee.bankAccountNo != null && updatedEmployee.salaryType != null) {
-    //   await this.employeeInfoRepository.update({ id: +employeerowid.id }, { active: true });
-    // }
+    const existingPayrollRecord = await this.employeePayrollRepository.findOne({ where: { employee: existingEmployee['id'] } });
+
+    if (updatedEmployee.isNonNative != null && updatedEmployee.bankAccountNo != null && existingPayrollRecord.salaryType != null) {
+      await this.employeeInfoRepository.update({ id: +employeerowid.id }, { active: true });
+    }
 
     // return await this.employeeInfoRepository.findOne({
     //   where: { id: employeerowid.id },
@@ -456,7 +495,7 @@ export class EmployeeModuleService {
     }
 
     const employeerow = await this.employeeRepository.findOne({ where: { id: UpdateEmployeeModuleDto.employeeId } });
-    const employeeInforow = await this.employeeInfoRepository.findOne({ where: { id: UpdateEmployeeModuleDto.employeeInfoId }, relations: [ 'employeeType', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'paymentFrequency', 'bankName',  'created_by', 'updated_by', 'employee' ] });
+    const employeeInforow = await this.employeeInfoRepository.findOne({ where: { id: UpdateEmployeeModuleDto.employeeInfoId }, relations: [ 'employeeType', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName',  'created_by', 'updated_by', 'employee' ] });
 
     if (data.hasOwnProperty("drivingLicenceCategory")) {
       const drivingLicenceCategories = data.drivingLicenceCategory;
