@@ -469,7 +469,7 @@ export class EmployeeModuleService {
       where: { id: employeerowid.id }
     });
 
-    const existingPayrollRecord = await this.employeePayrollRepository.findOne({ where: { employee: employeerowid['id'] } });
+    const existingPayrollRecord = await this.employeePayrollRepository.findOne({ where: { employee: existingEmployee['id'] } });
 
     if (updatedEmployee.isNonNative != null && updatedEmployee.bankAccountNo != null && existingPayrollRecord.salaryType != null) {
       await this.employeeInfoRepository.update({ id: +employeerowid.id }, { active: true });
@@ -494,7 +494,7 @@ export class EmployeeModuleService {
     }
 
     const employeerow = await this.employeeRepository.findOne({ where: { id: UpdateEmployeeModuleDto.employeeId } });
-    const employeeInforow = await this.employeeInfoRepository.findOne({ where: { id: UpdateEmployeeModuleDto.employeeInfoId }, relations: [ 'employeeType', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'paymentFrequency', 'bankName',  'created_by', 'updated_by', 'employee' ] });
+    const employeeInforow = await this.employeeInfoRepository.findOne({ where: { id: UpdateEmployeeModuleDto.employeeInfoId }, relations: [ 'employeeType', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName',  'created_by', 'updated_by', 'employee' ] });
 
     if (data.hasOwnProperty("drivingLicenceCategory")) {
       const drivingLicenceCategories = data.drivingLicenceCategory;
