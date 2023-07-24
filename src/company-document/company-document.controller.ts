@@ -17,30 +17,21 @@ export class CompanyDocumentController {
   // ** Customer document upload
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
-  async create(@UploadedFiles() file, @Body() documentData,) {
+  async create(@UploadedFiles() file, @Body() documentData) {
     const docArray = documentData['data']['doc'];
     const document = await this.imageUploadService.uploadcompany(file, "body");
 
-    const documentPathsArray = [];
+    const documentPath = document[0]['data[doc][file]'][0];
+    const documentName = docArray.documentName;
+    const companyDoc = documentData['data'].companyId;
 
-    if (document.length > 0 && docArray && docArray.length > 0) {
-      for (let i = 0; i < document.length; i++) {
-        const docObj: { documentName?: string; documentPath?: string; companyDoc?: CompaniesEntity; } = {};
+    const data = {
+      documentPath,
+      documentName,
+      companyDoc
+    };
 
-        if (i < document.length) {
-          const documentPath = document[i][Object.keys(document[i])[0]][0];
-          docObj.documentPath = documentPath;
-        }
-
-        if (i < docArray.length) {
-          const documentName = docArray[i].documentName;
-          docObj.documentName = documentName;
-        }
-        docObj.companyDoc = documentData['data'].companyId;
-        documentPathsArray.push(docObj);
-      }
-    }
-    return this.companyDocumentService.create(documentPathsArray);
+    return this.companyDocumentService.create(data);
   }
 
   // ** Customer document find all
@@ -54,7 +45,7 @@ export class CompanyDocumentController {
   findOne(@Param('id') id: string) {
     return this.companyDocumentService.findOne(+id);
   }
-  
+
   // update company document
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCompanyDocumentDto: UpdateCompanyDocumentDto) {
