@@ -50,14 +50,43 @@ export class EmployeeDataHistoryService {
         start_date: 'DESC',
       },
       skip: createEmployeeDataHistoryDto.page * createEmployeeDataHistoryDto.pageSize,
-      take: createEmployeeDataHistoryDto.pageSize, 
+      take: createEmployeeDataHistoryDto.pageSize,
     });
 
-  return {
-    historyList : results,
-    totalCount,
-    totalPages: Math.ceil(totalCount / createEmployeeDataHistoryDto.pageSize),  // Calculate the total number of pages
-  };
+    const historyDate = results.filter(function (row) {
+      return Math.floor(new Date(row.start_date).getTime() / 86400000) <= Math.floor(new Date().getTime() / 86400000)
+    })
+
+    return {
+      historyList: historyDate,
+      totalCount,
+      totalPages: Math.ceil(totalCount / createEmployeeDataHistoryDto.pageSize),  // Calculate the total number of pages
+    };
+  }
+
+  async findEmpDataShedule(createEmployeeDataHistoryDto) {
+    const [results, totalCount] = await this.empDataHistoryRepository.findAndCount({
+      where: {
+        employeeId: createEmployeeDataHistoryDto.employeeId,
+        type: createEmployeeDataHistoryDto.type,
+      },
+      relations: ['updated_by', 'created_by'],
+      order: {
+        start_date: 'DESC',
+      },
+      // skip: createEmployeeDataHistoryDto.page * createEmployeeDataHistoryDto.pageSize,
+      // take: createEmployeeDataHistoryDto.pageSize,
+    });
+
+    const sheduleDate = results.filter(function (row) {
+      return Math.floor(new Date(row.start_date).getTime() / 86400000) > Math.floor(new Date().getTime() / 86400000)
+    })
+
+    return {
+      historyList: sheduleDate,
+      totalCount,
+      totalPages: Math.ceil(totalCount / createEmployeeDataHistoryDto.pageSize),  // Calculate the total number of pages
+    };
   }
 
   findOne(id: number) {

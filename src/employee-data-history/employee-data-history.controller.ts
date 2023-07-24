@@ -17,6 +17,11 @@ export class EmployeeDataHistoryController {
     return this.employeeDataHistoryService.findEmpDataHistory(createEmployeeDataHistoryDto);
   }
 
+  @Post('/shedulebytype')
+  findEmpDataShedule(@Body() createEmployeeDataHistoryDto: CreateEmployeeDataHistoryDto) {
+    return this.employeeDataHistoryService.findEmpDataShedule(createEmployeeDataHistoryDto);
+  }
+
   @Get()
   findAll() {
    // return this.employeeDataHistoryService.findAll();
