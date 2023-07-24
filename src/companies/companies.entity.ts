@@ -113,15 +113,12 @@ export class CompaniesEntity {
   @OneToMany(() => Employee, employeemodule => employeemodule.company, ({ cascade: true }))
   employedetails: Employee[];
 
-  @OneToMany(() => CompanyDocument, companyDocuments => companyDocuments.company, { cascade: true })
+  @OneToMany(() => CompanyDocument, companyDocuments => companyDocuments.companyDoc, { cascade: true })
   documents: CompanyDocument[];
-
-  
 
   @ManyToMany(() => User, user => user.companies)
   @JoinTable()
   users: User[];
-
 
   @ManyToMany(() => PagePermissionEntity, (page) => page.companies)
   @JoinTable()
@@ -137,7 +134,6 @@ export class CompaniesEntity {
 
   @OneToMany(() => CompaniesHistorydata, historydata => historydata.company, ({ cascade: true }))
   historydata: CompaniesHistorydata[];
-
 }
 
 @Entity('company_info')

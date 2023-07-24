@@ -1,9 +1,10 @@
-import { CompaniesEntity } from 'src/companies/companies.entity';
-
+import { CompaniesEntity } from 'src/companies/companies.entity'
 
 export class CreateCompanyDocumentDto {
-  id: number;
-  documentPath: string;
-  createdat: Date;
-  company:CompaniesEntity
+  id: number
+  documentName: string
+  documentPath: string
+  createdat: Date
+  companyDoc: CompaniesEntity
+  status: boolean
 }
