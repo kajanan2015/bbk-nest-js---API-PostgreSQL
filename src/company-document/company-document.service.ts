@@ -9,9 +9,9 @@ export class CompanyDocumentService {
   constructor(
     @InjectRepository(CompanyDocument)
     private companyDocumentRepository: Repository<CompanyDocument>
-  ) {}
- async create(createCompanyDocumentDto) {
-    const response=this.companyDocumentRepository.create(createCompanyDocumentDto);
+  ) { }
+  async create(documentData) {
+    const response = this.companyDocumentRepository.create(documentData);
     return await this.companyDocumentRepository.save(response);
   }
 
@@ -19,12 +19,12 @@ export class CompanyDocumentService {
     return await this.companyDocumentRepository.find();
   }
 
- async findOne(id: number) {
-    const defectCaseFind = await this.companyDocumentRepository.findOne(id);
-    if (!defectCaseFind) {
-      throw new NotFoundException(` ID '${id}' not found`);
-    }
-    return defectCaseFind;
+  async findOne(companyDocId: number) {
+    const doc = await this.companyDocumentRepository.find({
+      where: { companyDoc: companyDocId }
+    });
+
+    return doc;
   }
 
   async update(id: number, updatecompanydocDto: UpdateCompanyDocumentDto) {
