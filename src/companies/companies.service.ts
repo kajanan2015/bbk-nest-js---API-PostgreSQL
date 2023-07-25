@@ -368,7 +368,8 @@ export class CompaniesService {
       documentData = {
         documentName: doc.documentName,
         documentPath: doc.documentPath,
-        companyDoc: maintableinsertsave["id"]
+        companyDoc: maintableinsertsave["id"],
+        createdBy: companyData.created_by
       }
 
       const addDocuments = await this.companyDocumentRepository.create(documentData)
