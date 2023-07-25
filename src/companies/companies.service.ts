@@ -386,7 +386,6 @@ export class CompaniesService {
       company: maintableinsertsave["id"],
       start_date: dataCompany.start_date
     }
-
     const addhistory = await this.companyhistoryRepository.create(historydate)
     const savehistory = await this.companyhistoryRepository.save(addhistory)
 
@@ -398,37 +397,37 @@ export class CompaniesService {
     // const responsehistory = await this.companyhistoryRepository.create({ history_data_type: "company-history", history_data: dataCompany, company: responsesave["id"] });
     // const res = await this.datahistoryrepo.save(responsehistory);
 
-    let newcompassigndata;
+    // let newcompassigndata;
 
-    const newlycreatedcompany = responsesave["company_info_id"];
-    await this.companypackagerowrepository
-      .createQueryBuilder()
-      .update(Companypackagerow)
-      .set({ enddate: currentDateTime })
-      .where('companyId = :newlycreatedcompany', { newlycreatedcompany })
-      .execute();
-    for (const trialpackagerowvalue of trialpackagedata.packagedetails) {
-      console.log(trialpackagerowvalue, 5665566324324)
-      newcompassigndata = {
-        rowcount: trialpackagerowvalue.NoOfRecords,
-        availablerowcount: trialpackagerowvalue.NoOfRecords,
-        rowprice: trialpackagerowvalue.CostPerRecord,
-        packageprice: trialpackagerowvalue.PackagePrice,
-        module: trialpackagerowvalue.module.id,
-        packages: trialpackagerowvalue.packages.id,
-        moduledetails: trialpackagerowvalue.id,
-        company: parseInt(responsesave["company_info_id"]),
-        trialpackageidentifier: '1'
-      }
-      console.log(newcompassigndata, 5236565)
-      // const compackageresponse = await this.companypackagerowrepository.create(newcompassigndata)
-      // const comppackagerowadded = await this.companypackagerowrepository.save(compackageresponse)
-    }
+    // const newlycreatedcompany = responsesave["company_info_id"];
+    // await this.companypackagerowrepository
+    //   .createQueryBuilder()
+    //   .update(Companypackagerow)
+    //   .set({ enddate: currentDateTime })
+    //   .where('companyId = :newlycreatedcompany', { newlycreatedcompany })
+    //   .execute();
+    // for (const trialpackagerowvalue of trialpackagedata.packagedetails) {
+    //   console.log(trialpackagerowvalue, 5665566324324)
+    //   newcompassigndata = {
+    //     rowcount: trialpackagerowvalue.NoOfRecords,
+    //     availablerowcount: trialpackagerowvalue.NoOfRecords,
+    //     rowprice: trialpackagerowvalue.CostPerRecord,
+    //     packageprice: trialpackagerowvalue.PackagePrice,
+    //     module: trialpackagerowvalue.module.id,
+    //     packages: trialpackagerowvalue.packages.id,
+    //     moduledetails: trialpackagerowvalue.id,
+    //     company: parseInt(responsesave["company_info_id"]),
+    //     trialpackageidentifier: '1'
+    //   }
+    //   console.log(newcompassigndata, 5236565)
+    //   // const compackageresponse = await this.companypackagerowrepository.create(newcompassigndata)
+    //   // const comppackagerowadded = await this.companypackagerowrepository.save(compackageresponse)
+    // }
 
 
 
-    console.log(dataCompany, 453)
-    console.log(newCompany, 43534)
+    // console.log(dataCompany, 453)
+    // console.log(newCompany, 43534)
     // await this.mailservice.companycreationsuccess(dataCompany.companyEmail, "adminemail", "adminname", dataCompany.companyName, process.env.main_url);
     if (dataCompany.companyIdentifier == Companyidentifier.MAIN) {
       const query = `
@@ -1605,8 +1604,8 @@ export class CompaniesService {
       const previousentitydata = { ...entity }
       const updatedpreviousdata = { ...entity };
       updatedpreviousdata.updated_at = data.updatedAt,
-        updatedpreviousdata.updated_by = data.updatedBy,
-        updatedpreviousdata.end_date = start_date
+      updatedpreviousdata.updated_by = data.updatedBy,
+      updatedpreviousdata.end_date = start_date
       delete entity.company_info_id;
       delete entity.updated_at;
       delete entity.end_date;
