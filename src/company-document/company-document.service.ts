@@ -15,16 +15,18 @@ export class CompanyDocumentService {
     return await this.companyDocumentRepository.save(response);
   }
 
-  async updateStatus(documentName, newStatus) {
+  async updateStatus(documentName, newStatus, endDate) {
     try {
       const companyDocument = await this.companyDocumentRepository.find({
         where: {
           documentName: documentName,
+          endDate: null
         },
       });
 
       for (const companyDoc of companyDocument) {
         companyDoc.status = newStatus
+        companyDoc.endDate = endDate
       }
 
       await this.companyDocumentRepository.save(companyDocument);

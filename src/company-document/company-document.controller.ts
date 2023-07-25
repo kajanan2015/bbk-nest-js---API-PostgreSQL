@@ -25,10 +25,11 @@ export class CompanyDocumentController {
     const documentName = docArray.documentName;
     const companyDoc = documentData['data'].companyId;
     const createdBy = documentData['data'].createdBy;
+    const endDate = documentData['data'].endDate;
     const existing = await this.companyDocumentService.findByDocumentName(documentName);
 
     if (existing) {
-      await this.companyDocumentService.updateStatus(existing.documentName, false);
+      await this.companyDocumentService.updateStatus(existing.documentName, false, endDate);
     }
 
     const data = {

@@ -20,8 +20,11 @@ export class CompanyDocument {
   @Column({ type: 'boolean', default: true })
   status: Boolean;
 
-  @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
-  createdat: Date;
+  @Column("timestamp", { name: "startDate", default: () => "CURRENT_TIMESTAMP" })
+  startDate: Date;
+
+  @Column("timestamp", { name: "endDate", nullable: true, default: () => null })
+  endDate: Date;
 
   @ManyToOne(() => User, user => user.companydocumentcreate)
   @JoinColumn({ name: 'created_by' })
