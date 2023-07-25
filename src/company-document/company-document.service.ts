@@ -37,9 +37,17 @@ export class CompanyDocumentService {
     return await this.companyDocumentRepository.find();
   }
 
-  async findOne(companyId: number) {
+  async findByCompanyId(companyId: number) {
     const doc = await this.companyDocumentRepository.find({
       where: { companyDoc: companyId, status: true }
+    });
+
+    return doc;
+  }
+
+  async findDocHistory(documentName: string) {
+    const doc = await this.companyDocumentRepository.find({
+      where: { documentName: documentName }
     });
 
     return doc;

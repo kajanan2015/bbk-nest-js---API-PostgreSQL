@@ -47,8 +47,14 @@ export class CompanyDocumentController {
 
   // ** Customer document find  by company id
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.companyDocumentService.findOne(+id);
+  findByCompanyId(@Param('id') id: string) {
+    return this.companyDocumentService.findByCompanyId(+id);
+  }
+
+  // ** Customer document history find by document name
+  @Get('document-history/:documentName')
+  findDocHistory(@Param('documentName') documentName: string) {
+    return this.companyDocumentService.findDocHistory(documentName);
   }
 
   // ** Check document name existing
