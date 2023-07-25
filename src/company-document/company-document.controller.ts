@@ -24,6 +24,7 @@ export class CompanyDocumentController {
     const documentPath = document[0]['data[doc][file]'][0];
     const documentName = docArray.documentName;
     const companyDoc = documentData['data'].companyId;
+    const createdBy = documentData['data'].createdBy;
     const existing = await this.companyDocumentService.findByDocumentName(documentName);
 
     if (existing) {
@@ -33,7 +34,8 @@ export class CompanyDocumentController {
     const data = {
       documentPath,
       documentName,
-      companyDoc
+      companyDoc,
+      createdBy
     };
 
     return this.companyDocumentService.create(data);

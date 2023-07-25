@@ -13,6 +13,7 @@ import { CustomizeTable } from 'src/customize-table/customize-table.entity';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
 import { EmployeeDocument } from 'src/employee-document/employee-document.entity';
+import { CompanyDocument } from 'src/company-document/company-document.entity';
 
 @Entity()
 export class User  {
@@ -156,5 +157,7 @@ export class User  {
   @OneToMany(()=>CompaniesHistorydata, company => company.updated_by,{cascade:true})
   companyhistoryupdate:CompaniesHistorydata[];
 
+  @OneToMany(()=>CompanyDocument, company => company.createdBy,{cascade:true})
+  companydocumentcreate:CompanyDocument[];
   
 }
