@@ -47,7 +47,8 @@ export class CompanyDocumentService {
 
   async findDocHistory(documentName: string) {
     const doc = await this.companyDocumentRepository.find({
-      where: { documentName: documentName }
+      where: { documentName: documentName },
+      relations: ["createdBy"],
     });
 
     return doc;
