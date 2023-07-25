@@ -3,6 +3,8 @@ import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColum
 import { PermissionRoleEntity } from 'src/permission-role/permission-role.entity';
 import { TripEntity } from 'src/trip/trip.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
+import { CompaniesEntityinfo } from 'src/companies/companies.entity';
+import { CompaniesHistorydata } from 'src/companies/companies.entity';
 import { Createmodule } from 'src/createmodule/createmodule.entity';
 import { Createpackage } from 'src/createpackage/createpackage.entity';
 import { CompanyPayment } from 'src/company-payment/company-payment.entity';
@@ -11,6 +13,7 @@ import { CustomizeTable } from 'src/customize-table/customize-table.entity';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
 import { EmployeeDocument } from 'src/employee-document/employee-document.entity';
+
 @Entity()
 export class User  {
   @PrimaryGeneratedColumn()
@@ -137,4 +140,21 @@ export class User  {
 
   @OneToMany(()=>CompanyWorkPattern, updatedby => updatedby.patternupdate,{cascade:true})
   patternupdatedby:CompanyWorkPattern[];
+
+  @OneToMany(()=>CompaniesEntity, company => company.created_by,{cascade:true})
+  companymainusercreate:CompaniesEntity[];
+
+  @OneToMany(()=>CompaniesEntityinfo, company => company.created_by,{cascade:true})
+  companyinfousercreate:CompaniesEntityinfo[];
+
+  @OneToMany(()=>CompaniesHistorydata, company => company.created_by,{cascade:true})
+  companyhistorycreate:CompaniesHistorydata[];
+
+  @OneToMany(()=>CompaniesEntityinfo, company => company.updated_by,{cascade:true})
+  companyinfouserupdate:CompaniesEntityinfo[];
+
+  @OneToMany(()=>CompaniesHistorydata, company => company.updated_by,{cascade:true})
+  companyhistoryupdate:CompaniesHistorydata[];
+
+  
 }

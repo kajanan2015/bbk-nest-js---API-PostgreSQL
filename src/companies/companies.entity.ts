@@ -17,38 +17,13 @@ import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entit
 import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { VehicleTypeEntity } from 'src/vehicle-type/vehicle-type.entity';
-// @Entity('company_k')
-// export class CompaniesEntityssss {
-//   @PrimaryGeneratedColumn({ type: "int", name: "id", unsigned: true })
-//   id: number;
-
-//   // // @Column("int",{ nullable: true ,  default: () => null })
-//   // // companyType: number | null;
-
-//   // // @Column("int",{ nullable: true , default: () => null })
-//   // // country: number | null;
-
-//   // // @Column("int",{ nullable: true , default: () => null })
-//   // // regAddressCountry: number;
-//   // @Column("varchar", { nullable: true, length: 250, default: () => null })
-//   // code: string;
-
-//   // @Column("tinyint", { default: 0, comment: ' 0-trial,1-12 month, 2-36 month' })
-//   // contractagreement: number;
-
-//   // @Column("timestamp", { name: "validityperiod", default: null })
-//   // validityperiod: Date;
-
-//   // @Column("varchar", { length: 100, nullable: true, default: () => null })
-//   // paymentlinkotp: string;
-
-// }
 
 
 
-export enum Companyidentifier{
-  MAIN='maincompany',
-  SUB='subcompany'
+
+export enum Companyidentifier {
+  MAIN = 'maincompany',
+  SUB = 'subcompany'
 }
 
 export enum Companystatus {
@@ -64,9 +39,9 @@ export enum Deactivationmethod {
 }
 
 export enum Historydatatype {
-  COMPANY='company initial data',
-  COMPANYINFO='company info',
-  COMPANYDETAILS='company details'
+  COMPANY = 'company initial data',
+  COMPANYINFO = 'company info',
+  COMPANYDETAILS = 'company details'
 }
 
 @Entity('company')
@@ -80,8 +55,10 @@ export class CompaniesEntity {
   @Column("varchar", { length: 10, comment: "to declare employee id" })
   company_prefix: string | null;
 
-  @Column("int", { nullable: true, default: () => null })
-  created_by: number;
+  @ManyToOne(() => User, user => user.companymainusercreate)
+  @JoinColumn({ name: 'created_by' })
+  created_by: User;
+
 
   @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
   created_at: Date;
@@ -167,7 +144,7 @@ export class CompaniesEntityinfo {
   country: country;
 
   @ManyToOne(() => companytype, companytype => companytype.companyType)
-  @JoinColumn({ name: 'company_type'})
+  @JoinColumn({ name: 'company_type' })
   companyType: companytype;
 
 
@@ -209,10 +186,10 @@ export class CompaniesEntityinfo {
   @Column("enum", { name: "deactivation_method", enum: Deactivationmethod, default: Deactivationmethod.NOTDELETE, comment: 'scheduled/immediate/not deleted' })
   deactivationmethod: Deactivationmethod;
 
-  @Column('enum',{name:"company_status",enum:Companystatus,default:Companystatus.TRIAL,comment:'trial/active/decativate'})
-  company_status:Companystatus;
+  @Column('enum', { name: "company_status", enum: Companystatus, default: Companystatus.TRIAL, comment: 'trial/active/decativate' })
+  company_status: Companystatus;
 
-  @Column("enum", { name:"company_identifier",enum:Companyidentifier,default:Companyidentifier.MAIN,comment:"maincompany/sucompany" })
+  @Column("enum", { name: "company_identifier", enum: Companyidentifier, default: Companyidentifier.MAIN, comment: "maincompany/sucompany" })
   companyIdentifier: Companyidentifier;
 
 
@@ -224,23 +201,24 @@ export class CompaniesEntityinfo {
   @JoinColumn({ name: 'company_id' })
   company: CompaniesEntity;
 
-  @Column("int", { nullable: true, default: () => null })
-  created_by: number;
+  @ManyToOne(() => User, user => user.companyinfousercreate)
+  @JoinColumn({ name: 'created_by' })
+  created_by: User;
 
   @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
   created_at: Date;
 
-  @Column("int", { nullable: true, default: () => null })
-  updated_by: number;
-
+  @ManyToOne(() => User, user => user.companyinfouserupdate)
+  @JoinColumn({ name: 'updated_by' })
+  updated_by: User;
   @Column("timestamp", { name: "updated_at", nullable: true, default: () => null })
   updated_at: Date;
 
-  @Column('timestamp',{name:'start_date', default: () => "CURRENT_TIMESTAMP"})
-  start_date:Date;
+  @Column('timestamp', { name: 'start_date', default: () => "CURRENT_TIMESTAMP" })
+  start_date: Date;
 
-  @Column('timestamp',{name:'end_date',default:null,nullable:true})
-  end_date:Date;
+  @Column('timestamp', { name: 'end_date', default: null, nullable: true })
+  end_date: Date;
 
   @ManyToOne(() => Paymenttype, paymenttype => paymenttype.paymentType)
   @JoinColumn({ name: 'billing' })
@@ -252,24 +230,27 @@ export class CompaniesEntityinfo {
 }
 
 @Entity('company_data_history')
-export class CompaniesHistorydata{
+export class CompaniesHistorydata {
   @PrimaryGeneratedColumn({ type: "int", name: "company_history_id", unsigned: true })
   id: number;
 
-  @Column("enum", { name: "history_data_type", enum:Historydatatype, default:Historydatatype.COMPANY, comment:"company initial data/company info"})
+  @Column("enum", { name: "history_data_type", enum: Historydatatype, default: Historydatatype.COMPANY, comment: "company initial data/company info" })
   history_data_type: Historydatatype;
 
-  @Column( {type:"text", name: "history_data"})
-  history_data:  String;
+  @Column({ type: "text", name: "history_data" })
+  history_data: String;
 
-  @Column("int", { nullable: true, default: () => null })
-  created_by: number;
+  @ManyToOne(() => User, user => user.companyhistorycreate)
+  @JoinColumn({ name: 'created_by' })
+  created_by: User;
 
   @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
   created_at: Date;
 
-  @Column("int", { nullable: true, default: () => null })
-  updated_by: number;
+  @ManyToOne(() => User, user => user.companyhistoryupdate)
+  @JoinColumn({ name: 'updated_by' })
+  updated_by: User;
+
 
   @Column("timestamp", { name: "updated_at", nullable: true, default: () => null })
   updated_at: Date;
@@ -282,6 +263,6 @@ export class CompaniesHistorydata{
   @JoinColumn({ name: 'company_id' })
   company: CompaniesEntity;
 
-  @Column('timestamp',{nullable:true,name:'start_date', default: () => "CURRENT_TIMESTAMP"})
-  start_date:Date;
+  @Column('timestamp', { nullable: true, name: 'start_date', default: () => "CURRENT_TIMESTAMP" })
+  start_date: Date;
 }
