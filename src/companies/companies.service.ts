@@ -1601,6 +1601,11 @@ export class CompaniesService {
       throw new NotFoundException('Entity not found');
     }
     if (start_date.getTime() >= date.getTime()) {
+      const passdatatogetschedule={type:'',companyInfoId:companyinfoid}
+      const existschedule=await this.getscheduledcompanydatahistory(companyid,passdatatogetschedule);
+      if(existschedule.length>0){
+        return  HttpStatus.CONFLICT;
+      }
       const previousentitydata = { ...entity }
       const updatedpreviousdata = { ...entity };
       updatedpreviousdata.updated_at = data.updatedAt,

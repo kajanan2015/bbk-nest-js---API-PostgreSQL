@@ -341,9 +341,6 @@ export class CompaniesController {
       ...companyData,
       filename
     }
-
-
-    console.log(data, 990909)
     return await this.service.updatenew(id, data);
   }
 
