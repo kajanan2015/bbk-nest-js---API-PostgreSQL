@@ -15,23 +15,37 @@ export class CompanyDocumentService {
     return await this.companyDocumentRepository.save(response);
   }
 
+  async updateStatus(documentName, newStatus) {
+    try {
+      const companyDocument = await this.companyDocumentRepository.find({
+        where: {
+          documentName: documentName,
+        },
+      });
+
+      for (const companyDoc of companyDocument) {
+        companyDoc.status = newStatus
+      }
+
+      await this.companyDocumentRepository.save(companyDocument);
+    } catch (error) {
+      throw new Error('Failed to update CompanyDocument status');
+    }
+  }
+
   async findAll() {
     return await this.companyDocumentRepository.find();
   }
 
-  async findOne(companyDocId: number) {
+  async findOne(companyId: number) {
     const doc = await this.companyDocumentRepository.find({
-      where: { companyDoc: companyDocId }
+      where: { companyDoc: companyId, status: true }
     });
 
     return doc;
   }
 
-  async update(id: number, updatecompanydocDto: UpdateCompanyDocumentDto) {
-    await this.companyDocumentRepository.update({ id }, updatecompanydocDto);
-    return await this.companyDocumentRepository.findOne({ id });
-  }
-  remove(id: number) {
-    return `This action removes a #${id} defectCase`;
+  async findByDocumentName(documentName: string): Promise<CompanyDocument> {
+    return await this.companyDocumentRepository.findOne({ where: { documentName: documentName } });
   }
 }

@@ -24,6 +24,11 @@ export class CompanyDocumentController {
     const documentPath = document[0]['data[doc][file]'][0];
     const documentName = docArray.documentName;
     const companyDoc = documentData['data'].companyId;
+    const existing = await this.companyDocumentService.findByDocumentName(documentName);
+
+    if (existing) {
+      await this.companyDocumentService.updateStatus(existing.documentName, false);
+    }
 
     const data = {
       documentPath,
@@ -46,14 +51,15 @@ export class CompanyDocumentController {
     return this.companyDocumentService.findOne(+id);
   }
 
-  // update company document
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCompanyDocumentDto: UpdateCompanyDocumentDto) {
-    return this.companyDocumentService.update(+id, updateCompanyDocumentDto);
-  }
-  // delete company document
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.companyDocumentService.remove(+id);
+  // ** Check document name existing
+  @Post('document-name')
+  async checkemailexist(@Body() data: any) {
+    const documentName = Object.keys(data)[0]
+    const existing = await this.companyDocumentService.findByDocumentName(documentName);
+    if (existing) {
+      return "name exist";
+    } else {
+      return 'name not exist'
+    }
   }
 }
