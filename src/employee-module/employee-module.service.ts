@@ -229,11 +229,6 @@ export class EmployeeModuleService {
         return returnData
 
       }
-
-      
-
-      
-
   }
 
   async getGender() {
@@ -339,6 +334,7 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("linkedEmployee.gender", "gender")
       .leftJoinAndSelect("linkedEmployee.maritalStatus", "maritalStatus")
       .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
+      .leftJoinAndSelect("linkedEmployee.drivingLicenceCategory", "drivingLicenceCategory")
       .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
       .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
       .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
@@ -494,8 +490,8 @@ export class EmployeeModuleService {
       ...UpdateEmployeeModuleDto.data
     }
 
-    const employeerow = await this.employeeRepository.findOne({ where: { id: UpdateEmployeeModuleDto.employeeId } });
-    const employeeInforow = await this.employeeInfoRepository.findOne({ where: { id: UpdateEmployeeModuleDto.employeeInfoId }, relations: [ 'employeeType', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName',  'created_by', 'updated_by', 'employee' ] });
+    const employeerow = await this.employeeRepository.findOne({ where: { id: +UpdateEmployeeModuleDto.employeeId } });
+    const employeeInforow = await this.employeeInfoRepository.findOne({ where: { id: +UpdateEmployeeModuleDto.employeeInfoId }, relations: ['employeeType', 'drivingLicenceCategory', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName', 'created_by', 'updated_by', 'employee'] });
 
     if (data.hasOwnProperty("drivingLicenceCategory")) {
       const drivingLicenceCategories = data.drivingLicenceCategory;
@@ -504,12 +500,12 @@ export class EmployeeModuleService {
         drivinglicensecategoryId.push(categoryid.id)
       }
 
-      const repsonse1 = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
-      employeeInforow.drivingLicenceCategory = repsonse1;
+      // const repsonse1 = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
+      // employeeInforow.drivingLicenceCategory = repsonse1;
 
-      const response3333 = await this.employeeInfoRepository.save(employeeInforow)
+      // const response3333 = await this.employeeInfoRepository.save(employeeInforow)
 
-      delete data.drivingLicenceCategory;
+     // delete data.drivingLicenceCategory;
     }
 
     let { visaDoc, drivingLicenceCategory, tachoDoc, officialDoc, drivingLicenceDoc, cpcCardDoc, refdoc, empProvidedCopy, ...dataWithoutDoc } = data
@@ -542,7 +538,6 @@ export class EmployeeModuleService {
       console.log(true, 22222222222);    
       await this.employeeInfoRepository.update({ id: +UpdateEmployeeModuleDto.employeeInfoId }, dataWithoutDoc);
     }
-
 
     const documents = UpdateEmployeeModuleDto['filenames'];
 
