@@ -211,7 +211,7 @@ async deletedoc(data){
     console.log(imageUrl,9090)
     const s3 = this.getS3();
     const image = await sharp(await fetch(imageUrl).then(res => res.buffer()));
-    const thumbnail = await image.resize({ width: 100, height: 100, fit: 'inside' }).toBuffer();
+    const thumbnail = await image.resize({ width: 50, height: 50, fit: 'inside' }).toBuffer();
     const objectKey = imageUrl.split('/').pop();
     const uploadParams = {
       Bucket: 'intaap/thumb',
