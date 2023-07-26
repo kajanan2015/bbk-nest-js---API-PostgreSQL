@@ -4,7 +4,8 @@ export class CreateCompanyDocumentDto {
   id: number
   documentName: string
   documentPath: string
-  createdat: Date
+  startDate: Date
+  endDate: Date
   companyDoc: CompaniesEntity
   status: boolean
 }

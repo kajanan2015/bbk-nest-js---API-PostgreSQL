@@ -15,6 +15,7 @@ export class CompanyDocumentController {
     private readonly imageUploadService: ImageUploadService) { }
 
   // ** Customer document upload
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   async create(@UploadedFiles() file, @Body() documentData) {
@@ -43,24 +44,28 @@ export class CompanyDocumentController {
   }
 
   // ** Customer document find all
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   findAll() {
     return this.companyDocumentService.findAll();
   }
 
   // ** Customer document find  by company id
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   findByCompanyId(@Param('id') id: string) {
     return this.companyDocumentService.findByCompanyId(+id);
   }
 
   // ** Customer document history find by document name
+  @UseGuards(AuthGuard('jwt'))
   @Get('document-history/:documentName')
   findDocHistory(@Param('documentName') documentName: string) {
     return this.companyDocumentService.findDocHistory(documentName);
   }
 
   // ** Check document name existing
+  @UseGuards(AuthGuard('jwt'))
   @Post('document-name')
   async checkemailexist(@Body() data: any) {
     const documentName = Object.keys(data)[0]
