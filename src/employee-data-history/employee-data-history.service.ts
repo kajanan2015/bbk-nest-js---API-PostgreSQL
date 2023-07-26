@@ -47,7 +47,7 @@ export class EmployeeDataHistoryService {
       },
       relations: ['updated_by', 'created_by'],
       order: {
-        start_date: 'ASC',
+        start_date: 'DESC',
       },
       skip: createEmployeeDataHistoryDto.page * createEmployeeDataHistoryDto.pageSize,
       take: createEmployeeDataHistoryDto.pageSize,
@@ -72,7 +72,7 @@ export class EmployeeDataHistoryService {
       },
       relations: ['updated_by', 'created_by'],
       order: {
-        start_date: 'ASC',
+        start_date: 'DESC',
       },
       // skip: createEmployeeDataHistoryDto.page * createEmployeeDataHistoryDto.pageSize,
       // take: createEmployeeDataHistoryDto.pageSize,
