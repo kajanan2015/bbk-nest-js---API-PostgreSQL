@@ -14,150 +14,153 @@ import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-his
 import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
 import { EmployeeDocument } from 'src/employee-document/employee-document.entity';
 import { CompanyDocument } from 'src/company-document/company-document.entity';
+import { CustomerSupport } from 'src/customer-support/customer-support.entity';
 
 @Entity()
-export class User  {
+export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true , length: 250, default: () => null })
-  firstName: string|null;
+  @Column({ nullable: true, length: 250, default: () => null })
+  firstName: string | null;
 
-  @Column("varchar",{ nullable: true , length: 250, default: () => null })
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
   middleName: string;
 
-  @Column({ nullable: true , length: 250, default: () => null })
-  lastName: string|null;
+  @Column({ nullable: true, length: 250, default: () => null })
+  lastName: string | null;
 
-  @Column("varchar",{ nullable: true , length: 250, default: () => null })
-  employeeNumber: string|null;
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
+  employeeNumber: string | null;
 
-  @Column({ nullable: true , default: () => null })
-  dob: Date|null;
+  @Column({ nullable: true, default: () => null })
+  dob: Date | null;
 
-  @Column("varchar", { nullable: true , length: 250, default: () => null })
-  address: string|null;
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
+  address: string | null;
 
-  @Column({ nullable: true , length: 250, default: () => null })
-  email: string|null;
+  @Column({ nullable: true, length: 250, default: () => null })
+  email: string | null;
 
-  @Column("varchar", { nullable: true , length: 250, default: () => null })
-  phone: string|null;
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
+  phone: string | null;
 
-  @Column("varchar", { nullable: true , length: 250, default: () => null })
-  nationality: string|null;
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
+  nationality: string | null;
 
-  @Column("varchar", { nullable: true , length: 250, default: () => null })
-  country: string|null;
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
+  country: string | null;
 
-  @Column("varchar", { nullable: true , length: 250, default: () => null })
-  profilePic: string|null;
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
+  profilePic: string | null;
 
-  @Column("varchar", { nullable: true , length: 250, default: () => null })
-  profilePicThumb: string|null;
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
+  profilePicThumb: string | null;
 
-  @Column({ nullable: true , length: 250, default: () => null })
-  password: string|null;
+  @Column({ nullable: true, length: 250, default: () => null })
+  password: string | null;
 
-  @Column("varchar", { name:"utype", default: () => "'USER'", length: 50 })
-  uType: string|null ;
+  @Column("varchar", { name: "utype", default: () => "'USER'", length: 50 })
+  uType: string | null;
 
-  @Column({ type: 'boolean', default:true})
-  status: Boolean|null;
-  
+  @Column({ type: 'boolean', default: true })
+  status: Boolean | null;
+
   @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
-  createdat: Date|null;
+  createdat: Date | null;
 
   @Column("timestamp", { name: "updatedat", default: () => "CURRENT_TIMESTAMP" })
-  updatedat: Date|null;
+  updatedat: Date | null;
 
   @ManyToMany(() => PermissionRoleEntity, (role) => role.employees)
   @JoinTable()
   roles: PermissionRoleEntity[];
 
-  @OneToMany(()=>TripEntity, trip => trip.jobuser,{cascade:true})
-  jobdata:TripEntity[]
+  @OneToMany(() => TripEntity, trip => trip.jobuser, { cascade: true })
+  jobdata: TripEntity[]
 
   @ManyToMany(() => CompaniesEntity, company => company.users)
   companies: CompaniesEntity[];
 
-  @OneToMany(()=>Createmodule, cretedby => cretedby.modulecreate,{cascade:true})
-  modulecreatedby:Createmodule[];
+  @OneToMany(() => Createmodule, cretedby => cretedby.modulecreate, { cascade: true })
+  modulecreatedby: Createmodule[];
 
-  @OneToMany(()=>Createmodule, updatedby => updatedby.moduleupdate,{cascade:true})
-  moduleupdateby:Createmodule[];
+  @OneToMany(() => Createmodule, updatedby => updatedby.moduleupdate, { cascade: true })
+  moduleupdateby: Createmodule[];
 
-  @OneToMany(()=>Createpackage, cretedby => cretedby.pkgcreate,{cascade:true})
-  pkgcreatedby:Createpackage[];
+  @OneToMany(() => Createpackage, cretedby => cretedby.pkgcreate, { cascade: true })
+  pkgcreatedby: Createpackage[];
 
-  @OneToMany(()=>Createpackage, updatedby => updatedby.pkgupdate,{cascade:true})
-  pkgupdateby:Createpackage[];
+  @OneToMany(() => Createpackage, updatedby => updatedby.pkgupdate, { cascade: true })
+  pkgupdateby: Createpackage[];
 
-  @OneToMany(()=>CompanyPayment, updatedby => updatedby.issuedBy,{cascade:true})
-  issueByuser:CompanyPayment[];
+  @OneToMany(() => CompanyPayment, updatedby => updatedby.issuedBy, { cascade: true })
+  issueByuser: CompanyPayment[];
 
-  @OneToMany(()=>Employee, employee => employee.created_by,{cascade:true})
-  empCreatedUser:Employee[];
+  @OneToMany(() => Employee, employee => employee.created_by, { cascade: true })
+  empCreatedUser: Employee[];
 
-  @OneToMany(()=>Employee, employee => employee.updated_by,{cascade:true})
-  empUpdatedUser:Employee[];
+  @OneToMany(() => Employee, employee => employee.updated_by, { cascade: true })
+  empUpdatedUser: Employee[];
 
-  @OneToMany(()=>EmployeeInfo, employee => employee.created_by,{cascade:true})
-  empInfoCreatedUser:EmployeeInfo[];
+  @OneToMany(() => EmployeeInfo, employee => employee.created_by, { cascade: true })
+  empInfoCreatedUser: EmployeeInfo[];
 
-  @OneToMany(()=>EmployeeInfo, employee => employee.updated_by,{cascade:true})
-  empInfoUpdatedUser:EmployeeInfo[];
+  @OneToMany(() => EmployeeInfo, employee => employee.updated_by, { cascade: true })
+  empInfoUpdatedUser: EmployeeInfo[];
 
-  @OneToMany(()=>CustomizeTable, customizeTable => customizeTable.user,{cascade:true})
-  tableUser:CustomizeTable[];
+  @OneToMany(() => CustomizeTable, customizeTable => customizeTable.user, { cascade: true })
+  tableUser: CustomizeTable[];
 
   // @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.editedBy,{cascade:true})
   // empEditedUser:CustomizeTable[];
 
-  @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.updated_by,{cascade:true})
-  empHistoryUpdatedBy:EmployeeDataHistory[];
+  @OneToMany(() => EmployeeDataHistory, empDataHistory => empDataHistory.updated_by, { cascade: true })
+  empHistoryUpdatedBy: EmployeeDataHistory[];
 
-  @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.created_by,{cascade:true})
-  empHistoryCreatedBy:EmployeeDataHistory[];
+  @OneToMany(() => EmployeeDataHistory, empDataHistory => empDataHistory.created_by, { cascade: true })
+  empHistoryCreatedBy: EmployeeDataHistory[];
 
-  @OneToMany(()=>EmployeeDocument, document => document.created_by,{cascade:true})
-  empDocEditedUser:EmployeeDocument[];
+  @OneToMany(() => EmployeeDocument, document => document.created_by, { cascade: true })
+  empDocEditedUser: EmployeeDocument[];
 
   // @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.createdBy,{cascade:true})
   // empCreatedUser:CustomizeTable[];
 
-  @Column({ type: 'boolean', default:false})
-  activate: Boolean|null;
+  @Column({ type: 'boolean', default: false })
+  activate: Boolean | null;
 
-  @Column("timestamp", { name: "activated_time", nullable:true, default: () => null })
-  activated_time: Date|null;
+  @Column("timestamp", { name: "activated_time", nullable: true, default: () => null })
+  activated_time: Date | null;
 
-  @Column({ type: 'boolean', default:false})
-  firsttimepasswordchange: Boolean|null;
+  @Column({ type: 'boolean', default: false })
+  firsttimepasswordchange: Boolean | null;
 
 
-  @OneToMany(()=>CompanyWorkPattern, cretedby => cretedby.patterncreate,{cascade:true})
-  patterncreateby:CompanyWorkPattern[];
+  @OneToMany(() => CompanyWorkPattern, cretedby => cretedby.patterncreate, { cascade: true })
+  patterncreateby: CompanyWorkPattern[];
 
-  @OneToMany(()=>CompanyWorkPattern, updatedby => updatedby.patternupdate,{cascade:true})
-  patternupdatedby:CompanyWorkPattern[];
+  @OneToMany(() => CompanyWorkPattern, updatedby => updatedby.patternupdate, { cascade: true })
+  patternupdatedby: CompanyWorkPattern[];
 
-  @OneToMany(()=>CompaniesEntity, company => company.created_by,{cascade:true})
-  companymainusercreate:CompaniesEntity[];
+  @OneToMany(() => CompaniesEntity, company => company.created_by, { cascade: true })
+  companymainusercreate: CompaniesEntity[];
 
-  @OneToMany(()=>CompaniesEntityinfo, company => company.created_by,{cascade:true})
-  companyinfousercreate:CompaniesEntityinfo[];
+  @OneToMany(() => CompaniesEntityinfo, company => company.created_by, { cascade: true })
+  companyinfousercreate: CompaniesEntityinfo[];
 
-  @OneToMany(()=>CompaniesHistorydata, company => company.created_by,{cascade:true})
-  companyhistorycreate:CompaniesHistorydata[];
+  @OneToMany(() => CompaniesHistorydata, company => company.created_by, { cascade: true })
+  companyhistorycreate: CompaniesHistorydata[];
 
-  @OneToMany(()=>CompaniesEntityinfo, company => company.updated_by,{cascade:true})
-  companyinfouserupdate:CompaniesEntityinfo[];
+  @OneToMany(() => CompaniesEntityinfo, company => company.updated_by, { cascade: true })
+  companyinfouserupdate: CompaniesEntityinfo[];
 
-  @OneToMany(()=>CompaniesHistorydata, company => company.updated_by,{cascade:true})
-  companyhistoryupdate:CompaniesHistorydata[];
+  @OneToMany(() => CompaniesHistorydata, company => company.updated_by, { cascade: true })
+  companyhistoryupdate: CompaniesHistorydata[];
 
-  @OneToMany(()=>CompanyDocument, company => company.createdBy,{cascade:true})
-  companydocumentcreate:CompanyDocument[];
-  
+  @OneToMany(() => CompanyDocument, company => company.createdBy, { cascade: true })
+  companydocumentcreate: CompanyDocument[];
+
+  @OneToMany(() => CustomerSupport, company => company.createdBy, { cascade: true })
+  customersupport: CustomerSupport[];
 }

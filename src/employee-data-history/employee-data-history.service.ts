@@ -25,7 +25,7 @@ export class EmployeeDataHistoryService {
         employeeId: +createEmployeeDataHistoryDto.employeeId,
         type: createEmployeeDataHistoryDto.type
       },
-      order: { created_at: 'DESC' },
+      order: { created_at: 'ASC' },
     });
 
     // If a previous record exists, update its endDate
@@ -47,7 +47,7 @@ export class EmployeeDataHistoryService {
       },
       relations: ['updated_by', 'created_by'],
       order: {
-        start_date: 'DESC',
+        start_date: 'ASC',
       },
       skip: createEmployeeDataHistoryDto.page * createEmployeeDataHistoryDto.pageSize,
       take: createEmployeeDataHistoryDto.pageSize,
@@ -72,7 +72,7 @@ export class EmployeeDataHistoryService {
       },
       relations: ['updated_by', 'created_by'],
       order: {
-        start_date: 'DESC',
+        start_date: 'ASC',
       },
       // skip: createEmployeeDataHistoryDto.page * createEmployeeDataHistoryDto.pageSize,
       // take: createEmployeeDataHistoryDto.pageSize,
