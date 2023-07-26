@@ -37,8 +37,8 @@ export class CustomerSupportService {
     }
   }
 
-  findAll() {
-    return `This action returns all customerSupport`;
+  async findAll() {
+    return await this.customerSupportRepository.find({relations: ['inquiryType']});
   }
 
   findOne(id: number) {

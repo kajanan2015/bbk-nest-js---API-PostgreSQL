@@ -4,6 +4,10 @@ import { User } from "src/user/user.entity"
 
 export class CreateCustomerSupportDto {
     id: number
+    fullName: string
+    companyName: string
+    email: string
+    phone: string
     inquiryType: InquiryType
     message: string
     companyId: CompaniesEntity
