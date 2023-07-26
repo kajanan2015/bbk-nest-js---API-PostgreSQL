@@ -4,7 +4,7 @@ module.exports = {
   port: '3306',
   username: 'root',
   password: '',
-  database: 'newdb_v1',
+  database: 'intaap_v2',
   synchronize: true,
   logging: true,
   autoLoadEntities: true,
