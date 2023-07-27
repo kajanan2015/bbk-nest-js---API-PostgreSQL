@@ -144,7 +144,7 @@ async verifypaymentdetailstokendecode(key){
       to: `${adminemail.trim()}`,
       from: "noreply@hexagonasia.com", // override default from
       subject: ` Welcome to ${companyname} Account - New Admin Access Granted`,
-      template: "./newadminadded", // `.hbs` extension is appended automatically
+      template: "./activateemail", // `.hbs` extension is appended automatically
       context: {
         adminname,
         companyname,
