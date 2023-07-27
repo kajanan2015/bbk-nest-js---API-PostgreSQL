@@ -59,7 +59,7 @@ async verifypaymentdetailstokendecode(key){
       to: accountemail.trim(),
       from: "noreply@hexagonasia.com", // override default from
       subject: `Password Reset Link`,
-      template: "./resentlink", // `.hbs` extension is appended automatically
+      template: "./passwordreset", // `.hbs` extension is appended automatically
       context: {
         accountemail,
         link
