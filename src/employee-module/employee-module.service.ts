@@ -199,36 +199,36 @@ export class EmployeeModuleService {
     }
   }
 
-  async createPayrollInfo(createEmployeeModuleDto){
+  async createPayrollInfo(createEmployeeModuleDto) {
 
-      const employee = await this.employeeRepository.findOne({ where: { employeeCode: createEmployeeModuleDto.employeeCode } });
+    const employee = await this.employeeRepository.findOne({ where: { employeeCode: createEmployeeModuleDto.employeeCode } });
 
-      const { employeeCode, ...data } = createEmployeeModuleDto;
+    const { employeeCode, ...data } = createEmployeeModuleDto;
 
-      const existingRecord = await this.employeePayrollRepository.findOne({ where: { employee: employee['id'] } });
+    const existingRecord = await this.employeePayrollRepository.findOne({ where: { employee: employee['id'] } });
 
-      if(!existingRecord){
+    if (!existingRecord) {
 
-        const response = await this.employeePayrollRepository.create({ employee: employee['id'], ...data});
-        const res = await this.employeePayrollRepository.save(response);
+      const response = await this.employeePayrollRepository.create({ employee: employee['id'], ...data });
+      const res = await this.employeePayrollRepository.save(response);
 
-        const returnData = await this.employeePayrollRepository.findOne({
-          where: { employee: employee.id },
-        });
-  
-        return returnData
+      const returnData = await this.employeePayrollRepository.findOne({
+        where: { employee: employee.id },
+      });
 
-      }else{
+      return returnData
 
-        const res = await this.employeePayrollRepository.update({ id: existingRecord['id'] }, data);
+    } else {
 
-        const returnData = await this.employeePayrollRepository.findOne({
-          where: { employee: employee['id'] },
-        });
-  
-        return returnData
+      const res = await this.employeePayrollRepository.update({ id: existingRecord['id'] }, data);
 
-      }
+      const returnData = await this.employeePayrollRepository.findOne({
+        where: { employee: employee['id'] },
+      });
+
+      return returnData
+
+    }
   }
 
   async getGender() {
@@ -343,7 +343,8 @@ export class EmployeeModuleService {
       .andWhere(
         "(linkedEmployee.end_date IS NULL OR linkedEmployee.end_date > :date)",
         { date }
-      );
+      )
+      .orderBy('linkedEmployee.start_date', 'DESC');;
 
     const data = await query.getMany();
     const newdata = [];
@@ -486,59 +487,105 @@ export class EmployeeModuleService {
   }
 
   async updateWithHistory(id: string, UpdateEmployeeModuleDto) {
+
     let data = {
       ...UpdateEmployeeModuleDto.data
     }
 
+    // ** get employee table data
     const employeerow = await this.employeeRepository.findOne({ where: { id: +UpdateEmployeeModuleDto.employeeId } });
+    // ** get employee info table data
     const employeeInforow = await this.employeeInfoRepository.findOne({ where: { id: +UpdateEmployeeModuleDto.employeeInfoId }, relations: ['employeeType', 'drivingLicenceCategory', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName', 'created_by', 'updated_by', 'employee'] });
 
+    // ** shedule start date
+    const start_date = new Date(UpdateEmployeeModuleDto.start_date)
+
+    // ** current date
+    const date = new Date();
+
+    const employeeHistoryId = UpdateEmployeeModuleDto.employeeHistoryId;
+    delete UpdateEmployeeModuleDto.employeeHistoryId;
+
+    // ** get latest shedule data before start date
+    const query: SelectQueryBuilder<EmployeeInfo> = getConnection()
+      .getRepository(EmployeeInfo)
+      .createQueryBuilder("employeeInfo")
+      .leftJoinAndSelect("employeeInfo.employeeType", "employeeType")
+      // .leftJoinAndSelect("employeeInfo.drivingLicenceCategory", "drivingLicenceCategory")
+      .leftJoinAndSelect("employeeInfo.designation", "designation")
+      .leftJoinAndSelect("employeeInfo.gender", "gender")
+      .leftJoinAndSelect("employeeInfo.maritalStatus", "maritalStatus")
+      .leftJoinAndSelect("employeeInfo.addressCountry", "addressCountry")
+      .leftJoinAndSelect("employeeInfo.refCompAddressCountry", "refCompAddressCountry")
+      .leftJoinAndSelect("employeeInfo.drivingLicenceType", "drivingLicenceType")
+      .leftJoinAndSelect("employeeInfo.bankName", "bankName")
+      .leftJoinAndSelect("employeeInfo.created_by", "created_by")
+      .leftJoinAndSelect("employeeInfo.updated_by", "updated_by")
+      .leftJoinAndSelect("employeeInfo.employee", "employee")
+      .andWhere("employeeInfo.employee = :id", { id: +UpdateEmployeeModuleDto.employeeId })
+      .andWhere("employeeInfo.start_date <= :date", { date: start_date })
+      .orderBy('employeeInfo.start_date', 'DESC');
+    const latestSheduleInfo = await query.getOne();
+
+    // ** update latest shedule record updated date and updated by
+    await this.employeeInfoRepository.update({ id: +latestSheduleInfo.id }, { endDate: UpdateEmployeeModuleDto.created_at, updated_by: UpdateEmployeeModuleDto.created_by, ...latestSheduleInfo });
+
+    // ** save employee driving licence categories
     if (data.hasOwnProperty("drivingLicenceCategory")) {
       const drivingLicenceCategories = data.drivingLicenceCategory;
       let drivinglicensecategoryId = [];
       for (const categoryid of data.drivingLicenceCategory) {
         drivinglicensecategoryId.push(categoryid.id)
       }
-
       // const repsonse1 = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
       // employeeInforow.drivingLicenceCategory = repsonse1;
-
       // const response3333 = await this.employeeInfoRepository.save(employeeInforow)
-
-     // delete data.drivingLicenceCategory;
+      // delete data.drivingLicenceCategory;
     }
 
+    // ** remove docs
     let { visaDoc, drivingLicenceCategory, tachoDoc, officialDoc, drivingLicenceDoc, cpcCardDoc, refdoc, empProvidedCopy, ...dataWithoutDoc } = data
 
-    // start date
-    const start_date = new Date(UpdateEmployeeModuleDto.start_date)
-    // current date
-    const date = new Date();
+    if (employeeHistoryId) {
 
-    if (Math.floor(start_date.getTime() / 86400000) > Math.floor(date.getTime() / 86400000)) {
-      console.log(true, 22222222222);
-      //dataWithoutDoc.end_date=start_date
+      const previousRecord = await this.employeedatahistoryrepo.findOne({
+        where: {
+          id: employeeHistoryId
+        },
+        relations: ['employeeInfoId']
+      });
 
-      delete employeeInforow.id;
-      delete employeeInforow.updated_at;
-      delete employeeInforow.endDate;
-      delete employeeInforow.startDate;
-      delete employeeInforow.updated_by;
+      // ** update employee info currnt record
+      await this.employeeInfoRepository.update({ id: +previousRecord?.['employeeInfoId']?.['id'] }, dataWithoutDoc);
 
-      const passvalue = {
-        ...employeeInforow, ...dataWithoutDoc
-      }
-
-      const responseInfo = await this.employeeInfoRepository.create({ ...passvalue, startDate: UpdateEmployeeModuleDto.start_date, employee: UpdateEmployeeModuleDto.employeeId });
-      const resInfo = await this.employeeInfoRepository.save(responseInfo)
-
-      UpdateEmployeeModuleDto.employeeInfoId = resInfo["id"];
 
     } else {
-      console.log(true, 22222222222);    
-      await this.employeeInfoRepository.update({ id: +UpdateEmployeeModuleDto.employeeInfoId }, dataWithoutDoc);
+      // ** compare shedule start date
+      if (Math.floor(start_date.getTime() / 86400000) > Math.floor(date.getTime() / 86400000)) {
+        delete latestSheduleInfo.id;
+        delete latestSheduleInfo.updated_at;
+        delete latestSheduleInfo.endDate;
+        delete latestSheduleInfo.startDate;
+        delete latestSheduleInfo.updated_by;
+        const passvalue = {
+          ...latestSheduleInfo, ...dataWithoutDoc
+        }
+
+        // ** create new employee info record
+        const responseInfo = await this.employeeInfoRepository.create({ ...passvalue, startDate: UpdateEmployeeModuleDto.start_date, employee: UpdateEmployeeModuleDto.employeeId });
+        const resInfo = await this.employeeInfoRepository.save(responseInfo)
+
+        UpdateEmployeeModuleDto.employeeInfoId = resInfo["id"];
+
+      } else {
+        // ** update employee info currnt record
+        await this.employeeInfoRepository.update({ id: +UpdateEmployeeModuleDto.employeeInfoId }, dataWithoutDoc);
+      }
     }
 
+
+
+    // ** get employee documents
     const documents = UpdateEmployeeModuleDto['filenames'];
 
     for (const item of documents) {
@@ -565,6 +612,7 @@ export class EmployeeModuleService {
         docType = "crbCardDoc";
       }
 
+      // ** deactivate previous documents
       this.employeeDocumentRepository
         .createQueryBuilder()
         .update(EmployeeDocument)
@@ -574,6 +622,7 @@ export class EmployeeModuleService {
         .execute();
     }
 
+    // ** create employee document records
     if (documents.length > 0) {
       for (let document in documents) {
         const docEntry = documents[document];
@@ -587,12 +636,11 @@ export class EmployeeModuleService {
           };
           await this.employeedocumentservice.create(empdocs)
           data = { ...data, [docType.replace('[]', '')]: empdocs }
-
         }
       }
     }
 
-    // Find the previous record of the employee
+    // ** Find the previous history record of the employee
     const previousRecord = await this.employeedatahistoryrepo.findOne({
       where: {
         employeeId: +UpdateEmployeeModuleDto.employeeId,
@@ -601,15 +649,23 @@ export class EmployeeModuleService {
       order: { created_by: 'DESC' },
     });
 
-    // If a previous record exists, update its endDate
+    // ** If a previous record exists, update its endDate
     if (previousRecord) {
       previousRecord.updated_at = new Date(Date.now());
       previousRecord.updated_by = UpdateEmployeeModuleDto.created_by;
       await this.employeedatahistoryrepo.save(previousRecord);
     }
 
-    const response = await this.employeedatahistoryrepo.create({ ...UpdateEmployeeModuleDto, data: JSON.stringify(data) });
-    const res = await this.employeedatahistoryrepo.save(response);
+    delete UpdateEmployeeModuleDto.filenames;
+
+    // ** create employee data history record
+    if (employeeHistoryId) {
+      await this.employeedatahistoryrepo.update({ id: employeeHistoryId }, { ...UpdateEmployeeModuleDto, data: JSON.stringify(data) });
+    } else {
+      const response = await this.employeedatahistoryrepo.create({ ...UpdateEmployeeModuleDto, data: JSON.stringify(data) });
+      const res = await this.employeedatahistoryrepo.save(response);
+    }
+    
 
     // added by nuwan for mail send employeee password should be random generate one add random string
     // await this.mailservice.sendemailtoemployeeregistration(employeeemail,companyname,employeename,employeepassword,employeeusername)
