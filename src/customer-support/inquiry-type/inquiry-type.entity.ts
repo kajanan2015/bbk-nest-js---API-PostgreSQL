@@ -6,7 +6,7 @@ export class InquiryType {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column("varchar", { length: 300, default: () => null })
+    @Column("varchar", { name: "inquiry_type", length: 300, default: () => null })
     inquiryType: string;
 
     @Column({ type: 'boolean', default: true })
