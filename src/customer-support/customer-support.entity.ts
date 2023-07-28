@@ -48,8 +48,8 @@ export class CustomerSupportDetails {
   @JoinColumn({ name: 'created_by' })
   createdBy: User;
 
-  @OneToMany(() => CustomerSupport, customerSupport => customerSupport.customerSupportDetailsId, { cascade: true })
-  customerSupportId: CustomerSupport[];
+  @OneToMany(() => CustomerSupport, customerSupport => customerSupport.customerSupportDetails, { cascade: true })
+  customerSupport: CustomerSupport[];
 }
 
 @Entity('customer_support')
@@ -57,9 +57,9 @@ export class CustomerSupport {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => CustomerSupportDetails, inquiry => inquiry.customerSupportId)
+  @ManyToOne(() => CustomerSupportDetails, inquiry => inquiry.customerSupport)
   @JoinColumn({ name: 'customer_support_details_id' })
-  customerSupportDetailsId: CustomerSupportDetails;
+  customerSupportDetails: CustomerSupportDetails;
 
   @Column('enum', { enum: CustomerSupportStatus, default: CustomerSupportStatus.PENDING, comment: 'pending/resolved/rejected/inprogress/onhold/pendingcustomeraction' })
   status: CustomerSupportStatus;

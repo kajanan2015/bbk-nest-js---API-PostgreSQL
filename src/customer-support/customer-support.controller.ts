@@ -13,7 +13,15 @@ export class CustomerSupportController {
   // ** Create inquiry
   @Post()
   create(@Body() customerSupportData) {
-    return this.customerSupportService.create(customerSupportData['data']);
+    const savedData = this.customerSupportService.create(customerSupportData['data']);
+
+    const successResponse = {
+      success: true,
+      data: savedData,
+      message: 'success',
+    };
+
+    return successResponse;
   }
 
   // ** Get all inquiry data

@@ -30,12 +30,11 @@ export class CustomerSupportService {
         createdAt: new Date(),
         createdBy: customerSupportData.createdBy,
       });
-      console.log(customerSupportDetails, 9090)
 
       await this.customerSupportDetailsRepository.save(customerSupportDetails);
 
       const customerSupport = this.customerSupportRepository.create({
-        customerSupportDetailsId: customerSupportDetails,
+        customerSupportDetails: customerSupportDetails,
         status: customerSupportData.status,
         resolvedAt: customerSupportData.resolvedAt,
         resolvedBy: customerSupportData.resolvedBy,
@@ -51,7 +50,7 @@ export class CustomerSupportService {
 
   // ** Find all inquiry
   async findAll() {
-    return await this.customerSupportRepository.find({ relations: ['inquiryType'] });
+    return await this.customerSupportDetailsRepository.find({ relations: ['customerSupport', 'inquiryType'] });
   }
 
   // ** Find one inquiry
