@@ -320,6 +320,12 @@ export class EmployeeModuleService {
   //   });
   // }
 
+  //Get payroll-info table data using employee
+  async findEmployeePayrollData(employeeId: number) {
+    const existingEmployee = await this.employeePayrollRepository.findOne({ where: { employee: employeeId } });
+    return existingEmployee
+  }
+
   async findById(id: number) {
     const date = new Date();
     const query: SelectQueryBuilder<Employee> = getConnection()

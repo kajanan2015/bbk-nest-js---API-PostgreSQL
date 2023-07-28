@@ -123,6 +123,16 @@ export class EmployeeModuleController {
     return this.employeeModuleService.createPayrollInfo(createEmployeeModuleDto);
   }
 
+  @Get('payroll-info/:id')
+  async getEmployeePayrollData(@Param('id') id: string) {
+    console.log('dsfggg');
+    const employeePayrollData = await this.employeeModuleService.findEmployeePayrollData(+id);
+    return {
+      statusCode: HttpStatus.OK,
+      employeeList: employeePayrollData
+    };
+  }
+
   @Get()
   findAll() {
     return this.employeeModuleService.find();
