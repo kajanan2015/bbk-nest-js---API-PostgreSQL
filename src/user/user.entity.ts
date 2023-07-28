@@ -14,7 +14,7 @@ import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-his
 import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
 import { EmployeeDocument } from 'src/employee-document/employee-document.entity';
 import { CompanyDocument } from 'src/company-document/company-document.entity';
-import { CustomerSupport } from 'src/customer-support/customer-support.entity';
+import { CustomerSupport, CustomerSupportDetails } from 'src/customer-support/customer-support.entity';
 
 @Entity()
 export class User {
@@ -161,6 +161,9 @@ export class User {
   @OneToMany(() => CompanyDocument, company => company.createdBy, { cascade: true })
   companydocumentcreate: CompanyDocument[];
 
-  @OneToMany(() => CustomerSupport, company => company.createdBy, { cascade: true })
+  @OneToMany(() => CustomerSupportDetails, company => company.createdBy, { cascade: true })
+  customersupportdetails: CustomerSupportDetails[];
+
+  @OneToMany(() => CustomerSupport, company => company.resolvedBy, { cascade: true })
   customersupport: CustomerSupport[];
 }

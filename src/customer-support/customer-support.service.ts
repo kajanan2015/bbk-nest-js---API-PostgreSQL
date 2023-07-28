@@ -3,52 +3,69 @@ import { UpdateCustomerSupportDto } from './update-customer-support.dto';
 import { InquiryType } from './inquiry-type/inquiry-type.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CustomerSupport } from './customer-support.entity';
+import { CustomerSupport, CustomerSupportDetails } from './customer-support.entity';
 
 @Injectable()
 export class CustomerSupportService {
   constructor(
+    @InjectRepository(CustomerSupportDetails)
+    private customerSupportDetailsRepository: Repository<CustomerSupportDetails>,
     @InjectRepository(CustomerSupport)
     private customerSupportRepository: Repository<CustomerSupport>,
     @InjectRepository(InquiryType)
     private readonly inquiryTypeRepository: Repository<InquiryType>,
   ) { }
 
+  // ** Create inquiry
   async create(customerSupportData) {
     try {
-      const response = await this.customerSupportRepository.create(customerSupportData);
-      const savedData = await this.customerSupportRepository.save(response);
-  
-      const successResponse = {
-        success: true,
-        data: savedData,
-        message: 'success',
-      };
-  
-      return successResponse;
+      const customerSupportDetails = this.customerSupportDetailsRepository.create({
+        fullName: customerSupportData.fullName,
+        companyName: customerSupportData.companyName,
+        email: customerSupportData.email,
+        phone: customerSupportData.phone,
+        inquiryType: customerSupportData.inquiryType,
+        message: customerSupportData.message,
+        companyId: customerSupportData.companyId,
+        createdAt: new Date(),
+        createdBy: customerSupportData.createdBy,
+      });
+
+      await this.customerSupportDetailsRepository.save(customerSupportDetails);
+
+      const customerSupport = this.customerSupportRepository.create({
+        customerSupportDetails: customerSupportDetails,
+        status: customerSupportData.status,
+        resolvedAt: customerSupportData.resolvedAt,
+        resolvedBy: customerSupportData.resolvedBy,
+        assignDate: customerSupportData.assignDate,
+        assignedBy: customerSupportData.assignedBy,
+      });
+
+      return this.customerSupportRepository.save(customerSupport);
     } catch (error) {
-      const errorResponse = {
-        success: false,
-        message: 'failed',
-        error: error.message,
-      };
-  
-      return errorResponse;
+      return error;
     }
   }
 
+  // ** Find all inquiry
   async findAll() {
-    return await this.customerSupportRepository.find({relations: ['inquiryType']});
+    return await this.customerSupportDetailsRepository.find({ relations: ['customerSupport', 'inquiryType'] });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} customerSupport`;
+  // ** Find one inquiry
+  async findOne(id: number) {
+    return await this.customerSupportRepository.findOne({
+      where: { id: id },
+      relations: ["inquiryType"],
+    })
   }
 
   update(id: number, updateCustomerSupportDto: UpdateCustomerSupportDto) {
     return `This action updates a #${id} customerSupport`;
   }
 
+  // ** Get inquiry types
   async getInquiryType() {
     const inquiryTypeList = await this.inquiryTypeRepository.find();
     return inquiryTypeList;

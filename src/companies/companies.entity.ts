@@ -17,7 +17,8 @@ import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entit
 import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { VehicleTypeEntity } from 'src/vehicle-type/vehicle-type.entity';
-import { CustomerSupport } from 'src/customer-support/customer-support.entity';
+import { CustomerSupportDetails } from 'src/customer-support/customer-support.entity';
+import { Department } from 'src/departments/department.entity';
 
 
 
@@ -94,8 +95,8 @@ export class CompaniesEntity {
   @OneToMany(() => CompanyDocument, companyDocuments => companyDocuments.companyDoc, { cascade: true })
   documents: CompanyDocument[];
 
-  @OneToMany(() => CustomerSupport, companyDocuments => companyDocuments.companyId, { cascade: true })
-  customerSupport: CustomerSupport[];
+  @OneToMany(() => CustomerSupportDetails, customerSupport => customerSupport.companyId, { cascade: true })
+  customerSupport: CustomerSupportDetails[];
 
   @ManyToMany(() => User, user => user.companies)
   @JoinTable()
@@ -115,6 +116,9 @@ export class CompaniesEntity {
 
   @OneToMany(() => CompaniesHistorydata, historydata => historydata.company, ({ cascade: true }))
   historydata: CompaniesHistorydata[];
+
+  @OneToMany(() => Department, department => department.companyId, ({ cascade: true }))
+  department: Department[];
 }
 
 @Entity('company_info')

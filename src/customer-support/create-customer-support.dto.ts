@@ -1,6 +1,7 @@
 import { CompaniesEntity } from "src/companies/companies.entity"
 import { InquiryType } from "./inquiry-type/inquiry-type.entity"
 import { User } from "src/user/user.entity"
+import { CustomerSupport, CustomerSupportDetails } from "./customer-support.entity"
 
 export class CreateCustomerSupportDto {
     id: number
@@ -11,8 +12,14 @@ export class CreateCustomerSupportDto {
     inquiryType: InquiryType
     message: string
     companyId: CompaniesEntity
-    status: Boolean
     createdAt: Date
-    resolvedAt: Date
     createdBy: User
+    customerSupportId: CustomerSupport[]
+
+    customerSupportDetailsId: CustomerSupportDetails
+    status: Boolean
+    resolvedAt: Date
+    resolvedBy: User;
+    assignDate: Date;
+    assignedBy: User;
 }
