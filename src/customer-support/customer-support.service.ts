@@ -3,11 +3,13 @@ import { UpdateCustomerSupportDto } from './update-customer-support.dto';
 import { InquiryType } from './inquiry-type/inquiry-type.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CustomerSupport } from './customer-support.entity';
+import { CustomerSupport, CustomerSupportDetails } from './customer-support.entity';
 
 @Injectable()
 export class CustomerSupportService {
   constructor(
+    @InjectRepository(CustomerSupportDetails)
+    private customerSupportDetailsRepository: Repository<CustomerSupportDetails>,
     @InjectRepository(CustomerSupport)
     private customerSupportRepository: Repository<CustomerSupport>,
     @InjectRepository(InquiryType)
@@ -17,24 +19,33 @@ export class CustomerSupportService {
   // ** Create inquiry
   async create(customerSupportData) {
     try {
-      const response = await this.customerSupportRepository.create(customerSupportData);
-      const savedData = await this.customerSupportRepository.save(response);
+      const customerSupportDetails = this.customerSupportDetailsRepository.create({
+        fullName: customerSupportData.fullName,
+        companyName: customerSupportData.companyName,
+        email: customerSupportData.email,
+        phone: customerSupportData.phone,
+        inquiryType: customerSupportData.inquiryType,
+        message: customerSupportData.message,
+        companyId: customerSupportData.companyId,
+        createdAt: new Date(),
+        createdBy: customerSupportData.createdBy,
+      });
+      console.log(customerSupportDetails, 9090)
 
-      const successResponse = {
-        success: true,
-        data: savedData,
-        message: 'success',
-      };
+      await this.customerSupportDetailsRepository.save(customerSupportDetails);
 
-      return successResponse;
+      const customerSupport = this.customerSupportRepository.create({
+        customerSupportDetailsId: customerSupportDetails,
+        status: customerSupportData.status,
+        resolvedAt: customerSupportData.resolvedAt,
+        resolvedBy: customerSupportData.resolvedBy,
+        assignDate: customerSupportData.assignDate,
+        assignedBy: customerSupportData.assignedBy,
+      });
+
+      return this.customerSupportRepository.save(customerSupport);
     } catch (error) {
-      const errorResponse = {
-        success: false,
-        message: 'failed',
-        error: error.message,
-      };
-
-      return errorResponse;
+      return error;
     }
   }
 

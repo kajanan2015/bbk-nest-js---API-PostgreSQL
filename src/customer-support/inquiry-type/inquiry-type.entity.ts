@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm'
-import { CustomerSupport } from '../customer-support.entity'
+import { CustomerSupportDetails } from '../customer-support.entity'
 
 @Entity('inquiry_type')
 export class InquiryType {
@@ -12,6 +12,6 @@ export class InquiryType {
     @Column({ type: 'boolean', default: true })
     status: Boolean;
 
-    @OneToMany(() => CustomerSupport, customerSup => customerSup.inquiryType, { cascade: true })
-    customerSupport: CustomerSupport[];
+    @OneToMany(() => CustomerSupportDetails, customerSup => customerSup.inquiryType, { cascade: true })
+    customerSupport: CustomerSupportDetails[];
 }
