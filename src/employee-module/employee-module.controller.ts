@@ -181,6 +181,12 @@ export class EmployeeModuleController {
     return this.employeeModuleService.updateWithHistory(id, data);
   }
 
+  @Patch('/history/:id')
+  @UseInterceptors(AnyFilesInterceptor())
+  async deleteSheduleRecord(@Param('id') id: string,) {
+    return this.employeeModuleService.deleteSheduleRecord(id);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.employeeModuleService.remove(+id);

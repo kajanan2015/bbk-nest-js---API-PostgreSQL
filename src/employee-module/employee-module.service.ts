@@ -707,6 +707,19 @@ export class EmployeeModuleService {
   //   });
   // }
 
+  async deleteSheduleRecord(employeeHistoryId){
+    const previousRecord = await this.employeedatahistoryrepo.findOne({
+      where: {
+        id: employeeHistoryId
+      },
+      relations: ['employeeInfoId']
+    });    
+    const employeeHistoryRecord = await this.employeedatahistoryrepo.update({ id: employeeHistoryId }, { status: false });
+    const employeeInfoRecord = await this.employeeInfoRepository.update({ id: +previousRecord?.['employeeInfoId']?.['id'] }, { status: false });
+
+    return { employeeHistoryRecord, employeeInfoRecord}
+  }
+
   async findCompanyAllEmployees(companyid: number) {
     const date = new Date();
     const query: SelectQueryBuilder<Employee> = getConnection()

@@ -44,6 +44,7 @@ export class EmployeeDataHistoryService {
       where: {
         employeeId: createEmployeeDataHistoryDto.employeeId,
         type: createEmployeeDataHistoryDto.type,
+        status: 1
       },
       relations: ['updated_by', 'created_by'],
       order: {
@@ -69,6 +70,7 @@ export class EmployeeDataHistoryService {
       where: {
         employeeId: createEmployeeDataHistoryDto.employeeId,
         type: createEmployeeDataHistoryDto.type,
+        status: 1
       },
       relations: ['updated_by', 'created_by'],
       order: {
