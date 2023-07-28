@@ -46,6 +46,7 @@ import { CompanyUserRoleModule } from './company-user-role/company-user-role.mod
 import { CompanypackagerowModule } from './companypackagerow/companypackagerow.module';
 import { CompanyWorkPatternModule } from './company-work-pattern/company-work-pattern.module';
 import { CustomerSupportModule } from './customer-support/customer-support.module';
+import { DepartmentsModule } from './departments/departments.module';
 
 
 
@@ -98,7 +99,8 @@ const settings = require("../ormconfig.js");
     CompanyUserRoleModule,
     CompanypackagerowModule,
     CompanyWorkPatternModule,
-    CustomerSupportModule
+    CustomerSupportModule,
+    DepartmentsModule
   ],
   controllers: [AppController],
   providers: [AppService],
