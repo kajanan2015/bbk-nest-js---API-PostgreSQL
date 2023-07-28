@@ -28,8 +28,4 @@ export class DepartmentsService {
   update(id: number, updateDepartmentDto: UpdateDepartmentDto) {
     return `This action updates a #${id} department`;
   }
-
-  remove(id: number) {
-    return `This action removes a #${id} department`;
-  }
 }

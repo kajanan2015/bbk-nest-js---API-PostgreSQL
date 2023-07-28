@@ -14,17 +14,18 @@ export class CustomerSupportService {
     private readonly inquiryTypeRepository: Repository<InquiryType>,
   ) { }
 
+  // ** Create inquiry
   async create(customerSupportData) {
     try {
       const response = await this.customerSupportRepository.create(customerSupportData);
       const savedData = await this.customerSupportRepository.save(response);
-  
+
       const successResponse = {
         success: true,
         data: savedData,
         message: 'success',
       };
-  
+
       return successResponse;
     } catch (error) {
       const errorResponse = {
@@ -32,23 +33,29 @@ export class CustomerSupportService {
         message: 'failed',
         error: error.message,
       };
-  
+
       return errorResponse;
     }
   }
 
+  // ** Find all inquiry
   async findAll() {
-    return await this.customerSupportRepository.find({relations: ['inquiryType']});
+    return await this.customerSupportRepository.find({ relations: ['inquiryType'] });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} customerSupport`;
+  // ** Find one inquiry
+  async findOne(id: number) {
+    return await this.customerSupportRepository.findOne({
+      where: { id: id },
+      relations: ["inquiryType"],
+    })
   }
 
   update(id: number, updateCustomerSupportDto: UpdateCustomerSupportDto) {
     return `This action updates a #${id} customerSupport`;
   }
 
+  // ** Get inquiry types
   async getInquiryType() {
     const inquiryTypeList = await this.inquiryTypeRepository.find();
     return inquiryTypeList;

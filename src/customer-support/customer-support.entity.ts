@@ -18,10 +18,10 @@ export class CustomerSupport {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column("varchar", { length: 300, nullable: true, default: () => null })
+  @Column("varchar", { name: 'full_name', length: 300, nullable: true, default: () => null })
   fullName: string;
 
-  @Column("varchar", { length: 300, nullable: true, default: () => null })
+  @Column("varchar", { name: 'company_name', length: 300, nullable: true, default: () => null })
   companyName: string;
 
   @Column("varchar", { length: 300, nullable: true, default: () => null })
@@ -31,26 +31,26 @@ export class CustomerSupport {
   phone: string;
 
   @ManyToOne(() => InquiryType, inquiry => inquiry.customerSupport)
-  @JoinColumn({ name: 'inquiryType' })
+  @JoinColumn({ name: 'inquiry_type' })
   inquiryType: InquiryType;
 
   @Column("varchar", { length: 300, nullable: true, default: () => null })
   message: string;
 
   @ManyToOne(() => CompaniesEntity, company => company.customerSupport)
-  @JoinColumn({ name: 'companyId' })
+  @JoinColumn({ name: 'company_id' })
   companyId: CompaniesEntity;
 
   @Column('enum', { enum: CustomerSupportStatus, default: CustomerSupportStatus.PENDING, comment: 'pending/resolved/rejected/inprogress/onhold/pendingcustomeraction' })
   status: CustomerSupportStatus;
 
-  @Column("timestamp", { name: "createdAt", default: () => "CURRENT_TIMESTAMP" })
+  @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
   createdAt: Date;
 
-  @Column("timestamp", { name: "resolvedAt", nullable: true, default: () => null })
+  @Column("timestamp", { name: "resolved_at", nullable: true, default: () => null })
   resolvedAt: Date;
 
   @ManyToOne(() => User, user => user.customersupport)
-  @JoinColumn({ name: 'createdBy' })
+  @JoinColumn({ name: 'created_by' })
   createdBy: User;
 }

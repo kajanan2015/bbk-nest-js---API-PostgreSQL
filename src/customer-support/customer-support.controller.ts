@@ -22,6 +22,7 @@ export class CustomerSupportController {
     return this.customerSupportService.findAll();
   }
 
+  // ** Get one inquiry
   @Get('view-ticket/:id')
   findOne(@Param('id') id: number) {
     return this.customerSupportService.findOne(+id);
