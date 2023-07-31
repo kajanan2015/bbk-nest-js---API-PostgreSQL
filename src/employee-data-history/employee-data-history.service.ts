@@ -65,6 +65,32 @@ export class EmployeeDataHistoryService {
     };
   }
 
+  async findAllEmpDataHistory(createEmployeeDataHistoryDto) {
+    const [results, totalCount] = await this.empDataHistoryRepository.findAndCount({
+      where: {
+        employeeId: createEmployeeDataHistoryDto.employeeId,
+      },
+      relations: ['updated_by', 'created_by'],
+      order: {
+        start_date: 'DESC',
+      },
+      // skip: createEmployeeDataHistoryDto.page * createEmployeeDataHistoryDto.pageSize,
+      // take: createEmployeeDataHistoryDto.pageSize,
+    });
+
+    const historyData = results.filter(function (row) {
+      return Math.floor(new Date(row.start_date).getTime() / 86400000) <= Math.floor(new Date().getTime() / 86400000)
+    })
+
+    console.log(historyData, 22222222222222222222)
+
+    return {
+      historyList: historyData,
+      totalCount,
+      totalPages: Math.ceil(totalCount / createEmployeeDataHistoryDto.pageSize),
+    };
+  }
+
   async findEmpDataShedule(createEmployeeDataHistoryDto) {
     const [results, totalCount] = await this.empDataHistoryRepository.findAndCount({
       where: {
