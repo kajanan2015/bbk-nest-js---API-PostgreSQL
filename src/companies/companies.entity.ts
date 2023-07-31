@@ -43,7 +43,8 @@ export enum Deactivationmethod {
 export enum Historydatatype {
   COMPANY = 'company initial data',
   COMPANYINFO = 'company info',
-  COMPANYDETAILS = 'company details'
+  COMPANYDETAILS = 'company details',
+  SCHEDULEHISTORY= 'schedule history'
 }
 
 @Entity('company')
@@ -242,7 +243,7 @@ export class CompaniesHistorydata {
   @PrimaryGeneratedColumn({ type: "int", name: "company_history_id", unsigned: true })
   id: number;
 
-  @Column("enum", { name: "history_data_type", enum: Historydatatype, default: Historydatatype.COMPANY, comment: "company initial data/company info" })
+  @Column("enum", { name: "history_data_type", enum: Historydatatype, default: Historydatatype.COMPANY, comment: "company initial data/company info/schedule history/company details" })
   history_data_type: Historydatatype;
 
   @Column({ type: "text", name: "history_data" })

@@ -261,6 +261,7 @@ export class CompaniesController {
   @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   async read(@Param('id') id: number) {
+    
     const company = await this.service.read(id);
     return {
       statusCode: HttpStatus.OK,
@@ -336,6 +337,7 @@ export class CompaniesController {
   @Patch('/updatecompany/:id')
   @UseInterceptors(AnyFilesInterceptor())
   async updatenew(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
+
     const filename = await this.imageUploadService.uploadcompany(file, "body");
     const data = {
       ...companyData,
