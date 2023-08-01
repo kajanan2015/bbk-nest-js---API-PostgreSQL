@@ -67,7 +67,8 @@ export class HistoryTransactionservicedb {
     @TransactionManager() manager?: any,
   ): Promise<void> {
     try {
-
+console.log(previousentitydata,6666)
+console.log(updatedpreviousdata,777)
       // Update the entity with the new data
       // Update the entity with the new data
       const updateresponseprevious = manager.merge(entityClass, previousentitydata, updatedpreviousdata); // Using merge directly on manager
@@ -89,7 +90,7 @@ export class HistoryTransactionservicedb {
     }
   }
   @Transaction()
-  async updateExistScheduleTransaction(companyinfoid, previousentitydata, historydata, entityclass, historyclass, companyExistHistory,existLastestValue,
+  async updateExistScheduleTransaction(companyinfoid, previousentitydata, historydata, entityclass, historyclass, companyExistHistory,existLastestValue,passvalue,
     @TransactionManager() manager?: any,
   ): Promise<void> {
     console.log(existLastestValue,999999)
@@ -104,7 +105,7 @@ export class HistoryTransactionservicedb {
     const createhistoryresponse = await manager.create(historyclass, historydata); // Using merge directly on manager
     await manager.save(historyclass, createhistoryresponse);
 
-    const updatepreviousdata = manager.merge(entityclass, previousentitydata, historydata); // Using merge directly on manager
+    const updatepreviousdata = manager.merge(entityclass, previousentitydata, passvalue); // Using merge directly on manager
     await manager.save(entityclass, updatepreviousdata);
   }
 }
