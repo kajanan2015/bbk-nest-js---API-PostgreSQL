@@ -31,6 +31,14 @@ export class EmployeeModuleController {
       maritalStatusList
     };
   }
+  @Get('/visa_type')
+  async getVisaType() {
+    const visaTypeList = await this.employeeModuleService.getVisaType();
+    return {
+      statusCode: HttpStatus.OK,
+      visaTypeList
+    };
+  }
   @Get('/employee-type')
   async getEmployeeType(){
     const employeeTypeList = await this.employeeModuleService.getEmployeeType();

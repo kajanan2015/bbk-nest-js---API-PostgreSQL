@@ -10,6 +10,7 @@ import { Bank } from "./bank/bank.entity";
 import { User } from "src/user/user.entity";
 import { country } from "src/companies/country/country.entity";
 import { DrivingLicenceCategory } from "./driving_licence_category/driving_licence_category.entity";
+import { VisaType } from "./visa_type/visaType.entity";
 export class CreateEmployeeModuleDto {
     id: number;
     employeeId: string;
@@ -44,7 +45,8 @@ export class CreateEmployeeModuleDto {
     officialDocNo: string;
     officialDocIssueDate: Date;
     officialDocExpireDate: Date;
-    visaType: string;
+    //visaType: string;
+    visaType: VisaType[];
     visaNo: string;
     visaIssueDate: Date;
     visaExpireDate: Date;

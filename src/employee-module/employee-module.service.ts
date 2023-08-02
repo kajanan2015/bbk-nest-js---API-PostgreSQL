@@ -18,6 +18,7 @@ import { MaritalStatus } from './marital_status/maritalStatus.entity';
 import { DrivingLicenceType } from './driving_licence_type/driving_licence_type.entity';
 import { PaymentFrequency } from './payment_frequency/payment_frequency.entity';
 import { Employee, EmployeeInfo, EmployeePayrollInfo } from './employee-module.entity';
+import { VisaType } from './visa_type/visaType.entity';
 // import randomstring from 'randomstring';
 const randomstring = require("randomstring");
 
@@ -54,6 +55,8 @@ export class EmployeeModuleService {
     private readonly companyRepository: Repository<CompaniesEntity>,
     @InjectRepository(MaritalStatus)
     private readonly maritalStatusRepository: Repository<MaritalStatus>,
+    @InjectRepository(VisaType)
+    private readonly visaTyeRepository: Repository<VisaType>,
     @InjectRepository(DrivingLicenceType)
     private readonly dlTypeRepository: Repository<DrivingLicenceType>,
     @InjectRepository(PaymentFrequency)
@@ -269,6 +272,11 @@ export class EmployeeModuleService {
   async getMaritalStatus() {
     const maritalStatusList = await this.maritalStatusRepository.find();
     return maritalStatusList;
+  }
+
+  async getVisaType() {
+    const visaTypeList = await this.visaTyeRepository.find();
+    return visaTypeList;
   }
 
   async getDrivingLicenceType() {
@@ -588,8 +596,6 @@ export class EmployeeModuleService {
         await this.employeeInfoRepository.update({ id: +UpdateEmployeeModuleDto.employeeInfoId }, dataWithoutDoc);
       }
     }
-
-
 
     // ** get employee documents
     const documents = UpdateEmployeeModuleDto['filenames'];

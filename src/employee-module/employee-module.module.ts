@@ -53,8 +53,9 @@ import { CompaniesHistorydata } from 'src/companies/companies.entity';
 import { Employee, EmployeeInfo, EmployeePayrollInfo } from './employee-module.entity';
 
 import { HistoryTransactionservicedb } from 'src/Transaction-query/transaction.service';
+import { VisaType } from './visa_type/visaType.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([Companypackagerow, CompaniesEntityinfo, CompaniesHistorydata, EmployeeInfo, EmployeePayrollInfo, Employee, EmployeeType, EmpDesignation, EmployeeInfo, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency, country, Createmodule, Createpackage, Paymenttype, Moduledetailsofpackage, EmployeeDataHistory, DrivingLicenceCategory, companytype]), CompaniesModule, CreatemoduleModule, MailModule, DrivingLicenceCategory],
+  imports: [TypeOrmModule.forFeature([Companypackagerow, CompaniesEntityinfo, CompaniesHistorydata, EmployeeInfo, EmployeePayrollInfo, Employee, EmployeeType, EmpDesignation, EmployeeInfo, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, VisaType, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency, country, Createmodule, Createpackage, Paymenttype, Moduledetailsofpackage, EmployeeDataHistory, DrivingLicenceCategory, companytype]), CompaniesModule, CreatemoduleModule, MailModule, DrivingLicenceCategory],
   controllers: [EmployeeModuleController, ImageUploadController],
   providers: [CompanypackagerowService, EmployeeModuleService, ImageUploadService, EmployeeDocumentService, CompaniesService, SystemCodeService, UserService, CompanyDocumentService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService, MailService, EmployeeDataHistoryService, DrivingLicenceCategory,HistoryTransactionservicedb]
 })
