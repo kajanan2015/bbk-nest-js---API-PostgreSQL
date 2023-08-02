@@ -12,6 +12,7 @@ import { User } from 'src/user/user.entity';
 import { country } from 'src/companies/country/country.entity';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { DrivingLicenceCategory } from './driving_licence_category/driving_licence_category.entity';
+import { VisaType } from './visa_type/visaType.entity';
 
 enum employeeStatus {
     active = 'active',
@@ -192,8 +193,12 @@ export class EmployeeInfo {
     @Column({ name: 'official_doc_expire_date', nullable: true, default: () => null })
     officialDocExpireDate: Date | null;
 
-    @Column("varchar", { name: 'visa_type', nullable: true, length: 250, default: () => null })
-    visaType: string | null;
+    //@Column("varchar", { name: 'visa_type', nullable: true, length: 250, default: () => null })
+    //visaType: string | null;
+
+    @ManyToOne(() => VisaType, visaType => visaType.employee)
+    @JoinColumn({ name: 'visa_type' })
+    visaType: VisaType;
 
     @Column("varchar", { name: 'visa_no', nullable: true, length: 250, default: () => null })
     visaNo: string | null;
