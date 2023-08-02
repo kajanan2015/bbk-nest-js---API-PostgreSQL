@@ -211,4 +211,14 @@ export class UserController {
     console.log(id)
     return await this.service.changepassword(id, data);
   }
+
+  // ** Get user data belongs to the department
+  @Get('department-user/:departmentId')
+  async departmentUser(@Param('departmentId') departmentId: number) {
+    const depUser = await this.service.findDepartmentUser(departmentId);
+    return {
+      statusCode: HttpStatus.OK,
+      depUser,
+    };
+  }
 }
