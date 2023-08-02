@@ -261,6 +261,7 @@ export class CompaniesController {
   @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   async read(@Param('id') id: number) {
+    
     const company = await this.service.read(id);
     return {
       statusCode: HttpStatus.OK,
@@ -336,6 +337,7 @@ export class CompaniesController {
   @Patch('/updatecompany/:id')
   @UseInterceptors(AnyFilesInterceptor())
   async updatenew(@Param('id') id: number, @UploadedFiles() file, @Body() companyData) {
+
     const filename = await this.imageUploadService.uploadcompany(file, "body");
     const data = {
       ...companyData,
@@ -457,12 +459,14 @@ export class CompaniesController {
   async paiddataupdate(@Param('token') token) {
     return await this.service.paiddataupdate(token);
   }
-
+// change parent
+  @UseGuards(AuthGuard('jwt'))
   @Post('changeparent:/id')
   async changeparent(@Param('id') id: number, @Body() data: any) {
     return await this.service.changeparentadmin(id, data);
   }
-
+// extend trial
+  @UseGuards(AuthGuard('jwt'))
   @Put('extend-trial/:id')
   async extendtrial(@Param('id') companyid: number, @Body() data: any) {
     console.log(companyid, 555);
@@ -472,6 +476,8 @@ export class CompaniesController {
 
   }
 
+  // cancel trial
+  @UseGuards(AuthGuard('jwt'))
   @Put('cancel-trial/:id')
   async cancelrial(@Param('id') companyid: number, @Body() data: any) {
     console.log(companyid, 555);
@@ -480,5 +486,11 @@ export class CompaniesController {
 
   }
 
+  // get latest company info when passing date
+  @UseGuards(AuthGuard('jwt'))
+  @Post('getlatestcompany')
+  async getlatestcompany( @Body() data){
+    return await this.service.getlatestcompanyinfo(data.companyid, data);
+  }
 
 }

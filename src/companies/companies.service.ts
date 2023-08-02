@@ -569,18 +569,25 @@ export class CompaniesService {
 
 
   async showcompanylist(value) {
+    const date= new Date()
     const companylist = await this.companyRepository.findOne({
       where: {
         id: value,
       },
       relations: ["linkedcompany", "linkedcompany.mainCompany"],
     });
-    return await this.companyinfoRepository.find({
-      where: {
-        mainCompany: companylist.linkedcompany[0].mainCompany.id,
-      },
-      relations: ["mainCompany", "company"]
-    });
+
+    return this.companyinfoRepository
+    .createQueryBuilder('company_info')
+    .where('company_info.mainCompany = :mainCompanyId', { mainCompanyId:companylist.linkedcompany[0].mainCompany.id })
+    .andWhere('company_info.start_date <= :date', { date })
+    .andWhere(
+      '(company_info.end_date > :date OR company_info.end_date IS NULL)',
+      { date },
+    )
+    .leftJoinAndSelect('company_info.mainCompany', 'mainCompany')
+    .leftJoinAndSelect('company_info.company', 'company')
+    .getMany();
   }
 
   async showonlySubCompany() {
@@ -858,12 +865,12 @@ export class CompaniesService {
       .createQueryBuilder("company_data_history")
       .leftJoinAndSelect("company_data_history.created_by", "created_by")
       .leftJoinAndSelect("company_data_history.updated_by", "updated_by")
+      .leftJoinAndSelect("company_data_history.companyinfo", "companyinfo")
       .where("company_data_history.company = :companyid", { companyid })
       .andWhere("company_data_history.start_date <= :currentDate", { currentDate })
       // .andWhere("company_data_history.history_data_type IN (:...types)", { types: [type, initialtype] })
       .orderBy("company_data_history.id", "DESC") // Order by company history ID in descending order
       .getMany();
-    console.log(company, 88)
     return company
   }
 
@@ -879,8 +886,8 @@ export class CompaniesService {
   }
 
   async read(id: number) {
-    const date = new Date();
 
+    const date = new Date();
     const query: SelectQueryBuilder<CompaniesEntity> = getConnection()
       .getRepository(CompaniesEntity)
       .createQueryBuilder("company")
@@ -1597,33 +1604,60 @@ export class CompaniesService {
       updated_by: data.updatedBy
     }
 
-    const entity = await this.companyinfoRepository.findOne({ company_info_id: companyinfoid })
+    const entity = await this.companyinfoRepository.findOne({ company_info_id: companyinfoid }, { relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'] })
     if (!entity) {
       throw new NotFoundException('Entity not found');
     }
-    if (start_date.getTime() >= date.getTime()) {
-      const passdatatogetschedule={type:'',companyInfoId:companyinfoid}
-      // const existschedule=await this.getscheduledcompanydatahistory(companyid,passdatatogetschedule);
-      // if(existschedule.length>0){
-      //   return  HttpStatus.CONFLICT;
-      // }
-      const previousentitydata = { ...entity }
-      const updatedpreviousdata = { ...entity };
+
+    const existLastestValues=await this.companyinfoRepository.find({where:{company:companyid,start_date:LessThanOrEqual(start_date)},relations:['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'],order:{start_date:'DESC'}})
+    const existLastestValue=existLastestValues[0]
+
+    if (data.historyId) {
+      console.log('data',56789)
+      const previousentitydata = { ...existLastestValue }
+      const updatedpreviousdata = { ...existLastestValue };
       updatedpreviousdata.updated_at = data.updatedAt,
-      updatedpreviousdata.updated_by = data.updatedBy,
-      updatedpreviousdata.end_date = start_date
-      delete entity.company_info_id;
-      delete entity.updated_at;
-      delete entity.end_date;
-      delete entity.updated_by;
+        updatedpreviousdata.updated_by = data.updatedBy,
+        updatedpreviousdata.end_date = start_date
+      delete existLastestValue.company_info_id;
+      delete existLastestValue.updated_at;
+      delete existLastestValue.end_date;
+      delete existLastestValue.updated_by;
       const passvalue = {
-        ...entity, ...data
+        ...existLastestValue, ...data,start_date:start_date
       }
 
-      await this.historytransaction.updateEntityWithScheduleTransaction(passvalue, historydata, CompaniesEntityinfo, CompaniesHistorydata, previousentitydata, updatedpreviousdata)
+    
+
+    const companyExistHistory = await this.companyhistoryRepository.findOne({ id: data.historyId }, { relations: ['created_by', 'updated_by', 'companyinfo', 'company'] })
+      await this.historytransaction.updateExistScheduleTransaction(companyinfoid, previousentitydata, historydata, CompaniesEntityinfo, CompaniesHistorydata,companyExistHistory,existLastestValue,passvalue)
     } else {
-      console.log('master', 88)
-      await this.historytransaction.updateEntityWithTransaction(entity, companyinfo, historydata, CompaniesEntityinfo, CompaniesHistorydata);
+      if (start_date.getTime() >= date.getTime()) {
+        // const passdatatogetschedule={type:'',companyInfoId:companyinfoid}
+        // const existschedule=await this.getscheduledcompanydatahistory(companyid,passdatatogetschedule);
+        // if(existschedule.length>0){
+        //   return  HttpStatus.CONFLICT;
+        // }
+        const previousentitydata = { ...existLastestValue }
+        const updatedpreviousdata = { ...existLastestValue };
+
+        updatedpreviousdata.updated_at = data.updatedAt,
+        updatedpreviousdata.updated_by = data.updatedBy,
+        updatedpreviousdata.end_date = start_date
+        delete existLastestValue.company_info_id;
+        delete existLastestValue.updated_at;
+        delete existLastestValue.end_date;
+        delete existLastestValue.updated_by;
+        const passvalue = {
+          ...existLastestValue, ...data,start_date:start_date
+        }
+
+        await this.historytransaction.updateEntityWithScheduleTransaction(passvalue, historydata, CompaniesEntityinfo, CompaniesHistorydata, previousentitydata, updatedpreviousdata)
+      } else {
+        console.log('master', 88)
+        await this.historytransaction.updateEntityWithTransaction(entity, companyinfo, historydata, CompaniesEntityinfo, CompaniesHistorydata);
+      }
+
     }
 
 
@@ -1649,12 +1683,36 @@ export class CompaniesService {
       .createQueryBuilder("company_data_history")
       .leftJoinAndSelect("company_data_history.created_by", "created_by")
       .leftJoinAndSelect("company_data_history.updated_by", "updated_by")
+      .leftJoinAndSelect("company_data_history.companyinfo", "companyinfo")
       .where("company_data_history.company_id = :companyid", { companyid })
       .andWhere("company_data_history.start_date > :currentDate", { currentDate })
+      .andWhere("company_data_history.history_data_type = :type", { type:Historydatatype.COMPANY })
       .orderBy("company_data_history.start_date", "ASC")
       // .andWhere("company_data_history.history_data_type IN (:...types)", { types: [type, initialtype] })
       .getMany();
-    console.log(company, 88)
+
+
+
+      // const company = await getConnection()
+      // .getRepository(CompaniesEntityinfo)
+      // .createQueryBuilder("company_info")
+      // .leftJoinAndSelect("company_info.mainCompany", "mainCompany")
+      // .leftJoinAndSelect("company_info.country", "country")
+      // .leftJoinAndSelect("company_info.regAddressCountry", "regAddressCountry")
+      // .leftJoinAndSelect("company_info.companyType", "companyType")
+      // .leftJoinAndSelect("company_info.billing", "billing")
+      // .where("company_info.company = :companyid", { companyid })
+      // .andWhere("company_info.start_date > :currentDate", { currentDate })
+      // .orderBy("company_info.start_date", "ASC")
+      // .getMany();
+
     return company
+  }
+
+  async getlatestcompanyinfo(companyid,data){
+    const start_date=data.startdate
+    const existLastestValues=await this.companyinfoRepository.find({where:{company:companyid,start_date:LessThanOrEqual(start_date)},relations:['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'],order:{start_date:'DESC'}})
+    const existLastestValue=existLastestValues[0]
+    return  existLastestValue;
   }
 }

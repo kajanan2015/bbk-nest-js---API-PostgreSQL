@@ -517,6 +517,7 @@ export class EmployeeModuleService {
     // ** current date
     const date = new Date();
 
+    // ** get history record id
     const employeeHistoryId = UpdateEmployeeModuleDto.employeeHistoryId;
     delete UpdateEmployeeModuleDto.employeeHistoryId;
 
@@ -537,8 +538,8 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("employeeInfo.updated_by", "updated_by")
       .leftJoinAndSelect("employeeInfo.employee", "employee")
       .andWhere("employeeInfo.employee = :id", { id: +UpdateEmployeeModuleDto.employeeId })
-      .andWhere("employeeInfo.start_date <= :date", { date: start_date })
-      .orderBy('employeeInfo.start_date', 'DESC');
+      .andWhere("employeeInfo.startDate <= :date", { date: start_date })
+      .orderBy('employeeInfo.startDate', 'DESC');
     const latestSheduleInfo = await query.getOne();
 
     // ** update latest shedule record updated date and updated by

@@ -55,9 +55,9 @@ export class CustomerSupportService {
 
   // ** Find one inquiry
   async findOne(id: number) {
-    return await this.customerSupportRepository.findOne({
+    return await this.customerSupportDetailsRepository.findOne({
       where: { id: id },
-      relations: ["inquiryType"],
+      relations: ['customerSupport', 'inquiryType']
     })
   }
 
