@@ -58,6 +58,9 @@ export class CustomerSupport {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column("varchar", { name: 'assigner_comment', length: 300, nullable: true, default: () => null })
+  assignerComment: string;
+
   @ManyToOne(() => CustomerSupportDetails, inquiry => inquiry.customerSupport)
   @JoinColumn({ name: 'customer_support_details_id' })
   customerSupportDetails: CustomerSupportDetails;

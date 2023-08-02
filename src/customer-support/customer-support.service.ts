@@ -18,33 +18,47 @@ export class CustomerSupportService {
 
   // ** Create inquiry
   async create(customerSupportData) {
-    try {
-      const customerSupportDetails = this.customerSupportDetailsRepository.create({
-        fullName: customerSupportData.fullName,
-        companyName: customerSupportData.companyName,
-        email: customerSupportData.email,
-        phone: customerSupportData.phone,
-        inquiryType: customerSupportData.inquiryType,
-        message: customerSupportData.message,
-        companyId: customerSupportData.companyId,
-        createdAt: new Date(),
-        createdBy: customerSupportData.createdBy,
-      });
+    if (customerSupportData?.customerSupportDetailsId && customerSupportData?.customerSupportId) {
+      try {
+        const customerSupport = {
+          id: customerSupportData?.customerSupportId,
+          customerSupportDetails: customerSupportData?.customerSupportDetailsId,
+          status: customerSupportData?.status,
+          assignDate: customerSupportData?.assignDate,
+          assignedBy: customerSupportData?.assignedBy,
+          assignedDepartment: customerSupportData?.assignDepartment,
+          assignedTo: customerSupportData?.assignTo,
+          assignerComment: customerSupportData?.assignerComment,
+        };
+        return this.customerSupportRepository.save(customerSupport);
+      } catch (error) {
+        return error;
+      }
+    } else {
+      try {
+        const customerSupportDetails = this.customerSupportDetailsRepository.create({
+          fullName: customerSupportData.fullName,
+          companyName: customerSupportData.companyName,
+          email: customerSupportData.email,
+          phone: customerSupportData.phone,
+          inquiryType: customerSupportData.inquiryType,
+          message: customerSupportData.message,
+          companyId: customerSupportData.companyId,
+          createdAt: new Date(),
+          createdBy: customerSupportData.createdBy,
+        });
 
-      await this.customerSupportDetailsRepository.save(customerSupportDetails);
+        await this.customerSupportDetailsRepository.save(customerSupportDetails);
 
-      const customerSupport = this.customerSupportRepository.create({
-        customerSupportDetails: customerSupportDetails,
-        status: customerSupportData.status,
-        resolvedAt: customerSupportData.resolvedAt,
-        resolvedBy: customerSupportData.resolvedBy,
-        assignDate: customerSupportData.assignDate,
-        assignedBy: customerSupportData.assignedBy,
-      });
+        const customerSupport = this.customerSupportRepository.create({
+          customerSupportDetails: customerSupportDetails,
+          status: customerSupportData.status,
+        });
 
-      return this.customerSupportRepository.save(customerSupport);
-    } catch (error) {
-      return error;
+        return this.customerSupportRepository.save(customerSupport);
+      } catch (error) {
+        return error;
+      }
     }
   }
 
