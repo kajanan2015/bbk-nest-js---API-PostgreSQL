@@ -1,8 +1,9 @@
 
 import { CompaniesEntity } from 'src/companies/companies.entity'
 import { User } from 'src/user/user.entity'
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToMany, OneToOne } from 'typeorm'
 import { InquiryType } from './inquiry-type/inquiry-type.entity'
+import { Department } from 'src/departments/department.entity';
 
 export enum CustomerSupportStatus {
   PENDING = 'pending',
@@ -67,14 +68,22 @@ export class CustomerSupport {
   @Column("timestamp", { name: "resolved_at", nullable: true, default: () => null })
   resolvedAt: Date;
 
-  @ManyToOne(() => User, user => user.customersupport)
+  @OneToOne(() => User, user => user.customersupportResolved)
   @JoinColumn({ name: 'resolved_by' })
   resolvedBy: User;
 
   @Column("timestamp", { name: "assign_date", nullable: true, default: () => null })
   assignDate: Date;
 
-  @ManyToOne(() => User, user => user.customersupport)
+  @OneToOne(() => User, user => user.customerSupportAssignedBy)
   @JoinColumn({ name: 'assigned_by' })
   assignedBy: User;
+
+  @OneToOne(() => User, user => user.customerSupportAssignedTo)
+  @JoinColumn({ name: 'assigned_to' })
+  assignedTo: User;
+
+  @OneToOne(() => Department, dep => dep.customer)
+  @JoinColumn({ name: 'assigned_department' })
+  assignedDepartment: Department;
 }

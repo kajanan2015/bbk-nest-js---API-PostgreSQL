@@ -1,7 +1,8 @@
 
 import { CompaniesEntity } from 'src/companies/companies.entity'
+import { CustomerSupport } from 'src/customer-support/customer-support.entity';
 import { User } from 'src/user/user.entity'
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, ManyToMany, JoinTable, OneToOne } from 'typeorm'
 
 @Entity('department')
 export class Department {
@@ -24,11 +25,18 @@ export class Department {
     @Column("timestamp", { name: "updated_at", nullable: true, default: () => null })
     updatedAt: Date;
 
-    @ManyToOne(() => User, user => user.customersupport)
+    @ManyToOne(() => User, user => user.customersupportCreated)
     @JoinColumn({ name: 'created_by' })
     createdBy: User;
 
-    @ManyToOne(() => User, user => user.customersupport)
+    @ManyToOne(() => User, user => user.customersupportUpdated)
     @JoinColumn({ name: 'updated_by' })
     updatedBy: User;
+
+    @ManyToMany(() => User, user => user.departments)
+    @JoinTable({ name: 'department_user' })
+    users: User[];
+
+    @OneToOne(() => CustomerSupport, customerSupport => customerSupport.assignedDepartment, { cascade: true })
+    customer: CustomerSupport[];
 }

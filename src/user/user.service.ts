@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult, Not } from 'typeorm';
+import { Repository, UpdateResult, Not, getConnection } from 'typeorm';
 
 import { User } from './user.entity';
 import * as bcrypt from 'bcryptjs';
 import { CreateUserDto } from './user.dto';
 import { PermissionRoleEntity } from 'src/permission-role/permission-role.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
+import { Department } from 'src/departments/department.entity';
 @Injectable()
 export class UserService {
   constructor(
@@ -18,9 +19,9 @@ export class UserService {
     private readonly permissionRoleRepository: Repository<PermissionRoleEntity>,
   ) { }
 
-  async getCompaniesByUserId(userId: number){
+  async getCompaniesByUserId(userId: number) {
     const user = await this.userRepository.findOne(userId, {
-      relations: ['companies', 'companies.linkedcompany','companies.linkedcompany.country'],
+      relations: ['companies', 'companies.linkedcompany', 'companies.linkedcompany.country'],
     });
     return user.companies;
   }
@@ -46,13 +47,13 @@ export class UserService {
   async find(id: number): Promise<User> {
     return await this.userRepository.findOne({ where: { id: id, status: 1 }, relations: ['jobdata'] });
   }
-  
+
   async findByEmail(email: string): Promise<User> {
-    return await this.userRepository.findOne({ where: { email:email,status: 1,activate:1} });
+    return await this.userRepository.findOne({ where: { email: email, status: 1, activate: 1 } });
   }
 
   async findByEmailexist(email: string): Promise<User> {
-    return await this.userRepository.findOne({ where: { email:email} });
+    return await this.userRepository.findOne({ where: { email: email } });
   }
   // we added same login for employee and admin, we need to identify uniquly employee data, that why we pass employee id
   async create(data) {
@@ -159,42 +160,48 @@ export class UserService {
     return users
   }
 
-// new admin create
+  // new admin create
   async create_new_admin(id: number, data) {
     const newhashpassword = await this.hashPassword(data.password);
-    
-   const user={
-    ...data,
-    password: newhashpassword,
-   }
-    
+
+    const user = {
+      ...data,
+      password: newhashpassword,
+    }
+
     if (data.companyType == "subcompany") {
-     user.uType= "SADMIN";
+      user.uType = "SADMIN";
     } else if (data.companyType == "maincompany") {
-      user.uType= "CADMIN";
-    }else{
-      
+      user.uType = "CADMIN";
+    } else {
+
     }
     const company = await this.companyRepository.findOne(id);
     user.companies = [company];
     return await this.userRepository.save(user);
   }
 
-// password change
-  async changepassword(id,data){
-    if(data.newPassword==data.confirmPassword){
+  // password change
+  async changepassword(id, data) {
+    if (data.newPassword == data.confirmPassword) {
       const newhashpassword = await this.hashPassword(data.newPassword);
       const currentDateTime = new Date();
-      const user={
-        password:newhashpassword,
-        firsttimepasswordchange:1,
-        updatedat:currentDateTime
+      const user = {
+        password: newhashpassword,
+        firsttimepasswordchange: 1,
+        updatedat: currentDateTime
       }
       await this.userRepository.update({ id }, user);
       return 'change'
-    }else{
+    } else {
       return "notchange"
     }
-   
+
+  }
+
+  // ** User data belongs to the department
+  async findDepartmentUser(departmentId) {
+    const users = await this.userRepository.find({ relations: ['departments'] });
+    return users.filter((user) => user.departments.some(department => department.id == departmentId));
   }
 }

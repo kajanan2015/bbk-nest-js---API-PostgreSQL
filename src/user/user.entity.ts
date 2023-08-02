@@ -1,5 +1,5 @@
 
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { PermissionRoleEntity } from 'src/permission-role/permission-role.entity';
 import { TripEntity } from 'src/trip/trip.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
@@ -15,6 +15,7 @@ import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-patter
 import { EmployeeDocument } from 'src/employee-document/employee-document.entity';
 import { CompanyDocument } from 'src/company-document/company-document.entity';
 import { CustomerSupport, CustomerSupportDetails } from 'src/customer-support/customer-support.entity';
+import { Department } from 'src/departments/department.entity';
 
 @Entity()
 export class User {
@@ -81,6 +82,9 @@ export class User {
 
   @ManyToMany(() => CompaniesEntity, company => company.users)
   companies: CompaniesEntity[];
+
+  @ManyToMany(() => Department, department => department.users)
+  departments: Department[];
 
   @OneToMany(() => Createmodule, cretedby => cretedby.modulecreate, { cascade: true })
   modulecreatedby: Createmodule[];
@@ -161,9 +165,22 @@ export class User {
   @OneToMany(() => CompanyDocument, company => company.createdBy, { cascade: true })
   companydocumentcreate: CompanyDocument[];
 
-  @OneToMany(() => CustomerSupportDetails, company => company.createdBy, { cascade: true })
+  @OneToMany(() => CustomerSupportDetails, customerSupport => customerSupport.createdBy, { cascade: true })
   customersupportdetails: CustomerSupportDetails[];
 
-  @OneToMany(() => CustomerSupport, company => company.resolvedBy, { cascade: true })
-  customersupport: CustomerSupport[];
+  @OneToOne(() => CustomerSupport, customerSupport => customerSupport.resolvedBy, { cascade: true })
+  customersupportResolved: CustomerSupport[];
+
+  @OneToOne(() => CustomerSupport, customerSupport => customerSupport.assignedBy, { cascade: true })
+  customerSupportAssignedBy: CustomerSupport[];
+
+  @OneToMany(() => Department, department => department.createdBy, { cascade: true })
+  customersupportCreated: Department[];
+
+  @OneToMany(() => Department, department => department.createdBy, { cascade: true })
+  customersupportUpdated: Department[];
+
+  @OneToOne(() => CustomerSupport, customerSupport => customerSupport.assignedBy, { cascade: true })
+  customerSupportAssignedTo: CustomerSupport[];
+
 }
