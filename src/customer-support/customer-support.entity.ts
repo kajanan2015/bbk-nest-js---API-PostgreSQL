@@ -81,22 +81,22 @@ export class CustomerSupport {
   @Column("timestamp", { name: "resolved_at", nullable: true, default: () => null })
   resolvedAt: Date;
 
-  @OneToOne(() => User, user => user.customersupportResolved)
+  @ManyToOne(() => User, user => user.customersupportResolved)
   @JoinColumn({ name: 'resolved_by' })
   resolvedBy: User;
 
   @Column("timestamp", { name: "assign_date", nullable: true, default: () => null })
   assignDate: Date;
 
-  @OneToOne(() => User, user => user.customerSupportAssignedBy)
+  @ManyToOne(() => User, user => user.customerSupportAssignedBy)
   @JoinColumn({ name: 'assigned_by' })
   assignedBy: User;
 
-  @OneToOne(() => User, user => user.customerSupportAssignedTo)
+  @ManyToOne(() => User, user => user.customerSupportAssignedTo)
   @JoinColumn({ name: 'assigned_to' })
   assignedTo: User;
 
-  @OneToOne(() => Department, dep => dep.customer)
+  @ManyToOne(() => Department, dep => dep.customer)
   @JoinColumn({ name: 'assigned_department' })
   assignedDepartment: Department;
 

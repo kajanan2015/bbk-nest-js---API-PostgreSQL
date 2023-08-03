@@ -6,9 +6,10 @@ import { CustomerSupport, CustomerSupportDetails, CustomerSupportHistory } from 
 import { InquiryType } from './inquiry-type/inquiry-type.entity';
 import { User } from 'src/user/user.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
+import { Department } from 'src/departments/department.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CustomerSupportDetails, CustomerSupport, InquiryType, User, CompaniesEntity, CustomerSupportHistory])],
+  imports: [TypeOrmModule.forFeature([CustomerSupportDetails, CustomerSupport, InquiryType, User, CompaniesEntity, CustomerSupportHistory, Department])],
   controllers: [CustomerSupportController],
   providers: [CustomerSupportService]
 })
