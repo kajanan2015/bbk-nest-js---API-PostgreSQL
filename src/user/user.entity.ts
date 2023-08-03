@@ -14,7 +14,7 @@ import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-his
 import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
 import { EmployeeDocument } from 'src/employee-document/employee-document.entity';
 import { CompanyDocument } from 'src/company-document/company-document.entity';
-import { CustomerSupport, CustomerSupportDetails } from 'src/customer-support/customer-support.entity';
+import { CustomerSupport, CustomerSupportDetails, CustomerSupportHistory } from 'src/customer-support/customer-support.entity';
 import { Department } from 'src/departments/department.entity';
 
 @Entity()
@@ -168,10 +168,10 @@ export class User {
   @OneToMany(() => CustomerSupportDetails, customerSupport => customerSupport.createdBy, { cascade: true })
   customersupportdetails: CustomerSupportDetails[];
 
-  @OneToOne(() => CustomerSupport, customerSupport => customerSupport.resolvedBy, { cascade: true })
+  @OneToMany(() => CustomerSupport, customerSupport => customerSupport.resolvedBy, { cascade: true })
   customersupportResolved: CustomerSupport[];
 
-  @OneToOne(() => CustomerSupport, customerSupport => customerSupport.assignedBy, { cascade: true })
+  @OneToMany(() => CustomerSupport, customerSupport => customerSupport.assignedBy, { cascade: true })
   customerSupportAssignedBy: CustomerSupport[];
 
   @OneToMany(() => Department, department => department.createdBy, { cascade: true })
@@ -180,7 +180,12 @@ export class User {
   @OneToMany(() => Department, department => department.createdBy, { cascade: true })
   customersupportUpdated: Department[];
 
-  @OneToOne(() => CustomerSupport, customerSupport => customerSupport.assignedBy, { cascade: true })
+  @OneToMany(() => CustomerSupport, customerSupport => customerSupport.assignedBy, { cascade: true })
   customerSupportAssignedTo: CustomerSupport[];
 
+  @OneToMany(() => CustomerSupportHistory, company => company.createdBy, { cascade: true })
+  customerSupportCreatedBy: CustomerSupportHistory[];
+
+  @OneToMany(() => CustomerSupportHistory, company => company.updatedBy, { cascade: true })
+  customerSupportUpdatedBy: CustomerSupportHistory[];
 }

@@ -6,12 +6,19 @@ import { InquiryType } from './inquiry-type/inquiry-type.entity'
 import { Department } from 'src/departments/department.entity';
 
 export enum CustomerSupportStatus {
+  NEW = 'new',
   PENDING = 'pending',
   RESOLVED = 'resolved',
+  REASSIGN = 'reassign',
   REJECTED = 'rejected',
   INPROGRESS = 'inprogress',
   ONHOLD = 'onhold',
   PENDINGCUSTOMERACTION = 'pendingcustomeraction'
+}
+
+export enum Historydatatype {
+  SUPPORTDETAILS = 'support details',
+  CUSTOMERSUPPORT = 'customer support'
 }
 
 @Entity('customer_support_details')
@@ -51,6 +58,9 @@ export class CustomerSupportDetails {
 
   @OneToMany(() => CustomerSupport, customerSupport => customerSupport.customerSupportDetails, { cascade: true })
   customerSupport: CustomerSupport[];
+
+  @OneToMany(() => CustomerSupportHistory, customerSupportHistory => customerSupportHistory.customerSupportDetails, { cascade: true })
+  customerSupportHistory: CustomerSupportHistory[];
 }
 
 @Entity('customer_support')
@@ -58,32 +68,72 @@ export class CustomerSupport {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column("varchar", { name: 'assigner_comment', length: 300, nullable: true, default: () => null })
+  assignerComment: string;
+
   @ManyToOne(() => CustomerSupportDetails, inquiry => inquiry.customerSupport)
   @JoinColumn({ name: 'customer_support_details_id' })
   customerSupportDetails: CustomerSupportDetails;
 
-  @Column('enum', { enum: CustomerSupportStatus, default: CustomerSupportStatus.PENDING, comment: 'pending/resolved/rejected/inprogress/onhold/pendingcustomeraction' })
+  @Column('enum', { enum: CustomerSupportStatus, default: CustomerSupportStatus.NEW, comment: 'new/inprogress/pending/reassign/resolved/rejected/onhold/pendingcustomeraction' })
   status: CustomerSupportStatus;
 
   @Column("timestamp", { name: "resolved_at", nullable: true, default: () => null })
   resolvedAt: Date;
 
-  @OneToOne(() => User, user => user.customersupportResolved)
+  @ManyToOne(() => User, user => user.customersupportResolved)
   @JoinColumn({ name: 'resolved_by' })
   resolvedBy: User;
 
   @Column("timestamp", { name: "assign_date", nullable: true, default: () => null })
   assignDate: Date;
 
-  @OneToOne(() => User, user => user.customerSupportAssignedBy)
+  @ManyToOne(() => User, user => user.customerSupportAssignedBy)
   @JoinColumn({ name: 'assigned_by' })
   assignedBy: User;
 
-  @OneToOne(() => User, user => user.customerSupportAssignedTo)
+  @ManyToOne(() => User, user => user.customerSupportAssignedTo)
   @JoinColumn({ name: 'assigned_to' })
   assignedTo: User;
 
-  @OneToOne(() => Department, dep => dep.customer)
+  @ManyToOne(() => Department, dep => dep.customer)
   @JoinColumn({ name: 'assigned_department' })
   assignedDepartment: Department;
+
+  @OneToMany(() => CustomerSupportHistory, customerSupportHistory => customerSupportHistory.customerSupport, { cascade: true })
+  customerSupportHistory: CustomerSupportHistory[];
+}
+
+@Entity('customer_support_history')
+export class CustomerSupportHistory {
+  @PrimaryGeneratedColumn({ type: "int", name: "customer_support_history_id", unsigned: true })
+  id: number;
+
+  @Column("enum", { name: "history_data_type", enum: Historydatatype, default: Historydatatype.CUSTOMERSUPPORT, comment: "support details/customer support" })
+  historyDataType: Historydatatype;
+
+  @Column({ type: "text", name: "history_data" })
+  historyData: String;
+
+  @ManyToOne(() => User, user => user.customerSupportCreatedBy)
+  @JoinColumn({ name: 'created_by' })
+  createdBy: User;
+
+  @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
+  createdAt: Date;
+
+  @ManyToOne(() => User, user => user.customerSupportUpdatedBy)
+  @JoinColumn({ name: 'updated_by' })
+  updatedBy: User;
+
+  @Column("timestamp", { name: "updated_at", nullable: true, default: () => null })
+  updatedAt: Date;
+
+  @ManyToOne(() => CustomerSupportDetails, customerSupport => customerSupport.customerSupportHistory)
+  @JoinColumn({ name: 'customer_support_details_id' })
+  customerSupportDetails: CustomerSupportDetails;
+
+  @ManyToOne(() => CustomerSupport, customerSupport => customerSupport.customerSupportHistory)
+  @JoinColumn({ name: 'customer_support_id' })
+  customerSupport: CustomerSupport;
 }
