@@ -6,6 +6,7 @@ import { InquiryType } from './inquiry-type/inquiry-type.entity'
 import { Department } from 'src/departments/department.entity';
 
 export enum CustomerSupportStatus {
+  NEW = 'new',
   PENDING = 'pending',
   RESOLVED = 'resolved',
   REJECTED = 'rejected',
@@ -73,7 +74,7 @@ export class CustomerSupport {
   @JoinColumn({ name: 'customer_support_details_id' })
   customerSupportDetails: CustomerSupportDetails;
 
-  @Column('enum', { enum: CustomerSupportStatus, default: CustomerSupportStatus.PENDING, comment: 'pending/resolved/rejected/inprogress/onhold/pendingcustomeraction' })
+  @Column('enum', { enum: CustomerSupportStatus, default: CustomerSupportStatus.NEW, comment: 'new/inprogress/pending/resolved/rejected/onhold/pendingcustomeraction' })
   status: CustomerSupportStatus;
 
   @Column("timestamp", { name: "resolved_at", nullable: true, default: () => null })
@@ -108,10 +109,10 @@ export class CustomerSupportHistory {
   id: number;
 
   @Column("enum", { name: "history_data_type", enum: Historydatatype, default: Historydatatype.CUSTOMERSUPPORT, comment: "support details/customer support" })
-  history_data_type: Historydatatype;
+  historyDataType: Historydatatype;
 
   @Column({ type: "text", name: "history_data" })
-  history_data: String;
+  historyData: String;
 
   @ManyToOne(() => User, user => user.customerSupportCreatedBy)
   @JoinColumn({ name: 'created_by' })
