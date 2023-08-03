@@ -19,7 +19,6 @@ export class CreateCustomerSupportDto {
     customerSupportDetailsId: CustomerSupportDetails
     status: Boolean
     resolvedAt: Date
-    resolvedBy: User;
     assignDate: Date;
     assignedBy: User;
 }

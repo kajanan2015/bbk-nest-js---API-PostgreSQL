@@ -168,9 +168,6 @@ export class User {
   @OneToMany(() => CustomerSupportDetails, customerSupport => customerSupport.createdBy, { cascade: true })
   customersupportdetails: CustomerSupportDetails[];
 
-  @OneToMany(() => CustomerSupport, customerSupport => customerSupport.resolvedBy, { cascade: true })
-  customersupportResolved: CustomerSupport[];
-
   @OneToMany(() => CustomerSupport, customerSupport => customerSupport.assignedBy, { cascade: true })
   customerSupportAssignedBy: CustomerSupport[];
 

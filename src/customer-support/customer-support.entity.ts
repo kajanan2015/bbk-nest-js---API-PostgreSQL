@@ -71,6 +71,9 @@ export class CustomerSupport {
   @Column("varchar", { name: 'assigner_comment', length: 300, nullable: true, default: () => null })
   assignerComment: string;
 
+  @Column("varchar", { name: 'assignee_comment', length: 300, nullable: true, default: () => null })
+  assigneeComment: string;
+
   @ManyToOne(() => CustomerSupportDetails, inquiry => inquiry.customerSupport)
   @JoinColumn({ name: 'customer_support_details_id' })
   customerSupportDetails: CustomerSupportDetails;
@@ -78,12 +81,8 @@ export class CustomerSupport {
   @Column('enum', { enum: CustomerSupportStatus, default: CustomerSupportStatus.NEW, comment: 'new/inprogress/pending/reassign/resolved/rejected/onhold/pendingcustomeraction' })
   status: CustomerSupportStatus;
 
-  @Column("timestamp", { name: "resolved_at", nullable: true, default: () => null })
-  resolvedAt: Date;
-
-  @ManyToOne(() => User, user => user.customersupportResolved)
-  @JoinColumn({ name: 'resolved_by' })
-  resolvedBy: User;
+  @Column("timestamp", { name: "assignee_commented_at", nullable: true, default: () => null })
+  assigneeCommentedAt: Date;
 
   @Column("timestamp", { name: "assign_date", nullable: true, default: () => null })
   assignDate: Date;

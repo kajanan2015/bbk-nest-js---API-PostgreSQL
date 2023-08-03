@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseGuards, Put } from '@nestjs/common';
 import { CustomerSupportService } from './customer-support.service';
 import { UpdateCustomerSupportDto } from './update-customer-support.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -42,9 +42,17 @@ export class CustomerSupportController {
     return this.customerSupportService.findHistory(+customerSupportId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCustomerSupportDto: UpdateCustomerSupportDto) {
-    return this.customerSupportService.update(+id, updateCustomerSupportDto);
+  @Put()
+  update(@Body() customerSupportData) {
+    const savedData = this.customerSupportService.update(customerSupportData['data']);
+
+    const successResponse = {
+      success: true,
+      data: savedData,
+      message: 'success',
+    };
+
+    return successResponse;
   }
 
   // ** Get inquiry type data
