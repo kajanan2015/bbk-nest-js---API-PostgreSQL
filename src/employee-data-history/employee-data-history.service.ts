@@ -111,7 +111,7 @@ export class EmployeeDataHistoryService {
           }
         } else {
           if (obj2[key] !== obj1[key] && !Object.is(obj1[key], obj2[key])) {
-            result[key] = [obj2[key]];
+            result[key] = obj2[key];
           }
           if (typeof obj2[key] === 'object' && typeof obj1[key] === 'object') {
             const value = difference(obj1[key], obj2[key]);
