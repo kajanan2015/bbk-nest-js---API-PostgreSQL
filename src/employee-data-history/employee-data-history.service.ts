@@ -109,9 +109,13 @@ export class EmployeeDataHistoryService {
           if (value !== undefined) {
             result[key] = obj1[key];
           }
-        } else {
+        } else if (key == 'start_date') {
+          result[key] = obj2[key];
+        }else if ((!isNaN(Date.parse(obj2[key])) && obj2[key] !== obj1[key] && !Object.is(obj1[key], obj2[key]))) {
+          result[key] = `${obj2[key]}`;
+        }  else {
           if (obj2[key] !== obj1[key] && !Object.is(obj1[key], obj2[key])) {
-            result[key] = obj2[key];
+            result[key] = `${obj1[key]} updated as ${obj2[key]}`;
           }
           if (typeof obj2[key] === 'object' && typeof obj1[key] === 'object') {
             const value = difference(obj1[key], obj2[key]);
