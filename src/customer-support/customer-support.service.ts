@@ -3,7 +3,9 @@ import { UpdateCustomerSupportDto } from './update-customer-support.dto';
 import { InquiryType } from './inquiry-type/inquiry-type.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CustomerSupport, CustomerSupportDetails } from './customer-support.entity';
+import { CustomerSupport, CustomerSupportDetails, CustomerSupportHistory, CustomerSupportStatus, Historydatatype } from './customer-support.entity';
+import { User } from 'src/user/user.entity';
+import { Department } from 'src/departments/department.entity';
 
 @Injectable()
 export class CustomerSupportService {
@@ -14,23 +16,46 @@ export class CustomerSupportService {
     private customerSupportRepository: Repository<CustomerSupport>,
     @InjectRepository(InquiryType)
     private readonly inquiryTypeRepository: Repository<InquiryType>,
+    @InjectRepository(CustomerSupportHistory)
+    private readonly customerSupportHistoryRepository: Repository<CustomerSupportHistory>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(Department)
+    private readonly departmentRepository: Repository<Department>
   ) { }
 
   // ** Create inquiry
   async create(customerSupportData) {
     if (customerSupportData?.customerSupportDetailsId && customerSupportData?.customerSupportId) {
       try {
+        const customerSupportDetailsEntity = await this.userRepository.findOne(customerSupportData?.customerSupportDetailsId)
+        const assignedByEntity = await this.userRepository.findOne(customerSupportData?.assignedBy)
+        const assignedToEntity = await this.userRepository.findOne(customerSupportData?.assignedTo)
+        const assignedDepartmentEntity = await this.departmentRepository.findOne(customerSupportData?.assignDepartment)
+
         const customerSupport = {
           id: customerSupportData?.customerSupportId,
-          customerSupportDetails: customerSupportData?.customerSupportDetailsId,
-          status: customerSupportData?.status,
+          customerSupportDetails: customerSupportDetailsEntity,
           assignDate: customerSupportData?.assignDate,
-          assignedBy: customerSupportData?.assignedBy,
-          assignedDepartment: customerSupportData?.assignDepartment,
-          assignedTo: customerSupportData?.assignTo,
+          assignedBy: assignedByEntity,
+          assignedDepartment: assignedDepartmentEntity,
+          assignedTo: assignedToEntity,
           assignerComment: customerSupportData?.assignerComment,
-        };
-        return this.customerSupportRepository.save(customerSupport);
+          status: CustomerSupportStatus.PENDING
+        }
+        await this.customerSupportRepository.save(customerSupport);
+
+        const historyData = {
+          historyDataType: Historydatatype.CUSTOMERSUPPORT,
+          historyData: JSON.stringify(customerSupport),
+          createdAt: new Date(),
+          updatedAt: customerSupportData.assignDate ? customerSupportData.assignDate : null,
+          updatedBy: customerSupportData.assignedBy ? customerSupportData.assignedBy : null,
+          customerSupport: customerSupportData?.customerSupportId,
+          customerSupportDetails: customerSupportData?.customerSupportDetailsId
+        }
+        const addhistory = await this.customerSupportHistoryRepository.create(historyData)
+        const savehistory = await this.customerSupportHistoryRepository.save(addhistory)
       } catch (error) {
         return error;
       }
@@ -46,16 +71,29 @@ export class CustomerSupportService {
           companyId: customerSupportData.companyId,
           createdAt: new Date(),
           createdBy: customerSupportData.createdBy,
-        });
+        })
 
         await this.customerSupportDetailsRepository.save(customerSupportDetails);
 
         const customerSupport = this.customerSupportRepository.create({
           customerSupportDetails: customerSupportDetails,
-          status: customerSupportData.status,
-        });
+          status: CustomerSupportStatus.NEW
+        })
 
-        return this.customerSupportRepository.save(customerSupport);
+        await this.customerSupportRepository.save(customerSupport);
+
+        const historyData = {
+          historyDataType: Historydatatype.CUSTOMERSUPPORT,
+          historyData: JSON.stringify(customerSupport),
+          createdAt: new Date(),
+          createdBy: customerSupportData.createdBy,
+          updatedAt: customerSupportData.updatedAt ? customerSupportData.updatedAt : null,
+          updatedBy: customerSupportData.updatedBy ? customerSupportData.updatedBy : null,
+          customerSupport: customerSupport,
+          customerSupportDetails: customerSupportDetails
+        }
+        const addhistory = await this.customerSupportHistoryRepository.create(historyData)
+        const savehistory = await this.customerSupportHistoryRepository.save(addhistory)
       } catch (error) {
         return error;
       }
@@ -71,7 +109,15 @@ export class CustomerSupportService {
   async findOne(id: number) {
     return await this.customerSupportDetailsRepository.findOne({
       where: { id: id },
-      relations: ['customerSupport', 'inquiryType']
+      relations: ['customerSupport', 'inquiryType', 'createdBy', 'customerSupport.assignedTo', 'customerSupport.assignedBy', 'customerSupport.resolvedBy', 'customerSupport.assignedDepartment']
+    })
+  }
+
+  // ** Find inquiry history
+  async findHistory(customerSupportId: number) {
+    return await this.customerSupportHistoryRepository.find({
+      where: { customerSupport: customerSupportId },
+      relations: ['customerSupportDetails', 'updatedBy', 'createdBy']
     })
   }
 

@@ -36,6 +36,12 @@ export class CustomerSupportController {
     return this.customerSupportService.findOne(+id);
   }
 
+  // ** Get inquiry history based on customer support id
+  @Get('get-history/:customerSupportId')
+  findHistory(@Param('customerSupportId') customerSupportId: number) {
+    return this.customerSupportService.findHistory(+customerSupportId);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCustomerSupportDto: UpdateCustomerSupportDto) {
     return this.customerSupportService.update(+id, updateCustomerSupportDto);

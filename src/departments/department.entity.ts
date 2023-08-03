@@ -2,7 +2,7 @@
 import { CompaniesEntity } from 'src/companies/companies.entity'
 import { CustomerSupport } from 'src/customer-support/customer-support.entity';
 import { User } from 'src/user/user.entity'
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, ManyToMany, JoinTable, OneToOne } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, ManyToMany, JoinTable, OneToOne, OneToMany } from 'typeorm'
 
 @Entity('department')
 export class Department {
@@ -37,6 +37,6 @@ export class Department {
     @JoinTable({ name: 'department_user' })
     users: User[];
 
-    @OneToOne(() => CustomerSupport, customerSupport => customerSupport.assignedDepartment, { cascade: true })
+    @OneToMany(() => CustomerSupport, customerSupport => customerSupport.assignedDepartment, { cascade: true })
     customer: CustomerSupport[];
 }

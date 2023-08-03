@@ -6,8 +6,10 @@ import { InquiryType } from './inquiry-type/inquiry-type.entity'
 import { Department } from 'src/departments/department.entity';
 
 export enum CustomerSupportStatus {
+  NEW = 'new',
   PENDING = 'pending',
   RESOLVED = 'resolved',
+  REASSIGN = 'reassign',
   REJECTED = 'rejected',
   INPROGRESS = 'inprogress',
   ONHOLD = 'onhold',
@@ -73,28 +75,28 @@ export class CustomerSupport {
   @JoinColumn({ name: 'customer_support_details_id' })
   customerSupportDetails: CustomerSupportDetails;
 
-  @Column('enum', { enum: CustomerSupportStatus, default: CustomerSupportStatus.PENDING, comment: 'pending/resolved/rejected/inprogress/onhold/pendingcustomeraction' })
+  @Column('enum', { enum: CustomerSupportStatus, default: CustomerSupportStatus.NEW, comment: 'new/inprogress/pending/reassign/resolved/rejected/onhold/pendingcustomeraction' })
   status: CustomerSupportStatus;
 
   @Column("timestamp", { name: "resolved_at", nullable: true, default: () => null })
   resolvedAt: Date;
 
-  @OneToOne(() => User, user => user.customersupportResolved)
+  @ManyToOne(() => User, user => user.customersupportResolved)
   @JoinColumn({ name: 'resolved_by' })
   resolvedBy: User;
 
   @Column("timestamp", { name: "assign_date", nullable: true, default: () => null })
   assignDate: Date;
 
-  @OneToOne(() => User, user => user.customerSupportAssignedBy)
+  @ManyToOne(() => User, user => user.customerSupportAssignedBy)
   @JoinColumn({ name: 'assigned_by' })
   assignedBy: User;
 
-  @OneToOne(() => User, user => user.customerSupportAssignedTo)
+  @ManyToOne(() => User, user => user.customerSupportAssignedTo)
   @JoinColumn({ name: 'assigned_to' })
   assignedTo: User;
 
-  @OneToOne(() => Department, dep => dep.customer)
+  @ManyToOne(() => Department, dep => dep.customer)
   @JoinColumn({ name: 'assigned_department' })
   assignedDepartment: Department;
 
@@ -108,10 +110,10 @@ export class CustomerSupportHistory {
   id: number;
 
   @Column("enum", { name: "history_data_type", enum: Historydatatype, default: Historydatatype.CUSTOMERSUPPORT, comment: "support details/customer support" })
-  history_data_type: Historydatatype;
+  historyDataType: Historydatatype;
 
   @Column({ type: "text", name: "history_data" })
-  history_data: String;
+  historyData: String;
 
   @ManyToOne(() => User, user => user.customerSupportCreatedBy)
   @JoinColumn({ name: 'created_by' })

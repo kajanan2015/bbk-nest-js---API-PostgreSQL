@@ -168,10 +168,10 @@ export class User {
   @OneToMany(() => CustomerSupportDetails, customerSupport => customerSupport.createdBy, { cascade: true })
   customersupportdetails: CustomerSupportDetails[];
 
-  @OneToOne(() => CustomerSupport, customerSupport => customerSupport.resolvedBy, { cascade: true })
+  @OneToMany(() => CustomerSupport, customerSupport => customerSupport.resolvedBy, { cascade: true })
   customersupportResolved: CustomerSupport[];
 
-  @OneToOne(() => CustomerSupport, customerSupport => customerSupport.assignedBy, { cascade: true })
+  @OneToMany(() => CustomerSupport, customerSupport => customerSupport.assignedBy, { cascade: true })
   customerSupportAssignedBy: CustomerSupport[];
 
   @OneToMany(() => Department, department => department.createdBy, { cascade: true })
@@ -180,7 +180,7 @@ export class User {
   @OneToMany(() => Department, department => department.createdBy, { cascade: true })
   customersupportUpdated: Department[];
 
-  @OneToOne(() => CustomerSupport, customerSupport => customerSupport.assignedBy, { cascade: true })
+  @OneToMany(() => CustomerSupport, customerSupport => customerSupport.assignedBy, { cascade: true })
   customerSupportAssignedTo: CustomerSupport[];
 
   @OneToMany(() => CustomerSupportHistory, company => company.createdBy, { cascade: true })

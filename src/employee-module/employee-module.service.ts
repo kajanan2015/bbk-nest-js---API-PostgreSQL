@@ -535,6 +535,7 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("employeeInfo.refCompAddressCountry", "refCompAddressCountry")
       .leftJoinAndSelect("employeeInfo.drivingLicenceType", "drivingLicenceType")
       .leftJoinAndSelect("employeeInfo.bankName", "bankName")
+      .leftJoinAndSelect("employeeInfo.visaType", "visaType")
       .leftJoinAndSelect("employeeInfo.created_by", "created_by")
       .leftJoinAndSelect("employeeInfo.updated_by", "updated_by")
       .leftJoinAndSelect("employeeInfo.employee", "employee")
@@ -553,9 +554,9 @@ export class EmployeeModuleService {
       for (const categoryid of data.drivingLicenceCategory) {
         drivinglicensecategoryId.push(categoryid.id)
       }
-      // const repsonse1 = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
-      // employeeInforow.drivingLicenceCategory = repsonse1;
-      // const response3333 = await this.employeeInfoRepository.save(employeeInforow)
+      const repsonse1 = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
+      employeeInforow.drivingLicenceCategory = repsonse1;
+      const response3333 = await this.employeeInfoRepository.save(employeeInforow)
       // delete data.drivingLicenceCategory;
     }
 
@@ -799,6 +800,7 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("linkedEmployee.gender", "gender")
       .leftJoinAndSelect("linkedEmployee.maritalStatus", "maritalStatus")
       .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
+      .leftJoinAndSelect("linkedEmployee.visaType", "visaType")
       .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
       .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
       .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")

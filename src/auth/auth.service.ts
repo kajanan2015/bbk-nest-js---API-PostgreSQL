@@ -90,20 +90,11 @@ export class AuthService {
     await this.authRepository.save(data)
     const payload = { utype: user.uType, name: user.firstName, email: user.email, sub: user.id, firstpasswordset: user.firsttimepasswordchange };
     let companies=await this.userService.getCompaniesByUserId(user.id)
-  if(user.uType=="ADMIN"){
-    companies=null;
     return {
       access_token: this.jwtService.sign(payload),
       payload,
       companies
     };
-  }else{
-    return {
-      access_token: this.jwtService.sign(payload),
-      payload,
-      companies
-    };
-  }
     
   }
 
