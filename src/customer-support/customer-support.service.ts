@@ -102,6 +102,14 @@ export class CustomerSupportService {
     })
   }
 
+  // ** Find inquiry history
+  async findHistory(customerSupportId: number) {
+    return await this.customerSupportHistoryRepository.find({
+      where: { customerSupport: customerSupportId },
+      relations: [ 'customerSupportDetails', 'updatedBy', 'createdBy']
+    })
+  }
+
   update(id: number, updateCustomerSupportDto: UpdateCustomerSupportDto) {
     return `This action updates a #${id} customerSupport`;
   }
