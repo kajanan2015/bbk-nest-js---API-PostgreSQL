@@ -98,7 +98,7 @@ export class CustomerSupportService {
   async findOne(id: number) {
     return await this.customerSupportDetailsRepository.findOne({
       where: { id: id },
-      relations: ['customerSupport', 'inquiryType']
+      relations: ['customerSupport', 'inquiryType', 'createdBy', 'customerSupport.assignedTo', 'customerSupport.assignedBy', 'customerSupport.resolvedBy', 'customerSupport.assignedDepartment']
     })
   }
 

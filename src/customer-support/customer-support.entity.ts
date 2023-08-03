@@ -9,6 +9,7 @@ export enum CustomerSupportStatus {
   NEW = 'new',
   PENDING = 'pending',
   RESOLVED = 'resolved',
+  REASSIGN = 'reassign',
   REJECTED = 'rejected',
   INPROGRESS = 'inprogress',
   ONHOLD = 'onhold',
@@ -74,7 +75,7 @@ export class CustomerSupport {
   @JoinColumn({ name: 'customer_support_details_id' })
   customerSupportDetails: CustomerSupportDetails;
 
-  @Column('enum', { enum: CustomerSupportStatus, default: CustomerSupportStatus.NEW, comment: 'new/inprogress/pending/resolved/rejected/onhold/pendingcustomeraction' })
+  @Column('enum', { enum: CustomerSupportStatus, default: CustomerSupportStatus.NEW, comment: 'new/inprogress/pending/reassign/resolved/rejected/onhold/pendingcustomeraction' })
   status: CustomerSupportStatus;
 
   @Column("timestamp", { name: "resolved_at", nullable: true, default: () => null })
