@@ -92,15 +92,15 @@ export class EmployeeDataHistoryService {
 
     const historyData = groupBy(results, 'type');
 
-    function formatDate (date) {  
+    function formatDate(date) {
       if (!(date instanceof Date)) {
         throw new Error('Invalid "date" argument. You must pass a date instance')
       }
-    
+
       const year = date.getFullYear()
       const month = String(date.getMonth() + 1).padStart(2, '0')
       const day = String(date.getDate()).padStart(2, '0')
-    
+
       return `${year}-${month}-${day}`
     }
 
@@ -113,6 +113,9 @@ export class EmployeeDataHistoryService {
         return obj2;
       }
       Object.keys(obj1 || {}).concat(Object.keys(obj2 || {})).forEach(key => {
+        // if(!obj2 || typeof obj2 !== 'object'){
+        //   result[key] = obj1[key];
+        // }
         if (key == 'created_at' || key == 'updated_at' || key == 'updated_by' || key == 'id') {
         } else if (key == 'created_by') {
           result[key] = obj2[key];
@@ -124,7 +127,7 @@ export class EmployeeDataHistoryService {
         } else if (key == 'start_date') {
           result[key] = obj2[key];
         } else if ((
-          ( key == 'dob' ||
+          (key == 'dob' ||
             key == 'dateofJoined' ||
             key == 'officialDocIssueDate' ||
             key == 'officialDocExpireDate' ||
@@ -146,7 +149,7 @@ export class EmployeeDataHistoryService {
           obj2[key] !== obj1[key] &&
           !Object.is(obj1[key], obj2[key])
         )) {
-          
+
           result[key] = `${formatDate(new Date(obj1[key]))} updated as ${formatDate(new Date(obj2[key]))}`;
         } else {
           if (obj2[key] !== obj1[key] && !Object.is(obj1[key], obj2[key])) {
@@ -246,6 +249,53 @@ export class EmployeeDataHistoryService {
           const json2 = tableData[Number(row) - 1];
           const res = difference(json1, json2)
           result.push(res)
+        } else {
+          const obj2 = tableData[row];
+          const res = {};
+          Object.keys(obj2).forEach(function (key, index) {
+            if (!obj2[key]) {
+              return
+            }
+            if (key == 'created_at' || key == 'updated_at' || key == 'updated_by' || key == 'id') {
+            } else if (key == 'created_by') {
+              res[key] = obj2[key];
+            } else if (key == 'empProvidedCopy' || key == 'visaDoc' || key == 'officialDoc' || key == 'refdoc' || key == 'drivingLicenceDoc' || key == 'tachoDoc' || key == 'cpcCardDoc') {
+              const value = obj2?.[key]?.[0]?.['docPath'];
+              if (value !== undefined) {
+                result[key] = obj2[key];
+              }
+            }
+            else if (key == 'start_date') {
+              res[key] = obj2[key];
+            } else if ((
+              (key == 'dob' ||
+                key == 'dateofJoined' ||
+                key == 'officialDocIssueDate' ||
+                key == 'officialDocExpireDate' ||
+                key == 'visaIssueDate' ||
+                key == 'visaExpireDate' ||
+                key == 'refGivenDate' ||
+                key == 'drivingLicenceIssue' ||
+                key == 'drivingLicenceExpire' ||
+                key == 'drivingLicenceCatDIssue' ||
+                key == 'drivingLicenceCatDExpire' ||
+                key == 'tachoIssueDate' ||
+                key == 'tachoExpireDate' ||
+                key == 'cpcCardIssueDate' ||
+                key == 'cpcCardExpireDate' ||
+                key == 'crbCardIssueDate' ||
+                key == 'crbCardExpireDate' ||
+                key == 'leaveDate' ||
+                key == 'drivingLicenceExpire')
+            )) {
+              res[key] = `${formatDate(new Date(obj2[key]))}`;
+            } else {
+              res[key] = obj2[key];
+            }
+          });
+          if (res.toString() != '{}') {
+            result.push(res)
+          }
         }
       }
 
