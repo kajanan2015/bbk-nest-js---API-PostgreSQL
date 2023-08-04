@@ -71,9 +71,9 @@ export class CompanyDocumentController {
     const documentName = Object.keys(data)[0]
     const existing = await this.companyDocumentService.findByDocumentName(documentName);
     if (existing) {
-      return "name exist";
+      return 300;
     } else {
-      return 'name not exist'
+      return 305
     }
   }
 }

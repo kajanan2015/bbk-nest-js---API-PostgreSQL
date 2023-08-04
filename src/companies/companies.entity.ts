@@ -44,7 +44,8 @@ export enum Historydatatype {
   COMPANY = 'company initial data',
   COMPANYINFO = 'company info',
   COMPANYDETAILS = 'company details',
-  SCHEDULEHISTORY= 'schedule history'
+  SCHEDULEHISTORY= 'schedule history',
+  DELETEDHISTORY='schedule deleted',
 }
 
 @Entity('company')
@@ -223,7 +224,7 @@ export class CompaniesEntityinfo {
   @Column("timestamp", { name: "updated_at", nullable: true, default: () => null })
   updated_at: Date;
 
-  @Column('timestamp', { name: 'start_date', default: () => "CURRENT_TIMESTAMP" })
+  @Column('timestamp', { name: 'start_date', default: () => "CURRENT_TIMESTAMP",nullable:true })
   start_date: Date;
 
   @Column('timestamp', { name: 'end_date', default: null, nullable: true })
