@@ -49,10 +49,10 @@ export class CompanyWorkPatternService {
   }
 
   async findbypattername(name: string, companyId) {
-   // const pattern = await this.patternrepository.find({ where: { workPatternName: name, company: companyId } });
-    // if (pattern.length > 0) {
-    //   return "name exist"
-    // }
+   const pattern = await this.patternrepository.find({ where: { workPatternName: name, company: companyId } });
+    if (pattern.length > 0) {
+      return 300
+    }
   }
 
   async findOne(id: number) {
