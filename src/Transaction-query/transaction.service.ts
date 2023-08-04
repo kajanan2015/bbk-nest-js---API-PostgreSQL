@@ -116,8 +116,16 @@ console.log(updatedpreviousdata,777)
     const updateprevioushistory = manager.merge(historyclass, companyExistHistory, newcomanyexisthistory); // Using merge directly on manager
     await manager.save(historyclass, updateprevioushistory);
 
-    const newcomanyexistdata = { ...existLastestValues, end_date:null,updated_by:null,updated_at: null}
-    const updatepreviousexistdata = manager.merge(entityclass, existLastestValues, newcomanyexistdata); // Using merge directly on manager
+    const newcomanyexistdata = { ...existLastestValues[0]}
+    delete newcomanyexistdata.end_date
+    delete newcomanyexistdata.updated_at
+    delete newcomanyexistdata.updated_by
+    newcomanyexistdata.end_date=null
+    newcomanyexistdata.updated_at=null
+    newcomanyexistdata.updated_by=null
+    console.log(newcomanyexistdata,999)
+    console.log(existLastestValues,9998)
+    const updatepreviousexistdata = manager.merge(entityclass, existLastestValues[0], newcomanyexistdata); // Using merge directly on manager
     await manager.save(entityclass, updatepreviousexistdata);
 
     // const createhistoryresponse = await manager.create(historyclass, historydata); // Using merge directly on manager

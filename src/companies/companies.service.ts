@@ -1702,7 +1702,7 @@ export class CompaniesService {
     if (!entity) {
       throw new NotFoundException('Entity not found');
     }
-    const existLastestValues = await this.companyinfoRepository.find({ where: { company: companyid, start_date: LessThanOrEqual(entity['start_date']) }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { start_date: 'DESC',  company_info_id: 'ASC'} })
+    const existLastestValues = await this.companyinfoRepository.find({ where: { company: companyid, start_date: LessThan(entity['start_date']) }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { company_info_id: 'DESC'} })
    console.log(existLastestValues,8989898)
     const companyExistHistory = await this.companyhistoryRepository.findOne({ id: scheduleid }, { relations: ['created_by', 'updated_by', 'companyinfo', 'company'] })
    await this.historytransaction.deleteExistScheduleTransaction(entity,existLastestValues,companyExistHistory,CompaniesEntityinfo,CompaniesHistorydata)
