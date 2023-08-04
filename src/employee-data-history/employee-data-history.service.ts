@@ -92,6 +92,18 @@ export class EmployeeDataHistoryService {
 
     const historyData = groupBy(results, 'type');
 
+    function formatDate (date) {  
+      if (!(date instanceof Date)) {
+        throw new Error('Invalid "date" argument. You must pass a date instance')
+      }
+    
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+    
+      return `${year}-${month}-${day}`
+    }
+
     const difference = (obj1, obj2) => {
       const result = {};
       if (Object.is(obj1, obj2)) {
@@ -103,17 +115,40 @@ export class EmployeeDataHistoryService {
       Object.keys(obj1 || {}).concat(Object.keys(obj2 || {})).forEach(key => {
         if (key == 'created_at' || key == 'updated_at' || key == 'updated_by' || key == 'id') {
         } else if (key == 'created_by') {
-          result[key] = obj1[key];
+          result[key] = obj2[key];
         } else if (key == 'empProvidedCopy' || key == 'visaDoc' || key == 'officialDoc' || key == 'refdoc' || key == 'drivingLicenceDoc' || key == 'tachoDoc' || key == 'cpcCardDoc') {
           const value = difference(obj1?.[key]?.[0]?.['docPath'], obj2?.[key]?.[0]?.['docPath']);
           if (value !== undefined) {
-            result[key] = obj1[key];
+            result[key] = obj2[key];
           }
         } else if (key == 'start_date') {
           result[key] = obj2[key];
-        }else if ((!isNaN(Date.parse(obj2[key])) && obj2[key] !== obj1[key] && !Object.is(obj1[key], obj2[key]))) {
-          result[key] = `${obj2[key]}`;
-        }  else {
+        } else if ((
+          ( key == 'dob' ||
+            key == 'dateofJoined' ||
+            key == 'officialDocIssueDate' ||
+            key == 'officialDocExpireDate' ||
+            key == 'visaIssueDate' ||
+            key == 'visaExpireDate' ||
+            key == 'refGivenDate' ||
+            key == 'drivingLicenceIssue' ||
+            key == 'drivingLicenceExpire' ||
+            key == 'drivingLicenceCatDIssue' ||
+            key == 'drivingLicenceCatDExpire' ||
+            key == 'tachoIssueDate' ||
+            key == 'tachoExpireDate' ||
+            key == 'cpcCardIssueDate' ||
+            key == 'cpcCardExpireDate' ||
+            key == 'crbCardIssueDate' ||
+            key == 'crbCardExpireDate' ||
+            key == 'leaveDate' ||
+            key == 'drivingLicenceExpire') &&
+          obj2[key] !== obj1[key] &&
+          !Object.is(obj1[key], obj2[key])
+        )) {
+          
+          result[key] = `${formatDate(new Date(obj1[key]))} updated as ${formatDate(new Date(obj2[key]))}`;
+        } else {
           if (obj2[key] !== obj1[key] && !Object.is(obj1[key], obj2[key])) {
             result[key] = `${obj1[key]} updated as ${obj2[key]}`;
           }
@@ -160,50 +195,50 @@ export class EmployeeDataHistoryService {
       `SELECT * FROM visa_type`
     );
 
-    Object.keys(historyData).forEach(function (key, index){
+    Object.keys(historyData).forEach(function (key, index) {
       const data = historyData[key];
       const tableData = [];
-      for (let row in data){
+      for (let row in data) {
         const rowData = data[row]
         const jsonRow = JSON.parse(rowData.data);
-        if(jsonRow.hasOwnProperty('employeeType')){
+        if (jsonRow.hasOwnProperty('employeeType')) {
           let employeeType = empTypesList.find(type => type.id == jsonRow.employeeType);
           jsonRow.employeeType = employeeType
         }
-        if(jsonRow.hasOwnProperty('gender')){
+        if (jsonRow.hasOwnProperty('gender')) {
           let gender = genderList.find(gender => gender.id == jsonRow.gender);
           jsonRow.gender = gender
         }
-        if(jsonRow.hasOwnProperty('maritalStatus')){
+        if (jsonRow.hasOwnProperty('maritalStatus')) {
           let maritalStatus = maritalStatusList.find(status => status.id == jsonRow.maritalStatus);
           jsonRow.maritalStatus = maritalStatus
         }
-        if(jsonRow.hasOwnProperty('designation')){
+        if (jsonRow.hasOwnProperty('designation')) {
           let designation = designationList.find(designation => designation.id == jsonRow.designation);
           jsonRow.designation = designation
         }
-        if(jsonRow.hasOwnProperty('addressCountry')){
+        if (jsonRow.hasOwnProperty('addressCountry')) {
           let addressCountry = countryList.find(country => country.id == jsonRow.addressCountry);
           jsonRow.addressCountry = addressCountry
         }
-        if(jsonRow.hasOwnProperty('bank')){
+        if (jsonRow.hasOwnProperty('bankName')) {
           let bankName = bankList.find(bank => bank.id == jsonRow.bankName);
           jsonRow.bankName = bankName
         }
-        if(jsonRow.hasOwnProperty('visaType')){
+        if (jsonRow.hasOwnProperty('visaType')) {
           let visaType = visaTypeList.find(visaType => visaType.id == jsonRow.visaType);
           jsonRow.visaType = visaType
         }
         tableData.push({
-            id: rowData?.id,
-            start_date: rowData?.start_date.toString(),
-            updated_at: rowData?.updated_at,
-            created_at: rowData?.created_at,
-            updated_by: rowData?.updated_by?.firstName,
-            created_by: rowData?.created_by?.firstName,
-            ...jsonRow
-        })        
-    }
+          id: rowData?.id,
+          start_date: rowData?.start_date.toString(),
+          updated_at: rowData?.updated_at,
+          created_at: rowData?.created_at,
+          updated_by: rowData?.updated_by?.firstName,
+          created_by: rowData?.created_by?.firstName,
+          ...jsonRow
+        })
+      }
 
       for (let row in tableData?.reverse()) {
         if (data[Number(row) - 1]) {
