@@ -107,9 +107,9 @@ export class CreatepackageController {
   async checkemailexist(@Body() data: any) {
     const existing = await this.createpackageService.findPackageNameExist(data.packagename);
     if (existing) {
-      return "package exist";
+      return 306;
     } else {
-      return 'package not exist'
+      return 307
     }
   }
   //find packages by using package name-for history

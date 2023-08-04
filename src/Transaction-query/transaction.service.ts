@@ -108,4 +108,36 @@ console.log(updatedpreviousdata,777)
     const updatepreviousdata = manager.merge(entityclass, previousentitydata, passvalue); // Using merge directly on manager
     await manager.save(entityclass, updatepreviousdata);
   }
+
+  @Transaction()
+  async deleteExistScheduleTransaction(entity,existLastestValues,companyExistHistory,entityclass,historyclass,@TransactionManager() manager?: any,
+  ): Promise<void> {
+    const newcomanyexisthistory = { ...companyExistHistory, history_data_type: Historydatatype.DELETEDHISTORY }
+    const updateprevioushistory = manager.merge(historyclass, companyExistHistory, newcomanyexisthistory); // Using merge directly on manager
+    await manager.save(historyclass, updateprevioushistory);
+
+    const newcomanyexistdata = { ...existLastestValues[0]}
+    delete newcomanyexistdata.end_date
+    delete newcomanyexistdata.updated_at
+    delete newcomanyexistdata.updated_by
+    newcomanyexistdata.end_date=null
+    newcomanyexistdata.updated_at=null
+    newcomanyexistdata.updated_by=null
+    console.log(newcomanyexistdata,999)
+    console.log(existLastestValues,9998)
+    const updatepreviousexistdata = manager.merge(entityclass, existLastestValues[0], newcomanyexistdata); // Using merge directly on manager
+    await manager.save(entityclass, updatepreviousexistdata);
+
+    // const createhistoryresponse = await manager.create(historyclass, historydata); // Using merge directly on manager
+    // await manager.save(historyclass, createhistoryresponse);
+
+    // const updatepreviousdata = manager.merge(entityclass, previousentitydata, passvalue); // Using merge directly on manager
+    // await manager.save(entityclass, updatepreviousdata);
+
+     // Remove the previous entity row from the database
+     const comanyexistdata = { ...entity, end_date:null, start_date:null, updated_by:null, updated_at: null}
+    const newsexistdata = manager.merge(entityclass, entity, comanyexistdata); // Using merge directly on manager
+    await manager.save(entityclass, newsexistdata);
+    // await manager.remove(entityclass, entity);
+  }
 }

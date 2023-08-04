@@ -35,11 +35,11 @@ async verifypaymentdetailstokendecode(key){
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
       // Handle expired token error
-      return 'Expired token';
+      return 320;
 
     } else {
       // Handle other verification errors
-      return 'Token verification failed';
+      return 321;
 
     }
   }
@@ -77,11 +77,11 @@ async verifypaymentdetailstokendecode(key){
     } catch (error) {
       if (error.name === 'TokenExpiredError') {
         // Handle expired token error
-        return 'Expired token';
+        return 320;
 
       } else {
         // Handle other verification errors
-        return 'Token verification failed';
+        return 321;
 
       }
     }
@@ -97,11 +97,11 @@ async verifypaymentdetailstokendecode(key){
     } catch (error) {
       if (error.name === 'TokenExpiredError') {
         // Handle expired token error
-        return 'Expired token';
+        return 320;
 
       } else {
         // Handle other verification errors
-        return 'Token verification failed';
+        return 321;
 
       }
     }

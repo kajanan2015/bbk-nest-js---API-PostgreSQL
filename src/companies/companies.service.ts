@@ -50,6 +50,7 @@ import { Companystatus } from "./companies.entity";
 import { Companyidentifier } from "./companies.entity";
 import { Historydatatype } from "./companies.entity";
 import { HistoryTransactionservicedb } from "src/Transaction-query/transaction.service";
+import { STATUS_CODES } from "http";
 @Injectable()
 export class CompaniesService {
 
@@ -108,7 +109,7 @@ export class CompaniesService {
       },
     });
     if (existingcompanyname) {
-      return "company name exist";
+      return 300;
     }
 
     const response = await this.systemcodeService.findOne("company");
@@ -162,7 +163,7 @@ export class CompaniesService {
         for (const admin of adminUsers) {
           existing = await this.userservice.findByEmailexist(admin.email);
           if (existing) {
-            return "account exist";
+            return 301;
           }
           profilethumbUrl = admin.profileImage
             ? await this.imageUploadService.uploadThumbnailToS3(
@@ -214,7 +215,7 @@ export class CompaniesService {
           for (const admin of adminUsers) {
             const existing = await this.userservice.findByEmailexist(admin.email);
             if (existing) {
-              return "account exist";
+              return 301;
             }
             profilethumbUrl = admin.profileImage
               ? await this.imageUploadService.uploadThumbnailToS3(
@@ -287,7 +288,7 @@ export class CompaniesService {
       for (const admin of adminUsers) {
         const existing = await this.userservice.findByEmailexist(admin.email);
         if (existing) {
-          return "account exist";
+          return 301;
         }
         profilethumbUrl = admin.profileImage
           ? await this.imageUploadService.uploadThumbnailToS3(
@@ -1432,10 +1433,10 @@ export class CompaniesService {
       console.log('decodedkey', 999)
       const exist = await this.userRepository.findOne({ email: decodedkey['email'] })
       if (exist.activate == true) {
-        return "You are already activated";
+        return 304;
       } else {
         const updateresponse = await this.userRepository.update({ email: decodedkey['email'] }, updateuserdata);
-        return "activated";
+        return 305;
       }
     } else {
       return decodedkey
@@ -1597,12 +1598,10 @@ export class CompaniesService {
     if(data.country){
       const countryobejct = await this.countryrepo.findOne({ id: data.country });
       data.country = countryobejct;
-      
     }
     if(data.regAddressCountry){
       const regcountryobejct = await this.countryrepo.findOne({ id: data.regAddressCountry });
       data.regAddressCountry = regcountryobejct;
-   
     }
     if(data.companyType){
       const companytypeobejct = await this.companytyperepo.findOne({ id: data.companyType });
@@ -1687,6 +1686,27 @@ export class CompaniesService {
     // const companydata= await this.companyRepository.update({id},data)
     // const historyresponse=await this.companyhistoryRepository.create();
     // const historysaveresponse=await this.companyhistoryRepository.save(historyresponse)
+  }
+
+  // delete schedule
+  async deleteschedulecompany(data){
+    // current date
+    console.log(data['CompanyDetails'],8989898)
+    const date = new Date();
+    const companyinfoid = parseInt(data['CompanyDetails'].companyInfoId);
+    const companyid = parseInt(data['CompanyDetails'].id);
+    const scheduleid=parseInt(data['CompanyDetails'].schedule_id) 
+
+
+    const entity = await this.companyinfoRepository.findOne({ company_info_id: companyinfoid }, { relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'] })
+    if (!entity) {
+      throw new NotFoundException('Entity not found');
+    }
+    const existLastestValues = await this.companyinfoRepository.find({ where: { company: companyid, start_date: LessThan(entity['start_date']) }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { company_info_id: 'DESC'} })
+   console.log(existLastestValues,8989898)
+    const companyExistHistory = await this.companyhistoryRepository.findOne({ id: scheduleid }, { relations: ['created_by', 'updated_by', 'companyinfo', 'company'] })
+   await this.historytransaction.deleteExistScheduleTransaction(entity,existLastestValues,companyExistHistory,CompaniesEntityinfo,CompaniesHistorydata)
+   return {status:HttpStatus.OK};
   }
 
   async getscheduledcompanydatahistory(id, data) {

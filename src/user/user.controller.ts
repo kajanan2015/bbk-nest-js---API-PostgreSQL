@@ -199,9 +199,9 @@ export class UserController {
   async checkemailexist(@Body() data: any) {
     const existing = await this.service.findByEmailexist(data.email);
     if (existing) {
-      return "account exist";
+      return 301;
     } else {
-      return 'account not exist'
+      return 307
     }
   }
 

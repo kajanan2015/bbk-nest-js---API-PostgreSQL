@@ -113,7 +113,7 @@ export class AuthService {
     if (checkemail) {
       return await this.mailservice.sendresetlink(checkemail['email'], checkemail['id'],base_url);
     }
-    return "cant find account"
+    return 302
   }
 
   async decodemyresettoken(key) {

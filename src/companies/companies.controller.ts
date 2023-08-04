@@ -348,6 +348,13 @@ export class CompaniesController {
 
 
 
+   // get latest company info when passing date
+   @UseGuards(AuthGuard('jwt'))
+   @Post('deleteschedulecompany')
+   async deleteschedulecompany( @Body() data){
+     return await this.service.deleteschedulecompany(data);
+   }
+
 
 
 

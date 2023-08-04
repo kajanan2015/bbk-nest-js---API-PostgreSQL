@@ -67,7 +67,7 @@ export class CustomerSupportService {
 
   // ** Find all inquiry
   async findAll() {
-    return await this.customerSupportDetailsRepository.find({ relations: ['customerSupport', 'inquiryType'] });
+    return await this.customerSupportDetailsRepository.find({ relations: ['customerSupport', 'inquiryType', 'customerSupport.assignedTo', 'customerSupport.assignedBy', 'customerSupport.assignedDepartment'] });
   }
 
   // ** Find one inquiry
