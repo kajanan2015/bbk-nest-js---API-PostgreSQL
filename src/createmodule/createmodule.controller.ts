@@ -15,8 +15,7 @@ export class CreatemoduleController {
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   async create(@UploadedFiles() moduleImg ,@Body() createCreatemoduleDto) {
-    console.log(moduleImg,345678)
-    console.log(createCreatemoduleDto,5678934)
+   
     const modulelogo= await this.imageUploadService.upload(moduleImg,'body')
     const data={
       modulename:createCreatemoduleDto.moduleName,

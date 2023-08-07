@@ -19,6 +19,7 @@ import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-his
 import { VehicleTypeEntity } from 'src/vehicle-type/vehicle-type.entity';
 import { CustomerSupportDetails } from 'src/customer-support/customer-support.entity';
 import { Department } from 'src/departments/department.entity';
+import { companyvehicledata } from 'src/company-vehicle/companyvehicle.entity';
 
 
 
@@ -121,6 +122,10 @@ export class CompaniesEntity {
 
   @OneToMany(() => Department, department => department.companyId, ({ cascade: true }))
   department: Department[];
+
+  
+  @OneToMany(() => companyvehicledata, vehicledetails => vehicledetails.company, ({ cascade: true }))
+  vehicledetails: companyvehicledata[];
 }
 
 @Entity('company_info')
