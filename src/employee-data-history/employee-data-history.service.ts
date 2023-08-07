@@ -116,8 +116,7 @@ export class EmployeeDataHistoryService {
           result[key] = obj1[key];
         }
         else if (key == 'empProvidedCopy' || key == 'visaDoc' || key == 'officialDoc' || key == 'refdoc' || key == 'drivingLicenceDoc' || key == 'tachoDoc' || key == 'cpcCardDoc') {
-          const value = difference(obj1?.[key]?.[0]?.['docPath'], obj2?.[key]?.[0]?.['docPath']);
-          if (value !== undefined) {
+          if(obj1?.[key]?.[0]?.['docPath'] != obj2?.[key]?.[0]?.['docPath']){
             result[key] = obj1[key];
           }
         }
@@ -143,13 +142,13 @@ export class EmployeeDataHistoryService {
             key == 'crbCardExpireDate' ||
             key == 'leaveDate' ||
             key == 'drivingLicenceExpire') &&
-          obj2[key] !== obj1[key] &&
+          obj2[key] != obj1[key] &&
           !Object.is(obj1[key], obj2[key])
         )) {
 
           result[key] = `${formatDate(new Date(obj2[key]))} updated as ${formatDate(new Date(obj1[key]))}`;
         } else {
-          if (obj2[key] !== obj1[key] && !Object.is(obj1[key], obj2[key])) {
+          if (obj2[key] != obj1[key] && !Object.is(obj1[key], obj2[key])) {
             result[key] = `${obj2[key]} updated as ${obj1[key]}`;
           }
           if (typeof obj2[key] === 'object' && typeof obj1[key] === 'object') {
@@ -248,53 +247,53 @@ export class EmployeeDataHistoryService {
           const res = difference(json1, json2)
           result.push(res)
         } else {
-          result.push(tableData[row])
-            // const obj2 = tableData[row];
-            // const res = {};
-            // Object.keys(obj2).forEach(function (key, index) {
-            //   if (!obj2[key]) {
-            //     return
-            //   }
-            //   if (key == 'created_at' || key == 'updated_at' || key == 'updated_by' || key == 'id') {
-            //   } else if (key == 'created_by') {
-            //     res[key] = obj2[key];
-            //   } else if (key == 'empProvidedCopy' || key == 'visaDoc' || key == 'officialDoc' || key == 'refdoc' || key == 'drivingLicenceDoc' || key == 'tachoDoc' || key == 'cpcCardDoc') {
-            //     const value = obj2?.[key]?.[0]?.['docPath'];
-            //     if (value !== undefined) {
-            //       result[key] = obj2[key];
-            //     }
-            //   }
-            //   else if (key == 'start_date') {
-            //     res[key] = obj2[key];
-            //   } else if ((
-            //     (key == 'dob' ||
-            //       key == 'dateofJoined' ||
-            //       key == 'officialDocIssueDate' ||
-            //       key == 'officialDocExpireDate' ||
-            //       key == 'visaIssueDate' ||
-            //       key == 'visaExpireDate' ||
-            //       key == 'refGivenDate' ||
-            //       key == 'drivingLicenceIssue' ||
-            //       key == 'drivingLicenceExpire' ||
-            //       key == 'drivingLicenceCatDIssue' ||
-            //       key == 'drivingLicenceCatDExpire' ||
-            //       key == 'tachoIssueDate' ||
-            //       key == 'tachoExpireDate' ||
-            //       key == 'cpcCardIssueDate' ||
-            //       key == 'cpcCardExpireDate' ||
-            //       key == 'crbCardIssueDate' ||
-            //       key == 'crbCardExpireDate' ||
-            //       key == 'leaveDate' ||
-            //       key == 'drivingLicenceExpire')
-            //   )) {
-            //     res[key] = `${formatDate(new Date(obj2[key]))}`;
-            //   } else {
-            //     res[key] = obj2[key];
-            //   }
-            // });
-            // if (res.toString() != '{}') {
-            //   result.push(res)
-            // }
+         // result.push(tableData[row])
+            const obj2 = tableData[row];
+            const res = {};
+            Object.keys(obj2).forEach(function (key, index) {
+              if (!obj2[key]) {
+                return
+              }
+              if (key == 'created_at' || key == 'updated_at' || key == 'updated_by' || key == 'id') {
+              } else if (key == 'created_by') {
+                res[key] = obj2[key];
+              } else if (key == 'empProvidedCopy' || key == 'visaDoc' || key == 'officialDoc' || key == 'refdoc' || key == 'drivingLicenceDoc' || key == 'tachoDoc' || key == 'cpcCardDoc') {
+                const value = obj2?.[key]?.[0]?.['docPath'];
+                if (value !== undefined) {
+                  res[key] = obj2[key];
+                }
+              }
+              else if (key == 'start_date') {
+                res[key] = obj2[key];
+              } else if ((
+                (key == 'dob' ||
+                  key == 'dateofJoined' ||
+                  key == 'officialDocIssueDate' ||
+                  key == 'officialDocExpireDate' ||
+                  key == 'visaIssueDate' ||
+                  key == 'visaExpireDate' ||
+                  key == 'refGivenDate' ||
+                  key == 'drivingLicenceIssue' ||
+                  key == 'drivingLicenceExpire' ||
+                  key == 'drivingLicenceCatDIssue' ||
+                  key == 'drivingLicenceCatDExpire' ||
+                  key == 'tachoIssueDate' ||
+                  key == 'tachoExpireDate' ||
+                  key == 'cpcCardIssueDate' ||
+                  key == 'cpcCardExpireDate' ||
+                  key == 'crbCardIssueDate' ||
+                  key == 'crbCardExpireDate' ||
+                  key == 'leaveDate' ||
+                  key == 'drivingLicenceExpire')
+              )) {
+                res[key] = `${formatDate(new Date(obj2[key]))}`;
+              } else {
+                res[key] = obj2[key];
+              }
+            });
+            if (res.toString() != '{}') {
+              result.push(res)
+            }
         }
       }
 
