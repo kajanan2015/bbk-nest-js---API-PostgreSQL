@@ -114,6 +114,10 @@ export class EmployeeDataHistoryService {
         if (key == 'created_at' || key == 'updated_at' || key == 'updated_by' || key == 'id') {
         } else if (key == 'created_by') {
           result[key] = obj1[key];
+        } else if (key == 'drivingLicenceCategory') {
+          const driverLicenceCategories1 = obj1[key].map(item => item.driverLicenceCategory).join(', ');
+          const driverLicenceCategories2 = obj2[key].map(item => item.driverLicenceCategory).join(', ');
+          result[key] = `${driverLicenceCategories2} updated as ${driverLicenceCategories1}`;
         }
         else if (key == 'empProvidedCopy' || key == 'visaDoc' || key == 'officialDoc' || key == 'refdoc' || key == 'drivingLicenceDoc' || key == 'tachoDoc' || key == 'cpcCardDoc') {
           if(obj1?.[key]?.[0]?.['docPath'] != obj2?.[key]?.[0]?.['docPath']){
