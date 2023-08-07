@@ -205,6 +205,14 @@ export class EmployeeModuleController {
     return this.employeeModuleService.deleteSheduleRecord(id);
   }
 
+   // get latest employee info when passing date
+   @UseGuards(AuthGuard('jwt'))
+   @Post('getlatestemployeeinfo')
+   async getlatestcompany( @Body() data){
+     return await this.employeeModuleService.findLatestEmployeeInfo(data.empid, data);
+   }
+ 
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.employeeModuleService.remove(+id);
