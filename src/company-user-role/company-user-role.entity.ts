@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-@Entity('companyUserRole')
+@Entity()
 export class CompanyUserRole {
     @PrimaryGeneratedColumn()
     id:number;
@@ -31,6 +31,6 @@ export class CompanyUserRole {
     @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
     createdat: Date;
   
-    @Column("timestamp", { name: "updatedat", default: () => null })
+    @Column("timestamp", { name: "updated_at",nullable:true, default: () => null })
     updatedat: Date;
 }

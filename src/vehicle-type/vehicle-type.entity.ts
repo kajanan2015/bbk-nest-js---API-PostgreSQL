@@ -1,6 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Vehicle } from "src/vehicle/vehicle.entity";
 import { CompaniesEntity } from "src/companies/companies.entity";
+import { companyvehicledata } from "src/company-vehicle/companyvehicle.entity";
 
 @Entity()
 export class VehicleTypeEntity {
@@ -42,5 +43,8 @@ export class VehicleTypeEntity {
 
   @OneToMany(() => Vehicle, vehicle => vehicle.vehicletype, { cascade: true })
   vehicle: Vehicle[]
+
+  @OneToMany(() => companyvehicledata, vehicledetails => vehicledetails.company, ({ cascade: true }))
+  vehicledetails: companyvehicledata[];
 
 }

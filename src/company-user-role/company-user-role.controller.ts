@@ -29,10 +29,7 @@ export class CompanyUserRoleController {
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
   async create(@UploadedFiles() profileImg, @Body() data) {
-    console.log(profileImg, 9090000);
-    console.log(data, 9090);
     const prflogo = await this.imageUploadService.upload(profileImg, "body");
-    console.log(prflogo, 222222);
     const passdata = {
       ...data,
       profilePicture: prflogo[0],
@@ -85,19 +82,20 @@ export class CompanyUserRoleController {
     //   console.log(data, 23232323);
     // }
 
-
-    if(updateCompanyUserRoleDto.existprfpic){
-      const profilePicture= await this.imageUploadService.upload(prfImg,'body');
+    if (updateCompanyUserRoleDto.existprfpic) {
+      const profilePicture = await this.imageUploadService.upload(
+        prfImg,
+        "body"
+      );
       console.log(profilePicture, 12345);
       delete data.existprfpic;
-     
-      data={
-        ...data,
-        profilePicture:profilePicture[0]
-      }
-      console.log(data,67890)
-    }
 
+      data = {
+        ...data,
+        profilePicture: profilePicture[0],
+      };
+      console.log(data, 67890);
+    }
 
     return await this.companyUserRoleService.update(
       +id,

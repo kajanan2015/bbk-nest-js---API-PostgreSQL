@@ -5,6 +5,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CompanyUserRole } from "./company-user-role.entity";
 import { FindOneOptions, Repository } from "typeorm";
 import * as bcrypt from "bcryptjs";
+
 @Injectable()
 export class CompanyUserRoleService {
   constructor(
@@ -13,13 +14,12 @@ export class CompanyUserRoleService {
   ) {}
 
   async create(data) {
-    console.log(data, 5555);
+    
     let newhashpassword;
     if (data.password) {
       newhashpassword = await this.hashPassword(data.password);
     }
 
-    console.log(newhashpassword, 666666);
     const user = {
       ...data,
       password: newhashpassword,
