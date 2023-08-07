@@ -233,7 +233,7 @@ export class EmployeeDataHistoryService {
           jsonRow.visaType = visaType
         }
         if (jsonRow.hasOwnProperty('drivingLicenceType')) {
-          let drivingLicenceType = visaTypeList.find(drivingLicenceType => drivingLicenceType.id == jsonRow.drivingLicenceType);
+          let drivingLicenceType = dlTypeList.find(drivingLicenceType => drivingLicenceType.id == jsonRow.drivingLicenceType);
           jsonRow.drivingLicenceType = drivingLicenceType
         }
         tableData.push({
