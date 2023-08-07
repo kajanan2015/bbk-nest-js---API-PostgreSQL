@@ -409,7 +409,7 @@ let trialpackagesave;
       
       console.log(packageDetail.module, 6807);
       console.log(packageDetail.packages, 6808);
-      
+      console.log(dataCompany.created_at)
       assignpackagedata = {
         rowcount: packageDetail.NoOfRecords,
         availablerowcount: packageDetail.NoOfRecords,
@@ -421,7 +421,7 @@ let trialpackagesave;
         created_by: companyData.created_by,
         trialpackageidentifier: AssignPackageType.TRIAL,
         module: packageDetail.module.id,
-        package: packageDetail.packages.id,
+        packages: packageDetail.packages.id,
         moduledetails: packageDetail.id,
         company: maintableinsertsave["id"],
       };
