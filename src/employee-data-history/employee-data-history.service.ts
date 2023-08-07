@@ -194,6 +194,10 @@ export class EmployeeDataHistoryService {
       `SELECT * FROM visa_type`
     );
 
+    const dlTypeList = await entityManager.query(
+      `SELECT * FROM driving_licence_type`
+    );
+
     Object.keys(historyData).forEach(function (key, index) {
       const data = historyData[key];
       const tableData = [];
@@ -227,6 +231,10 @@ export class EmployeeDataHistoryService {
         if (jsonRow.hasOwnProperty('visaType')) {
           let visaType = visaTypeList.find(visaType => visaType.id == jsonRow.visaType);
           jsonRow.visaType = visaType
+        }
+        if (jsonRow.hasOwnProperty('drivingLicenceType')) {
+          let drivingLicenceType = visaTypeList.find(drivingLicenceType => drivingLicenceType.id == jsonRow.drivingLicenceType);
+          jsonRow.drivingLicenceType = drivingLicenceType
         }
         tableData.push({
           id: rowData?.id,
