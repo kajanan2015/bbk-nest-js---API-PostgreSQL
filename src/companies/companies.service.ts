@@ -852,7 +852,7 @@ export class CompaniesService {
 
   }
 
-  async getcompnyhistory(id, data) {
+  async getcompnyhistory(id, data,date) {
     let type;
 
     if (data.type == 'company details') {
@@ -862,10 +862,8 @@ export class CompaniesService {
     const companyinfoid = data.company_info_id;
     const initialtype = Historydatatype.COMPANY
     console.log(data, 666)
-
-
     console.log(companyinfoid, 666)
-    const currentDate = new Date();
+    const currentDate = date;
     const company = await getConnection()
       .getRepository(CompaniesHistorydata)
       .createQueryBuilder("company_data_history")
@@ -1709,7 +1707,7 @@ export class CompaniesService {
    return {status:HttpStatus.OK};
   }
 
-  async getscheduledcompanydatahistory(id, data) {
+  async getscheduledcompanydatahistory(id, data,date) {
     let type;
     if (data.type == 'company details') {
       type = Historydatatype.COMPANYDETAILS
@@ -1719,7 +1717,7 @@ export class CompaniesService {
     const initialtype = Historydatatype.COMPANY
     console.log(data, 666)
 
-    const currentDate = new Date();
+    const currentDate = date;
     const company = await getConnection()
       .getRepository(CompaniesHistorydata)
       .createQueryBuilder("company_data_history")

@@ -315,8 +315,9 @@ export class CompaniesController {
   @UseGuards(AuthGuard('jwt'))
   @Post('/get_history_data/:id')
   async getcompnyhistory(@Param('id') companyid: number, @Body() data) {
-    const historydata = await this.service.getcompnyhistory(companyid, data);
-    const scheduleddata = await this.service.getscheduledcompanydatahistory(companyid, data)
+    const date=new Date();
+    const historydata = await this.service.getcompnyhistory(companyid, data,date);
+    const scheduleddata = await this.service.getscheduledcompanydatahistory(companyid, data,date)
     return {
       historydata,
       scheduleddata
@@ -327,8 +328,8 @@ export class CompaniesController {
   @UseGuards(AuthGuard('jwt'))
   @Post('/get_scheduled_data/:id')
   async getscheduledcompanydatahistory(@Param('id') companyid: number, @Body() data) {
-
-    return await this.service.getcompnyhistory(companyid, data);
+    const date=new Date();
+    return await this.service.getcompnyhistory(companyid, data,date);
   }
 
 
