@@ -5,9 +5,18 @@ import { Createmodule } from 'src/createmodule/createmodule.entity';
 import { Createpackage } from 'src/createpackage/createpackage.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
 import { Moduledetailsofpackage } from 'src/moduledetailsofpackage/moduledetailsofpackage.entity';
+
+
+export enum AssignPackageType {
+    TRIAL = 'trial package',
+    FIXED = 'fixed package',
+    DEFAULT= 'no package'
+  }
+
+
 @Entity()
 export class Companypackagerow {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn({name: "assign_package_id"})
     id: number;
 
     @Column({ nullable: true ,default: () => null})
@@ -22,11 +31,21 @@ export class Companypackagerow {
     @Column({ type: 'numeric', precision: 10, scale: 2 })
     packageprice: number;
 
-    @Column("timestamp", { name: "assigndate", default: () => "CURRENT_TIMESTAMP" })
+    @Column("timestamp", { name: "assign_date", default: () => "CURRENT_TIMESTAMP" })
     assigndate: Date;
 
-    @Column("timestamp", { nullable:true,name: "enddate", default: null })
+    @Column("timestamp", { nullable:true,name: "valid_date", default: null })
     enddate: Date;
+  
+    @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
+    cre
+
+    @Column("enum", { name: "package_identifier", enum: AssignPackageType, default: AssignPackageType.DEFAULT, comment: 'Trial/assign/default' })
+    trialpackageidentifier: AssignPackageType;
+    
+    @ManyToOne(() => User, user => user.packageassignuser)
+    @JoinColumn({ name: 'assigned_by' })
+    created_by: User;
 
     @ManyToOne(() => Createmodule, module => module.companypackagerow)
     @JoinColumn()
@@ -44,8 +63,7 @@ export class Companypackagerow {
     @JoinColumn()
     moduledetails: Moduledetailsofpackage;
 
-    @Column("tinyint",{ nullable: true ,default: () => null, comment: ' 1-trial,0-default'})
-    trialpackageidentifier: number;
+    
 
     
 }

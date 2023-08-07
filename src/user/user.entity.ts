@@ -16,6 +16,7 @@ import { EmployeeDocument } from 'src/employee-document/employee-document.entity
 import { CompanyDocument } from 'src/company-document/company-document.entity';
 import { CustomerSupport, CustomerSupportDetails, CustomerSupportHistory } from 'src/customer-support/customer-support.entity';
 import { Department } from 'src/departments/department.entity';
+import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entity';
 
 @Entity()
 export class User {
@@ -185,4 +186,7 @@ export class User {
 
   @OneToMany(() => CustomerSupportHistory, company => company.updatedBy, { cascade: true })
   customerSupportUpdatedBy: CustomerSupportHistory[];
+
+  @OneToMany(()=>Companypackagerow, company=>company.created_by,{cascade:true})
+  packageassignuser:Companypackagerow[]
 }

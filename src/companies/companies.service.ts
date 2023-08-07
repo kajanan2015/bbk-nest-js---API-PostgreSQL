@@ -51,6 +51,7 @@ import { Companyidentifier } from "./companies.entity";
 import { Historydatatype } from "./companies.entity";
 import { HistoryTransactionservicedb } from "src/Transaction-query/transaction.service";
 import { STATUS_CODES } from "http";
+import { AssignPackageType } from "src/companypackagerow/companypackagerow.entity";
 @Injectable()
 export class CompaniesService {
 
@@ -347,13 +348,13 @@ export class CompaniesService {
     }
 
     await this.systemcodeService.update(response.id, newstartvalue);
-    const trialpackagedata = await this.pkgrepository.findOne({ where: { packagename: "Trial", validity: 0, enddate: null }, relations: ['packagedetails', 'packagedetails.packages', 'packagedetails.module'] })
-    dataCompany.package = trialpackagedata.packagedetails;
-    dataCompany.contractagreement = 0;
-    const currentDateTime = new Date();
-    const validtimeTime = new Date();
-    validtimeTime.setDate(validtimeTime.getDate() + parseInt(trialpackagedata.numberOfDays));
-    validtimeTime.setMilliseconds(0);
+    // const trialpackagedata = await this.pkgrepository.findOne({ where: { packagename: "Trial", validity: 0, enddate: null }, relations: ['packagedetails', 'packagedetails.packages', 'packagedetails.module'] })
+    // dataCompany.package = trialpackagedata.packagedetails;
+    // dataCompany.contractagreement = 0;
+    // const currentDateTime = new Date();
+    // const validtimeTime = new Date();
+    // validtimeTime.setDate(validtimeTime.getDate() + parseInt(trialpackagedata.numberOfDays));
+    // validtimeTime.setMilliseconds(0);
     // dataCompany.validityperiod = validtimeTime;
     // dataCompany.validityperiod=new Date(validtimeTime.split('.')[0]);
     const maintableinsert = await this.companyRepository.create(mainDataCompany)
@@ -396,6 +397,38 @@ export class CompaniesService {
     const addhistory = await this.companyhistoryRepository.create(historydate)
     const savehistory = await this.companyhistoryRepository.save(addhistory)
 
+    const trialpackagedata = await this.pkgrepository.findOne({ where: { packagename: "Trial", validity: 0, enddate: null }, relations: ['packagedetails', 'packagedetails.packages', 'packagedetails.module'] })
+    const validtimeTime = new Date();
+    validtimeTime.setDate(validtimeTime.getDate() + parseInt(trialpackagedata.numberOfDays));
+    validtimeTime.setMilliseconds(0);
+    let assignpackagedata;
+let trialpackageinsert;
+let trialpackagesave;
+    for (let i = 0; i < trialpackagedata.packagedetails.length; i++) {
+      const packageDetail = trialpackagedata.packagedetails[i];
+      
+      console.log(packageDetail.module, 6807);
+      console.log(packageDetail.packages, 6808);
+      
+      assignpackagedata = {
+        rowcount: packageDetail.NoOfRecords,
+        availablerowcount: packageDetail.NoOfRecords,
+        rowprice: packageDetail.CostPerRecord,
+        packageprice: packageDetail.PackagePrice,
+        assigndate: "",
+        enddate: validtimeTime,
+        created_at: "",
+        created_by: companyData.created_by,
+        trialpackageidentifier: AssignPackageType.TRIAL,
+        module: packageDetail.module.id,
+        package: packageDetail.packages.id,
+        moduledetails: packageDetail.id,
+        company: maintableinsertsave["id"],
+      };
+    trialpackageinsert=await this.companypackagerowrepository.create(assignpackagedata)
+    await this.companypackagerowrepository.save(trialpackageinsert)
+      // Do whatever you want with assignpackagedata here
+    }
     // const jsonData = JSON.stringify({
     //   bn: "company",
     //   responsesaveId: responsesave["id"]
@@ -532,6 +565,9 @@ export class CompaniesService {
         companystatusvalue = 1
       } else {
         companystatusvalue = 2
+      }
+      if(data[i].id==1){
+        continue;
       }
 
       passdata = {
