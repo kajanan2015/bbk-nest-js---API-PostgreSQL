@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { Connection, Repository, SelectQueryBuilder, getConnection } from 'typeorm';
+import { Connection, LessThanOrEqual, Repository, SelectQueryBuilder, getConnection } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmployeeDocumentService } from 'src/employee-document/employee-document.service';
 import { CompaniesService } from 'src/companies/companies.service';
@@ -547,19 +547,6 @@ export class EmployeeModuleService {
     // ** update latest shedule record updated date and updated by
     await this.employeeInfoRepository.update({ id: +latestSheduleInfo.id }, { endDate: UpdateEmployeeModuleDto.created_at, updated_by: UpdateEmployeeModuleDto.created_by, ...latestSheduleInfo });
 
-    // ** save employee driving licence categories
-    if (data.hasOwnProperty("drivingLicenceCategory")) {
-      const drivingLicenceCategories = data.drivingLicenceCategory;
-      let drivinglicensecategoryId = [];
-      for (const categoryid of data.drivingLicenceCategory) {
-        drivinglicensecategoryId.push(categoryid.id)
-      }
-      const repsonse1 = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
-      employeeInforow.drivingLicenceCategory = repsonse1;
-      const response3333 = await this.employeeInfoRepository.save(employeeInforow)
-      // delete data.drivingLicenceCategory;
-    }
-
     // ** remove docs
     let { visaDoc, drivingLicenceCategory, tachoDoc, officialDoc, drivingLicenceDoc, cpcCardDoc, refdoc, empProvidedCopy, ...dataWithoutDoc } = data
 
@@ -588,15 +575,53 @@ export class EmployeeModuleService {
           ...latestSheduleInfo, ...dataWithoutDoc
         }
 
-        // ** create new employee info record
-        const responseInfo = await this.employeeInfoRepository.create({ ...passvalue, startDate: UpdateEmployeeModuleDto.start_date, employee: UpdateEmployeeModuleDto.employeeId });
-        const resInfo = await this.employeeInfoRepository.save(responseInfo)
+        // ** save employee driving licence categories
+        if (data.hasOwnProperty("drivingLicenceCategory")) {
+          const drivingLicenceCategories = data.drivingLicenceCategory;
+          let drivinglicensecategoryId = [];
+          for (const categoryid of drivingLicenceCategories) {
+            drivinglicensecategoryId.push(categoryid.id)
+          }
+          const response = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
 
-        UpdateEmployeeModuleDto.employeeInfoId = resInfo["id"];
+          // ** create new employee info record
+          const responseInfo = await this.employeeInfoRepository.create({ ...passvalue, startDate: UpdateEmployeeModuleDto.start_date, employee: UpdateEmployeeModuleDto.employeeId });
+          const resInfo = await this.employeeInfoRepository.save(responseInfo)
+          // delete data.drivingLicenceCategory;
+
+          const res = await this.employeeInfoRepository.findOne({ where: { id: +responseInfo['id'] }, relations: ['employeeType', 'drivingLicenceCategory', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName', 'created_by', 'updated_by', 'employee'] });
+          res.drivingLicenceCategory = response;
+          await this.employeeInfoRepository.save(res)
+
+          UpdateEmployeeModuleDto.employeeInfoId = resInfo["id"];
+        } else {
+          // ** create new employee info record
+          const responseInfo = await this.employeeInfoRepository.create({ ...passvalue, startDate: UpdateEmployeeModuleDto.start_date, employee: UpdateEmployeeModuleDto.employeeId });
+          const resInfo = await this.employeeInfoRepository.save(responseInfo)
+          
+          UpdateEmployeeModuleDto.employeeInfoId = resInfo["id"];
+        }
 
       } else {
-        // ** update employee info currnt record
-        await this.employeeInfoRepository.update({ id: +UpdateEmployeeModuleDto.employeeInfoId }, dataWithoutDoc);
+
+        if (data.hasOwnProperty("drivingLicenceCategory")) {
+          const drivingLicenceCategories = data.drivingLicenceCategory;
+          let drivinglicensecategoryId = [];
+          for (const categoryid of drivingLicenceCategories) {
+            drivinglicensecategoryId.push(categoryid.id)
+          }
+          const response = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
+
+          // ** update employee info currnt record
+          await this.employeeInfoRepository.update({ id: +UpdateEmployeeModuleDto.employeeInfoId }, dataWithoutDoc);
+          const res = await this.employeeInfoRepository.findOne({ where: { id: +UpdateEmployeeModuleDto.employeeInfoId }, relations: ['employeeType', 'drivingLicenceCategory', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName', 'created_by', 'updated_by', 'employee'] });
+          res.drivingLicenceCategory = response;
+          await this.employeeInfoRepository.save(res)
+          // delete data.drivingLicenceCategory;
+        } else {
+          // ** update employee info currnt record
+          await this.employeeInfoRepository.update({ id: +UpdateEmployeeModuleDto.employeeInfoId }, dataWithoutDoc);
+        }
       }
     }
 
@@ -680,7 +705,7 @@ export class EmployeeModuleService {
       const response = await this.employeedatahistoryrepo.create({ ...UpdateEmployeeModuleDto, data: JSON.stringify(data) });
       const res = await this.employeedatahistoryrepo.save(response);
     }
-    
+
 
     // added by nuwan for mail send employeee password should be random generate one add random string
     // await this.mailservice.sendemailtoemployeeregistration(employeeemail,companyname,employeename,employeepassword,employeeusername)
@@ -715,6 +740,14 @@ export class EmployeeModuleService {
     });
   }
 
+  async findLatestEmployeeInfo(empid, data) {
+    const start_date = data.startdate
+    const existLastestValues = await this.employeeInfoRepository.find({ where: { employee: empid, startDate: LessThanOrEqual(start_date) }, relations: ['employeeType', 'drivingLicenceCategory', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName', 'visaType', 'created_by', 'updated_by', 'employee'], order: { startDate: 'DESC' } })
+    const documents = await this.employeeDocumentRepository.find({ empid: empid, active: 1 })
+    const employeeData = existLastestValues[0]
+    return { employeeData, documents };
+  }
+
   // async findCompanyAllEmployees(companyid: number) {
   //   return await this.employeeInfoRepository.find({
   //     where: { company: companyid, status: 1 },
@@ -722,17 +755,17 @@ export class EmployeeModuleService {
   //   });
   // }
 
-  async deleteSheduleRecord(employeeHistoryId){
+  async deleteSheduleRecord(employeeHistoryId) {
     const previousRecord = await this.employeedatahistoryrepo.findOne({
       where: {
         id: employeeHistoryId
       },
       relations: ['employeeInfoId']
-    });    
+    });
     const employeeHistoryRecord = await this.employeedatahistoryrepo.update({ id: employeeHistoryId }, { status: false });
     const employeeInfoRecord = await this.employeeInfoRepository.update({ id: +previousRecord?.['employeeInfoId']?.['id'] }, { status: false });
 
-    return { employeeHistoryRecord, employeeInfoRecord}
+    return { employeeHistoryRecord, employeeInfoRecord }
   }
 
   async findCompanyAllEmployees(companyid: number) {
