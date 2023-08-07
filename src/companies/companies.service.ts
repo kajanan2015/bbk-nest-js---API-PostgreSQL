@@ -53,6 +53,8 @@ import { HistoryTransactionservicedb } from "src/Transaction-query/transaction.s
 import { STATUS_CODES } from "http";
 import { AssignPackageType } from "src/companypackagerow/companypackagerow.entity";
 import { Companypackageassignhistory } from "src/companypackagerow/companypackagerow.entity";
+import { AssignPackageHistoryType } from "src/companypackagerow/companypackagerow.entity";
+
 @Injectable()
 export class CompaniesService {
 
@@ -86,14 +88,10 @@ export class CompaniesService {
     private readonly pkgrepository: Repository<Createpackage>,
     @InjectRepository(Moduledetailsofpackage)
     private readonly detailsrepository: Repository<Moduledetailsofpackage>,
-    private readonly companyrowpackageservice: CompanypackagerowService,
     @InjectRepository(Companypackagerow)
     private readonly companypackagerowrepository: Repository<Companypackagerow>,
-    private readonly datahistoryservice: EmployeeDataHistoryService,
-    @InjectRepository(EmployeeDataHistory)
-    private readonly datahistoryrepo: Repository<EmployeeDataHistory>,
     @InjectRepository(Companypackageassignhistory)
-    private readonly assignpackagerepo: Repository<Companypackageassignhistory>,
+    private readonly assignpackagehistoryrepo: Repository<Companypackageassignhistory>,
     @InjectRepository(country)
     private readonly countryrepo: Repository<country>,
     @InjectRepository(companytype)
@@ -407,6 +405,9 @@ export class CompaniesService {
     let assignpackagedata;
 let trialpackageinsert;
 let trialpackagesave;
+let trailpackagehistory;
+let trailpackagehistoryinsert;
+
     for (let i = 0; i < trialpackagedata.packagedetails.length; i++) {
       const packageDetail = trialpackagedata.packagedetails[i];
       
@@ -423,14 +424,25 @@ let trialpackagesave;
         created_at: dataCompany.created_at,
         created_by: companyData.created_by,
         trialpackageidentifier: AssignPackageType.TRIAL,
-        module: packageDetail.module.id,
-        packages: packageDetail.packages.id,
+        module: packageDetail.module,
+        packages: packageDetail.packages,
         moduledetails: packageDetail.id,
         company: maintableinsertsave["id"],
       };
       console.log(assignpackagedata,6809)
     trialpackageinsert=await this.companypackagerowrepository.create(assignpackagedata)
-    await this.companypackagerowrepository.save(trialpackageinsert)
+    trialpackagesave= await this.companypackagerowrepository.save(trialpackageinsert)
+    trailpackagehistory={
+      history_data_type:AssignPackageHistoryType.INITIAL,
+      history_data:JSON.stringify(trialpackagesave),
+      created_by:companyData.created_by,
+      created_at:dataCompany.created_at,
+      company:maintableinsertsave["id"],
+      companypackagerow:trialpackageinsert["id"],
+      start_date:dataCompany.created_at,
+    }
+    trailpackagehistoryinsert=await this.assignpackagehistoryrepo.create(trailpackagehistory);
+    await this.assignpackagehistoryrepo.save(trailpackagehistoryinsert)
       // Do whatever you want with assignpackagedata here
     }
     // const jsonData = JSON.stringify({

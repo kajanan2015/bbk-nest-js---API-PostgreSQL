@@ -63,7 +63,8 @@ export class Companypackagerow {
     @JoinColumn()
     moduledetails: Moduledetailsofpackage;
 
-    
+    @OneToMany(() => Companypackageassignhistory, assignpkghistory => assignpkghistory.companypackagerow, ({ cascade: true }))
+    assignpackagehistorydata: Companypackageassignhistory[];
 
     
 }
@@ -101,6 +102,10 @@ export class Companypackageassignhistory{
     @ManyToOne(() => CompaniesEntity, company => company.assignpkghistory)
     @JoinColumn({ name: 'company_id' })
     company: CompaniesEntity;
+
+    @ManyToOne(() => Companypackagerow, assignrow => assignrow.assignpackagehistorydata)
+    @JoinColumn({ name: 'assignpackagerow_id' })
+    companypackagerow: Companypackagerow;
   
     @Column('timestamp', { nullable: true, name: 'start_date', default: () => "CURRENT_TIMESTAMP" })
     start_date: Date;
