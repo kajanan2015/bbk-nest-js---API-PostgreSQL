@@ -415,9 +415,9 @@ let trialpackagesave;
         availablerowcount: packageDetail.NoOfRecords,
         rowprice: packageDetail.CostPerRecord,
         packageprice: packageDetail.PackagePrice,
-        assigndate: "",
+        assigndate: dataCompany.created_at,
         enddate: validtimeTime,
-        created_at: "",
+        created_at: dataCompany.created_at,
         created_by: companyData.created_by,
         trialpackageidentifier: AssignPackageType.TRIAL,
         module: packageDetail.module.id,
@@ -425,6 +425,7 @@ let trialpackagesave;
         moduledetails: packageDetail.id,
         company: maintableinsertsave["id"],
       };
+      console.log(assignpackagedata,6809)
     trialpackageinsert=await this.companypackagerowrepository.create(assignpackagedata)
     await this.companypackagerowrepository.save(trialpackageinsert)
       // Do whatever you want with assignpackagedata here
