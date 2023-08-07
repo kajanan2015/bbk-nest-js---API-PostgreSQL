@@ -52,6 +52,7 @@ import { Historydatatype } from "./companies.entity";
 import { HistoryTransactionservicedb } from "src/Transaction-query/transaction.service";
 import { STATUS_CODES } from "http";
 import { AssignPackageType } from "src/companypackagerow/companypackagerow.entity";
+import { Companypackageassignhistory } from "src/companypackagerow/companypackagerow.entity";
 @Injectable()
 export class CompaniesService {
 
@@ -91,6 +92,8 @@ export class CompaniesService {
     private readonly datahistoryservice: EmployeeDataHistoryService,
     @InjectRepository(EmployeeDataHistory)
     private readonly datahistoryrepo: Repository<EmployeeDataHistory>,
+    @InjectRepository(Companypackageassignhistory)
+    private readonly assignpackagerepo: Repository<Companypackageassignhistory>,
     @InjectRepository(country)
     private readonly countryrepo: Repository<country>,
     @InjectRepository(companytype)

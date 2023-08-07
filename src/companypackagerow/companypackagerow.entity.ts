@@ -67,3 +67,41 @@ export class Companypackagerow {
 
     
 }
+
+export enum AssignPackageHistoryType{
+    INITIAL='initial data'
+}
+
+@Entity('company_assign_package_history')
+export class Companypackageassignhistory{
+    @PrimaryGeneratedColumn({ type: "int", name: "company_assign_package_history_id", unsigned: true })
+    id: number;
+  
+    @Column("enum", { name: "history_data_type", enum: AssignPackageHistoryType, default: AssignPackageHistoryType.INITIAL, comment: "company assign package initial data" })
+    history_data_type: AssignPackageHistoryType;
+  
+    @Column({ type: "text", name: "history_data" })
+    history_data: String;
+  
+    @ManyToOne(() => User, user => user.companyassignpackagehistorycreate)
+    @JoinColumn({ name: 'created_by' })
+    created_by: User;
+  
+    @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
+    created_at: Date;
+  
+    @ManyToOne(() => User, user => user.companyassignpackagehistoryupdate)
+    @JoinColumn({ name: 'updated_by' })
+    updated_by: User;
+  
+  
+    @Column("timestamp", { name: "updated_at", nullable: true, default: () => null })
+    updated_at: Date;
+  
+    @ManyToOne(() => CompaniesEntity, company => company.assignpkghistory)
+    @JoinColumn({ name: 'company_id' })
+    company: CompaniesEntity;
+  
+    @Column('timestamp', { nullable: true, name: 'start_date', default: () => "CURRENT_TIMESTAMP" })
+    start_date: Date;
+}

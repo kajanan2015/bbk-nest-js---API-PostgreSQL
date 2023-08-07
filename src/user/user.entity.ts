@@ -17,7 +17,7 @@ import { CompanyDocument } from 'src/company-document/company-document.entity';
 import { CustomerSupport, CustomerSupportDetails, CustomerSupportHistory } from 'src/customer-support/customer-support.entity';
 import { Department } from 'src/departments/department.entity';
 import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entity';
-
+import { Companypackageassignhistory } from 'src/companypackagerow/companypackagerow.entity';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -188,5 +188,11 @@ export class User {
   customerSupportUpdatedBy: CustomerSupportHistory[];
 
   @OneToMany(()=>Companypackagerow, company=>company.created_by,{cascade:true})
-  packageassignuser:Companypackagerow[]
+  packageassignuser:Companypackagerow[];
+
+  @OneToMany(()=>Companypackageassignhistory, company=>company.created_by,{cascade:true})
+  companyassignpackagehistorycreate:Companypackageassignhistory[]
+
+  @OneToMany(()=>Companypackageassignhistory, company=>company.updated_by,{cascade:true})
+  companyassignpackagehistoryupdate:Companypackageassignhistory[]
 }
