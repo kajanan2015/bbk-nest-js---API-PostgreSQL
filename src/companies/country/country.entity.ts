@@ -3,8 +3,8 @@ import * as bcrypt from 'bcryptjs';
 
 import { CompaniesEntityinfo } from '../companies.entity';
 import { Employee, EmployeeInfo } from 'src/employee-module/employee-module.entity';
-
-
+import { cities } from './cities/city.entity';
+import { states } from './states/states.entity';
 @Entity('country')
 export class country {
     @PrimaryGeneratedColumn()
@@ -37,4 +37,9 @@ export class country {
     @OneToMany(() => EmployeeInfo, employeemodule => employeemodule.refCompAddressCountry, { cascade: true })
     refCompAddressCountry: EmployeeInfo[];
 
+    // @OneToMany(()=>cities,city=>city.country_id,{cascade:true})
+    // city:cities[];
+
+    // @OneToMany(()=>states,state=>state.country_id,{cascade:true})
+    // state:states[];
 }
