@@ -120,7 +120,7 @@ export class EmployeeDataHistoryService {
           if (obj1?.[key]?.[0]?.['docPath'] != obj2?.[key]?.[0]?.['docPath']) {
             result[key] = obj1[key];
           }
-        } else if (key == 'isNonNative') {
+        } else if (key == 'isNonNative' && obj2[key] != obj1[key] && !Object.is(obj1[key], obj2[key])) {
           const nationality1 = obj1[key] == 1 ? 'Non-Native' : 'Native';
           const nationality2 = obj2[key] == 1 ? 'Non-Native' : 'Native';
           result[key] = `${nationality2} updated as ${nationality1}`;
