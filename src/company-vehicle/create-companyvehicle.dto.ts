@@ -28,12 +28,12 @@ export class CreateCompanyvehicleDto {
   postal_code: string;
 
   // vehicle official details
-  first_registered: string;
-  date_purchased: string;
+  first_registered: Date;
+  date_purchased: Date;
   purchase_distance: string;
   purchase_price: string;
-  purchased_form: string;
-  date_sold: string;
+  purchased_from: string;
+  date_sold: Date;
   sale_distance: string;
   sale_price: string;
   sold_to: string;

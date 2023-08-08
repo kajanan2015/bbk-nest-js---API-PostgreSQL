@@ -84,10 +84,10 @@ export class companyvehicledata {
   addressPostal: string;
 
   // vehicle official details
-  @Column("date", { nullable: true })
+  @Column("timestamp", { nullable: true, default:()=> "CURRENT_TIMESTAMP"})
   FirstRegistered: Date;
 
-  @Column("date", { nullable: true })
+  @Column("timestamp", { nullable: true, default:()=> "CURRENT_TIMESTAMP"})
   DatePurchased: Date;
 
   @Column("varchar", { nullable: true, length: 30, default: () => null })
@@ -99,7 +99,7 @@ export class companyvehicledata {
   @Column("varchar", { nullable: true, length: 30, default: () => null })
   PurchasedFrom: string;
 
-  @Column("date", { nullable: true })
+  @Column("timestamp", { nullable: true, default:()=> "CURRENT_TIMESTAMP"})
   DateSold: Date;
 
   @Column("varchar", { nullable: true, length: 30, default: () => null })
@@ -216,19 +216,19 @@ export class companyvehicledata {
 
   @ManyToOne(() => fuelTypeEntity, (fuelDrop) => fuelDrop.vehicledetails)
   @JoinColumn()
-  fuelDrop: fuelTypeEntity;
+  fuelType: fuelTypeEntity;
 
   @ManyToOne(() => liveryEntity, (liveryDrop) => liveryDrop.vehicledetails)
   @JoinColumn()
-  liveryDrop: liveryEntity;
+  livery: liveryEntity;
 
   @ManyToOne(() => licenseCategoryEntity, (licenseDrop) => licenseDrop.vehicledetails)
   @JoinColumn()
-  licenseDrop: licenseCategoryEntity;
+  licenseCategory: licenseCategoryEntity;
 
   @ManyToOne(() => defaultBaseEntity, (defaultBaseDrop) => defaultBaseDrop.vehicledetails)
   @JoinColumn()
-  defaultBaseDrop: defaultBaseEntity;
+  defaultBase: defaultBaseEntity;
 
   @ManyToOne(() => CompaniesEntity, (company) => company.vehicledetails)
   @JoinColumn()

@@ -7,11 +7,11 @@ export class defaultBaseEntity {
   id: number;
 
   @Column("varchar", { nullable: true, length: 30, default: () => null })
-  default_base: string;
+  defaultBase: string;
   
   @Column({ type: 'boolean', default:true})
   status: boolean;
 
-  @OneToMany(()=>companyvehicledata, vehicledetails => vehicledetails.defaultBaseDrop,{cascade:true})
+  @OneToMany(()=>companyvehicledata, vehicledetails => vehicledetails.defaultBase,{cascade:true})
 vehicledetails:companyvehicledata[]
 }

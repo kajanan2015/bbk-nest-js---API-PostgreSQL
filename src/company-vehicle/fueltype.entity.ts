@@ -8,11 +8,11 @@ export class fuelTypeEntity {
 id:number;
 
 @Column("varchar", { nullable: true, length: 30, default: () => null })
-fuel_type: string;
+fuelType: string;
 
 @Column({ type: 'boolean', default:true})
 status: boolean;
 
-@OneToMany(()=>companyvehicledata, vehicledetails => vehicledetails.fuelDrop,{cascade:true})
+@OneToMany(()=>companyvehicledata, vehicledetails => vehicledetails.fuelType,{cascade:true})
 vehicledetails:companyvehicledata[]
 }
