@@ -67,6 +67,8 @@ export class EmployeeDataHistoryService {
 
   async findAllEmpDataHistory(createEmployeeDataHistoryDto) {
 
+    // ** get all employee history
+    // ** findAndCount - for future use for pagination
     const [res, totalCount] = await this.empDataHistoryRepository.findAndCount({
       where: {
         employeeId: createEmployeeDataHistoryDto.employeeId,
@@ -79,6 +81,7 @@ export class EmployeeDataHistoryService {
       // take: createEmployeeDataHistoryDto.pageSize,
     });
 
+    // ** object array group by function
     var groupBy = function (xs, key) {
       return xs.reduce(function (rv, x) {
         (rv[x[key]] = rv[x[key]] || []).push(x);
@@ -86,12 +89,15 @@ export class EmployeeDataHistoryService {
       }, {});
     };
 
+    // ** filter only history data
     const results = res.filter(function (row) {
       return Math.floor(new Date(row.start_date).getTime() / 86400000) <= Math.floor(new Date().getTime() / 86400000)
     })
 
+    // ** history data group by
     const historyData = groupBy(results, 'type');
 
+    // ** format date
     function formatDate(date) {
       const year = date.getFullYear()
       const month = String(date.getMonth() + 1).padStart(2, '0')
@@ -99,18 +105,10 @@ export class EmployeeDataHistoryService {
       return `${year}-${month}-${day}`
     }
 
+    // ** find different values in two objects
     const difference = (obj1, obj2) => {
       const result = {};
-      // if (Object.is(obj1, obj2)) {
-      //   return undefined;
-      // }
-      // if (!obj2 || typeof obj2 !== 'object') {
-      //   return obj2;
-      // }
       Object.keys(obj1 || {}).concat(Object.keys(obj2 || {})).forEach(key => {
-        // if(!obj2 || typeof obj2 !== 'object'){
-        //   result[key] = obj1[key];
-        // }
         if (key == 'created_at' || key == 'updated_at' || key == 'updated_by' || key == 'id') {
         } else if (key == 'created_by') {
           result[key] = obj1[key];
@@ -169,41 +167,49 @@ export class EmployeeDataHistoryService {
     }
 
     let result = [];
-
     const entityManager = getManager();
 
+    // ** get employee type list
     const empTypesList = await entityManager.query(
       `SELECT * FROM employee_type`
     );
 
+    // ** get gender list
     const genderList = await entityManager.query(
       `SELECT * FROM gender`
     );
 
+    // ** get marital status list
     const maritalStatusList = await entityManager.query(
       `SELECT * FROM marital_status`
     );
 
+    // ** get designation list
     const designationList = await entityManager.query(
       `SELECT * FROM employee_designation`
     );
 
+    // ** get country list
     const countryList = await entityManager.query(
       `SELECT * FROM country`
     );
 
+    // ** get bank list
     const bankList = await entityManager.query(
       `SELECT * FROM bank`
     );
 
+    // ** get visa types list
     const visaTypeList = await entityManager.query(
       `SELECT * FROM visa_type`
     );
 
+    // ** get driving license type list
     const dlTypeList = await entityManager.query(
       `SELECT * FROM driving_licence_type`
     );
 
+    // ** format history data
     Object.keys(historyData).forEach(function (key, index) {
       const data = historyData[key];
       const tableData = [];
@@ -254,6 +260,7 @@ export class EmployeeDataHistoryService {
         })
       }
 
+      // ** find changed values
       for (let row in tableData?.reverse()) {
         if (tableData[Number(row) - 1]) {
           const json1 = tableData[row];
@@ -261,7 +268,7 @@ export class EmployeeDataHistoryService {
           const res = difference(json1, json2)
           result.push(res)
         } else {
-          // result.push(tableData[row])
+          // ** add first time records
           const obj2 = tableData[row];
           const res = {};
           Object.keys(obj2).forEach(function (key, index) {
@@ -318,40 +325,6 @@ export class EmployeeDataHistoryService {
       }
 
     });
-
-
-    // const query: SelectQueryBuilder<EmployeeDataHistory> = getConnection()
-    //   .getRepository(EmployeeDataHistory)
-    //   .createQueryBuilder("employeeHistory")
-    //   .leftJoinAndSelect("employeeHistory.created_by", "created_by")
-    //   .leftJoinAndSelect("employeeHistory.updated_by", "updated_by")
-    //   .leftJoinAndSelect("employeeHistory.employeeId", "employee")
-    //   .andWhere("employeeHistory.employeeId = :id", { id: +createEmployeeDataHistoryDto.employeeId })
-    //   // .andWhere("employeeHistory.start_date <= :date", { date: start_date })
-    //   // .groupBy('employeeHistory.type')
-    //   // .orderBy('employeeHistory.start_date', 'DESC')
-
-    //   // .addGroupBy('employeeHistory.type');
-
-    //   const historyData = await query.getMany();
-    //   const tableData = [];
-    //   for (let row in historyData) {
-    //     const rowData = historyData[row]
-    //     const jsonRow = JSON.parse(rowData.data);
-    //     // let gender = genderList.find(gender => gender.id == jsonRow.gender);
-    //     // let maritalStatus = maritalStatusList.find(status => status.id == jsonRow.maritalStatus);
-    //     // jsonRow.gender = gender
-    //     // jsonRow.maritalStatus = maritalStatus
-    //     tableData.push({
-    //         id: rowData?.id,
-    //         start_date: rowData?.start_date,
-    //         updated_at: rowData?.updated_at,
-    //         created_at: rowData?.created_at,
-    //         updated_by: rowData?.updated_by?.firstName,
-    //         created_by: rowData?.created_by?.firstName,
-    //         ...jsonRow
-    //     })
-    // }
     return result
   }
 
