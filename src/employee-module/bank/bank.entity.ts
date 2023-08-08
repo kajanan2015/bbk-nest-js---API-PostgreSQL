@@ -15,8 +15,8 @@ export class Bank {
     @OneToMany(() => EmployeeInfo, employee => employee.bankName, ({ cascade: true }))
     employee: EmployeeInfo;
 
-    @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
-    createdat: Date;
+    @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
+    created_at: Date;
 
     @Column({ type: 'boolean', default: true })
     status: boolean;
