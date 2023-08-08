@@ -118,13 +118,15 @@ export class EmployeeDataHistoryService {
           const driverLicenceCategories1 = obj1[key].map(item => item.driverLicenceCategory).join(', ');
           const driverLicenceCategories2 = obj2[key].map(item => item.driverLicenceCategory).join(', ');
           result[key] = `${driverLicenceCategories2} updated as ${driverLicenceCategories1}`;
-        }
-        else if (key == 'empProvidedCopy' || key == 'visaDoc' || key == 'officialDoc' || key == 'refdoc' || key == 'drivingLicenceDoc' || key == 'tachoDoc' || key == 'cpcCardDoc') {
+        } else if (key == 'empProvidedCopy' || key == 'visaDoc' || key == 'officialDoc' || key == 'refdoc' || key == 'drivingLicenceDoc' || key == 'tachoDoc' || key == 'cpcCardDoc') {
           if(obj1?.[key]?.[0]?.['docPath'] != obj2?.[key]?.[0]?.['docPath']){
             result[key] = obj1[key];
           }
-        }
-        else if (key == 'start_date') {
+        } else if(key == 'isNonNative'){
+          const nationality1 = obj1[key] == 1 ? 'Non-Native' : 'Native';
+          const nationality2 = obj2[key] == 1 ? 'Non-Native' : 'Native';
+          result[key] = `${nationality2} updated as ${nationality1}`;
+        } else if (key == 'start_date') {
           result[key] = obj1[key];
         } else if ((
           (key == 'dob' ||
@@ -269,6 +271,12 @@ export class EmployeeDataHistoryService {
               if (key == 'created_at' || key == 'updated_at' || key == 'updated_by' || key == 'id') {
               } else if (key == 'created_by') {
                 res[key] = obj2[key];
+              } else if(key == 'isNonNative'){
+                if(obj2[key] == 1){
+                  res[key] = 'Non-Native'
+                }else{
+                  res[key] = 'Native'
+                }
               } else if (key == 'empProvidedCopy' || key == 'visaDoc' || key == 'officialDoc' || key == 'refdoc' || key == 'drivingLicenceDoc' || key == 'tachoDoc' || key == 'cpcCardDoc') {
                 const value = obj2?.[key]?.[0]?.['docPath'];
                 if (value !== undefined) {
