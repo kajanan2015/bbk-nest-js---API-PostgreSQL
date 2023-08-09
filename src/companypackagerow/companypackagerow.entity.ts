@@ -13,6 +13,11 @@ export enum AssignPackageType {
     DEFAULT= 'no package'
   }
 
+  export enum AssignPackageStatus{
+    ACTIVE='active',
+    PENDING='pending',
+    INACTIVE='inactive'
+  }
 
 @Entity()
 export class Companypackagerow {
@@ -38,11 +43,14 @@ export class Companypackagerow {
     enddate: Date;
   
     @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
-    cre
+    created_at:Date;
 
     @Column("enum", { name: "package_identifier", enum: AssignPackageType, default: AssignPackageType.DEFAULT, comment: 'Trial/assign/default' })
     trialpackageidentifier: AssignPackageType;
-    
+
+    @Column('enum',{name:"status",enum:AssignPackageStatus,default:AssignPackageStatus.PENDING,comment:"active/payment pending/inactive"})
+    status:AssignPackageStatus;
+
     @ManyToOne(() => User, user => user.packageassignuser)
     @JoinColumn({ name: 'assigned_by' })
     created_by: User;

@@ -54,6 +54,7 @@ import { STATUS_CODES } from "http";
 import { AssignPackageType } from "src/companypackagerow/companypackagerow.entity";
 import { Companypackageassignhistory } from "src/companypackagerow/companypackagerow.entity";
 import { AssignPackageHistoryType } from "src/companypackagerow/companypackagerow.entity";
+import { AssignPackageStatus } from "src/companypackagerow/companypackagerow.entity";
 
 @Injectable()
 export class CompaniesService {
@@ -428,6 +429,7 @@ let trailpackagehistoryinsert;
         packages: packageDetail.packages,
         moduledetails: packageDetail.id,
         company: maintableinsertsave["id"],
+        status:AssignPackageStatus.ACTIVE
       };
       console.log(assignpackagedata,6809)
     trialpackageinsert=await this.companypackagerowrepository.create(assignpackagedata)
