@@ -513,7 +513,9 @@ export class EmployeeModuleService {
     const employeeInforow = await this.employeeInfoRepository.findOne({ where: { id: +UpdateEmployeeModuleDto.employeeInfoId }, relations: ['employeeType', 'drivingLicenceCategory', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName', 'created_by', 'updated_by', 'employee'] });
 
     // ** shedule start date
-    const start_date = new Date(UpdateEmployeeModuleDto.start_date)
+    const str_date =  new Date(UpdateEmployeeModuleDto.start_date)
+    // Create the Date object (months are 0-indexed in JavaScript Date)
+    const start_date = new Date(Date.UTC(str_date.getFullYear(), str_date.getMonth(), str_date.getDate()));
 
     // ** current date
     const date = new Date();
@@ -585,7 +587,7 @@ export class EmployeeModuleService {
           const response = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
 
           // ** create new employee info record
-          const responseInfo = await this.employeeInfoRepository.create({ ...passvalue, startDate: UpdateEmployeeModuleDto.start_date, employee: UpdateEmployeeModuleDto.employeeId });
+          const responseInfo = await this.employeeInfoRepository.create({ ...passvalue, startDate: start_date, employee: UpdateEmployeeModuleDto.employeeId });
           const resInfo = await this.employeeInfoRepository.save(responseInfo)
           // delete data.drivingLicenceCategory;
 
@@ -596,7 +598,7 @@ export class EmployeeModuleService {
           UpdateEmployeeModuleDto.employeeInfoId = resInfo["id"];
         } else {
           // ** create new employee info record
-          const responseInfo = await this.employeeInfoRepository.create({ ...passvalue, startDate: UpdateEmployeeModuleDto.start_date, employee: UpdateEmployeeModuleDto.employeeId });
+          const responseInfo = await this.employeeInfoRepository.create({ ...passvalue, startDate: start_date, employee: UpdateEmployeeModuleDto.employeeId });
           const resInfo = await this.employeeInfoRepository.save(responseInfo)
           
           UpdateEmployeeModuleDto.employeeInfoId = resInfo["id"];
