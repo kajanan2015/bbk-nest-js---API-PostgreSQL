@@ -1,13 +1,15 @@
 import { BeforeInsert, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { country } from '../country.entity';
+import { State } from '../states/states.entity';
+import { CompaniesEntityinfo } from 'src/companies/companies.entity';
 
 @Entity('country_city')
-export class cities {
+export class City {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column("varchar", {nullable: true, length: 250, default: () => null })
+    @Column("varchar", { nullable: true, length: 250, default: () => null })
     name: string;
 
     @Column("varchar", { nullable: true, length: 250, default: () => null })
@@ -37,8 +39,13 @@ export class cities {
     @Column("timestamp", { name: "updated_at", default: () => "CURRENT_TIMESTAMP" })
     updated_at: Date;
 
-    // @ManyToOne(() => country, citycountry => citycountry.city)
-    // @JoinColumn({ name: 'country_id' })
-    // country_id: country;
+    @ManyToOne(() => State, citystate => citystate.city)
+    @JoinColumn({ name: 'city_state_id' })
+    state: State;
 
+    @OneToMany(() => CompaniesEntityinfo, company => company.city, { cascade: true })
+    companyAddressCity: CompaniesEntityinfo[];
+
+    @OneToMany(() => CompaniesEntityinfo, company => company.regAddressCity, { cascade: true })
+    companyRegAddressCity: CompaniesEntityinfo[];
 }

@@ -3,8 +3,9 @@ import * as bcrypt from 'bcryptjs';
 
 import { CompaniesEntityinfo } from '../companies.entity';
 import { Employee, EmployeeInfo } from 'src/employee-module/employee-module.entity';
-import { cities } from './cities/city.entity';
-import { states } from './states/states.entity';
+import { State } from './states/states.entity';
+import { companyvehicledata } from 'src/company-vehicle/companyvehicle.entity';
+
 @Entity('country')
 export class country {
     @PrimaryGeneratedColumn()
@@ -21,8 +22,8 @@ export class country {
 
     @Column("varchar", { nullable: true, length: 250, default: () => null })
     time_zone: string;
-   
-    @Column("varchar", {name:"currency_unit", nullable: true, length: 250, default: () => null })
+
+    @Column("varchar", { name: "currency_unit", nullable: true, length: 250, default: () => null })
     currencyUnit: string;
 
     @OneToMany(() => CompaniesEntityinfo, companycountry => companycountry.country, { cascade: true })
@@ -37,9 +38,10 @@ export class country {
     @OneToMany(() => EmployeeInfo, employeemodule => employeemodule.refCompAddressCountry, { cascade: true })
     refCompAddressCountry: EmployeeInfo[];
 
-    // @OneToMany(()=>cities,city=>city.country_id,{cascade:true})
-    // city:cities[];
+    @OneToMany(()=>State,state=>state.country,{cascade:true})
+    state:State[];
 
-    // @OneToMany(()=>states,state=>state.country_id,{cascade:true})
-    // state:states[];
+    @OneToMany(()=>companyvehicledata, vehicledetails => vehicledetails.addressCountry,{cascade:true})
+    vehicledetails:companyvehicledata[]
+    
 }

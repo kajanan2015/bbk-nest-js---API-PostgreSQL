@@ -78,7 +78,7 @@ export class CompaniesController {
       }
     }
 
-    const {additionalDocuments, ...compData} = companyData
+    const { additionalDocuments, ...compData } = companyData
 
     const data = {
       ...compData,
@@ -247,6 +247,28 @@ export class CompaniesController {
     };
   }
 
+  // Get states based on country flag code
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/state/:flagcode')
+  async getStates(@Param('flagcode') flagcode: string) {
+    const states = await this.service.getStates(flagcode);
+    return {
+      statusCode: HttpStatus.OK,
+      states
+    };
+  }
+
+  // Get cities based on state id
+  @UseGuards(AuthGuard('jwt'))
+  @Get('/city/:stateId')
+  async getCities(@Param('stateId') stateId: string) {
+    const cities = await this.service.getCities(stateId);
+    return {
+      statusCode: HttpStatus.OK,
+      cities
+    };
+  }
+
   // when pass parent company id return sub company
   @UseGuards(AuthGuard('jwt'))
   @Get('getmatchsubcompany/:id')
@@ -261,7 +283,7 @@ export class CompaniesController {
   @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   async read(@Param('id') id: number) {
-    
+
     const company = await this.service.read(id);
     return {
       statusCode: HttpStatus.OK,
@@ -315,9 +337,9 @@ export class CompaniesController {
   @UseGuards(AuthGuard('jwt'))
   @Post('/get_history_data/:id')
   async getcompnyhistory(@Param('id') companyid: number, @Body() data) {
-    const date=new Date();
-    const historydata = await this.service.getcompnyhistory(companyid, data,date);
-    const scheduleddata = await this.service.getscheduledcompanydatahistory(companyid, data,date)
+    const date = new Date();
+    const historydata = await this.service.getcompnyhistory(companyid, data, date);
+    const scheduleddata = await this.service.getscheduledcompanydatahistory(companyid, data, date)
     return {
       historydata,
       scheduleddata
@@ -328,8 +350,8 @@ export class CompaniesController {
   @UseGuards(AuthGuard('jwt'))
   @Post('/get_scheduled_data/:id')
   async getscheduledcompanydatahistory(@Param('id') companyid: number, @Body() data) {
-    const date=new Date();
-    return await this.service.getcompnyhistory(companyid, data,date);
+    const date = new Date();
+    return await this.service.getcompnyhistory(companyid, data, date);
   }
 
 
@@ -349,12 +371,12 @@ export class CompaniesController {
 
 
 
-   // get latest company info when passing date
-   @UseGuards(AuthGuard('jwt'))
-   @Post('deleteschedulecompany')
-   async deleteschedulecompany( @Body() data){
-     return await this.service.deleteschedulecompany(data);
-   }
+  // get latest company info when passing date
+  @UseGuards(AuthGuard('jwt'))
+  @Post('deleteschedulecompany')
+  async deleteschedulecompany(@Body() data) {
+    return await this.service.deleteschedulecompany(data);
+  }
 
 
 
@@ -467,13 +489,13 @@ export class CompaniesController {
   async paiddataupdate(@Param('token') token) {
     return await this.service.paiddataupdate(token);
   }
-// change parent
+  // change parent
   @UseGuards(AuthGuard('jwt'))
   @Post('changeparent:/id')
   async changeparent(@Param('id') id: number, @Body() data: any) {
     return await this.service.changeparentadmin(id, data);
   }
-// extend trial
+  // extend trial
   @UseGuards(AuthGuard('jwt'))
   @Put('extend-trial/:id')
   async extendtrial(@Param('id') companyid: number, @Body() data: any) {
@@ -497,7 +519,7 @@ export class CompaniesController {
   // get latest company info when passing date
   @UseGuards(AuthGuard('jwt'))
   @Post('getlatestcompany')
-  async getlatestcompany( @Body() data){
+  async getlatestcompany(@Body() data) {
     return await this.service.getlatestcompanyinfo(data.companyid, data);
   }
 

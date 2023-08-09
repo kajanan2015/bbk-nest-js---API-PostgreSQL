@@ -12,7 +12,6 @@ export class LocalSignInStrategy extends PassportStrategy(Strategy, 'local-sign-
   }
 
   async validate(email: string, password: string): Promise<any> {
-    console.log('hiiii')
     const user = await this.authService.signIn(email, password);
     if (!user) {
       throw new UnauthorizedException();
