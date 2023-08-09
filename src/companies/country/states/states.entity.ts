@@ -46,7 +46,7 @@ export class State {
     @JoinColumn({ name: 'country_id' })
     country: country;
 
-    @OneToMany(() => CompaniesEntityinfo, company => company.companyState, { cascade: true })
+    @OneToMany(() => CompaniesEntityinfo, company => company.state, { cascade: true })
     companyAddress: CompaniesEntityinfo[];
 
     @OneToMany(() => CompaniesEntityinfo, company => company.regAddressState, { cascade: true })

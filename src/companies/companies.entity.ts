@@ -164,7 +164,7 @@ export class CompaniesEntityinfo {
 
   @ManyToOne(() => State, state => state.companyAddress)
   @JoinColumn({ name: 'company_place_state' })
-  companyState: State;
+  state: State;
 
   @ManyToOne(() => country, country => country.companyCountry)
   @JoinColumn({ name: 'company_contact_country' })
