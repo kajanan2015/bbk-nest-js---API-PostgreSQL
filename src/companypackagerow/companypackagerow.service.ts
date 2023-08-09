@@ -8,11 +8,11 @@ import { AssignPackageStatus } from './companypackagerow.entity';
 @Injectable()
 export class CompanypackagerowService {
   constructor(@InjectRepository(Companypackagerow)
-  private companyPaymentRepository: Repository<Companypackagerow>) { }
+  private companypackagerowrepo: Repository<Companypackagerow>) { }
 
   async create(createCompanypackagerowDto) {
-    const response = await this.companyPaymentRepository.create(createCompanypackagerowDto);
-    await this.companyPaymentRepository.save(response);
+    const response = await this.companypackagerowrepo.create(createCompanypackagerowDto);
+    await this.companypackagerowrepo.save(response);
   }
 
   findAll() {
@@ -20,7 +20,7 @@ export class CompanypackagerowService {
   }
 
   async findOne(id: number,date) {
-    const response = await this.companyPaymentRepository.find({
+    const response = await this.companypackagerowrepo.find({
       where: {
         company: { id }, // Assuming 'id' is the ID of the company you want to filter by
         enddate: MoreThanOrEqual(date),
@@ -32,7 +32,7 @@ export class CompanypackagerowService {
   }
 
   async findOneActive(id: number,date) {
-    const response = await this.companyPaymentRepository.find({
+    const response = await this.companypackagerowrepo.find({
       where: {
         company: { id }, // Assuming 'id' is the ID of the company you want to filter by
         enddate: MoreThanOrEqual(date),
@@ -42,6 +42,19 @@ export class CompanypackagerowService {
     });
     return response;
   }
+
+// async findvaliditypackage(id,date){
+//   const response = await this.companypackagerowrepo.find({
+//     where: {
+//       company: { id }, // Assuming 'id' is the ID of the company you want to filter by
+//       enddate: MoreThanOrEqual(date),
+//       status: AssignPackageStatus.ACTIVE
+//     },
+//     relations: ["module", "packages", "moduledetails"]
+//   });
+//   return response;
+// }
+
 
   update(id: number, updateCompanypackagerowDto: UpdateCompanypackagerowDto) {
     return `This action updates a #${id} companypackagerow`;
