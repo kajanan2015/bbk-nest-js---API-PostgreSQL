@@ -67,6 +67,10 @@ export class EmployeeModuleService {
 
   async create(createEmployeeModuleDto) {
     const existingEmployee = await this.employeeRepository.findOne({ where: { employeeCode: createEmployeeModuleDto.employeeCode } });
+
+    const str_date = new Date()
+    const start_date = new Date(Date.UTC(str_date.getFullYear(), str_date.getMonth(), str_date.getDate()));
+
     if (existingEmployee) {
 
       const { providedCopyUrl, empProvidedCopyUrl, filenames, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
@@ -133,7 +137,7 @@ export class EmployeeModuleService {
       const response = await this.employeeRepository.create({ employeeCode, company, linkedEmployee: infoData, created_at: infoData.created_at, created_by: infoData.created_by });
       const res = await this.employeeRepository.save(response);
 
-      const responseInfo = await this.employeeInfoRepository.create({ ...infoData, employee: res.id });
+      const responseInfo = await this.employeeInfoRepository.create({ ...infoData, employee: res.id, startDate: start_date });
       const resInfo = await this.employeeInfoRepository.save(responseInfo)
 
       const documents = createEmployeeModuleDto['filenames'];
@@ -206,20 +210,23 @@ export class EmployeeModuleService {
 
     const employee = await this.employeeRepository.findOne({ where: { employeeCode: createEmployeeModuleDto.employeeCode } });
 
+    const str_date = new Date()
+    const start_date = new Date(Date.UTC(str_date.getFullYear(), str_date.getMonth(), str_date.getDate()));
+
     const { employeeCode, ...data } = createEmployeeModuleDto;
 
     const existingRecord = await this.employeePayrollRepository.findOne({ where: { employee: employee['id'] } });
 
     if (!existingRecord) {
 
-      const response = await this.employeePayrollRepository.create({ employee: employee['id'], ...data });
+      const response = await this.employeePayrollRepository.create({ employee: employee['id'], ...data, startDate: start_date });
       const res = await this.employeePayrollRepository.save(response);
 
       const returnData = await this.employeePayrollRepository.findOne({
         where: { employee: employee.id },
       });
 
-      return returnData
+      return { infoId: res['id'], ...returnData }
 
     } else {
 
@@ -229,7 +236,7 @@ export class EmployeeModuleService {
         where: { employee: employee['id'] },
       });
 
-      return returnData
+      return { infoId: res['id'], ...returnData }
 
     }
   }
@@ -342,6 +349,7 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("employee.company", "company")
       .leftJoinAndSelect("employee.documents", "documents")
       .leftJoinAndSelect("employee.linkedEmployee", "linkedEmployee")
+      .leftJoinAndSelect("employee.linkedEmployeePayroll", "linkedEmployeePayroll")
       .leftJoinAndSelect("linkedEmployee.employeeType", "employeeType")
       .leftJoinAndSelect("linkedEmployee.bankName", "bankName")
       .leftJoinAndSelect("linkedEmployee.designation", "designation")
@@ -353,25 +361,35 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
       .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
       .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
+      .leftJoinAndSelect("linkedEmployeePayroll.paymentFrequency", "paymentFrequency")
+      .leftJoinAndSelect("linkedEmployeePayroll.created_by", "payroll_created_by")
       .andWhere("employee.id = :id", { id })
-      .andWhere("linkedEmployee.start_date <= :date", { date })
+      .andWhere("linkedEmployee.startDate <= :date", { date })
       .andWhere(
-        "(linkedEmployee.end_date IS NULL OR linkedEmployee.end_date > :date)",
+        "(linkedEmployee.endDate IS NULL OR linkedEmployee.endDate > :date)",
         { date }
       )
-      .orderBy('linkedEmployee.start_date', 'DESC');;
+      .orderBy('linkedEmployee.startDate', 'DESC')
+      .andWhere("linkedEmployeePayroll.startDate <= :date", { date })
+      .andWhere(
+        "(linkedEmployeePayroll.endDate IS NULL OR linkedEmployeePayroll.endDate > :date)",
+        { date }
+      )
+      .orderBy('linkedEmployeePayroll.startDate', 'DESC');
 
     const data = await query.getMany();
     const newdata = [];
 
     for (var i = 0; i < data.length; i++) {
       let passdata = {}
-      const { linkedEmployee, ...mainEmployeeData } = data[i];
+      const { linkedEmployee, linkedEmployeePayroll, ...mainEmployeeData } = data[i];
       const companyData = await this.companyservice.read(mainEmployeeData?.company?.id);
       passdata = {
         ...linkedEmployee[0],
+        ...linkedEmployeePayroll[0],
         id: mainEmployeeData.id,
         infoId: linkedEmployee[0].id,
+        payrollId: linkedEmployeePayroll[0].id,
         employeeCode: mainEmployeeData.employeeCode,
         company: companyData,
         documents: mainEmployeeData.documents
@@ -513,7 +531,7 @@ export class EmployeeModuleService {
     const employeeInforow = await this.employeeInfoRepository.findOne({ where: { id: +UpdateEmployeeModuleDto.employeeInfoId }, relations: ['employeeType', 'drivingLicenceCategory', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName', 'created_by', 'updated_by', 'employee'] });
 
     // ** shedule start date
-    const str_date =  new Date(UpdateEmployeeModuleDto.start_date)
+    const str_date = new Date(UpdateEmployeeModuleDto.start_date)
     // Create the Date object (months are 0-indexed in JavaScript Date)
     const start_date = new Date(Date.UTC(str_date.getFullYear(), str_date.getMonth(), str_date.getDate()));
 
@@ -524,30 +542,51 @@ export class EmployeeModuleService {
     const employeeHistoryId = UpdateEmployeeModuleDto.employeeHistoryId;
     delete UpdateEmployeeModuleDto.employeeHistoryId;
 
-    // ** get latest shedule data before start date
-    const query: SelectQueryBuilder<EmployeeInfo> = getConnection()
-      .getRepository(EmployeeInfo)
-      .createQueryBuilder("employeeInfo")
-      .leftJoinAndSelect("employeeInfo.employeeType", "employeeType")
-      // .leftJoinAndSelect("employeeInfo.drivingLicenceCategory", "drivingLicenceCategory")
-      .leftJoinAndSelect("employeeInfo.designation", "designation")
-      .leftJoinAndSelect("employeeInfo.gender", "gender")
-      .leftJoinAndSelect("employeeInfo.maritalStatus", "maritalStatus")
-      .leftJoinAndSelect("employeeInfo.addressCountry", "addressCountry")
-      .leftJoinAndSelect("employeeInfo.refCompAddressCountry", "refCompAddressCountry")
-      .leftJoinAndSelect("employeeInfo.drivingLicenceType", "drivingLicenceType")
-      .leftJoinAndSelect("employeeInfo.bankName", "bankName")
-      .leftJoinAndSelect("employeeInfo.visaType", "visaType")
-      .leftJoinAndSelect("employeeInfo.created_by", "created_by")
-      .leftJoinAndSelect("employeeInfo.updated_by", "updated_by")
-      .leftJoinAndSelect("employeeInfo.employee", "employee")
-      .andWhere("employeeInfo.employee = :id", { id: +UpdateEmployeeModuleDto.employeeId })
-      .andWhere("employeeInfo.startDate <= :date", { date: start_date })
-      .orderBy('employeeInfo.startDate', 'DESC');
-    const latestSheduleInfo = await query.getOne();
+    let latestSheduleInfo;
 
-    // ** update latest shedule record updated date and updated by
-    await this.employeeInfoRepository.update({ id: +latestSheduleInfo.id }, { endDate: UpdateEmployeeModuleDto.created_at, updated_by: UpdateEmployeeModuleDto.created_by, ...latestSheduleInfo });
+    if (data.salaryType) {
+      // ** get latest payroll shedule data before start date
+      const queryPayroll: SelectQueryBuilder<EmployeePayrollInfo> = getConnection()
+        .getRepository(EmployeePayrollInfo)
+        .createQueryBuilder("employeePayrollInfo")
+        .leftJoinAndSelect("employeePayrollInfo.paymentFrequency", "paymentFrequency")
+        .leftJoinAndSelect("employeePayrollInfo.created_by", "created_by")
+        .leftJoinAndSelect("employeePayrollInfo.updated_by", "updated_by")
+        .leftJoinAndSelect("employeePayrollInfo.employee", "employee")
+        .andWhere("employeePayrollInfo.employee = :id", { id: +UpdateEmployeeModuleDto.employeeId })
+        .andWhere("employeePayrollInfo.startDate <= :date", { date: start_date })
+        .orderBy('employeePayrollInfo.startDate', 'DESC');
+      latestSheduleInfo = await queryPayroll.getOne();
+      console.log(latestSheduleInfo)
+      // ** update latest payroll shedule record updated date and updated by
+      await this.employeePayrollRepository.update({ id: +latestSheduleInfo.id }, { endDate: UpdateEmployeeModuleDto.created_at, updated_by: UpdateEmployeeModuleDto.created_by, ...latestSheduleInfo });
+    } else {
+      // ** get latest shedule data before start date
+      const query: SelectQueryBuilder<EmployeeInfo> = getConnection()
+        .getRepository(EmployeeInfo)
+        .createQueryBuilder("employeeInfo")
+        .leftJoinAndSelect("employeeInfo.employeeType", "employeeType")
+        //.leftJoinAndSelect("employeeInfo.drivingLicenceCategory", "drivingLicenceCategory")
+        .leftJoinAndSelect("employeeInfo.designation", "designation")
+        .leftJoinAndSelect("employeeInfo.gender", "gender")
+        .leftJoinAndSelect("employeeInfo.maritalStatus", "maritalStatus")
+        .leftJoinAndSelect("employeeInfo.addressCountry", "addressCountry")
+        .leftJoinAndSelect("employeeInfo.refCompAddressCountry", "refCompAddressCountry")
+        .leftJoinAndSelect("employeeInfo.drivingLicenceType", "drivingLicenceType")
+        .leftJoinAndSelect("employeeInfo.bankName", "bankName")
+        .leftJoinAndSelect("employeeInfo.visaType", "visaType")
+        .leftJoinAndSelect("employeeInfo.created_by", "created_by")
+        .leftJoinAndSelect("employeeInfo.updated_by", "updated_by")
+        .leftJoinAndSelect("employeeInfo.employee", "employee")
+        .andWhere("employeeInfo.employee = :id", { id: +UpdateEmployeeModuleDto.employeeId })
+        .andWhere("employeeInfo.startDate <= :date", { date: start_date })
+        .orderBy('employeeInfo.startDate', 'DESC');
+      latestSheduleInfo = await query.getOne();
+
+      // ** update latest shedule record updated date and updated by
+      await this.employeeInfoRepository.update({ id: +latestSheduleInfo.id }, { endDate: UpdateEmployeeModuleDto.created_at, updated_by: UpdateEmployeeModuleDto.created_by, ...latestSheduleInfo });
+
+    }
 
     // ** remove docs
     let { visaDoc, drivingLicenceCategory, tachoDoc, officialDoc, drivingLicenceDoc, cpcCardDoc, refdoc, empProvidedCopy, ...dataWithoutDoc } = data
@@ -558,12 +597,16 @@ export class EmployeeModuleService {
         where: {
           id: employeeHistoryId
         },
-        relations: ['employeeInfoId']
+        relations: ['employeeInfoId', 'employeePayrollInfoId']
       });
 
-      // ** update employee info currnt record
-      await this.employeeInfoRepository.update({ id: +previousRecord?.['employeeInfoId']?.['id'] }, dataWithoutDoc);
-
+      if (data.salaryType) {
+        // ** update employee payroll info currnt record
+        await this.employeePayrollRepository.update({ id: +previousRecord?.['employeePayrollInfoId']?.['id'] }, dataWithoutDoc);
+      } else {
+        // ** update employee info currnt record
+        await this.employeeInfoRepository.update({ id: +previousRecord?.['employeeInfoId']?.['id'] }, dataWithoutDoc);
+      }
 
     } else {
       // ** compare shedule start date
@@ -597,11 +640,17 @@ export class EmployeeModuleService {
 
           UpdateEmployeeModuleDto.employeeInfoId = resInfo["id"];
         } else {
-          // ** create new employee info record
-          const responseInfo = await this.employeeInfoRepository.create({ ...passvalue, startDate: start_date, employee: UpdateEmployeeModuleDto.employeeId });
-          const resInfo = await this.employeeInfoRepository.save(responseInfo)
-          
-          UpdateEmployeeModuleDto.employeeInfoId = resInfo["id"];
+          if (data.salaryType) {
+            // ** create new employee payroll info record
+            const responseInfo = await this.employeePayrollRepository.create({ ...passvalue, startDate: start_date, employee: UpdateEmployeeModuleDto.employeeId });
+            const resInfo = await this.employeePayrollRepository.save(responseInfo)
+            UpdateEmployeeModuleDto.employeeInfoId = resInfo["id"];
+          } else {
+            // ** create new employee info record
+            const responseInfo = await this.employeeInfoRepository.create({ ...passvalue, startDate: start_date, employee: UpdateEmployeeModuleDto.employeeId });
+            const resInfo = await this.employeeInfoRepository.save(responseInfo)
+            UpdateEmployeeModuleDto.employeeInfoId = resInfo["id"];
+          }
         }
 
       } else {
@@ -621,8 +670,13 @@ export class EmployeeModuleService {
           await this.employeeInfoRepository.save(res)
           // delete data.drivingLicenceCategory;
         } else {
-          // ** update employee info currnt record
-          await this.employeeInfoRepository.update({ id: +UpdateEmployeeModuleDto.employeeInfoId }, dataWithoutDoc);
+          if (data.salaryType) {
+            // ** update employee info currnt record
+            await this.employeePayrollRepository.update({ id: +UpdateEmployeeModuleDto.employeeInfoId }, dataWithoutDoc);
+          } else {
+            // ** update employee info currnt record
+            await this.employeeInfoRepository.update({ id: +UpdateEmployeeModuleDto.employeeInfoId }, dataWithoutDoc);
+          }
         }
       }
     }
@@ -704,8 +758,15 @@ export class EmployeeModuleService {
     if (employeeHistoryId) {
       await this.employeedatahistoryrepo.update({ id: employeeHistoryId }, { ...UpdateEmployeeModuleDto, data: JSON.stringify(data) });
     } else {
-      const response = await this.employeedatahistoryrepo.create({ ...UpdateEmployeeModuleDto, data: JSON.stringify(data) });
-      const res = await this.employeedatahistoryrepo.save(response);
+      if (data.salaryType) {
+        const payrollId = UpdateEmployeeModuleDto.employeeInfoId;
+        delete UpdateEmployeeModuleDto.employeeInfoId;
+        const response = await this.employeedatahistoryrepo.create({ ...UpdateEmployeeModuleDto, employeePayrollInfoId: payrollId, data: JSON.stringify(data) });
+        const res = await this.employeedatahistoryrepo.save(response);
+      } else {
+        const response = await this.employeedatahistoryrepo.create({ ...UpdateEmployeeModuleDto, data: JSON.stringify(data) });
+        const res = await this.employeedatahistoryrepo.save(response);
+      }
     }
 
 
@@ -750,6 +811,13 @@ export class EmployeeModuleService {
     return { employeeData, documents };
   }
 
+  async findLatestEmployeePayrollInfo(empid, data) {
+    const start_date = data.startdate
+    const existLastestValues = await this.employeePayrollRepository.find({ where: { employee: empid, startDate: LessThanOrEqual(start_date) }, relations: ['paymentFrequency', 'created_by', 'updated_by', 'employee'], order: { startDate: 'DESC' } })
+    const employeeData = existLastestValues[0]
+    return { employeeData };
+  }
+
   // async findCompanyAllEmployees(companyid: number) {
   //   return await this.employeeInfoRepository.find({
   //     where: { company: companyid, status: 1 },
@@ -778,6 +846,7 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("employee.company", "company")
       // .leftJoinAndSelect("employee.documents", "documents")
       .leftJoinAndSelect("employee.linkedEmployee", "linkedEmployee")
+      .leftJoinAndSelect("employee.linkedEmployeePayroll", "linkedEmployeePayroll")
       .leftJoinAndSelect("linkedEmployee.employeeType", "employeeType")
       .leftJoinAndSelect("linkedEmployee.designation", "designation")
       .leftJoinAndSelect("linkedEmployee.gender", "gender")
@@ -830,6 +899,7 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("employee.company", "company")
       // .leftJoinAndSelect("employee.documents", "documents")
       .leftJoinAndSelect("employee.linkedEmployee", "linkedEmployee")
+      .leftJoinAndSelect("employee.linkedEmployeePayroll", "linkedEmployeePayroll")
       .leftJoinAndSelect("linkedEmployee.employeeType", "employeeType")
       .leftJoinAndSelect("linkedEmployee.designation", "designation")
       .leftJoinAndSelect("linkedEmployee.gender", "gender")
