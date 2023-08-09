@@ -40,10 +40,11 @@ import { Employee, EmployeeInfo, EmployeePayrollInfo } from 'src/employee-module
 import { HistoryTransactionservicedb } from 'src/Transaction-query/transaction.service';
 import { VisaType } from 'src/employee-module/visa_type/visaType.entity';
 import { Companypackageassignhistory } from 'src/companypackagerow/companypackagerow.entity';
+import { State } from 'src/companies/country/states/states.entity';
+import { City } from 'src/companies/country/cities/city.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([EmployeeDataHistory, CompaniesHistorydata, CompaniesEntityinfo, VisaType, EmployeePayrollInfo, Bank, DrivingLicenceType, PaymentFrequency, Gender, MaritalStatus, EmpDesignation, Companypackagerow, SystemCode, Moduledetailsofpackage, Employee, EmployeeInfo, EmployeeDocument, Createmodule, Createpackage, DrivingLicenceCategory, CompaniesEntity, User, PermissionRoleEntity, PagePermissionEntity, Bank, EmployeeType, CompanyDocument, CompanyWorkPattern, country, companytype,Companypackageassignhistory])],
-
+  imports: [TypeOrmModule.forFeature([EmployeeDataHistory, CompaniesHistorydata, CompaniesEntityinfo, VisaType, EmployeePayrollInfo, Bank, DrivingLicenceType, PaymentFrequency, Gender, MaritalStatus, EmpDesignation, Companypackagerow, SystemCode, Moduledetailsofpackage, Employee, EmployeeInfo, EmployeeDocument, Createmodule, Createpackage, DrivingLicenceCategory, CompaniesEntity, User, PermissionRoleEntity, PagePermissionEntity, Bank, EmployeeType, CompanyDocument, CompanyWorkPattern, country, companytype, Companypackageassignhistory, State, City])],
   controllers: [EmployeeDataHistoryController],
-  providers: [EmployeeDataHistoryService, CompanypackagerowService, EmployeeModuleService, EmployeeDocumentService, UserService, CompaniesService, ImageUploadService, EmployeeDocumentService, SystemCodeService, CompanyDocumentService,HistoryTransactionservicedb]
+  providers: [EmployeeDataHistoryService, CompanypackagerowService, EmployeeModuleService, EmployeeDocumentService, UserService, CompaniesService, ImageUploadService, EmployeeDocumentService, SystemCodeService, CompanyDocumentService, HistoryTransactionservicedb]
 })
-export class EmployeeDataHistoryModule {}
+export class EmployeeDataHistoryModule { }

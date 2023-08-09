@@ -55,6 +55,8 @@ import { AssignPackageType } from "src/companypackagerow/companypackagerow.entit
 import { Companypackageassignhistory } from "src/companypackagerow/companypackagerow.entity";
 import { AssignPackageHistoryType } from "src/companypackagerow/companypackagerow.entity";
 import { AssignPackageStatus } from "src/companypackagerow/companypackagerow.entity";
+import { State } from "./country/states/states.entity";
+import { City } from "./country/cities/city.entity";
 
 @Injectable()
 export class CompaniesService {
@@ -95,6 +97,10 @@ export class CompaniesService {
     private readonly assignpackagehistoryrepo: Repository<Companypackageassignhistory>,
     @InjectRepository(country)
     private readonly countryrepo: Repository<country>,
+    @InjectRepository(State)
+    private readonly stateRepository: Repository<State>,
+    @InjectRepository(City)
+    private readonly cityRepository: Repository<City>,
     @InjectRepository(companytype)
     private readonly companytyperepo: Repository<companytype>,
   ) { }
@@ -404,14 +410,14 @@ export class CompaniesService {
     validtimeTime.setDate(validtimeTime.getDate() + parseInt(trialpackagedata.numberOfDays));
     validtimeTime.setMilliseconds(0);
     let assignpackagedata;
-let trialpackageinsert;
-let trialpackagesave;
-let trailpackagehistory;
-let trailpackagehistoryinsert;
+    let trialpackageinsert;
+    let trialpackagesave;
+    let trailpackagehistory;
+    let trailpackagehistoryinsert;
 
     for (let i = 0; i < trialpackagedata.packagedetails.length; i++) {
       const packageDetail = trialpackagedata.packagedetails[i];
-      
+
       console.log(packageDetail.module, 6807);
       console.log(packageDetail.packages, 6808);
       console.log(dataCompany.created_at)
@@ -429,22 +435,22 @@ let trailpackagehistoryinsert;
         packages: packageDetail.packages,
         moduledetails: packageDetail.id,
         company: maintableinsertsave["id"],
-        status:AssignPackageStatus.ACTIVE
+        status: AssignPackageStatus.ACTIVE
       };
-      console.log(assignpackagedata,6809)
-    trialpackageinsert=await this.companypackagerowrepository.create(assignpackagedata)
-    trialpackagesave= await this.companypackagerowrepository.save(trialpackageinsert)
-    trailpackagehistory={
-      history_data_type:AssignPackageHistoryType.INITIAL,
-      history_data:JSON.stringify(trialpackagesave),
-      created_by:companyData.created_by,
-      created_at:dataCompany.created_at,
-      company:maintableinsertsave["id"],
-      companypackagerow:trialpackageinsert["id"],
-      start_date:dataCompany.created_at,
-    }
-    trailpackagehistoryinsert=await this.assignpackagehistoryrepo.create(trailpackagehistory);
-    await this.assignpackagehistoryrepo.save(trailpackagehistoryinsert)
+      console.log(assignpackagedata, 6809)
+      trialpackageinsert = await this.companypackagerowrepository.create(assignpackagedata)
+      trialpackagesave = await this.companypackagerowrepository.save(trialpackageinsert)
+      trailpackagehistory = {
+        history_data_type: AssignPackageHistoryType.INITIAL,
+        history_data: JSON.stringify(trialpackagesave),
+        created_by: companyData.created_by,
+        created_at: dataCompany.created_at,
+        company: maintableinsertsave["id"],
+        companypackagerow: trialpackageinsert["id"],
+        start_date: dataCompany.created_at,
+      }
+      trailpackagehistoryinsert = await this.assignpackagehistoryrepo.create(trailpackagehistory);
+      await this.assignpackagehistoryrepo.save(trailpackagehistoryinsert)
       // Do whatever you want with assignpackagedata here
     }
     // const jsonData = JSON.stringify({
@@ -584,7 +590,7 @@ let trailpackagehistoryinsert;
       } else {
         companystatusvalue = 2
       }
-      if(data[i].id==1){
+      if (data[i].id == 1) {
         continue;
       }
 
@@ -855,9 +861,22 @@ let trailpackagehistoryinsert;
     return companyTypeList;
   }
 
+  // ** Get country
   async getcountry() {
     const countryList = await this.countryrepo.find();
     return countryList;
+  }
+
+  // ** Get states
+  async getStates(flagcode: string) {
+    const stateList = await this.stateRepository.find({ where: { country_code: flagcode } });
+    return stateList;
+  }
+
+  // ** Get cities
+  async getCities(stateId: string) {
+    const cityList = await this.cityRepository.find({ where: { state_id: stateId } });
+    return cityList;
   }
 
   async showSubAll(mainCompanyId: number): Promise<CompaniesEntity[]> {
@@ -906,7 +925,7 @@ let trailpackagehistoryinsert;
 
   }
 
-  async getcompnyhistory(id, data,date) {
+  async getcompnyhistory(id, data, date) {
     let type;
 
     if (data.type == 'company details') {
@@ -1647,15 +1666,15 @@ let trailpackagehistoryinsert;
     const date = new Date();
     const companyinfoid = parseInt(data.companyInfoId);
     const companyid = parseInt(id);
-    if(data.country){
+    if (data.country) {
       const countryobejct = await this.countryrepo.findOne({ id: data.country });
       data.country = countryobejct;
     }
-    if(data.regAddressCountry){
+    if (data.regAddressCountry) {
       const regcountryobejct = await this.countryrepo.findOne({ id: data.regAddressCountry });
       data.regAddressCountry = regcountryobejct;
     }
-    if(data.companyType){
+    if (data.companyType) {
       const companytypeobejct = await this.companytyperepo.findOne({ id: data.companyType });
       data.companyType = companytypeobejct
     }
@@ -1690,8 +1709,8 @@ let trailpackagehistoryinsert;
       const previousentitydata = { ...existLastestValue }
       const updatedpreviousdata = { ...existLastestValue };
       updatedpreviousdata.updated_at = data.updatedAt,
-      updatedpreviousdata.updated_by = data.updatedBy,
-      updatedpreviousdata.end_date = start_date
+        updatedpreviousdata.updated_by = data.updatedBy,
+        updatedpreviousdata.end_date = start_date
       delete existLastestValue.company_info_id;
       delete existLastestValue.updated_at;
       delete existLastestValue.end_date;
@@ -1741,27 +1760,27 @@ let trailpackagehistoryinsert;
   }
 
   // delete schedule
-  async deleteschedulecompany(data){
+  async deleteschedulecompany(data) {
     // current date
-    console.log(data['CompanyDetails'],8989898)
+    console.log(data['CompanyDetails'], 8989898)
     const date = new Date();
     const companyinfoid = parseInt(data['CompanyDetails'].companyInfoId);
     const companyid = parseInt(data['CompanyDetails'].id);
-    const scheduleid=parseInt(data['CompanyDetails'].schedule_id) 
+    const scheduleid = parseInt(data['CompanyDetails'].schedule_id)
 
 
     const entity = await this.companyinfoRepository.findOne({ company_info_id: companyinfoid }, { relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'] })
     if (!entity) {
       throw new NotFoundException('Entity not found');
     }
-    const existLastestValues = await this.companyinfoRepository.find({ where: { company: companyid, start_date: LessThan(entity['start_date']) }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { company_info_id: 'DESC'} })
-   console.log(existLastestValues,8989898)
+    const existLastestValues = await this.companyinfoRepository.find({ where: { company: companyid, start_date: LessThan(entity['start_date']) }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { company_info_id: 'DESC' } })
+    console.log(existLastestValues, 8989898)
     const companyExistHistory = await this.companyhistoryRepository.findOne({ id: scheduleid }, { relations: ['created_by', 'updated_by', 'companyinfo', 'company'] })
-   await this.historytransaction.deleteExistScheduleTransaction(entity,existLastestValues,companyExistHistory,CompaniesEntityinfo,CompaniesHistorydata)
-   return {status:HttpStatus.OK};
+    await this.historytransaction.deleteExistScheduleTransaction(entity, existLastestValues, companyExistHistory, CompaniesEntityinfo, CompaniesHistorydata)
+    return { status: HttpStatus.OK };
   }
 
-  async getscheduledcompanydatahistory(id, data,date) {
+  async getscheduledcompanydatahistory(id, data, date) {
     let type;
     if (data.type == 'company details') {
       type = Historydatatype.COMPANYDETAILS
