@@ -12,6 +12,7 @@ import { CompaniesEntity } from "src/companies/companies.entity";
 import { defaultBaseEntity } from "./defaulbase.entity";
 import { licenseCategoryEntity } from "./licensecategory.entity";
 import { liveryEntity } from "./livery.entity";
+import { country } from "src/companies/country/country.entity";
 
 @Entity("vehicle_data_company")
 export class companyvehicledata {
@@ -73,9 +74,6 @@ export class companyvehicledata {
 
   @Column("varchar", { nullable: true, length: 30, default: () => null })
   addressCity: string;
-
-  @Column("varchar", { nullable: true, length: 30, default: () => null })
-  addressCountry: string;
 
   @Column("varchar", { nullable: true, length: 30, default: () => null })
   addressState: string;
@@ -237,5 +235,10 @@ export class companyvehicledata {
   @ManyToOne(() => VehicleTypeEntity, (vehicle_Type) => vehicle_Type.vehicledetails)
   @JoinColumn()
   vehicle_Type: VehicleTypeEntity;
+
+  @ManyToOne(() => country, (addressCountry) => addressCountry.vehicledetails)
+  @JoinColumn()
+  addressCountry: country;
+
 
 }

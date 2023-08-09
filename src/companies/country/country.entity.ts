@@ -4,6 +4,7 @@ import * as bcrypt from 'bcryptjs';
 import { CompaniesEntityinfo } from '../companies.entity';
 import { Employee, EmployeeInfo } from 'src/employee-module/employee-module.entity';
 import { State } from './states/states.entity';
+import { companyvehicledata } from 'src/company-vehicle/companyvehicle.entity';
 
 @Entity('country')
 export class country {
@@ -39,4 +40,8 @@ export class country {
 
     @OneToMany(()=>State,state=>state.country,{cascade:true})
     state:State[];
+
+    @OneToMany(()=>companyvehicledata, vehicledetails => vehicledetails.addressCountry,{cascade:true})
+    vehicledetails:companyvehicledata[]
+    
 }
