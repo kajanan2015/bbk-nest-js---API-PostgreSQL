@@ -39,8 +39,20 @@ findOneActive(@Param('id') id: string, @Headers('userTime') userTime) {
   return this.companypackagerowService.findOneActive(+id,date);
 }
   
+// show expiry date and row count assign package
+@Get('activeassignpackagewithvalidperiod/:id')
+findvaliditypackage(@Param('id') id: string, @Headers('userTime') userTime) {
+  let date;
+  if(userTime){
+   date=new Date(userTime);
+  }else{
+   date=new Date();
+  }
+   return this.companypackagerowService.findvaliditypackage(+id,date);
+ } 
 
-  @Patch(':id')
+
+@Patch(':id')
   update(@Param('id') id: string, @Body() updateCompanypackagerowDto: UpdateCompanypackagerowDto) {
     return this.companypackagerowService.update(+id, updateCompanypackagerowDto);
   }

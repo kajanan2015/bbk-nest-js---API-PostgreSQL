@@ -43,17 +43,24 @@ export class CompanypackagerowService {
     return response;
   }
 
-// async findvaliditypackage(id,date){
-//   const response = await this.companypackagerowrepo.find({
-//     where: {
-//       company: { id }, // Assuming 'id' is the ID of the company you want to filter by
-//       enddate: MoreThanOrEqual(date),
-//       status: AssignPackageStatus.ACTIVE
-//     },
-//     relations: ["module", "packages", "moduledetails"]
-//   });
-//   return response;
-// }
+async findvaliditypackage(id,date){
+  const response = await this.companypackagerowrepo.find({
+    where: {
+      company: { id }, // Assuming 'id' is the ID of the company you want to filter by
+      enddate: MoreThanOrEqual(date),
+      status: AssignPackageStatus.ACTIVE
+    },
+    relations: ["module", "packages", "moduledetails"],
+    order: {
+      enddate: 'ASC', // Order by enddate in ascending order
+    },
+  });
+  const data={
+    enddate:response[0].enddate,
+    trialpackageidentifier:response[0].trialpackageidentifier
+  }
+  return {data,response};
+}
 
 
   update(id: number, updateCompanypackagerowDto: UpdateCompanypackagerowDto) {
