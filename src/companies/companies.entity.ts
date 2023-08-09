@@ -22,6 +22,7 @@ import { Department } from 'src/departments/department.entity';
 import { companyvehicledata } from 'src/company-vehicle/companyvehicle.entity';
 import { Companypackageassignhistory } from 'src/companypackagerow/companypackagerow.entity';
 import { State } from './country/states/states.entity';
+import { City } from './country/cities/city.entity';
 
 
 
@@ -157,8 +158,9 @@ export class CompaniesEntityinfo {
   @Column("varchar", { name: "company_place_street", nullable: true, length: 250, default: () => null })
   street: string | null;
 
-  @Column("varchar", { name: "company_place_city", nullable: true, length: 250, default: () => null })
-  city: string | null;
+  @ManyToOne(() => City, city => city.companyAddressCity)
+  @JoinColumn({ name: 'company_place_city' })
+  city: City;
 
   @ManyToOne(() => State, state => state.companyAddress)
   @JoinColumn({ name: 'company_place_state' })
@@ -188,8 +190,9 @@ export class CompaniesEntityinfo {
   @Column("varchar", { name: "company_registration_address_street", nullable: true, length: 250, default: () => null })
   regAddressStreet: string | null;
 
-  @Column("varchar", { name: "comapny_registration_address_city", nullable: true, length: 250, default: () => null })
-  regAddressCity: string | null;
+  @ManyToOne(() => City, city => city.companyRegAddressCity)
+  @JoinColumn({ name: 'comapny_registration_address_city' })
+  regAddressCity: City;
 
   @Column("varchar", { name: "comapny_registration_postal_code", nullable: true, length: 250, default: () => null })
   regAddressPostalCode: string | null;

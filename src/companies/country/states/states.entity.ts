@@ -2,6 +2,7 @@ import { BeforeInsert, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyTo
 import * as bcrypt from 'bcryptjs';
 import { country } from '../country.entity';
 import { CompaniesEntityinfo } from 'src/companies/companies.entity';
+import { City } from '../cities/city.entity';
 
 @Entity('country_states')
 export class State {
@@ -41,7 +42,7 @@ export class State {
     @Column("timestamp", { name: "updated_at", default: () => "CURRENT_TIMESTAMP" })
     updated_at: Date;
 
-    @ManyToOne(() => country, citycountry => citycountry.state)
+    @ManyToOne(() => country, statecountry => statecountry.state)
     @JoinColumn({ name: 'country_id' })
     country: country;
 
@@ -50,4 +51,7 @@ export class State {
 
     @OneToMany(() => CompaniesEntityinfo, company => company.regAddressState, { cascade: true })
     companyRegAddress: CompaniesEntityinfo[];
+
+    @OneToMany(() => City, city => city.state, { cascade: true })
+    city: City[];
 }
