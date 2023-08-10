@@ -7,7 +7,7 @@ import { Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthEntity } from './auth.entity';
 import { MailService } from 'src/mail/mail.service';
-
+import { refreshTokenSecret } from './constants';
 @Injectable()
 export class AuthService {
   constructor(
@@ -92,6 +92,10 @@ export class AuthService {
     let companies=await this.userService.getCompaniesByUserId(user.id)
     return {
       access_token: this.jwtService.sign(payload),
+      refreshtoken: this.jwtService.sign(
+        { userId: payload.sub, refresh: true },
+        { expiresIn: '7d' }
+      ),
       payload,
       companies
     };

@@ -21,7 +21,7 @@ export class UserService {
 
   async getCompaniesByUserId(userId: number) {
     const user = await this.userRepository.findOne(userId, {
-      relations: ['companies', 'companies.linkedcompany', 'companies.linkedcompany.country'],
+      relations: ['companies', 'companies.linkedcompany', 'companies.linkedcompany.country','companies.linkedcompany.regAddressCountry'],
     });
     return user.companies;
   }
