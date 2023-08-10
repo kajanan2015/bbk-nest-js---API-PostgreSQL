@@ -313,18 +313,19 @@ export class EmployeeModuleService {
       charset: 'numeric'
     });
 
-    let newrandomId = individualcompany.company_code + '-' + randomId;;
+    let newrandomId = individualcompany.company_prefix + '-' + randomId;;
     let response = await this.employeeRepository.find({ where: { employeeCode: newrandomId } });
-
-
+    console.log(individualcompany,999)
+    console.log(individualcompany.company_prefix,999)
     while (response.length > 0) {
       randomId = randomstring.generate({
         length: 7,
         charset: 'numeric'
       });
-      newrandomId = individualcompany.company_code + '-' + randomId;
+      newrandomId = individualcompany.company_prefix + '-' + randomId;
       response = await this.employeeRepository.find({ where: { employeeCode: newrandomId } });
     }
+    console.log(newrandomId,999)
     return newrandomId;
   }
 

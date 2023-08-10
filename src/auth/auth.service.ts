@@ -91,8 +91,8 @@ export class AuthService {
     const payload = { utype: user.uType, name: user.firstName, email: user.email, sub: user.id, firstpasswordset: user.firsttimepasswordchange };
     let companies=await this.userService.getCompaniesByUserId(user.id)
     return {
-      access_token: this.jwtService.sign(payload),
-      refreshtoken: this.jwtService.sign(
+      refreshtoken: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(
         { userId: payload.sub, refresh: true },
         { expiresIn: '7d' }
       ),
