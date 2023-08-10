@@ -283,6 +283,7 @@ export class CompaniesService {
           regAddressNo: companyData.number,
           regAddressStreet: companyData.street,
           regAddressCity: companyData.city,
+          regAddressState: companyData.state,
           regAddressPostalCode: companyData.postalCode,
           regAddressCountry: companyData.country,
           companyLogo: companyData.logoImg,
@@ -346,6 +347,7 @@ export class CompaniesService {
           regAddressNo: companyData.number,
           regAddressStreet: companyData.street,
           regAddressCity: companyData.city,
+          regAddressState: companyData.state,
           regAddressPostalCode: companyData.postalCode,
           regAddressCountry: companyData.country,
           companyLogo: companyData.logoImg,
@@ -387,8 +389,16 @@ export class CompaniesService {
     }
     const countryobejct = await this.countryrepo.findOne({ id: dataCompany.country });
     dataCompany.country = countryobejct;
+    const stateobejct = await this.stateRepository.findOne({ id: dataCompany.state });
+    dataCompany.state = stateobejct;
+    const cityobject = await this.cityRepository.findOne({ id: dataCompany.city });
+    dataCompany.city = cityobject;
     const regcountryobejct = await this.countryrepo.findOne({ id: dataCompany.regAddressCountry });
     dataCompany.regAddressCountry = regcountryobejct;
+    const regstateobejct = await this.stateRepository.findOne({ id: dataCompany.regAddressState });
+    dataCompany.state = regstateobejct;
+    const regcityobject = await this.cityRepository.findOne({ id: dataCompany.regAddressCity });
+    dataCompany.regAddressCity = regcityobject;
     const companytypeobejct = await this.companytyperepo.findOne({ id: dataCompany.companyType });
     dataCompany.companyType = companytypeobejct
     const historydate = {
@@ -790,7 +800,11 @@ export class CompaniesService {
       .leftJoinAndSelect("company.linkedcompany", "linkedcompany")
       .leftJoinAndSelect("linkedcompany.mainCompany", "mainCompany")
       .leftJoinAndSelect("linkedcompany.country", "country")
+      .leftJoinAndSelect("linkedcompany.city", "city")
+      .leftJoinAndSelect("linkedcompany.state", "state")
       .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
+      .leftJoinAndSelect("linkedcompany.regAddressState", "regAddressState")
+      .leftJoinAndSelect("linkedcompany.regAddressCity", "regAddressCity")
       .leftJoinAndSelect("linkedcompany.companyType", "companyType")
       .leftJoinAndSelect("linkedcompany.billing", "billing")
       .where("linkedcompany.company_status = :status", { status: statusvalue })
@@ -821,12 +835,14 @@ export class CompaniesService {
         number: data[i].linkedcompany[0].number,
         street: data[i].linkedcompany[0].street,
         city: data[i].linkedcompany[0].city,
+        state: data[i].linkedcompany[0].state,
         postalCode: data[i].linkedcompany[0].postalCode,
         vat: data[i].linkedcompany[0].vat,
         registrationNumber: data[i].linkedcompany[0].registrationNumber,
         regAddressNo: data[i].linkedcompany[0].regAddressNo,
         regAddressStreet: data[i].linkedcompany[0].regAddressStreet,
         regAddressCity: data[i].linkedcompany[0].regAddressCity,
+        regAddressState: data[i].linkedcompany[0].regAddressState,
         regAddressPostalCode: data[i].linkedcompany[0].regAddressPostalCode,
         companyLogo: data[i].linkedcompany[0].companyLogo,
         companyLogoThumb: data[i].linkedcompany[0].companyLogoThumb,
@@ -893,7 +909,11 @@ export class CompaniesService {
         "users",
         "documents",
         "country",
+        "city",
+        "state",
         "regAddressCountry",
+        "regAddressState",
+        "regAddressCity",
         "companyType",
         "billing",
       ],
@@ -1021,6 +1041,7 @@ export class CompaniesService {
           regAddressNo: data.regAddressNo,
           regAddressStreet: data.regAddressStreet,
           regAddressCity: data.regAddressCity,
+          regAddressState: data.regAddressState,
           regAddressPostalCode: data.regAddressPostalCode,
           regAddressCountry: data.regAddressCountry.id,
         }
@@ -1674,16 +1695,32 @@ export class CompaniesService {
       const countryobejct = await this.countryrepo.findOne({ id: data.country });
       data.country = countryobejct;
     }
+    if (data.state) {
+      const stateobject = await this.stateRepository.findOne({ id: data.state });
+      data.state = stateobject;
+    }
+    if (data.city) {
+      const cityobject = await this.cityRepository.findOne({ id: data.city });
+      data.city = cityobject;
+    }
     if (data.regAddressCountry) {
       const regcountryobejct = await this.countryrepo.findOne({ id: data.regAddressCountry });
       data.regAddressCountry = regcountryobejct;
+    }
+    if (data.regAddressState) {
+      const regstateobject = await this.stateRepository.findOne({ id: data.regAddressState });
+      data.regAddressState = regstateobject;
+    }
+    if (data.regAddressCity) {
+      const regcityobject = await this.cityRepository.findOne({ id: data.regAddressCity });
+      data.regAddressCity = regcityobject;
     }
     if (data.companyType) {
       const companytypeobejct = await this.companytyperepo.findOne({ id: data.companyType });
       data.companyType = companytypeobejct
     }
 
-    const entity = await this.companyinfoRepository.findOne({ company_info_id: companyinfoid }, { relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'] })
+    const entity = await this.companyinfoRepository.findOne({ company_info_id: companyinfoid }, { relations: ['country', 'city', 'state', 'companyType', 'regAddressCountry', 'regAddressCity', 'regAddressState', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'] })
     if (!entity) {
       throw new NotFoundException('Entity not found');
     }
@@ -1705,7 +1742,7 @@ export class CompaniesService {
     }
 
 
-    const existLastestValues = await this.companyinfoRepository.find({ where: { company: companyid, start_date: LessThanOrEqual(start_date) }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { start_date: 'DESC' } })
+    const existLastestValues = await this.companyinfoRepository.find({ where: { company: companyid, start_date: LessThanOrEqual(start_date) }, relations: ['country', 'state', 'city', 'companyType', 'regAddressCountry', 'regAddressCity', 'regAddressState', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { start_date: 'DESC' } })
     const existLastestValue = existLastestValues[0]
 
     if (data.historyId) {
@@ -1773,11 +1810,11 @@ export class CompaniesService {
     const scheduleid = parseInt(data['CompanyDetails'].schedule_id)
 
 
-    const entity = await this.companyinfoRepository.findOne({ company_info_id: companyinfoid }, { relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'] })
+    const entity = await this.companyinfoRepository.findOne({ company_info_id: companyinfoid }, { relations: ['country', 'city', 'state', 'companyType', 'regAddressCountry', 'regAddressCity', 'regAddressState', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'] })
     if (!entity) {
       throw new NotFoundException('Entity not found');
     }
-    const existLastestValues = await this.companyinfoRepository.find({ where: { company: companyid, start_date: LessThan(entity['start_date']) }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { company_info_id: 'DESC' } })
+    const existLastestValues = await this.companyinfoRepository.find({ where: { company: companyid, start_date: LessThan(entity['start_date']) }, relations: ['country', 'city', 'state', 'companyType', 'regAddressCountry', 'regAddressCity', 'regAddressState', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { company_info_id: 'DESC' } })
     console.log(existLastestValues, 8989898)
     const companyExistHistory = await this.companyhistoryRepository.findOne({ id: scheduleid }, { relations: ['created_by', 'updated_by', 'companyinfo', 'company'] })
     await this.historytransaction.deleteExistScheduleTransaction(entity, existLastestValues, companyExistHistory, CompaniesEntityinfo, CompaniesHistorydata)
@@ -1828,7 +1865,7 @@ export class CompaniesService {
 
   async getlatestcompanyinfo(companyid, data) {
     const start_date = data.startdate
-    const existLastestValues = await this.companyinfoRepository.find({ where: { company: companyid, start_date: LessThanOrEqual(start_date) }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { start_date: 'DESC' } })
+    const existLastestValues = await this.companyinfoRepository.find({ where: { company: companyid, start_date: LessThanOrEqual(start_date) }, relations: ['country', 'state', 'city', 'companyType', 'regAddressCountry', 'regAddressCity', 'regAddressState', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { start_date: 'DESC' } })
     const existLastestValue = existLastestValues[0]
     return existLastestValue;
   }
