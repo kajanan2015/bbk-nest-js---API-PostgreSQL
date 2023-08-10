@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UpdateEmployeeDataHistoryDto } from './update-employee-data-history.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, getManager } from 'typeorm';
+import { LessThanOrEqual, Repository, getManager } from 'typeorm';
 import { EmployeeDataHistory } from './employee-data-history.entity';
 import { EmployeeInfo } from 'src/employee-module/employee-module.entity';
 
@@ -40,11 +40,16 @@ export class EmployeeDataHistoryService {
   }
 
   async findEmpDataHistory(createEmployeeDataHistoryDto) {
+
+    const str_date = new Date()
+    const start_date = new Date(Date.UTC(str_date.getFullYear(), str_date.getMonth(), str_date.getDate() + 1));
+
     const [results, totalCount] = await this.empDataHistoryRepository.findAndCount({
       where: {
         employeeId: createEmployeeDataHistoryDto.employeeId,
         type: createEmployeeDataHistoryDto.type,
-        status: 1
+        status: 1,
+        start_date:  LessThanOrEqual(start_date),
       },
       relations: ['updated_by', 'created_by'],
       order: {
@@ -54,12 +59,12 @@ export class EmployeeDataHistoryService {
       take: createEmployeeDataHistoryDto.pageSize,
     });
 
-    const historyDate = results.filter(function (row) {
-      return Math.floor(new Date(row.start_date).getTime() / 86400000) <= Math.floor(new Date().getTime() / 86400000)
-    })
+    // const historyDate = results.filter(function (row) {
+    //   return Math.floor(new Date(row.start_date).getTime() / 86400000) <= Math.floor(new Date().getTime() / 86400000)
+    // })
 
     return {
-      historyList: historyDate,
+      historyList: results,
       totalCount,
       totalPages: Math.ceil(totalCount / createEmployeeDataHistoryDto.pageSize),  // Calculate the total number of pages
     };
