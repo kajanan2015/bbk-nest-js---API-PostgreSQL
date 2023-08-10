@@ -830,10 +830,17 @@ export class EmployeeModuleService {
       where: {
         id: employeeHistoryId
       },
-      relations: ['employeeInfoId']
+      relations: ['employeeInfoId', 'employeePayrollInfoId']
     });
+
     const employeeHistoryRecord = await this.employeedatahistoryrepo.update({ id: employeeHistoryId }, { status: false });
-    const employeeInfoRecord = await this.employeeInfoRepository.update({ id: +previousRecord?.['employeeInfoId']?.['id'] }, { status: false });
+
+    let employeeInfoRecord;
+    if(previousRecord?.['employeeInfoId']){
+      employeeInfoRecord = await this.employeeInfoRepository.update({ id: +previousRecord?.['employeeInfoId']?.['id'] }, { status: false });
+    }else{
+      employeeInfoRecord = await this.employeePayrollRepository.update({ id: +previousRecord?.['employeePayrollInfoId']?.['id'] }, { status: false });
+    }   
 
     return { employeeHistoryRecord, employeeInfoRecord }
   }
@@ -856,11 +863,19 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
       .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
       .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
+      .leftJoinAndSelect("linkedEmployeePayroll.paymentFrequency", "paymentFrequency")
+      .leftJoinAndSelect("linkedEmployeePayroll.created_by", "payroll_created_by")
       .andWhere("linkedEmployee.startDate <= :date", { date })
       .andWhere("linkedEmployee.status = :status", { status: 1 })
       .andWhere("company.id = :companyid", { companyid })
       .andWhere(
-        "(linkedEmployee.end_date IS NULL OR linkedEmployee.end_date > :date)",
+        "(linkedEmployee.endDate IS NULL OR linkedEmployee.endDate > :date)",
+        { date }
+      )
+      .andWhere("linkedEmployeePayroll.startDate <= :date", { date })
+      .andWhere("linkedEmployeePayroll.status = :status", { status: 1 })
+      .andWhere(
+        "(linkedEmployeePayroll.endDate IS NULL OR linkedEmployeePayroll.endDate > :date)",
         { date }
       );
 
@@ -913,7 +928,13 @@ export class EmployeeModuleService {
       .andWhere("linkedEmployee.status = :status", { status: 1 })
       .andWhere("linkedEmployee.company = :companyid", { companyid })
       .andWhere(
-        "(linkedEmployee.end_date IS NULL OR linkedEmployee.end_date > :date)",
+        "(linkedEmployee.endDate IS NULL OR linkedEmployee.endDate > :date)",
+        { date }
+      )
+      .andWhere("linkedEmployeePayroll.startDate <= :date", { date })
+      .andWhere("linkedEmployeePayroll.status = :status", { status: 1 })
+      .andWhere(
+        "(linkedEmployeePayroll.endDate IS NULL OR linkedEmployeePayroll.endDate > :date)",
         { date }
       );
 

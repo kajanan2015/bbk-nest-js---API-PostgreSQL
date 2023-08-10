@@ -449,6 +449,9 @@ export class EmployeePayrollInfo {
     @JoinColumn({ name: 'payment_frequency' })
     paymentFrequency: PaymentFrequency;
 
+    @Column({ name: 'status', type: 'boolean', default: true })
+    status: boolean;    
+
     @Column("timestamp", { default: () => null })
     created_at: Date;
 
