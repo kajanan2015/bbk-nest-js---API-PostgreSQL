@@ -63,7 +63,7 @@ export class CompanyvehicleController {
     return this.companyvehicleService.findOneCompanyVehicleDetails(+id);
   }
 
-  @Get()
+  @Get("vehicle-details")
   findAll() {
     return this.companyvehicleService.findAll();
   }
