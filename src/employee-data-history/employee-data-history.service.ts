@@ -116,7 +116,7 @@ export class EmployeeDataHistoryService {
           const driverLicenceCategories1 = obj1[key]?.map(item => item.driverLicenceCategory).join(', ');
           const driverLicenceCategories2 = obj2[key]?.map(item => item.driverLicenceCategory).join(', ');
           if(driverLicenceCategories2?.toString() != driverLicenceCategories1?.toString()){
-            result[key] = `${driverLicenceCategories2} updated as ${driverLicenceCategories1 ?? ''}`;
+            result[key] = `${driverLicenceCategories2 ?? ''} updated as ${driverLicenceCategories1 ?? ''}`;
           }          
         } else if (key == 'empProvidedCopy' || key == 'visaDoc' || key == 'officialDoc' || key == 'refdoc' || key == 'drivingLicenceDoc' || key == 'tachoDoc' || key == 'cpcCardDoc') {
           if (obj1?.[key]?.[0]?.['docPath'] != obj2?.[key]?.[0]?.['docPath']) {
@@ -125,7 +125,7 @@ export class EmployeeDataHistoryService {
         } else if (key == 'isNonNative' && obj2[key] != obj1[key] && !Object.is(obj1[key], obj2[key])) {
           const nationality1 = obj1[key] == 1 ? 'Non-Native' : 'Native';
           const nationality2 = obj2[key] == 1 ? 'Non-Native' : 'Native';
-          result[key] = `${nationality2} updated as ${nationality1}`;
+          result[key] = `${nationality2 ?? ''} updated as ${nationality1 ?? ''}`;
         } else if (key == 'start_date' || key == 'type') {
           result[key] = obj1[key];
         } else if ((
@@ -155,7 +155,7 @@ export class EmployeeDataHistoryService {
           result[key] = `${formatDate(new Date(obj2[key]))} updated as ${formatDate(new Date(obj1[key]))}`;
         } else {
           if (obj2[key] != obj1[key] && !Object.is(obj1[key], obj2[key])) {
-            result[key] = `${obj2[key]} updated as ${obj1[key]}`;
+            result[key] = `${obj2[key] ?? ''} updated as ${obj1[key] ?? ''}`;
           }
           if (typeof obj2[key] === 'object' && typeof obj1[key] === 'object') {
             const value = difference(obj1[key], obj2[key]);

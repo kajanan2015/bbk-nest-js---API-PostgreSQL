@@ -728,7 +728,7 @@ export class EmployeeModuleService {
 
           const empdocs = []
           for (const url in docUrls as {}) {
-            empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +UpdateEmployeeModuleDto.employeeId, addedBy: data.addedBy })
+            empdocs.push({ docType: docType.replace('[]', ''), docPath: docUrls[url], empid: +UpdateEmployeeModuleDto.employeeId, created_by: data.addedBy })
           };
           await this.employeedocumentservice.create(empdocs)
           data = { ...data, [docType.replace('[]', '')]: empdocs }
