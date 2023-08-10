@@ -738,15 +738,23 @@ export class EmployeeModuleService {
       }
     }
 
+    const tommorow_date = new Date(Date.UTC(start_date.getFullYear(), start_date.getMonth(), start_date.getDate() + 1));
+
     // ** Find the previous history record of the employee
     const previousRecord = await this.employeedatahistoryrepo.findOne({
       where: {
         employeeId: +UpdateEmployeeModuleDto.employeeId,
-        type: UpdateEmployeeModuleDto.type
+        type: UpdateEmployeeModuleDto.type,
+        status: 1,
+        start_date:  LessThanOrEqual(tommorow_date),
       },
-      order: { created_by: 'DESC' },
+      relations: ['updated_by', 'created_by'],
+      order: {
+      start_date: 'DESC',
+    },
     });
-
+    
+    
     // ** If a previous record exists, update its endDate
     if (previousRecord) {
       previousRecord.updated_at = new Date(Date.now());
@@ -807,7 +815,7 @@ export class EmployeeModuleService {
 
   async findLatestEmployeeInfo(empid, data) {
     const start_date = data.startdate
-    const existLastestValues = await this.employeeInfoRepository.find({ where: { employee: empid, startDate: LessThanOrEqual(start_date) }, relations: ['employeeType', 'drivingLicenceCategory', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName', 'visaType', 'created_by', 'updated_by', 'employee'], order: { startDate: 'DESC' } })
+    const existLastestValues = await this.employeeInfoRepository.find({ where: { employee: empid, startDate: LessThanOrEqual(start_date), status: 1 }, relations: ['employeeType', 'drivingLicenceCategory', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName', 'visaType', 'created_by', 'updated_by', 'employee'], order: { startDate: 'DESC' } })
     const documents = await this.employeeDocumentRepository.find({ empid: empid, active: 1 })
     const employeeData = existLastestValues[0]
     return { employeeData, documents };
@@ -815,7 +823,7 @@ export class EmployeeModuleService {
 
   async findLatestEmployeePayrollInfo(empid, data) {
     const start_date = data.startdate
-    const existLastestValues = await this.employeePayrollRepository.find({ where: { employee: empid, startDate: LessThanOrEqual(start_date) }, relations: ['paymentFrequency', 'created_by', 'updated_by', 'employee'], order: { startDate: 'DESC' } })
+    const existLastestValues = await this.employeePayrollRepository.find({ where: { employee: empid, startDate: LessThanOrEqual(start_date), status: 1  }, relations: ['paymentFrequency', 'created_by', 'updated_by', 'employee'], order: { startDate: 'DESC' } })
     const employeeData = existLastestValues[0]
     return { employeeData };
   }
