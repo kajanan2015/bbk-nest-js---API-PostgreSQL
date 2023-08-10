@@ -42,16 +42,9 @@ export class State {
     @Column("timestamp", { name: "updated_at", default: () => "CURRENT_TIMESTAMP" })
     updated_at: Date;
 
-    @ManyToOne(() => country, statecountry => statecountry.state)
-    @JoinColumn({ name: 'country_id' })
-    country: country;
-
     @OneToMany(() => CompaniesEntityinfo, company => company.state, { cascade: true })
     companyAddress: CompaniesEntityinfo[];
 
     @OneToMany(() => CompaniesEntityinfo, company => company.regAddressState, { cascade: true })
     companyRegAddress: CompaniesEntityinfo[];
-
-    @OneToMany(() => City, city => city.state, { cascade: true })
-    city: City[];
 }

@@ -38,9 +38,6 @@ export class country {
     @OneToMany(() => EmployeeInfo, employeemodule => employeemodule.refCompAddressCountry, { cascade: true })
     refCompAddressCountry: EmployeeInfo[];
 
-    @OneToMany(()=>State,state=>state.country,{cascade:true})
-    state:State[];
-
     @OneToMany(()=>companyvehicledata, vehicledetails => vehicledetails.addressCountry,{cascade:true})
     vehicledetails:companyvehicledata[]
     
