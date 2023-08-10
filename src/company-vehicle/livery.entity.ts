@@ -12,6 +12,6 @@ export class liveryEntity {
   @Column({ type: 'boolean', default:true})
   status: boolean;
 
-  @OneToMany(()=>companyvehicledata, vehicledetails => vehicledetails.liveryDrop,{cascade:true})
+  @OneToMany(()=>companyvehicledata, vehicledetails => vehicledetails.livery,{cascade:true})
 vehicledetails:companyvehicledata[]
 }

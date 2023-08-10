@@ -8,11 +8,11 @@ export class licenseCategoryEntity {
 id:number;
 
 @Column("varchar", { nullable: true, length: 30, default: () => null })
-license_category: string;
+licenseCategory: string;
 
 @Column({ type: 'boolean', default:true})
 status: boolean;
 
-@OneToMany(()=>companyvehicledata, vehicledetails => vehicledetails.licenseDrop,{cascade:true})
+@OneToMany(()=>companyvehicledata, vehicledetails => vehicledetails.licenseCategory,{cascade:true})
 vehicledetails:companyvehicledata[]
 }

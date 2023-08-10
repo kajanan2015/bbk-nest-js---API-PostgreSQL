@@ -14,33 +14,33 @@ import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-his
 import { DrivingLicenceCategory } from './driving_licence_category/driving_licence_category.entity';
 import { VisaType } from './visa_type/visaType.entity';
 
-enum employeeStatus {
+export enum employeeStatus {
     active = 'active',
     inactive = 'inactive',
 }
 
-enum salaryType {
+export enum salaryType {
     hourlyRate = 'hourlyRate',
     dayRate = 'dayRate',
     salary = 'salary'
 }
 
-enum salaryOtType {
+export enum salaryOtType {
     hour = 'hour',
     day = 'day',
 }
 
-enum salarySickType {
+export enum salarySickType {
     ssp = 'ssp',
     csp = 'csp',
 }
 
-enum empProvidedForm {
+export enum empProvidedForm {
     p45 = 'p45',
     p46 = 'p46'
 }
 
-enum officialDoc {
+export enum officialDoc {
     passport = 'passport',
     birthCertificate = 'birthCertificate'
 }
@@ -469,7 +469,10 @@ export class EmployeePayrollInfo {
     @Column("timestamp", { name: "end_date", default: null })
     endDate: Date;
 
-    @ManyToOne(() => Employee, employee => employee.linkedEmployee)
+    @ManyToOne(() => Employee, employee => employee.linkedEmployeePayroll)
     @JoinColumn({ name: 'employee_id' })
     employee: Employee;
+
+    @OneToMany(() => EmployeeDataHistory, empDataHistory => empDataHistory.employeePayrollInfoId, { cascade: true })
+    editHistory: EmployeeDataHistory[];
 }

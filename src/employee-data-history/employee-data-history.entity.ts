@@ -1,4 +1,4 @@
-import { Employee, EmployeeInfo } from "src/employee-module/employee-module.entity";
+import { Employee, EmployeeInfo, EmployeePayrollInfo } from "src/employee-module/employee-module.entity";
 import { User } from "src/user/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { CompaniesEntity } from "src/companies/companies.entity";
@@ -15,6 +15,10 @@ export class EmployeeDataHistory {
     @ManyToOne(() => EmployeeInfo, employee => employee.editHistory)
     @JoinColumn({ name: 'employee_info_id' })
     employeeInfoId: EmployeeInfo;
+
+    @ManyToOne(() => EmployeePayrollInfo, employee => employee.editHistory)
+    @JoinColumn({ name: 'employee_payroll_info_id' })
+    employeePayrollInfoId: EmployeeInfo;
 
     @ManyToOne(() => CompaniesEntity, company => company.editHistory)
     @JoinColumn({ name: 'company' })
@@ -45,7 +49,7 @@ export class EmployeeDataHistory {
 
     @Column({ type: 'boolean', default: true })
     status: boolean;
-
+    
     // @Column("timestamp", { name: "startDate", default: () => "CURRENT_TIMESTAMP" })
     // startDate: Date;    
 

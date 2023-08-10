@@ -208,8 +208,15 @@ export class EmployeeModuleController {
    // get latest employee info when passing date
    @UseGuards(AuthGuard('jwt'))
    @Post('getlatestemployeeinfo')
-   async getlatestcompany( @Body() data){
+   async getlatestEmployeeInfo( @Body() data){
      return await this.employeeModuleService.findLatestEmployeeInfo(data.empid, data);
+   }
+
+   // get latest employee payroll info when passing date
+   @UseGuards(AuthGuard('jwt'))
+   @Post('get-latest-employee-payrollinfo')
+   async getlatestEmployeePayrollInfo( @Body() data){
+     return await this.employeeModuleService.findLatestEmployeePayrollInfo(data.empid, data);
    }
  
 

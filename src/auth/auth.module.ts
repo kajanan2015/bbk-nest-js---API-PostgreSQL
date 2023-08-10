@@ -18,7 +18,7 @@ import { MailService } from 'src/mail/mail.service';
     PassportModule,
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '1 days' },
+      signOptions: {  expiresIn: '1h' },
     }),
   ],
   providers: [AuthService, LocalSignInStrategy, LocalSignUpStrategy, JwtStrategy,MailService],

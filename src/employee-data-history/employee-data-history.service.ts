@@ -113,14 +113,16 @@ export class EmployeeDataHistoryService {
         } else if (key == 'created_by') {
           result[key] = obj1[key];
         } else if (key == 'drivingLicenceCategory') {
-          const driverLicenceCategories1 = obj1[key].map(item => item.driverLicenceCategory).join(', ');
-          const driverLicenceCategories2 = obj2[key].map(item => item.driverLicenceCategory).join(', ');
-          result[key] = `${driverLicenceCategories2} updated as ${driverLicenceCategories1}`;
+          const driverLicenceCategories1 = obj1[key]?.map(item => item.driverLicenceCategory).join(', ');
+          const driverLicenceCategories2 = obj2[key]?.map(item => item.driverLicenceCategory).join(', ');
+          if(driverLicenceCategories2?.toString() != driverLicenceCategories1?.toString()){
+            result[key] = `${driverLicenceCategories2} updated as ${driverLicenceCategories1 ?? ''}`;
+          }          
         } else if (key == 'empProvidedCopy' || key == 'visaDoc' || key == 'officialDoc' || key == 'refdoc' || key == 'drivingLicenceDoc' || key == 'tachoDoc' || key == 'cpcCardDoc') {
           if (obj1?.[key]?.[0]?.['docPath'] != obj2?.[key]?.[0]?.['docPath']) {
             result[key] = obj1[key];
           }
-        } else if (key == 'isNonNative') {
+        } else if (key == 'isNonNative' && obj2[key] != obj1[key] && !Object.is(obj1[key], obj2[key])) {
           const nationality1 = obj1[key] == 1 ? 'Non-Native' : 'Native';
           const nationality2 = obj2[key] == 1 ? 'Non-Native' : 'Native';
           result[key] = `${nationality2} updated as ${nationality1}`;

@@ -26,7 +26,7 @@ export class CompanyvehicleController {
     private readonly imageUploadService: ImageUploadService
   ) {}
 
-  @Get("/dropdowns")
+  @Get("dropdowns")
   async getDropdownData() {
     const dropdownData = await this.companyvehicleService.getDropdownData();
     return {
