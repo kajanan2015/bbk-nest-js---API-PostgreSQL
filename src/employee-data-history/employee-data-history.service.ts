@@ -211,6 +211,11 @@ export class EmployeeDataHistoryService {
       `SELECT * FROM driving_licence_type`
     );
 
+    // ** get payment frequency type type list
+    const paymentTypeList = await entityManager.query(
+      `SELECT * FROM payment_frequency`
+    );
+
     // ** format history data
     Object.keys(historyData).forEach(function (key, index) {
       const data = historyData[key];
@@ -238,6 +243,10 @@ export class EmployeeDataHistoryService {
           let addressCountry = countryList.find(country => country.id == jsonRow.addressCountry);
           jsonRow.addressCountry = addressCountry
         }
+        if (jsonRow.hasOwnProperty('refCompAddressCountry')) {
+          let refCompAddressCountry = countryList.find(country => country.id == jsonRow.refCompAddressCountry);
+          jsonRow.refCompAddressCountry = refCompAddressCountry
+        }
         if (jsonRow.hasOwnProperty('bankName')) {
           let bankName = bankList.find(bank => bank.id == jsonRow.bankName);
           jsonRow.bankName = bankName
@@ -249,6 +258,10 @@ export class EmployeeDataHistoryService {
         if (jsonRow.hasOwnProperty('drivingLicenceType')) {
           let drivingLicenceType = dlTypeList.find(drivingLicenceType => drivingLicenceType.id == jsonRow.drivingLicenceType);
           jsonRow.drivingLicenceType = drivingLicenceType
+        }
+        if (jsonRow.hasOwnProperty('paymentFrequency')) {
+          let paymentFrequency = paymentTypeList.find(paymentFrequency => paymentFrequency.id == jsonRow.paymentFrequency);
+          jsonRow.paymentFrequency = paymentFrequency
         }
         tableData.push({
           id: rowData?.id,
