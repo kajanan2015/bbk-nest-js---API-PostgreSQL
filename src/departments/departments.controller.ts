@@ -5,16 +5,26 @@ import { UpdateDepartmentDto } from './update-department.dto';
 
 @Controller('departments')
 export class DepartmentsController {
-  constructor(private readonly departmentsService: DepartmentsService) {}
+  constructor(private readonly departmentsService: DepartmentsService) { }
 
+  // ** Create department
   @Post()
   create(@Body() createDepartmentDto: CreateDepartmentDto) {
-    return this.departmentsService.create(createDepartmentDto);
+    const department = this.departmentsService.create(createDepartmentDto);
+
+    const successResponse = {
+      success: true,
+      data: department,
+      message: 'success',
+    };
+
+    return successResponse;
   }
 
-  @Get()
-  findAll() {
-    return this.departmentsService.findAll();
+  // ** Fetch one depatment
+  @Get('/:id')
+  findOneDepartment(@Param('id') id: number) {
+    return this.departmentsService.findOneDepartment(+id);
   }
 
   // ** Get departments belongs to a company id
@@ -23,8 +33,9 @@ export class DepartmentsController {
     return this.departmentsService.findDepartmentsByCompanyId(+id);
   }
 
+  // ** Update department
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDepartmentDto: UpdateDepartmentDto) {
-    return this.departmentsService.update(+id, updateDepartmentDto);
+  update(@Param('id') id: number, @Body() createDepartmentDto: CreateDepartmentDto) {
+    return this.departmentsService.update(+id, createDepartmentDto);
   }
 }
