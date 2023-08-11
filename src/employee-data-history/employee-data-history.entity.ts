@@ -14,15 +14,15 @@ export class EmployeeDataHistory {
 
     @ManyToOne(() => EmployeeInfo, employee => employee.editHistory)
     @JoinColumn({ name: 'employee_info_id' })
-    employeeInfoId: EmployeeInfo;
+    employeeInfoId: EmployeeInfo  | null;
 
     @ManyToOne(() => EmployeePayrollInfo, employee => employee.editHistory)
     @JoinColumn({ name: 'employee_payroll_info_id' })
-    employeePayrollInfoId: EmployeeInfo;
+    employeePayrollInfoId: EmployeePayrollInfo;
 
     @ManyToOne(() => CompaniesEntity, company => company.editHistory)
     @JoinColumn({ name: 'company' })
-    company: CompaniesEntity;
+    company: CompaniesEntity | null;
 
     @Column("varchar", { name: 'type', length: 250, nullable: true, default: () => null })
     type: string | null;

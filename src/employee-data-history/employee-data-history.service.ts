@@ -17,15 +17,24 @@ export class EmployeeDataHistoryService {
 
   async create(createEmployeeDataHistoryDto) {
 
-    const response = this.empDataHistoryRepository.create(createEmployeeDataHistoryDto);
+    let response;
+    
+    if(createEmployeeDataHistoryDto?.type == 'empPayrollData'){
+      const payrollId = createEmployeeDataHistoryDto.employeeInfoId;
+      delete createEmployeeDataHistoryDto.employeeInfoId;
+      response = this.empDataHistoryRepository.create({...createEmployeeDataHistoryDto, employeePayrollInfoId: payrollId });
+    }else{
+      response = this.empDataHistoryRepository.create(createEmployeeDataHistoryDto);
+    }   
 
     // Find the previous record of the employee
     const previousRecord = await this.empDataHistoryRepository.findOne({
       where: {
         employeeId: +createEmployeeDataHistoryDto.employeeId,
-        type: createEmployeeDataHistoryDto.type
+        type: createEmployeeDataHistoryDto.type,
+        status: 1
       },
-      order: { created_at: 'ASC' },
+      order: { created_at: 'DESC' },
     });
 
     // If a previous record exists, update its endDate
@@ -34,7 +43,8 @@ export class EmployeeDataHistoryService {
       previousRecord.updated_by = createEmployeeDataHistoryDto.created_by;
       await this.empDataHistoryRepository.save(previousRecord);
     }
-
+    
+    console.log(response, 88888888888888) 
     return await this.empDataHistoryRepository.save(response);
 
   }

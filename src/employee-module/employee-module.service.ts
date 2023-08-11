@@ -222,9 +222,17 @@ export class EmployeeModuleService {
       const response = await this.employeePayrollRepository.create({ employee: employee['id'], ...data, startDate: start_date });
       const res = await this.employeePayrollRepository.save(response);
 
-      const returnData = await this.employeePayrollRepository.findOne({
-        where: { employee: employee.id },
+      // const returnData = await this.employeePayrollRepository.findOne({
+      //   where: { employee: employee.id },
+      // });
+
+      // return { infoId: res['id'], ...returnData }
+
+      const returnData = await this.employeeRepository.findOne({
+        where: { employeeCode: createEmployeeModuleDto.employeeCode },
       });
+
+     
 
       return { infoId: res['id'], ...returnData }
 
@@ -232,11 +240,17 @@ export class EmployeeModuleService {
 
       const res = await this.employeePayrollRepository.update({ id: existingRecord['id'] }, data);
 
-      const returnData = await this.employeePayrollRepository.findOne({
-        where: { employee: employee['id'] },
+      // const returnData = await this.employeePayrollRepository.findOne({
+      //   where: { employee: employee['id'] },
+      // });
+
+      // return { infoId: res['id'], ...returnData }
+
+      const returnData = await this.employeeRepository.findOne({
+        where: { employeeCode: createEmployeeModuleDto.employeeCode },
       });
 
-      return { infoId: res['id'], ...returnData }
+      return { infoId: existingRecord['id'], ...returnData }
 
     }
   }
