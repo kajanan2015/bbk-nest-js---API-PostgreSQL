@@ -25,7 +25,7 @@ export class CustomerSupportService {
   ) { }
 
   // ** Create inquiry
-  async create(customerSupportData) {
+  async create(customerSupportData): Promise<any> {
     try {
       const customerSupportDetails = this.customerSupportDetailsRepository.create({
         fullName: customerSupportData.fullName,
@@ -39,7 +39,7 @@ export class CustomerSupportService {
         createdBy: customerSupportData.createdBy,
       })
 
-      await this.customerSupportDetailsRepository.save(customerSupportDetails);
+      const customerSupportDetailsReturnData = await this.customerSupportDetailsRepository.save(customerSupportDetails);
 
       const customerSupport = this.customerSupportRepository.create({
         customerSupportDetails: customerSupportDetails,
@@ -60,6 +60,7 @@ export class CustomerSupportService {
       }
       const addhistory = await this.customerSupportHistoryRepository.create(historyData)
       await this.customerSupportHistoryRepository.save(addhistory)
+      return customerSupportDetailsReturnData;
     } catch (error) {
       return error;
     }
