@@ -62,6 +62,9 @@ export class CompaniesEntity {
   @Column("varchar", { length: 10, comment: "to declare employee id" })
   company_prefix: string | null;
 
+  @Column("int", {name:"contract_agreement", comment: "to check company aggrement date",nullable:true,default:null })
+  contractagreement: number;
+
   @ManyToOne(() => User, user => user.companymainusercreate)
   @JoinColumn({ name: 'created_by' })
   created_by: User;

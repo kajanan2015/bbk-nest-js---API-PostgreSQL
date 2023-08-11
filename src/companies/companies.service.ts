@@ -57,7 +57,7 @@ import { AssignPackageHistoryType } from "src/companypackagerow/companypackagero
 import { AssignPackageStatus } from "src/companypackagerow/companypackagerow.entity";
 import { State } from "./country/states/states.entity";
 import { City } from "./country/cities/city.entity";
-
+import { addMonths, format } from 'date-fns';
 @Injectable()
 export class CompaniesService {
 
@@ -263,6 +263,7 @@ export class CompaniesService {
           company_code: companyCode,
           company_prefix: companyData.code,
           users: users,
+          created_by:companyData.created_by
         }
         dataCompany = {
           ...companyData,
@@ -276,6 +277,7 @@ export class CompaniesService {
           company_code: companyCode,
           company_prefix: companyData.code,
           users: users,
+          created_by:companyData.created_by
         }
 
         dataCompany = {
@@ -328,6 +330,7 @@ export class CompaniesService {
           company_code: companyCode,
           company_prefix: companyData.code,
           users: users,
+          created_by:companyData.created_by
         }
         dataCompany = {
           ...companyData,
@@ -340,6 +343,7 @@ export class CompaniesService {
           company_code: companyCode,
           company_prefix: companyData.code,
           users: users,
+          created_by:companyData.created_by
         }
 
         dataCompany = {
@@ -1331,28 +1335,19 @@ export class CompaniesService {
   }
 
 
-
+// assign packages to customer-payment link
   async assignpackage(id, data) {
     console.log(id, 77);
     console.log(data.package, 88);
-    const entityA = await this.companyRepository.findOne(id, {
-      relations: ["package"],
-    });
-    if (!entityA) {
-      throw new NotFoundException("package not found");
-    }
-    console.log(entityA);
-    entityA.package = await this.detailsrepository.findByIds(data.package, { relations: ["packages", "module"] });
-    console.log(entityA);
     const currentDateTime = new Date();
-    await this.companypackagerowrepository
-      .createQueryBuilder()
-      .update(Companypackagerow)
-      .set({ enddate: currentDateTime })
-      .where('companyId = :id', { id })
-      .execute();
+    const packagedetails = await this.detailsrepository.findByIds(data.package, { relations: ["packages", "module"] });
+    const companymaindata=await this.companyRepository.findOne({id})
+    const company_contarctdate=companymaindata.contractagreement;
+    const futureDate = addMonths(new Date(), company_contarctdate);
+console.log(futureDate,999999)
+console.log(company_contarctdate,999999)
     let newcompassigndata;
-    for (const comppackagedata of entityA.package) {
+    for (const comppackagedata of packagedetails) {
       console.log(comppackagedata.module.id, 56565)
       if (comppackagedata.packages.customizePackageValue == false) {
         newcompassigndata = {
@@ -1360,10 +1355,16 @@ export class CompaniesService {
           availablerowcount: comppackagedata.NoOfRecords,
           rowprice: comppackagedata.CostPerRecord,
           packageprice: comppackagedata.PackagePrice,
+          assigndate: currentDateTime,
+          enddate:futureDate,
+          created_at: currentDateTime,
+          created_by: null,
+          trialpackageidentifier: AssignPackageType.FIXED,
           module: comppackagedata.module.id,
           packages: comppackagedata.packages.id,
           moduledetails: comppackagedata.id,
           company: parseInt(id),
+          status: AssignPackageStatus.PENDING
         }
         console.log(newcompassigndata, 5236565)
         const compackageresponse = await this.companypackagerowrepository.create(newcompassigndata)
@@ -1380,10 +1381,16 @@ export class CompaniesService {
         availablerowcount: newdata.records,
         rowprice: newdata.costPerRecord,
         packageprice: newdata.packagePrice,
+        assigndate: currentDateTime,
+        enddate:futureDate,
+        created_at: currentDateTime,
+        created_by:null,
+        trialpackageidentifier: AssignPackageType.FIXED,
         module: newdata.moduleId,
         packages: getpkgid.packages.id,
         moduledetails: newdata.packageId,
         company: parseInt(id),
+        status: AssignPackageStatus.PENDING
       }
       console.log(newcompassigndata, 898989)
       const compackageresponsecustomize = await this.companypackagerowrepository.create(newcompassigndata)
@@ -1407,14 +1414,33 @@ export class CompaniesService {
 
 
     }
-    const responese = await this.companyRepository.save(entityA);
-    console.log(responese);
+    // const responese = await this.companyRepository.save(entityA);
+    // console.log(responese);
 
-    return entityA;
+    // return entityA;
 
     // return  await this.companyRepository.update(id,data);
   }
   async contractagreement(id, data) {
+    // await this.companyRepository.update(id, data);
+    // const entity = await this.companyinfoRepository.findOne({ company_info_id: data.companyinfoid }, { relations: ['country', 'city', 'state', 'companyType', 'regAddressCountry', 'regAddressCity', 'regAddressState', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'] })
+    // if (!entity) {
+    //   throw new NotFoundException('Entity not found');
+    // }
+    // entity.push(contractagreementdata.contractagreement);
+    // const historydate = {
+    //   history_data_type: Historydatatype.COMPANY,
+    //   history_data: JSON.stringify(data),
+    //   created_at: data.created_at,
+    //   created_by: data.created_by,
+    //   updated_at: data.updated_at ? data.updated_at : null,
+    //   updated_by: data.updated_by ? data.updated_by : null,
+    //   companyinfo:data.companyinfoid,
+    //   company: id,
+    //   start_date: data.start_date
+    // }
+    // const addhistory = await this.companyhistoryRepository.create(historydate)
+    // const savehistory = await this.companyhistoryRepository.save(addhistory)
     return await this.companyRepository.update(id, data);
   }
   async assignpaymentmethod(id, data) {

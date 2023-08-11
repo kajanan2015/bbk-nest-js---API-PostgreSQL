@@ -34,6 +34,7 @@
     "aus-abr": "^1.0.4",
     "aws-sdk": "^2.1339.0",
     "bcryptjs": "^2.4.3",
+    "date-fns": "^2.30.0",
     "dotenv": "^16.3.1",
     "handlebars": "^4.7.7",
     "helmet": "^5.1.1",
