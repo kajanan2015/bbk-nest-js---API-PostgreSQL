@@ -155,6 +155,15 @@ export class EmployeeModuleController {
     };
   }
 
+  @Get('/company-former-employees/:id')
+  async getFormerEmployeeData(@Param('id') id: string) {
+    const employeeList = await this.employeeModuleService.findCompanyFormerEmployees(+id);;
+    return {
+      statusCode: HttpStatus.OK,
+      employeeList: employeeList
+    };
+  }
+
   @Get('/company-employees-docs/:id')
   async getTableDoc(@Param('id') id: string) {
     const employeedocList = await this.employeeModuleService.findCompanyAllEmployeesWithDoc(+id);;

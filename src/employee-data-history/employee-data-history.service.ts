@@ -167,7 +167,7 @@ export class EmployeeDataHistoryService {
           !Object.is(obj1[key], obj2[key])
         )) {
 
-          result[key] = `${formatDate(new Date(obj2[key]))} updated as ${formatDate(new Date(obj1[key]))}`;
+          result[key] = `${obj2[key] != '' ? formatDate(new Date(obj2[key])) : ''} updated as ${obj1[key] != '' ? formatDate(new Date(obj1[key])): ''}`;
         } else {
           if (obj2[key] != obj1[key] && !Object.is(obj1[key], obj2[key])) {
             result[key] = `${obj2[key] ?? ''} updated as ${obj1[key] ?? ''}`;

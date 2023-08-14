@@ -920,7 +920,72 @@ export class EmployeeModuleService {
       newdata.push(passdata)
     }
 
-    return newdata;
+    const results = newdata.filter(function (row) {
+      return Math.floor(new Date(row.leaveDate).getTime() / 86400000) > Math.floor(new Date().getTime() / 86400000) || row.leaveDate == null
+    })
+
+    return results;
+  }
+
+  async findCompanyFormerEmployees(companyid: number) {
+    const date = new Date();
+    const query: SelectQueryBuilder<Employee> = getConnection()
+      .getRepository(Employee)
+      .createQueryBuilder("employee")
+      .leftJoinAndSelect("employee.company", "company")
+      // .leftJoinAndSelect("employee.documents", "documents")
+      .leftJoinAndSelect("employee.linkedEmployee", "linkedEmployee")
+      .leftJoinAndSelect("employee.linkedEmployeePayroll", "linkedEmployeePayroll")
+      .leftJoinAndSelect("linkedEmployee.employeeType", "employeeType")
+      .leftJoinAndSelect("linkedEmployee.designation", "designation")
+      .leftJoinAndSelect("linkedEmployee.gender", "gender")
+      .leftJoinAndSelect("linkedEmployee.maritalStatus", "maritalStatus")
+      .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
+      .leftJoinAndSelect("linkedEmployee.visaType", "visaType")
+      .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
+      .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
+      .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
+      .leftJoinAndSelect("linkedEmployeePayroll.paymentFrequency", "paymentFrequency")
+      .leftJoinAndSelect("linkedEmployeePayroll.created_by", "payroll_created_by")
+      .andWhere("linkedEmployee.startDate <= :date", { date })
+      .andWhere("linkedEmployee.status = :status", { status: 1 })
+      .andWhere("company.id = :companyid", { companyid })
+      .andWhere(
+        "(linkedEmployee.endDate IS NULL OR linkedEmployee.endDate > :date)",
+        { date }
+      )
+      .andWhere("linkedEmployeePayroll.startDate <= :date", { date })
+      .andWhere("linkedEmployeePayroll.status = :status", { status: 1 })
+      .andWhere(
+        "(linkedEmployeePayroll.endDate IS NULL OR linkedEmployeePayroll.endDate > :date)",
+        { date }
+      );
+
+    const data = await query.getMany();
+
+    const newdata = [];
+
+    for (var i = 0; i < data.length; i++) {
+      let passdata = {}
+      const { linkedEmployee, ...mainEmployeeData } = data[i];
+      const companyData = await this.companyservice.read(mainEmployeeData?.company?.id);
+      passdata = {
+        ...linkedEmployee[0],
+        id: mainEmployeeData.id,
+        employeeCode: mainEmployeeData.employeeCode,
+        company: companyData,
+      }
+      newdata.push(passdata)
+    }
+
+    const results = newdata.filter(function (row) {
+      if(row.leaveDate){
+        return Math.floor(new Date(row.leaveDate).getTime() / 86400000) <= Math.floor(new Date().getTime() / 86400000) 
+      }
+      return false;
+    })
+
+    return results;
   }
 
   // async findCompanyAllEmployeesWithDoc(companyid: number) {
