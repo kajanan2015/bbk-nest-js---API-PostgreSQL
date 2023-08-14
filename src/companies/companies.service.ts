@@ -263,7 +263,7 @@ export class CompaniesService {
           company_code: companyCode,
           company_prefix: companyData.code,
           users: users,
-          created_by:companyData.created_by
+          created_by: companyData.created_by
         }
         dataCompany = {
           ...companyData,
@@ -277,7 +277,7 @@ export class CompaniesService {
           company_code: companyCode,
           company_prefix: companyData.code,
           users: users,
-          created_by:companyData.created_by
+          created_by: companyData.created_by
         }
 
         dataCompany = {
@@ -330,7 +330,7 @@ export class CompaniesService {
           company_code: companyCode,
           company_prefix: companyData.code,
           users: users,
-          created_by:companyData.created_by
+          created_by: companyData.created_by
         }
         dataCompany = {
           ...companyData,
@@ -343,7 +343,7 @@ export class CompaniesService {
           company_code: companyCode,
           company_prefix: companyData.code,
           users: users,
-          created_by:companyData.created_by
+          created_by: companyData.created_by
         }
 
         dataCompany = {
@@ -1335,17 +1335,17 @@ export class CompaniesService {
   }
 
 
-// assign packages to customer-payment link
+  // assign packages to customer-payment link
   async assignpackage(id, data) {
     console.log(id, 77);
     console.log(data.package, 88);
     const currentDateTime = new Date();
     const packagedetails = await this.detailsrepository.findByIds(data.package, { relations: ["packages", "module"] });
-    const companymaindata=await this.companyRepository.findOne({id})
-    const company_contarctdate=companymaindata.contractagreement;
+    const companymaindata = await this.companyRepository.findOne({ id })
+    const company_contarctdate = companymaindata.contractagreement;
     const futureDate = addMonths(new Date(), company_contarctdate);
-console.log(futureDate,999999)
-console.log(company_contarctdate,999999)
+    console.log(futureDate, 999999)
+    console.log(company_contarctdate, 999999)
     let newcompassigndata;
     for (const comppackagedata of packagedetails) {
       console.log(comppackagedata.module.id, 56565)
@@ -1356,7 +1356,7 @@ console.log(company_contarctdate,999999)
           rowprice: comppackagedata.CostPerRecord,
           packageprice: comppackagedata.PackagePrice,
           assigndate: currentDateTime,
-          enddate:futureDate,
+          enddate: futureDate,
           created_at: currentDateTime,
           created_by: null,
           trialpackageidentifier: AssignPackageType.FIXED,
@@ -1382,9 +1382,9 @@ console.log(company_contarctdate,999999)
         rowprice: newdata.costPerRecord,
         packageprice: newdata.packagePrice,
         assigndate: currentDateTime,
-        enddate:futureDate,
+        enddate: futureDate,
         created_at: currentDateTime,
-        created_by:null,
+        created_by: null,
         trialpackageidentifier: AssignPackageType.FIXED,
         module: newdata.moduleId,
         packages: getpkgid.packages.id,
@@ -1444,12 +1444,15 @@ console.log(company_contarctdate,999999)
     return await this.companyRepository.update(id, data);
   }
   async assignpaymentmethod(id, data) {
-    console.log(data, 88);
-    return await this.companyRepository.update(id, data);
+    const companydata = await this.read(id)
+    const companyinfoid = companydata.company_info_id;
+    return await this.companyinfoRepository.update(companyinfoid, data);
   }
 
   async getassignpaymentmethod(id) {
-    return await this.companyRepository.findOne(id, { relations: ["billing"] });
+    const data = await this.read(id)
+    const companyinfoid = data.company_info_id;
+    return await this.companyinfoRepository.findOne(companyinfoid, { relations: ["billing"] });
   }
   async assignmodule(id, data) {
     const entityA = await this.companyRepository.findOne(id, {
