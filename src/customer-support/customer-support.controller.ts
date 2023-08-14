@@ -12,8 +12,8 @@ export class CustomerSupportController {
 
   // ** Create inquiry
   @Post()
-  create(@Body() customerSupportData) {
-    const savedData = this.customerSupportService.create(customerSupportData['data']);
+  async create(@Body() customerSupportData) {
+    const savedData = await this.customerSupportService.create(customerSupportData['data']);
 
     const successResponse = {
       success: true,
@@ -43,8 +43,9 @@ export class CustomerSupportController {
   }
 
   @Put()
-  update(@Body() customerSupportData) {
-    const savedData = this.customerSupportService.update(customerSupportData['data']);
+  async update(@Body() customerSupportData) {
+    console.log(customerSupportData, 9090)
+    const savedData = await this.customerSupportService.update(customerSupportData['data']);
 
     const successResponse = {
       success: true,

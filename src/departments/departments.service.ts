@@ -11,21 +11,34 @@ export class DepartmentsService {
     @InjectRepository(Department)
     private departmentRepository: Repository<Department>
   ) { }
-  create(createDepartmentDto: CreateDepartmentDto) {
-    return 'This action adds a new department';
+
+  // ** Create department
+  async create(createDepartmentDto: CreateDepartmentDto) {
+    try {
+      const customerSupportDetails = this.departmentRepository.create(createDepartmentDto);
+      return await this.departmentRepository.save(customerSupportDetails);
+    } catch (error) {
+      return error;
+    }
   }
 
-  findAll() {
-    return `This action returns all departments`;
+  // ** Fetch one department
+  async findOneDepartment(id: number) {
+    return await this.departmentRepository.findOne({
+      where: { id: id }
+    })
   }
 
+  // ** Get departments belongs to a company id
   async findDepartmentsByCompanyId(id: number) {
     return await this.departmentRepository.find({
       where: { companyId: id }
     })
   }
 
-  update(id: number, updateDepartmentDto: UpdateDepartmentDto) {
-    return `This action updates a #${id} department`;
+  // ** Update department
+  async update(id: number, createDepartmentDto: CreateDepartmentDto) {
+    await this.departmentRepository.update({ id }, createDepartmentDto);
+    return await this.departmentRepository.findOne({ id });
   }
 }
