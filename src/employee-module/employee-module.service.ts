@@ -944,6 +944,7 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("linkedEmployee.gender", "gender")
       .leftJoinAndSelect("linkedEmployee.maritalStatus", "maritalStatus")
       .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
+      .leftJoinAndSelect("linkedEmployee.drivingLicenceCategory", "drivingLicenceCategory")
       .leftJoinAndSelect("linkedEmployee.visaType", "visaType")
       .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
       .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
