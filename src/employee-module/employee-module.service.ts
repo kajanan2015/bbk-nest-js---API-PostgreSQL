@@ -936,7 +936,7 @@ export class EmployeeModuleService {
       .getRepository(Employee)
       .createQueryBuilder("employee")
       .leftJoinAndSelect("employee.company", "company")
-      // .leftJoinAndSelect("employee.documents", "documents")
+      .leftJoinAndSelect("employee.documents", "documents")
       .leftJoinAndSelect("employee.linkedEmployee", "linkedEmployee")
       .leftJoinAndSelect("employee.linkedEmployeePayroll", "linkedEmployeePayroll")
       .leftJoinAndSelect("linkedEmployee.employeeType", "employeeType")
@@ -978,7 +978,8 @@ export class EmployeeModuleService {
         id: mainEmployeeData.id,
         infoId: linkedEmployee[0]['id'],
         employeeCode: mainEmployeeData.employeeCode,
-        company: companyData
+        company: companyData,
+        documents: mainEmployeeData.documents
       }
       newdata.push(passdata)
     }
