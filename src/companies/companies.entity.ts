@@ -23,8 +23,8 @@ import { companyvehicledata } from 'src/company-vehicle/companyvehicle.entity';
 import { Companypackageassignhistory } from 'src/companypackagerow/companypackagerow.entity';
 import { State } from './country/states/states.entity';
 import { City } from './country/cities/city.entity';
-
-
+import { PaymentLinkData } from 'src/payment/payment_link_otp/payment_link.entity';
+import { CompanyPayment } from 'src/company-payment/company-payment.entity';
 
 export enum Companyidentifier {
   MAIN = 'maincompany',
@@ -135,6 +135,11 @@ export class CompaniesEntity {
   @OneToMany(() => Companypackageassignhistory, assignhistorydata => assignhistorydata.company, ({ cascade: true }))
   assignpkghistory: Companypackageassignhistory[];
 
+  @OneToMany(() => PaymentLinkData, paymentdata => paymentdata.company, ({ cascade: true }))
+  paymentdatalink: PaymentLinkData[];
+
+  @OneToMany(() => CompanyPayment, paymentdata => paymentdata.company, ({ cascade: true }))
+  paymentdata: CompanyPayment[];
 
 }
 

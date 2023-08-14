@@ -18,6 +18,7 @@ import { CustomerSupport, CustomerSupportDetails, CustomerSupportHistory } from 
 import { Department } from 'src/departments/department.entity';
 import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entity';
 import { Companypackageassignhistory } from 'src/companypackagerow/companypackagerow.entity';
+import { PaymentLinkData } from 'src/payment/payment_link_otp/payment_link.entity';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -191,8 +192,12 @@ export class User {
   packageassignuser:Companypackagerow[];
 
   @OneToMany(()=>Companypackageassignhistory, company=>company.created_by,{cascade:true})
-  companyassignpackagehistorycreate:Companypackageassignhistory[]
+  companyassignpackagehistorycreate:Companypackageassignhistory[];
 
   @OneToMany(()=>Companypackageassignhistory, company=>company.updated_by,{cascade:true})
-  companyassignpackagehistoryupdate:Companypackageassignhistory[]
+  companyassignpackagehistoryupdate:Companypackageassignhistory[];
+
+  @OneToMany(()=>PaymentLinkData, paymentdata=>paymentdata.created_by,{cascade:true})
+  companypaymentlinkcreate:PaymentLinkData[];
+
 }

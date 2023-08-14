@@ -475,9 +475,10 @@ export class CompaniesController {
   // genertae payment link
   @UseGuards(AuthGuard('jwt'))
   @Post('generatepaymentlink/:companyid')
-  async generatepaymentlink(@Param('companyid') companyid: string, @Req() req) {
+  async generatepaymentlink(@Param('companyid') companyid: string, @Req() req, @Body() data) {
+    console.log(data,90990)
     const base_url = `${req.get('origin')}/`;
-    return await this.service.generatepaymentlink(companyid, base_url);
+    return await this.service.generatepaymentlink(companyid, base_url,data);
   }
 
   @Get('verifypaymentdetailstoken/:token')

@@ -68,12 +68,12 @@ export class CompanyvehicleService {
   async findOneCompanyVehicleDetails(id: number) {
     return await this.CompanyVehicleRepository.findOne({
       where: { id: id },
-      relations: ['fuelType', 'livery', 'licenseCategory', 'defaultBase', 'company','vehicle_Type','addressCountry']
+      relations: ['fuelType', 'livery', 'licenseCategory', 'defaultBase', 'company','vehicleType','addressCountry']
     });
   }
 
   async findAll() {
-    return await this.CompanyVehicleRepository.find({relations:['fuelType', 'livery', 'licenseCategory', 'defaultBase', 'company','vehicle_Type','addressCountry']});
+    return await this.CompanyVehicleRepository.find({relations:['fuelType', 'livery', 'licenseCategory', 'defaultBase', 'company','vehicleType','addressCountry']});
   }
 
   async findOne(id): Promise<companyvehicledata> {
