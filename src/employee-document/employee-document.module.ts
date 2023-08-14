@@ -46,8 +46,9 @@ import { VisaType } from 'src/employee-module/visa_type/visaType.entity';
 import { Companypackageassignhistory } from 'src/companypackagerow/companypackagerow.entity';
 import { State } from 'src/companies/country/states/states.entity';
 import { City } from 'src/companies/country/cities/city.entity';
+import { PaymentLinkData } from 'src/payment/payment_link_otp/payment_link.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([Companypackagerow, EmployeeDocument, EmployeePayrollInfo, CompaniesEntityinfo, CompaniesHistorydata, DrivingLicenceType, PaymentFrequency, MaritalStatus, EmpDesignation, Gender, EmployeeType, PagePermissionEntity, EmployeeInfo, Employee, CompanyDocument, SystemCode, User, PermissionRoleEntity, CompaniesEntity, Createmodule, Createpackage, Bank, VisaType, Moduledetailsofpackage, EmployeeDataHistory, DrivingLicenceCategory, country, companytype, Companypackageassignhistory, State, City]), CompaniesModule, CreatemoduleModule, EmployeeDataHistoryModule],
+  imports: [TypeOrmModule.forFeature([Companypackagerow, EmployeeDocument, EmployeePayrollInfo, CompaniesEntityinfo, CompaniesHistorydata, DrivingLicenceType, PaymentFrequency, MaritalStatus, EmpDesignation, Gender, EmployeeType, PagePermissionEntity, EmployeeInfo, Employee, CompanyDocument, SystemCode, User, PermissionRoleEntity, CompaniesEntity, Createmodule, Createpackage, Bank, VisaType, Moduledetailsofpackage, EmployeeDataHistory, DrivingLicenceCategory, country, companytype, Companypackageassignhistory, State, City,PaymentLinkData]), CompaniesModule, CreatemoduleModule, EmployeeDataHistoryModule],
   controllers: [EmployeeDocumentController],
   providers: [CompanypackagerowService, EmployeeDocumentService, EmployeeModuleService, CompaniesService, CompanyDocumentService, UserService, SystemCodeService, ImageUploadService, CreatemoduleService, EmployeeDataHistoryService, HistoryTransactionservicedb]
 })

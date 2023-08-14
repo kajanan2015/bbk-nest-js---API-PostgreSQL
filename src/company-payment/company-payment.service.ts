@@ -17,12 +17,16 @@ export class CompanyPaymentService {
     private companyRepository: Repository<CompaniesEntity>
   ) { }
   async create(createCompanyPaymentDto) {
+    console.log(createCompanyPaymentDto,98989)
+   
+    const paymentlinkinsert=await this.companyPaymentRepository.create(createCompanyPaymentDto)
+    const paymentlinksave=await this.companyPaymentRepository.save(paymentlinkinsert)
     // await this.companyRepository.update(createCompanyPaymentDto.companyId, {
     //   com: 3,
     // })
     // const response = this.companyPaymentRepository.create(createCompanyPaymentDto);
     // await this.companyPaymentRepository.save(response);
-    // return await this.mailservice.trialpackageadded(createCompanyPaymentDto.sendedContact, "adminemail", "adminname", "", createCompanyPaymentDto.paymentLink);
+    return await this.mailservice.trialpackageadded(createCompanyPaymentDto.sendedContact, "adminemail", "adminname", "", createCompanyPaymentDto.paymentLink,createCompanyPaymentDto.company);
   }
 
   findAll() {

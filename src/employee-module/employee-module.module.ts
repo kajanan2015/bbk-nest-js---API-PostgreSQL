@@ -57,8 +57,9 @@ import { VisaType } from './visa_type/visaType.entity';
 import { Companypackageassignhistory } from 'src/companypackagerow/companypackagerow.entity';
 import { State } from 'src/companies/country/states/states.entity';
 import { City } from 'src/companies/country/cities/city.entity';
+import { PaymentLinkData } from 'src/payment/payment_link_otp/payment_link.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([Companypackagerow, CompaniesEntityinfo, CompaniesHistorydata, EmployeeInfo, EmployeePayrollInfo, Employee, EmployeeType, EmpDesignation, EmployeeInfo, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, VisaType, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency, country, Createmodule, Createpackage, Paymenttype, Moduledetailsofpackage, EmployeeDataHistory, DrivingLicenceCategory, companytype, Companypackageassignhistory, State, City]), CompaniesModule, CreatemoduleModule, MailModule, DrivingLicenceCategory],
+  imports: [TypeOrmModule.forFeature([Companypackagerow, CompaniesEntityinfo, CompaniesHistorydata, EmployeeInfo, EmployeePayrollInfo, Employee, EmployeeType, EmpDesignation, EmployeeInfo, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, VisaType, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency, country, Createmodule, Createpackage, Paymenttype, Moduledetailsofpackage, EmployeeDataHistory, DrivingLicenceCategory, companytype, Companypackageassignhistory, State, City,PaymentLinkData]), CompaniesModule, CreatemoduleModule, MailModule, DrivingLicenceCategory],
   controllers: [EmployeeModuleController, ImageUploadController],
   providers: [CompanypackagerowService, EmployeeModuleService, ImageUploadService, EmployeeDocumentService, CompaniesService, SystemCodeService, UserService, CompanyDocumentService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService, MailService, EmployeeDataHistoryService, DrivingLicenceCategory, HistoryTransactionservicedb]
 })

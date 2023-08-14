@@ -58,6 +58,7 @@ import { AssignPackageStatus } from "src/companypackagerow/companypackagerow.ent
 import { State } from "./country/states/states.entity";
 import { City } from "./country/cities/city.entity";
 import { addMonths, format } from 'date-fns';
+import { PaymentLinkData } from "src/payment/payment_link_otp/payment_link.entity";
 @Injectable()
 export class CompaniesService {
 
@@ -103,6 +104,8 @@ export class CompaniesService {
     private readonly cityRepository: Repository<City>,
     @InjectRepository(companytype)
     private readonly companytyperepo: Repository<companytype>,
+    @InjectRepository(PaymentLinkData)
+    private readonly paymentlinkrepo:Repository<PaymentLinkData>
   ) { }
 
 
@@ -1569,51 +1572,61 @@ export class CompaniesService {
 
   }
 
-  async generatepaymentlink(companyId, base_url) {
-
-    // const paymentid = randomstring.generate({
-    //   length: 4,
-    //   charset: 'numeric'
-    // });
-    // const updatecompany = await this.companyRepository.update({ id: companyId }, { paymentlinkotp: paymentid })
-    // const comapny = await this.companyRepository.findOne(companyId);
-    // const companyemail = comapny.companyEmail
-    // return await this.mailservice.generatepaymentlink(companyemail, companyId, base_url, paymentid)
+  async generatepaymentlink(companyId, base_url,data) {
+const date=new Date();
+    const paymentid = randomstring.generate({
+      length: 4,
+      charset: 'numeric'
+    });
+    const companydata = await this.read(companyId)
+    const companyinfoid = companydata.company_info_id;
+    // add data to payment data table
+    const passdata={
+      otp_number:paymentid,
+      created_at:date,
+      created_by:data.userId,
+      company:companyId
+    }
+    const paymentlinkinsert=await this.paymentlinkrepo.create(passdata)
+    const paymentlinksave=await this.paymentlinkrepo.save(paymentlinkinsert)
+    const companyemail = companydata.companyEmail
+    return await this.mailservice.generatepaymentlink(companyemail, companyId, base_url, paymentid)
   }
 
   async verifypaymentdetailstoken(token) {
-    // const verifyresponse = await this.mailservice.verifypaymentdetailstokendecode(token);
-    // if (verifyresponse["id"]) {
-    //   let id = verifyresponse["id"]
-    //   const company = await this.companyinfoRepository.findOne(id);
-    //   const companyemail = company.companyEmail
-    //   const paymentid = company.paymentlinkotp
-    //   if ((verifyresponse["paymenttokenid"] == paymentid) && (verifyresponse["email"] == companyemail)) {
-    //     const data = {
-    //       id: id,
-    //       email: companyemail,
-    //     }
-    //     return data
-    //   } else {
-    //     return "Invalid token"
-    //   }
-    // } else {
-    //   return verifyresponse
-    // }
+    const verifyresponse = await this.mailservice.verifypaymentdetailstokendecode(token);
+    if (verifyresponse["id"]) {
+      let id = verifyresponse["id"]
+      const company = await this.read(id);
+      const companyemail = company.companyEmail;
+     const paymentlinkdata= await this.paymentlinkrepo.findOne({company:id},{order:{created_at:"DESC"}})
+      const paymentid = paymentlinkdata.otp_number
+      if ((verifyresponse["paymenttokenid"] == paymentid) && (verifyresponse["email"] == companyemail)) {
+        const data = {
+          id: id,
+          email: companyemail,
+        }
+        return data
+      } else {
+        return "Invalid token"
+      }
+    } else {
+      return verifyresponse
+    }
 
   }
 
   async paiddataupdate(token) {
     // console.log(token)
-    // const verify = await this.mailservice.verifypaymentdetailstokendecode(token);
+    const verify = await this.mailservice.verifypaymentdetailstokendecode(token);
     // // const verify=await this.verifypaymentdetailstoken(token)
-    // console.log(verify, 898)
-    // if (verify["id"]) {
-    //   const updateresponse = await this.companyRepository.update({ id: verify["id"] }, { compstatus: 5, paymentlinkotp: null });
-    //   return "payment completed"
-    // } else {
-    //   return "payment not complete"
-    // }
+    console.log(verify, 898)
+    if (verify["id"]) {
+      
+      return 200
+    } else {
+      return 500
+    }
   }
 
   async changeparentadmin(id, data) {

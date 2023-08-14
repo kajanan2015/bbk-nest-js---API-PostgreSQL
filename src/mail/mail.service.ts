@@ -171,7 +171,7 @@ async verifypaymentdetailstokendecode(key){
     });
   }
   //  send payment link for added packages
-  async trialpackageadded(companyemail, adminemail, adminname, companyname, link) {
+  async trialpackageadded(companyemail, adminemail, adminname, companyname, link,companyid) {
     await this.mailerService.sendMail({
       to: companyemail.trim(),
       from: "noreply@hexagonasia.com", // override default from
