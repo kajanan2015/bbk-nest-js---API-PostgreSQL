@@ -1013,9 +1013,11 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
       .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
       .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
-      .andWhere("linkedEmployee.start_date <= :date", { date })
+      .leftJoinAndSelect("linkedEmployeePayroll.paymentFrequency", "paymentFrequency")
+      .leftJoinAndSelect("linkedEmployeePayroll.created_by", "payroll_created_by")
+      .andWhere("linkedEmployee.startDate <= :date", { date })
       .andWhere("linkedEmployee.status = :status", { status: 1 })
-      .andWhere("linkedEmployee.company = :companyid", { companyid })
+      .andWhere("company.id = :companyid", { companyid })
       .andWhere(
         "(linkedEmployee.endDate IS NULL OR linkedEmployee.endDate > :date)",
         { date }
@@ -1028,6 +1030,7 @@ export class EmployeeModuleService {
       );
 
     const data = await query.getMany();
+
     const newdata = [];
 
     for (var i = 0; i < data.length; i++) {
@@ -1037,6 +1040,7 @@ export class EmployeeModuleService {
       passdata = {
         ...linkedEmployee[0],
         id: mainEmployeeData.id,
+        infoId: linkedEmployee[0]['id'],
         employeeCode: mainEmployeeData.employeeCode,
         company: companyData
       }

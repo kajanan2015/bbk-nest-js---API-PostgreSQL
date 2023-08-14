@@ -21,9 +21,6 @@ export class companyvehicledata {
   id: number;
 
   @Column("varchar", { nullable: true, length: 30, default: () => null })
-  vehicleType: string;
-
-  @Column("varchar", { nullable: true, length: 30, default: () => null })
   VehicleID: string;
 
   @Column("varchar", { nullable: true, length: 30, default: () => null })
@@ -232,9 +229,9 @@ export class companyvehicledata {
   @JoinColumn()
   company: CompaniesEntity;
 
-  @ManyToOne(() => VehicleTypeEntity, (vehicle_Type) => vehicle_Type.vehicledetails)
+  @ManyToOne(() => VehicleTypeEntity, (vehicleType) => vehicleType.vehicledetails)
   @JoinColumn()
-  vehicle_Type: VehicleTypeEntity;
+  vehicleType: VehicleTypeEntity;
 
   @ManyToOne(() => country, (addressCountry) => addressCountry.vehicledetails)
   @JoinColumn()

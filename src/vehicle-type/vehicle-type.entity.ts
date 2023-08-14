@@ -44,7 +44,7 @@ export class VehicleTypeEntity {
   @OneToMany(() => Vehicle, vehicle => vehicle.vehicletype, { cascade: true })
   vehicle: Vehicle[]
 
-  @OneToMany(() => companyvehicledata, vehicledetails => vehicledetails.company, ({ cascade: true }))
+  @OneToMany(() => companyvehicledata, vehicledetails => vehicledetails.vehicleType, ({ cascade: true }))
   vehicledetails: companyvehicledata[];
 
 }
