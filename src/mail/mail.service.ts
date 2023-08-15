@@ -126,7 +126,7 @@ async verifypaymentdetailstokendecode(key){
       to: `${data.email.trim()}`,
       from: "noreply@hexagonasia.com", // override default from
       subject: ` Welcome to BBK portal- Activaye account`,
-      template: "./newactivateemail", // `.hbs` extension is appended automatically
+      template: "./emailverification", // `.hbs` extension is appended automatically
       context: {
         //  data.name,
         email,

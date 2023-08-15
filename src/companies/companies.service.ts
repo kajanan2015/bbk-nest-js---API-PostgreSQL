@@ -896,6 +896,13 @@ export class CompaniesService {
     return stateList;
   }
 
+  // ** Get states
+  async getCitiesByFlag(data) {
+    const cityList = await this.cityRepository.find({ where: { country_code: data?.flagCode } });
+    const filteredCityList= cityList.filter((city) => city?.name?.toLowerCase().startsWith(data.inputValue));
+    return filteredCityList;
+  }
+
   // ** Get cities
   async getCities(stateId: string) {
     const cityList = await this.cityRepository.find({ where: { state_id: stateId } });
