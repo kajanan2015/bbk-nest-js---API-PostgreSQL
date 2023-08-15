@@ -605,7 +605,7 @@ export class EmployeeModuleService {
     }
 
     // ** remove docs
-    let { visaDoc, drivingLicenceCategory, tachoDoc, officialDoc, drivingLicenceDoc, cpcCardDoc, refdoc, empProvidedCopy, ...dataWithoutDoc } = data
+    let { visaDoc, drivingLicenceCategory, tachoDoc, officialDoc, drivingLicenceDoc, cpcCardDoc, crbCardDoc, refdoc, empProvidedCopy, ...dataWithoutDoc } = data
 
     if (employeeHistoryId) {
 

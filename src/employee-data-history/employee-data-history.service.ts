@@ -133,7 +133,7 @@ export class EmployeeDataHistoryService {
           if(driverLicenceCategories2?.toString() != driverLicenceCategories1?.toString()){
             result[key] = `${driverLicenceCategories2 ?? ''} updated as ${driverLicenceCategories1 ?? ''}`;
           }          
-        } else if (key == 'empProvidedCopy' || key == 'visaDoc' || key == 'officialDoc' || key == 'refdoc' || key == 'drivingLicenceDoc' || key == 'tachoDoc' || key == 'cpcCardDoc') {
+        } else if (key == 'empProvidedCopy' || key == 'visaDoc' || key == 'officialDoc' || key == 'refdoc' || key == 'drivingLicenceDoc' || key == 'tachoDoc' || key == 'cpcCardDoc' || key == 'crbCardDoc') {
           if (obj1?.[key]?.[0]?.['docPath'] != obj2?.[key]?.[0]?.['docPath']) {
             result[key] = obj1[key];
           }
@@ -314,7 +314,7 @@ export class EmployeeDataHistoryService {
               } else {
                 res[key] = 'Native'
               }
-            } else if (key == 'empProvidedCopy' || key == 'visaDoc' || key == 'officialDoc' || key == 'refdoc' || key == 'drivingLicenceDoc' || key == 'tachoDoc' || key == 'cpcCardDoc') {
+            } else if (key == 'empProvidedCopy' || key == 'visaDoc' || key == 'officialDoc' || key == 'refdoc' || key == 'drivingLicenceDoc' || key == 'tachoDoc' || key == 'cpcCardDoc' || key == 'crbCardDoc') {
               const value = obj2?.[key]?.[0]?.['docPath'];
               if (value !== undefined) {
                 res[key] = obj2[key];
