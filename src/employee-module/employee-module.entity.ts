@@ -41,8 +41,8 @@ export enum empProvidedForm {
 }
 
 export enum officialDoc {
-    passport = 'passport',
-    birthCertificate = 'birthCertificate'
+    Passport = 'Passport',
+    BirthCertificate = 'BirthCertificate'
 }
 
 @Entity('employee')
