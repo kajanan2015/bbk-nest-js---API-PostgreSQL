@@ -21,6 +21,12 @@ export class DepartmentsController {
     return successResponse;
   }
 
+  // find all accident details
+  @Get()
+  findAll() {
+    return this.departmentsService.findAll();
+  }
+
   // ** Fetch one depatment
   @Get('/:id')
   findOneDepartment(@Param('id') id: number) {
