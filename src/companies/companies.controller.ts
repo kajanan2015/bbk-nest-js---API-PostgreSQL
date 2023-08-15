@@ -11,6 +11,7 @@ import {
   UseInterceptors,
   UploadedFiles,
   Req,
+  Headers
 } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -499,10 +500,14 @@ export class CompaniesController {
   // extend trial
   @UseGuards(AuthGuard('jwt'))
   @Put('extend-trial/:id')
-  async extendtrial(@Param('id') companyid: number, @Body() data: any) {
-    console.log(companyid, 555);
-    console.log(data, 444)
-    return await this.service.extendtrial(data)
+  async extendtrial(@Param('id') companyid: number, @Body() data: any, @Headers('userTime') userTime) {
+    let date;
+  if(userTime){
+   date=new Date(userTime);
+  }else{
+   date=new Date();
+  }
+    return await this.service.extendtrial(companyid,data,date)
 
 
   }
