@@ -1622,7 +1622,10 @@ const date=new Date();
     // // const verify=await this.verifypaymentdetailstoken(token)
     console.log(verify, 898)
     if (verify["id"]) {
-      
+      const companypackage=await this.companypackagerowrepository.find({where:{company:verify["id"],status:AssignPackageStatus.PENDING}})
+      for (const row of companypackage) {
+        await this.companypackagerowrepository.update({id:row.id},{status:AssignPackageStatus.PAID})
+      }
       return 200
     } else {
       return 500
