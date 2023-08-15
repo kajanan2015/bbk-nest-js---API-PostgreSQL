@@ -9,6 +9,9 @@ export class Department {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column("varchar", { name: "department_id", length: 300, nullable: true, default: () => null })
+    departmentId: string;
+
     @Column("varchar", { name: "department_name", length: 300, nullable: true, default: () => null })
     departmentName: string;
 

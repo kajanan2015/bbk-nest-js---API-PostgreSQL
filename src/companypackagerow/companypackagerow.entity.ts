@@ -16,7 +16,8 @@ export enum AssignPackageType {
   export enum AssignPackageStatus{
     ACTIVE='active',
     PENDING='pending',
-    INACTIVE='inactive'
+    INACTIVE='inactive',
+    PAID='paid'
   }
 
 @Entity()
@@ -48,7 +49,7 @@ export class Companypackagerow {
     @Column("enum", { name: "package_identifier", enum: AssignPackageType, default: AssignPackageType.DEFAULT, comment: 'Trial/assign/default' })
     trialpackageidentifier: AssignPackageType;
 
-    @Column('enum',{name:"status",enum:AssignPackageStatus,default:AssignPackageStatus.PENDING,comment:"active/payment pending/inactive"})
+    @Column('enum',{name:"status",enum:AssignPackageStatus,default:AssignPackageStatus.PENDING,comment:"active/payment pending/inactive/paid"})
     status:AssignPackageStatus;
 
     @ManyToOne(() => User, user => user.packageassignuser)

@@ -896,18 +896,18 @@ export class EmployeeModuleService {
         "(linkedEmployee.endDate IS NULL OR linkedEmployee.endDate > :date)",
         { date }
       )
-      .andWhere("linkedEmployeePayroll.startDate <= :date", { date })
-      .andWhere("linkedEmployeePayroll.status = :status", { status: 1 })
-      .andWhere(
-        "(linkedEmployeePayroll.endDate IS NULL OR linkedEmployeePayroll.endDate > :date)",
-        { date }
-      );
+      // .andWhere("linkedEmployeePayroll.startDate <= :date", { date })
+      // .andWhere("linkedEmployeePayroll.status = :status", { status: 1 })
+      // .andWhere(
+      //   "(linkedEmployeePayroll.endDate IS NULL OR linkedEmployeePayroll.endDate > :date)",
+      //   { date }
+      // );
 
     const data = await query.getMany();
 
     const newdata = [];
 
-    for (var i = 0; i < data.length; i++) {
+    for (var i = 0; i < data.length; i++) {      
       let passdata = {}
       const { linkedEmployee, ...mainEmployeeData } = data[i];
       const companyData = await this.companyservice.read(mainEmployeeData?.company?.id);
@@ -916,12 +916,12 @@ export class EmployeeModuleService {
         id: mainEmployeeData.id,
         employeeCode: mainEmployeeData.employeeCode,
         company: companyData,
-      }
+      } 
       newdata.push(passdata)
     }
 
-    const results = newdata.filter(function (row) {
-      return Math.floor(new Date(row.leaveDate).getTime() / 86400000) > Math.floor(new Date().getTime() / 86400000) || row.leaveDate == null
+    const results = newdata.filter(function (row) {          
+        return Math.floor(new Date(row.leaveDate).getTime() / 86400000) > Math.floor(new Date().getTime() / 86400000) || row.leaveDate == null
     })
 
     return results;
@@ -954,12 +954,12 @@ export class EmployeeModuleService {
         "(linkedEmployee.endDate IS NULL OR linkedEmployee.endDate > :date)",
         { date }
       )
-      .andWhere("linkedEmployeePayroll.startDate <= :date", { date })
-      .andWhere("linkedEmployeePayroll.status = :status", { status: 1 })
-      .andWhere(
-        "(linkedEmployeePayroll.endDate IS NULL OR linkedEmployeePayroll.endDate > :date)",
-        { date }
-      );
+      // .andWhere("linkedEmployeePayroll.startDate <= :date", { date })
+      // .andWhere("linkedEmployeePayroll.status = :status", { status: 1 })
+      // .andWhere(
+      //   "(linkedEmployeePayroll.endDate IS NULL OR linkedEmployeePayroll.endDate > :date)",
+      //   { date }
+      // );
 
     const data = await query.getMany();
 
@@ -1023,12 +1023,12 @@ export class EmployeeModuleService {
         "(linkedEmployee.endDate IS NULL OR linkedEmployee.endDate > :date)",
         { date }
       )
-      .andWhere("linkedEmployeePayroll.startDate <= :date", { date })
-      .andWhere("linkedEmployeePayroll.status = :status", { status: 1 })
-      .andWhere(
-        "(linkedEmployeePayroll.endDate IS NULL OR linkedEmployeePayroll.endDate > :date)",
-        { date }
-      );
+      // .orWhere("linkedEmployeePayroll.startDate <= :date", { date })
+      // .orWhere("linkedEmployeePayroll.status = :status", { status: 1 })
+      // .orWhere(
+      //   "(linkedEmployeePayroll.endDate IS NULL OR linkedEmployeePayroll.endDate > :date)",
+      //   { date }
+      // );
 
     const data = await query.getMany();
 

@@ -21,6 +21,12 @@ export class DepartmentsController {
     return successResponse;
   }
 
+  // find all accident details
+  @Get()
+  findAll() {
+    return this.departmentsService.findAll();
+  }
+
   // ** Fetch one depatment
   @Get('/:id')
   findOneDepartment(@Param('id') id: number) {
@@ -36,6 +42,13 @@ export class DepartmentsController {
   // ** Update department
   @Patch(':id')
   update(@Param('id') id: number, @Body() createDepartmentDto: CreateDepartmentDto) {
-    return this.departmentsService.update(+id, createDepartmentDto);
+    const department = this.departmentsService.update(+id, createDepartmentDto);
+    const successResponse = {
+      success: true,
+      data: department,
+      message: 'success',
+    };
+
+    return successResponse;
   }
 }
