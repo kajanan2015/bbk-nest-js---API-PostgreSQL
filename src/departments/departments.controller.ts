@@ -42,6 +42,13 @@ export class DepartmentsController {
   // ** Update department
   @Patch(':id')
   update(@Param('id') id: number, @Body() createDepartmentDto: CreateDepartmentDto) {
-    return this.departmentsService.update(+id, createDepartmentDto);
+    const department = this.departmentsService.update(+id, createDepartmentDto);
+    const successResponse = {
+      success: true,
+      data: department,
+      message: 'success',
+    };
+
+    return successResponse;
   }
 }
