@@ -105,7 +105,7 @@ export class CompaniesService {
     @InjectRepository(companytype)
     private readonly companytyperepo: Repository<companytype>,
     @InjectRepository(PaymentLinkData)
-    private readonly paymentlinkrepo:Repository<PaymentLinkData>
+    private readonly paymentlinkrepo: Repository<PaymentLinkData>
   ) { }
 
 
@@ -1350,6 +1350,13 @@ export class CompaniesService {
     console.log(futureDate, 999999)
     console.log(company_contarctdate, 999999)
     let newcompassigndata;
+
+    const finddata = await this.companypackagerowrepository.find({ where: { company: id, status: AssignPackageStatus.PENDING } })
+    // Assuming finddata is an array of rows to be deleted
+    for (const row of finddata) {
+      await this.companypackagerowrepository.remove(row);
+    }
+
     for (const comppackagedata of packagedetails) {
       console.log(comppackagedata.module.id, 56565)
       if (comppackagedata.packages.customizePackageValue == false) {
@@ -1444,6 +1451,12 @@ export class CompaniesService {
     // }
     // const addhistory = await this.companyhistoryRepository.create(historydate)
     // const savehistory = await this.companyhistoryRepository.save(addhistory)
+    const finddata = await this.companypackagerowrepository.find({ where: { company: id, status: AssignPackageStatus.PENDING } })
+    // Assuming finddata is an array of rows to be deleted
+    for (const row of finddata) {
+      await this.companypackagerowrepository.remove(row);
+    }
+
     return await this.companyRepository.update(id, data);
   }
   async assignpaymentmethod(id, data) {
@@ -1572,8 +1585,8 @@ export class CompaniesService {
 
   }
 
-  async generatepaymentlink(companyId, base_url,data) {
-const date=new Date();
+  async generatepaymentlink(companyId, base_url, data) {
+    const date = new Date();
     const paymentid = randomstring.generate({
       length: 4,
       charset: 'numeric'
@@ -1581,14 +1594,14 @@ const date=new Date();
     const companydata = await this.read(companyId)
     const companyinfoid = companydata.company_info_id;
     // add data to payment data table
-    const passdata={
-      otp_number:paymentid,
-      created_at:date,
-      created_by:data.userId,
-      company:companyId
+    const passdata = {
+      otp_number: paymentid,
+      created_at: date,
+      created_by: data.userId,
+      company: companyId
     }
-    const paymentlinkinsert=await this.paymentlinkrepo.create(passdata)
-    const paymentlinksave=await this.paymentlinkrepo.save(paymentlinkinsert)
+    const paymentlinkinsert = await this.paymentlinkrepo.create(passdata)
+    const paymentlinksave = await this.paymentlinkrepo.save(paymentlinkinsert)
     const companyemail = companydata.companyEmail
     return await this.mailservice.generatepaymentlink(companyemail, companyId, base_url, paymentid)
   }
@@ -1599,7 +1612,7 @@ const date=new Date();
       let id = verifyresponse["id"]
       const company = await this.read(id);
       const companyemail = company.companyEmail;
-     const paymentlinkdata= await this.paymentlinkrepo.findOne({company:id},{order:{created_at:"DESC"}})
+      const paymentlinkdata = await this.paymentlinkrepo.findOne({ company: id }, { order: { created_at: "DESC" } })
       const paymentid = paymentlinkdata.otp_number
       if ((verifyresponse["paymenttokenid"] == paymentid) && (verifyresponse["email"] == companyemail)) {
         const data = {
@@ -1622,9 +1635,9 @@ const date=new Date();
     // // const verify=await this.verifypaymentdetailstoken(token)
     console.log(verify, 898)
     if (verify["id"]) {
-      const companypackage=await this.companypackagerowrepository.find({where:{company:verify["id"],status:AssignPackageStatus.PENDING}})
+      const companypackage = await this.companypackagerowrepository.find({ where: { company: verify["id"], status: AssignPackageStatus.PENDING } })
       for (const row of companypackage) {
-        await this.companypackagerowrepository.update({id:row.id},{status:AssignPackageStatus.PAID})
+        await this.companypackagerowrepository.update({ id: row.id }, { status: AssignPackageStatus.PAID })
       }
       return 200
     } else {
