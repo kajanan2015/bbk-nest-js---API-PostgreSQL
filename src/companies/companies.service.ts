@@ -110,7 +110,7 @@ export class CompaniesService {
 
 
   async create(companyData, base_url) {
-
+console.log(companyData,8920)
     // ** Company name existing check
     const existingcompanyname = await this.companyinfoRepository.findOne({
       where: {
@@ -261,7 +261,8 @@ export class CompaniesService {
         }
       }
       // const users = await this.userRepository.findByIds(userIds);
-      if (!companyData.sameTradingAddress) {
+      console.log(companyData,89899)
+      if (companyData.sameTradingAddress=='false') {
         mainDataCompany = {
           company_code: companyCode,
           company_prefix: companyData.code,
@@ -328,7 +329,7 @@ export class CompaniesService {
         const adminUser = await this.userRepository.findByIds([userId]);
         users.push(adminUser[0]);
       }
-      if (!companyData.sameTradingAddress) {
+      if (companyData.sameTradingAddress=='false') {
         mainDataCompany = {
           company_code: companyCode,
           company_prefix: companyData.code,
@@ -1050,7 +1051,7 @@ export class CompaniesService {
         : {}),
       ...(data.country ? { country: data.country.id } : {}),
       ...(data.companyType ? { companyType: data.companyType } : {}),
-      ...(data.sameTradingAddress !== false
+      ...(data.sameTradingAddress !== 'false'
         ? {
           regAddressNo: data.regAddressNo,
           regAddressStreet: data.regAddressStreet,
