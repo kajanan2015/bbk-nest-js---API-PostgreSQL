@@ -48,9 +48,9 @@ export class CompanyUserRoleController {
     return this.companyUserRoleService.create(passdata,prflogothumb,base_url);
   }
 
-  @Get()
-  findAll() {
-    return this.companyUserRoleService.findAll();
+  @Get('company_wise/:id')
+  findAll(@Param("id") id) {
+    return this.companyUserRoleService.findAll(id);
   }
 
   @Get(":id")
@@ -75,8 +75,6 @@ export class CompanyUserRoleController {
         : {}),
     };
     delete data.userId;
-    console.log(data, 111111);
-
     // if (prfImg && prfImg.length) {
     //   const profilePicture = await this.imageUploadService.upload(
     //     prfImg,
@@ -96,14 +94,13 @@ export class CompanyUserRoleController {
         prfImg,
         "body"
       );
-      console.log(profilePicture, 12345);
       delete data.existprfpic;
 
       data = {
         ...data,
         profilePicture: profilePicture[0],
       };
-      console.log(data, 67890);
+      
     }
 
     return await this.companyUserRoleService.update(

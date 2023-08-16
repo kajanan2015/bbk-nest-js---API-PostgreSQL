@@ -18,9 +18,6 @@ export class CompanyUserRole {
     @Column("varchar", { nullable: true, length: 250, default: () => null })
     userType: string | null;
 
-    
-    @Column("varchar", { nullable: true, length: 250, default: () => null })
-    password: string | null;
 
     @Column("varchar",{ nullable: true, default: () => null})
     profilePicture: string;
