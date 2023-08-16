@@ -5,15 +5,22 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CompanyUserRole } from "./company-user-role.entity";
 import { FindOneOptions, Repository } from "typeorm";
 import * as bcrypt from "bcryptjs";
-
+import { User } from "src/user/user.entity";
+import { UserService } from "src/user/user.service";
+import { CompaniesEntity } from "src/companies/companies.entity";
+import { MailService } from "src/mail/mail.service";
 @Injectable()
 export class CompanyUserRoleService {
   constructor(
     @InjectRepository(CompanyUserRole)
-    private CompanyUserRepository: Repository<CompanyUserRole>
-  ) {}
+    private CompanyUserRepository: Repository<CompanyUserRole>,
+    private readonly userservice: UserService,
+    private readonly mailservice: MailService,
+    @InjectRepository(CompaniesEntity)
+    private readonly companyRepo:Repository<CompaniesEntity>
+    ) {}
 
-  async create(data) {
+  async create(data,prflogothumb,base_url) {
     
     let newhashpassword;
     if (data.password) {
@@ -26,7 +33,20 @@ export class CompanyUserRoleService {
     };
     const companyuser = this.CompanyUserRepository.create(user);
     await this.CompanyUserRepository.save(companyuser);
-    if (companyuser) {
+    const companydata=await this.companyRepo.findByIds(data.companyid)
+    const adminData = {
+      firstName: data.userName,
+      uType: "ADMIN",
+      profilePic: data.profilePicture,
+      profilePicThumb: prflogothumb,
+      password: data.password,
+      phone: data.userPhone,
+      email: data.userEmail,
+      companies:companydata
+    };
+    const adminResponse = await this.userservice.create(adminData);
+     await this.mailservice.newadminadded(adminResponse.email, "", adminResponse.firstName, adminResponse.password, base_url);
+    if (adminResponse) {
       return {
         statusCode: HttpStatus.OK,
         message: "successs",

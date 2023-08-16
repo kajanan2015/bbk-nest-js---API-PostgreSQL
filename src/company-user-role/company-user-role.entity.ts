@@ -1,5 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { CompaniesEntity } from "src/companies/companies.entity";
 @Entity()
 export class CompanyUserRole {
     @PrimaryGeneratedColumn()
@@ -33,4 +33,9 @@ export class CompanyUserRole {
   
     @Column("timestamp", { name: "updated_at",nullable:true, default: () => null })
     updatedat: Date;
+
+    @ManyToOne(() => CompaniesEntity, company => company.manualcreateduser)
+    @JoinColumn({ name: 'companyId' })
+    company: CompaniesEntity;
+
 }

@@ -10,6 +10,7 @@ import {
   UseInterceptors,
   UploadedFiles,
   UseGuards,
+  Req,
 } from "@nestjs/common";
 import { ImageUploadService } from "src/imageupload/imageupload.service";
 import { CompanyUserRoleService } from "./company-user-role.service";
@@ -28,15 +29,23 @@ export class CompanyUserRoleController {
 
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
-  async create(@UploadedFiles() profileImg, @Body() data) {
-    const prflogo = await this.imageUploadService.upload(profileImg, "body");
+  async create(@UploadedFiles() profileImg, @Body() data,@Req() req) {
+    let prflogo=[];
+    let prflogothumb;
+    console.log(profileImg,89898)
+    if(profileImg.length>0){
+      prflogo = await this.imageUploadService.upload(profileImg, "body");
+      prflogothumb=await this.imageUploadService.uploadThumbnailToS3(prflogo[0])
+    }
+    const base_url = `${req.get('origin')}/`;
     const passdata = {
       ...data,
       profilePicture: prflogo[0],
       prfcreate: data.userId,
+      company:data.companyid,
       status: 1,
     };
-    return this.companyUserRoleService.create(passdata);
+    return this.companyUserRoleService.create(passdata,prflogothumb,base_url);
   }
 
   @Get()
