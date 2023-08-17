@@ -10,31 +10,36 @@ export class CompanyWorkPatternController {
 
   @Post('create-pattern')
   async create(@Body() createCompanyWorkPatternDto: CreateCompanyWorkPatternDto) {
-    return this.companyWorkPatternService.create(createCompanyWorkPatternDto);
+    return await this.companyWorkPatternService.create(createCompanyWorkPatternDto);
   }
 
   @Get()
   async findAll() {
-    return this.companyWorkPatternService.findAll();
+    return await this.companyWorkPatternService.findAll();
   }
 
   @Post('findByname/:name')
   async findByname(@Param('name') name: string, @Body() data) {
-    return this.companyWorkPatternService.findbypattername(name, data.company);
+    return await this.companyWorkPatternService.findbypattername(name, data.company);
   }
 
   @Get(':id')
   async findOne(@Param('id') id: number) {
-    return this.companyWorkPatternService.findOne(+id);
+    return await this.companyWorkPatternService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCompanyWorkPatternDto: UpdateCompanyWorkPatternDto) {
-    return this.companyWorkPatternService.update(+id, updateCompanyWorkPatternDto);
+ async update(@Param('id') id: string, @Body() updateCompanyWorkPatternDto: UpdateCompanyWorkPatternDto) {
+    return await this.companyWorkPatternService.update(+id, updateCompanyWorkPatternDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.companyWorkPatternService.remove(+id);
+ async remove(@Param('id') id: string) {
+    return await this.companyWorkPatternService.remove(+id);
+  }
+// assign work pattern to the employee
+  @Post()
+  async assignworkpatternemployee(){
+    return await this.companyWorkPatternService.assignworkpatternemployee()
   }
 }
