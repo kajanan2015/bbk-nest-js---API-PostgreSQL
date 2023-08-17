@@ -59,9 +59,13 @@ import { State } from 'src/companies/country/states/states.entity';
 import { City } from 'src/companies/country/cities/city.entity';
 import { PaymentLinkData } from 'src/payment/payment_link_otp/payment_link.entity';
 import { DrivingLicenceCategoryEmployee } from './driving_licence_category_employee/driving_licence_category_employee.entity';
+import { Department } from 'src/departments/department.entity';
+import { DepartmentsController } from 'src/departments/departments.controller';
+import { DepartmentsService } from 'src/departments/departments.service';
+import { EmployeeDepartments } from './employee_departments/employee_departments.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([Companypackagerow, DrivingLicenceCategoryEmployee, CompaniesEntityinfo, CompaniesHistorydata, EmployeeInfo, EmployeePayrollInfo, Employee, EmployeeType, EmpDesignation, EmployeeInfo, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, VisaType, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency, country, Createmodule, Createpackage, Paymenttype, Moduledetailsofpackage, EmployeeDataHistory, DrivingLicenceCategory, companytype, Companypackageassignhistory, State, City,PaymentLinkData]), CompaniesModule, CreatemoduleModule, MailModule, DrivingLicenceCategory],
-  controllers: [EmployeeModuleController, ImageUploadController],
-  providers: [CompanypackagerowService, EmployeeModuleService, ImageUploadService, EmployeeDocumentService, CompaniesService, SystemCodeService, UserService, CompanyDocumentService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService, MailService, EmployeeDataHistoryService, DrivingLicenceCategory, HistoryTransactionservicedb]
+  imports: [TypeOrmModule.forFeature([Companypackagerow, DrivingLicenceCategoryEmployee, CompaniesEntityinfo, CompaniesHistorydata, EmployeeInfo, EmployeePayrollInfo, Employee, EmployeeType, EmpDesignation, EmployeeInfo, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, VisaType, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency, country, Createmodule, Createpackage, Paymenttype, Moduledetailsofpackage, EmployeeDataHistory, DrivingLicenceCategory, companytype, Companypackageassignhistory, State, City, PaymentLinkData, Department, EmployeeDepartments]), CompaniesModule, CreatemoduleModule, MailModule, DrivingLicenceCategory, Department, EmployeeDepartments],
+  controllers: [EmployeeModuleController, ImageUploadController, DepartmentsController],
+  providers: [CompanypackagerowService, EmployeeModuleService, ImageUploadService, EmployeeDocumentService, CompaniesService, SystemCodeService, UserService, CompanyDocumentService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService, MailService, EmployeeDataHistoryService, DrivingLicenceCategory, HistoryTransactionservicedb, DepartmentsService]
 })
 export class EmployeeModuleModule { }

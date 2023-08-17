@@ -21,6 +21,7 @@ import { Employee, EmployeeInfo, EmployeePayrollInfo } from './employee-module.e
 import { VisaType } from './visa_type/visaType.entity';
 import { Department } from 'src/departments/department.entity';
 import { DrivingLicenceCategoryEmployee } from './driving_licence_category_employee/driving_licence_category_employee.entity';
+import { EmployeeDepartments } from './employee_departments/employee_departments.entity';
 // import randomstring from 'randomstring';
 const randomstring = require("randomstring");
 
@@ -69,6 +70,8 @@ export class EmployeeModuleService {
     private readonly deparmentRepository: Repository<Department>,
     @InjectRepository(DrivingLicenceCategoryEmployee)
     private readonly dlCategoryEmployeeRepository: Repository<DrivingLicenceCategoryEmployee>,
+    @InjectRepository(EmployeeDepartments)
+    private readonly employeeDeparmentRepository: Repository<EmployeeDepartments>,
   ) { }
 
   async create(createEmployeeModuleDto) {
@@ -138,13 +141,20 @@ export class EmployeeModuleService {
       }
 
       //const { providedCopyUrl, empProvidedCopyUrl, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
-      const { profilePicUrl, employeeCode, company, ...infoData } = createEmployeeModuleDto;
+      const { department, profilePicUrl, employeeCode, company, ...infoData } = createEmployeeModuleDto;
 
       const response = await this.employeeRepository.create({ employeeCode, company, linkedEmployee: infoData, created_at: infoData.created_at, created_by: infoData.created_by });
       const res = await this.employeeRepository.save(response);
 
       const responseInfo = await this.employeeInfoRepository.create({ ...infoData, employee: res.id, startDate: start_date });
       const resInfo = await this.employeeInfoRepository.save(responseInfo)
+
+      if (department) {
+        const dept = department[0];
+        console.log({ empInfoId: resInfo['id'], department: dept["id"] }, 66666666666)
+        const response = await this.employeeDeparmentRepository.save({ empInfoId: resInfo['id'], empId:res["id"], department: dept["id"] });
+        // delete infoData.department;
+      }    
 
       const documents = createEmployeeModuleDto['filenames'];
 
@@ -383,13 +393,13 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
       .leftJoinAndSelect("linkedEmployee.drivingLicenceCategory", "drivingLicenceCategory")
       .leftJoinAndSelect("linkedEmployee.visaType", "visaType")
-      // .leftJoinAndSelect("linkedEmployee.department", "department")
+      .leftJoinAndSelect("linkedEmployee.department", "department")
       .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
       .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
       .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
       .leftJoinAndSelect("drivingLicenceCategory.category", "category")
       .leftJoinAndSelect("documents.created_by", "created_byd")
-      .orWhere("drivingLicenceCategory.status = :status", {status : 1})
+      .orWhere("drivingLicenceCategory.status = :status", { status: 1 })
       .andWhere("employee.id = :id", { id })
       .andWhere("linkedEmployee.startDate <= :date", { date })
       .andWhere(
@@ -449,7 +459,7 @@ export class EmployeeModuleService {
     const { employeeCode, ...data } = empdata;
 
     const existingEmployee = await this.employeeRepository.findOne({ where: { employeeCode: id } });
-    const employeerowid = await this.employeeInfoRepository.findOne({ where: { employee: existingEmployee.id }, relations: ['drivingLicenceCategory'] });
+    const employeerowid = await this.employeeInfoRepository.findOne({ where: { employee: existingEmployee.id }, relations: ['drivingLicenceCategory', 'department'] });
 
     if (data.hasOwnProperty("deletedCategories")) {
       for (const category of data.deletedCategories) {
@@ -1060,7 +1070,7 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
       .leftJoinAndSelect("linkedEmployee.drivingLicenceCategory", "drivingLicenceCategory")
       .leftJoinAndSelect("linkedEmployee.visaType", "visaType")
-      // .leftJoinAndSelect("linkedEmployee.department", "department")
+      .leftJoinAndSelect("linkedEmployee.department", "department")
       .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
       .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
       .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")

@@ -48,8 +48,10 @@ import { State } from 'src/companies/country/states/states.entity';
 import { City } from 'src/companies/country/cities/city.entity';
 import { PaymentLinkData } from 'src/payment/payment_link_otp/payment_link.entity';
 import { DrivingLicenceCategoryEmployee } from 'src/employee-module/driving_licence_category_employee/driving_licence_category_employee.entity';
+import { Department } from 'src/departments/department.entity';
+import { EmployeeDepartments } from 'src/employee-module/employee_departments/employee_departments.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([Companypackagerow, DrivingLicenceCategoryEmployee, EmployeeDocument, EmployeePayrollInfo, CompaniesEntityinfo, CompaniesHistorydata, DrivingLicenceType, PaymentFrequency, MaritalStatus, EmpDesignation, Gender, EmployeeType, PagePermissionEntity, EmployeeInfo, Employee, CompanyDocument, SystemCode, User, PermissionRoleEntity, CompaniesEntity, Createmodule, Createpackage, Bank, VisaType, Moduledetailsofpackage, EmployeeDataHistory, DrivingLicenceCategory, country, companytype, Companypackageassignhistory, State, City,PaymentLinkData]), CompaniesModule, CreatemoduleModule, EmployeeDataHistoryModule],
+  imports: [TypeOrmModule.forFeature([Companypackagerow, DrivingLicenceCategoryEmployee, EmployeeDocument, EmployeePayrollInfo, CompaniesEntityinfo, CompaniesHistorydata, DrivingLicenceType, PaymentFrequency, MaritalStatus, EmpDesignation, Gender, EmployeeType, PagePermissionEntity, EmployeeInfo, Employee, CompanyDocument, SystemCode, User, PermissionRoleEntity, CompaniesEntity, Createmodule, Createpackage, Bank, VisaType, Moduledetailsofpackage, EmployeeDataHistory, DrivingLicenceCategory, country, companytype, Companypackageassignhistory, State, City, PaymentLinkData, Department, EmployeeDepartments]), CompaniesModule, CreatemoduleModule, EmployeeDataHistoryModule, Department, EmployeeDepartments],
   controllers: [EmployeeDocumentController],
   providers: [CompanypackagerowService, EmployeeDocumentService, EmployeeModuleService, CompaniesService, CompanyDocumentService, UserService, SystemCodeService, ImageUploadService, CreatemoduleService, EmployeeDataHistoryService, HistoryTransactionservicedb]
 })

@@ -17,6 +17,8 @@ import { DrivingLicenceCategoryEmployee } from './driving_licence_category_emplo
 
 import { EmployeeAssignWorkPattern } from 'src/company-work-pattern/assign_work_pattern/employee-assign-work-pattern.entity';
 import { EmployeeAssignWorkPatternHistory } from 'src/company-work-pattern/assign_work_pattern/employee-assign-work-pattern.entity';
+import { Department } from 'src/departments/department.entity';
+import { EmployeeDepartments } from './employee_departments/employee_departments.entity';
 export enum employeeStatus {
     active = 'active',
     inactive = 'inactive',
@@ -105,6 +107,9 @@ export class EmployeeInfo {
     @ManyToOne(() => EmpDesignation, designation => designation.designation)
     @JoinColumn({ name: 'employee_designation' })
     designation: EmpDesignation;    
+
+    @OneToMany(() => EmployeeDepartments, department => department.empInfoId, { cascade: true })
+    department: EmployeeDepartments[];
 
     @Column("varchar", { name: 'first_name', nullable: true, default: () => null })
     firstName: string | null;
