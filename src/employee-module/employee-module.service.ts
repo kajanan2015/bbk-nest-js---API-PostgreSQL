@@ -19,6 +19,7 @@ import { DrivingLicenceType } from './driving_licence_type/driving_licence_type.
 import { PaymentFrequency } from './payment_frequency/payment_frequency.entity';
 import { Employee, EmployeeInfo, EmployeePayrollInfo } from './employee-module.entity';
 import { VisaType } from './visa_type/visaType.entity';
+import { Department } from 'src/departments/department.entity';
 // import randomstring from 'randomstring';
 const randomstring = require("randomstring");
 
@@ -63,6 +64,8 @@ export class EmployeeModuleService {
     private readonly paymentFreqRepository: Repository<PaymentFrequency>,
     @InjectRepository(DrivingLicenceCategory)
     private readonly dlCategoryRepository: Repository<DrivingLicenceCategory>,
+    @InjectRepository(Department)
+    private readonly deparmentRepository: Repository<Department>,
   ) { }
 
   async create(createEmployeeModuleDto) {
@@ -320,6 +323,11 @@ export class EmployeeModuleService {
     return getDrivingLicenceCategory;
   }
 
+  async getDepartment() {
+    const departmentList = await this.deparmentRepository.find();
+    return departmentList;
+  }
+
   async generateemployeeid(id) {
     const individualcompany = await this.companyservice.read(id)
     let randomId = randomstring.generate({
@@ -373,6 +381,7 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
       .leftJoinAndSelect("linkedEmployee.drivingLicenceCategory", "drivingLicenceCategory")
       .leftJoinAndSelect("linkedEmployee.visaType", "visaType")
+      // .leftJoinAndSelect("linkedEmployee.department", "department")
       .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
       .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
       .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
@@ -591,6 +600,7 @@ export class EmployeeModuleService {
         .leftJoinAndSelect("employeeInfo.drivingLicenceType", "drivingLicenceType")
         .leftJoinAndSelect("employeeInfo.bankName", "bankName")
         .leftJoinAndSelect("employeeInfo.visaType", "visaType")
+        // .leftJoinAndSelect("employeeInfo.department", "department")
         .leftJoinAndSelect("employeeInfo.created_by", "created_by")
         .leftJoinAndSelect("employeeInfo.updated_by", "updated_by")
         .leftJoinAndSelect("employeeInfo.employee", "employee")
@@ -884,6 +894,7 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("linkedEmployee.maritalStatus", "maritalStatus")
       .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
       .leftJoinAndSelect("linkedEmployee.visaType", "visaType")
+      // .leftJoinAndSelect("linkedEmployee.department", "department")
       .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
       .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
       .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
@@ -942,6 +953,7 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("linkedEmployee.maritalStatus", "maritalStatus")
       .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
       .leftJoinAndSelect("linkedEmployee.visaType", "visaType")
+      // .leftJoinAndSelect("linkedEmployee.department", "department")
       .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
       .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
       .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
@@ -1011,6 +1023,7 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
       .leftJoinAndSelect("linkedEmployee.drivingLicenceCategory", "drivingLicenceCategory")
       .leftJoinAndSelect("linkedEmployee.visaType", "visaType")
+      // .leftJoinAndSelect("linkedEmployee.department", "department")
       .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
       .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
       .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")

@@ -11,6 +11,7 @@ import { User } from "src/user/user.entity";
 import { country } from "src/companies/country/country.entity";
 import { DrivingLicenceCategory } from "./driving_licence_category/driving_licence_category.entity";
 import { VisaType } from "./visa_type/visaType.entity";
+import { Department } from "src/departments/department.entity";
 export class CreateEmployeeModuleDto {
     id: number;
     employeeId: string;
@@ -109,4 +110,5 @@ export class CreateEmployeeModuleDto {
     addedBy:User[];
     driverLicenceCategory: DrivingLicenceCategory[];
     active: boolean;
+    department: Department[]
 }

@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, Repository, getManager } from 'typeorm';
 import { EmployeeDataHistory } from './employee-data-history.entity';
 import { EmployeeInfo } from 'src/employee-module/employee-module.entity';
+import { Department } from 'src/departments/department.entity';
 
 @Injectable()
 export class EmployeeDataHistoryService {
@@ -13,6 +14,8 @@ export class EmployeeDataHistoryService {
     private empDataHistoryRepository: Repository<EmployeeDataHistory>,
     @InjectRepository(EmployeeInfo)
     private employeeModuleRepository: Repository<EmployeeInfo>,
+    @InjectRepository(Department)
+    private readonly deparmentRepository: Repository<Department>,
   ) { }
 
   async create(createEmployeeDataHistoryDto) {

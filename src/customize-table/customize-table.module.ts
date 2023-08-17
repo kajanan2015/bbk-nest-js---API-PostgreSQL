@@ -39,8 +39,9 @@ import { Companypackageassignhistory } from 'src/companypackagerow/companypackag
 import { State } from 'src/companies/country/states/states.entity';
 import { City } from 'src/companies/country/cities/city.entity';
 import { PaymentLinkData } from 'src/payment/payment_link_otp/payment_link.entity';
+import { Department } from 'src/departments/department.entity';
 @Module({
-  imports:[TypeOrmModule.forFeature([Companypackagerow,CompaniesEntityinfo,CompaniesHistorydata,CustomizeTable, User, CompaniesEntity, PermissionRoleEntity, PagePermissionEntity, CompanyDocument, Createmodule, Createpackage, Moduledetailsofpackage, SystemCode, Paymenttype,EmployeeDataHistory,Employee, EmployeeInfo,country,companytype,Companypackageassignhistory,State,City,PaymentLinkData]),EmployeeDataHistoryModule,EmployeeModuleModule],
+  imports: [TypeOrmModule.forFeature([Companypackagerow, CompaniesEntityinfo, CompaniesHistorydata, CustomizeTable, User, CompaniesEntity, PermissionRoleEntity, PagePermissionEntity, CompanyDocument, Createmodule, Createpackage, Moduledetailsofpackage, SystemCode, Paymenttype, EmployeeDataHistory, Employee, EmployeeInfo, country, companytype, Companypackageassignhistory, State, City, PaymentLinkData, Department]), EmployeeDataHistoryModule, EmployeeModuleModule],
   controllers: [CustomizeTableController],
   providers: [CustomizeTableService, UserService, CompaniesService, PermissionRoleService, PagePermissionService, CompanyDocumentService, SystemCodeService, ImageUploadService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService, CompanypackagerowService, EmployeeDataHistoryService,HistoryTransactionservicedb]
 })

@@ -58,8 +58,11 @@ import { Companypackageassignhistory } from 'src/companypackagerow/companypackag
 import { State } from 'src/companies/country/states/states.entity';
 import { City } from 'src/companies/country/cities/city.entity';
 import { PaymentLinkData } from 'src/payment/payment_link_otp/payment_link.entity';
+import { Department } from 'src/departments/department.entity';
+import { DepartmentsService } from 'src/departments/departments.service';
+import { DepartmentsController } from 'src/departments/departments.controller';
 @Module({
-  imports: [TypeOrmModule.forFeature([Companypackagerow, CompaniesEntityinfo, CompaniesHistorydata, EmployeeInfo, EmployeePayrollInfo, Employee, EmployeeType, EmpDesignation, EmployeeInfo, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, VisaType, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency, country, Createmodule, Createpackage, Paymenttype, Moduledetailsofpackage, EmployeeDataHistory, DrivingLicenceCategory, companytype, Companypackageassignhistory, State, City,PaymentLinkData]), CompaniesModule, CreatemoduleModule, MailModule, DrivingLicenceCategory],
+  imports: [TypeOrmModule.forFeature([Companypackagerow, CompaniesEntityinfo, CompaniesHistorydata, EmployeeInfo, EmployeePayrollInfo, Employee, EmployeeType, EmpDesignation, EmployeeInfo, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, VisaType, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency, country, Createmodule, Createpackage, Paymenttype, Moduledetailsofpackage, EmployeeDataHistory, DrivingLicenceCategory, companytype, Companypackageassignhistory, State, City, PaymentLinkData, Department]), CompaniesModule, CreatemoduleModule, MailModule, DrivingLicenceCategory, Department],
   controllers: [EmployeeModuleController, ImageUploadController],
   providers: [CompanypackagerowService, EmployeeModuleService, ImageUploadService, EmployeeDocumentService, CompaniesService, SystemCodeService, UserService, CompanyDocumentService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService, MailService, EmployeeDataHistoryService, DrivingLicenceCategory, HistoryTransactionservicedb]
 })
