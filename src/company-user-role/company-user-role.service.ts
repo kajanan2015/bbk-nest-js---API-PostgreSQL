@@ -5,36 +5,59 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { CompanyUserRole } from "./company-user-role.entity";
 import { FindOneOptions, Repository } from "typeorm";
 import * as bcrypt from "bcryptjs";
-
+import { User } from "src/user/user.entity";
+import { UserService } from "src/user/user.service";
+import { CompaniesEntity } from "src/companies/companies.entity";
+import { MailService } from "src/mail/mail.service";
 @Injectable()
 export class CompanyUserRoleService {
   constructor(
     @InjectRepository(CompanyUserRole)
-    private CompanyUserRepository: Repository<CompanyUserRole>
-  ) {}
+    private CompanyUserRepository: Repository<CompanyUserRole>,
+    private readonly userservice: UserService,
+    private readonly mailservice: MailService,
+    @InjectRepository(CompaniesEntity)
+    private readonly companyRepo: Repository<CompaniesEntity>
+  ) { }
 
-  async create(data) {
-    
-    let newhashpassword;
-    if (data.password) {
-      newhashpassword = await this.hashPassword(data.password);
+  async create(data, prflogothumb, base_url) {
+
+    const existing = await this.userservice.findByEmailexist(data.userEmail);
+    if (existing) {
+      return {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 301,
+      };
     }
 
     const user = {
-      ...data,
-      password: newhashpassword,
+      ...data
     };
     const companyuser = this.CompanyUserRepository.create(user);
     await this.CompanyUserRepository.save(companyuser);
-    if (companyuser) {
+    const companydata = await this.companyRepo.findByIds(data.companyid)
+    const adminData = {
+      firstName: data.userName,
+      uType: data.uType,
+      profilePic: data.profilePicture,
+      profilePicThumb: prflogothumb,
+      password: data.password,
+      phone: data.userPhone,
+      email: data.userEmail,
+      companies: companydata
+    };
+
+    const adminResponse = await this.userservice.create(adminData);
+    await this.mailservice.newadminadded(adminResponse.email, "", adminResponse.firstName, adminResponse.password, base_url);
+    if (adminResponse) {
       return {
         statusCode: HttpStatus.OK,
-        message: "successs",
+        message: 200,
       };
     } else {
       return {
         statusCode: HttpStatus.BAD_REQUEST,
-        message: "failed",
+        message: 500,
       };
     }
   }
@@ -45,8 +68,8 @@ export class CompanyUserRoleService {
     return hashed;
   }
 
-  async findAll(): Promise<CompanyUserRole[]> {
-    return this.CompanyUserRepository.find();
+  async findAll(id) {
+    return this.CompanyUserRepository.find({ where: { company: id } });
   }
 
   async findOne(id): Promise<CompanyUserRole> {
@@ -54,24 +77,41 @@ export class CompanyUserRoleService {
   }
 
   async update(id: number, data) {
-    console.log(id, 9898);
-    if (data.password) {
-      const hashedPassword = await this.hashPassword(data.password);
-      data.password = hashedPassword;
+    if (data.userEmail) {
+      const existing = await this.userservice.findByEmailexist(data.userEmail);
+      if (existing) {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: 301,
+        };
+      }
     }
 
-    console.log(data, 8908989);
+    const userdata=await this.CompanyUserRepository.findOne(id)
+    const adminData = {
+      ...(data.userName ? { firstName: data.userName } : {}),
+      ...(data.profilePicture ? { profilePic: data.profilePic } : {}),
+      ...(data.prflogothumb ? { profilePicThumb: data.prflogothumb } : {}),
+      ...(data.password ? { password: data.password } : {}),
+      ...(data.userPhone ? { phone: data.userPhone } : {}),
+      ...(data.userEmail ? { email: data.userEmail } : {})
+    };
+  const userprofile= await this.userservice.findByEmailexist(userdata.userEmail);
+  const updateadmindata= await this.userservice.update(userprofile.id,adminData)
+
+ delete data.password;
+
     const updateResult = await this.CompanyUserRepository.update({ id }, data);
-    console.log(updateResult, 9898989);
-    if (updateResult) {
+   
+    if (updateadmindata) {
       return {
         statusCode: HttpStatus.OK,
-        message: "successs",
+        message: 200,
       };
     } else {
       return {
         statusCode: HttpStatus.BAD_REQUEST,
-        message: "failed",
+        message: 500,
       };
     }
   }

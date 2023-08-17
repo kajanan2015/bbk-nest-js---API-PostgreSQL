@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinColu
 import { User } from 'src/user/user.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
+import { EmployeeAssignWorkPattern } from './assign_work_pattern/employee-assign-work-pattern.entity';
 @Entity()
 export class CompanyWorkPattern {
     @PrimaryGeneratedColumn()
@@ -48,6 +49,9 @@ export class CompanyWorkPattern {
     @ManyToOne(() => User, userupdate => userupdate.patternupdatedby)
     @JoinColumn({ name: 'updatedBy' })
     patternupdate: User;
+
+    @OneToMany(() => EmployeeAssignWorkPattern, assignpattern => assignpattern.workpatternId, { cascade: true })
+    assignworkpattern: EmployeeAssignWorkPattern[];
 
     // @OneToMany(() => EmployeeDataHistory, patternDataHistory => patternDataHistory.workpattern,{ cascade: true })
     // editHistory: EmployeeDataHistory[];

@@ -15,6 +15,8 @@ import { DrivingLicenceCategory } from './driving_licence_category/driving_licen
 import { VisaType } from './visa_type/visaType.entity';
 import { DrivingLicenceCategoryEmployee } from './driving_licence_category_employee/driving_licence_category_employee.entity';
 
+import { EmployeeAssignWorkPattern } from 'src/company-work-pattern/assign_work_pattern/employee-assign-work-pattern.entity';
+import { EmployeeAssignWorkPatternHistory } from 'src/company-work-pattern/assign_work_pattern/employee-assign-work-pattern.entity';
 export enum employeeStatus {
     active = 'active',
     inactive = 'inactive',
@@ -83,6 +85,12 @@ export class Employee {
 
     @OneToMany(() => EmployeeDataHistory, empDocuments => empDocuments.employeeId, { cascade: true })
     linkedHistory: EmployeeDataHistory[];
+
+    @OneToMany(() => EmployeeAssignWorkPattern, assignpattern => assignpattern.employeeId, { cascade: true })
+    assignworkpattern: EmployeeAssignWorkPattern[];
+
+    @OneToMany(() => EmployeeAssignWorkPatternHistory, assignpatternhistory => assignpatternhistory.employeeId, { cascade: true })
+    assignworkpatternhistory: EmployeeAssignWorkPatternHistory[];
 }
 
 @Entity('employee-info')
