@@ -13,6 +13,7 @@ import { country } from 'src/companies/country/country.entity';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { DrivingLicenceCategory } from './driving_licence_category/driving_licence_category.entity';
 import { VisaType } from './visa_type/visaType.entity';
+import { DrivingLicenceCategoryEmployee } from './driving_licence_category_employee/driving_licence_category_employee.entity';
 
 export enum employeeStatus {
     active = 'active',
@@ -357,9 +358,11 @@ export class EmployeeInfo {
     @Column({ name: 'active', type: 'boolean', default: false })
     active: boolean;
 
-    @ManyToMany(() => DrivingLicenceCategory, category => category.empDlCategory, { cascade: true })
-    @JoinTable()
-    drivingLicenceCategory: DrivingLicenceCategory[];
+    // @ManyToMany(() => DrivingLicenceCategory, category => category.empDlCategory, { cascade: true })
+    // @JoinTable()
+    // drivingLicenceCategory: DrivingLicenceCategory[];
+    @OneToMany(() => DrivingLicenceCategoryEmployee, cat => cat.empid, { cascade: true })
+    drivingLicenceCategory: DrivingLicenceCategoryEmployee[];
 
     @Column("timestamp", { name: 'created_at', default: () => null })
     created_at: Date;

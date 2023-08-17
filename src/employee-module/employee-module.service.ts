@@ -19,6 +19,7 @@ import { DrivingLicenceType } from './driving_licence_type/driving_licence_type.
 import { PaymentFrequency } from './payment_frequency/payment_frequency.entity';
 import { Employee, EmployeeInfo, EmployeePayrollInfo } from './employee-module.entity';
 import { VisaType } from './visa_type/visaType.entity';
+import { DrivingLicenceCategoryEmployee } from './driving_licence_category_employee/driving_licence_category_employee.entity';
 // import randomstring from 'randomstring';
 const randomstring = require("randomstring");
 
@@ -63,6 +64,8 @@ export class EmployeeModuleService {
     private readonly paymentFreqRepository: Repository<PaymentFrequency>,
     @InjectRepository(DrivingLicenceCategory)
     private readonly dlCategoryRepository: Repository<DrivingLicenceCategory>,
+    @InjectRepository(DrivingLicenceCategoryEmployee)
+    private readonly dlCategoryEmployeeRepository: Repository<DrivingLicenceCategoryEmployee>,
   ) { }
 
   async create(createEmployeeModuleDto) {
@@ -232,7 +235,7 @@ export class EmployeeModuleService {
         where: { employeeCode: createEmployeeModuleDto.employeeCode },
       });
 
-     
+
 
       return { infoId: res['id'], ...returnData }
 
@@ -329,8 +332,8 @@ export class EmployeeModuleService {
 
     let newrandomId = individualcompany.company_prefix + '-' + randomId;;
     let response = await this.employeeRepository.find({ where: { employeeCode: newrandomId } });
-    console.log(individualcompany,999)
-    console.log(individualcompany.company_prefix,999)
+    console.log(individualcompany, 999)
+    console.log(individualcompany.company_prefix, 999)
     while (response.length > 0) {
       randomId = randomstring.generate({
         length: 7,
@@ -339,7 +342,7 @@ export class EmployeeModuleService {
       newrandomId = individualcompany.company_prefix + '-' + randomId;
       response = await this.employeeRepository.find({ where: { employeeCode: newrandomId } });
     }
-    console.log(newrandomId,999)
+    console.log(newrandomId, 999)
     return newrandomId;
   }
 
@@ -364,7 +367,6 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("employee.company", "company")
       .leftJoinAndSelect("employee.documents", "documents")
       .leftJoinAndSelect("employee.linkedEmployee", "linkedEmployee")
-      .leftJoinAndSelect("employee.linkedEmployeePayroll", "linkedEmployeePayroll")
       .leftJoinAndSelect("linkedEmployee.employeeType", "employeeType")
       .leftJoinAndSelect("linkedEmployee.bankName", "bankName")
       .leftJoinAndSelect("linkedEmployee.designation", "designation")
@@ -376,9 +378,9 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
       .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
       .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
-      .leftJoinAndSelect("linkedEmployeePayroll.paymentFrequency", "paymentFrequency")
-      .leftJoinAndSelect("linkedEmployeePayroll.created_by", "payroll_created_by")
+      .leftJoinAndSelect("drivingLicenceCategory.category", "category")
       .leftJoinAndSelect("documents.created_by", "created_byd")
+      .orWhere("drivingLicenceCategory.status = :status", {status : 1})
       .andWhere("employee.id = :id", { id })
       .andWhere("linkedEmployee.startDate <= :date", { date })
       .andWhere(
@@ -386,6 +388,14 @@ export class EmployeeModuleService {
         { date }
       )
       .orderBy('linkedEmployee.startDate', 'DESC')
+
+    const payrollQuery: SelectQueryBuilder<Employee> = getConnection()
+      .getRepository(Employee)
+      .createQueryBuilder("employee")
+      .leftJoinAndSelect("employee.linkedEmployeePayroll", "linkedEmployeePayroll")
+      .leftJoinAndSelect("linkedEmployeePayroll.paymentFrequency", "paymentFrequency")
+      .leftJoinAndSelect("linkedEmployeePayroll.created_by", "payroll_created_by")
+      .andWhere("employee.id = :id", { id })
       .andWhere("linkedEmployeePayroll.startDate <= :date", { date })
       .andWhere(
         "(linkedEmployeePayroll.endDate IS NULL OR linkedEmployeePayroll.endDate > :date)",
@@ -394,21 +404,23 @@ export class EmployeeModuleService {
       .orderBy('linkedEmployeePayroll.startDate', 'DESC');
 
     const data = await query.getMany();
+    const payrollData = await payrollQuery.getMany();
     const newdata = [];
 
     for (var i = 0; i < data.length; i++) {
       let passdata = {}
-      const { linkedEmployee, linkedEmployeePayroll, ...mainEmployeeData } = data[i];
+      const { linkedEmployee, ...mainEmployeeData } = data[i];
+      const linkedEmployeePayroll = payrollData["linkedEmployeePayroll"];
       const companyData = await this.companyservice.read(mainEmployeeData?.company?.id);
       passdata = {
         ...linkedEmployee[0],
-        ...linkedEmployeePayroll[0],
+        ...linkedEmployeePayroll?.[0],
         id: mainEmployeeData.id,
-        infoId: linkedEmployee[0].id,
-        payrollId: linkedEmployeePayroll[0].id,
+        infoId: linkedEmployee?.[0]?.id,
+        payrollId: linkedEmployeePayroll?.[0]?.id,
         employeeCode: mainEmployeeData.employeeCode,
         company: companyData,
-        documents: mainEmployeeData.documents
+        documents: mainEmployeeData?.documents
       }
       newdata.push(passdata)
     }
@@ -427,22 +439,47 @@ export class EmployeeModuleService {
 
     const { employeeCode, ...data } = empdata;
 
-    console.log(data, 6666666666666666)
-
     const existingEmployee = await this.employeeRepository.findOne({ where: { employeeCode: id } });
     const employeerowid = await this.employeeInfoRepository.findOne({ where: { employee: existingEmployee.id }, relations: ['drivingLicenceCategory'] });
 
+    if (data.hasOwnProperty("deletedCategories")) {
+      for (const category of data.deletedCategories) {
+        this.dlCategoryEmployeeRepository.find({ where: { empid: employeerowid['id'], category: category.category?.id, status: 1 } }).then(async (res) => {
+
+          if (res) {
+            await this.dlCategoryEmployeeRepository.update({ id: +res?.[0]?.['id'] }, { status: false });
+          }
+        });
+      }
+      delete data.deletedCategories
+    }
+
     if (data.hasOwnProperty("drivingLicenceCategory")) {
       const drivingLicenceCategories = data.drivingLicenceCategory;
-      let drivinglicensecategoryId = [];
-      for (const categoryid of data.drivingLicenceCategory) {
-        drivinglicensecategoryId.push(categoryid.id)
-      }
-      console.log(drivinglicensecategoryId, 5654)
-      const repsonse1 = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
-      employeerowid.drivingLicenceCategory = repsonse1;
-      const response3333 = await this.employeeInfoRepository.save(employeerowid)
+      const updatedDrivingLicenceCategories = [];
 
+      const existingCategories = await this.dlCategoryEmployeeRepository.find({ where: { empid: employeerowid['id'], status: 1 }, relations: ['category'] })
+
+      for (const category of drivingLicenceCategories) {
+        const existingCategory = existingCategories.find(cat => cat.category?.id == category.category?.id);
+
+        if (existingCategory) {
+          // Update existing category
+          existingCategory.issueDate = category.issueDate;
+          existingCategory.expireDate = category.expireDate;
+          updatedDrivingLicenceCategories.push(existingCategory);
+        } else {
+          // Create new category
+          updatedDrivingLicenceCategories.push({
+            empid: employeerowid['id'],
+            category: category.category?.id,
+            issueDate: category.issueDate,
+            expireDate: category.expireDate,
+          });
+        }
+      };
+      // Update or create categories in the database
+      const response = await this.dlCategoryEmployeeRepository.save(updatedDrivingLicenceCategories);
       delete data.drivingLicenceCategory;
     }
 
@@ -638,21 +675,21 @@ export class EmployeeModuleService {
 
         // ** save employee driving licence categories
         if (data.hasOwnProperty("drivingLicenceCategory")) {
-          const drivingLicenceCategories = data.drivingLicenceCategory;
-          let drivinglicensecategoryId = [];
-          for (const categoryid of drivingLicenceCategories) {
-            drivinglicensecategoryId.push(categoryid.id)
-          }
-          const response = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
+          // const drivingLicenceCategories = data.drivingLicenceCategory;
+          // let drivinglicensecategoryId = [];
+          // for (const categoryid of drivingLicenceCategories) {
+          //   drivinglicensecategoryId.push(categoryid.id)
+          // }
+          // const response = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
 
           // ** create new employee info record
           const responseInfo = await this.employeeInfoRepository.create({ ...passvalue, startDate: start_date, employee: UpdateEmployeeModuleDto.employeeId });
           const resInfo = await this.employeeInfoRepository.save(responseInfo)
           // delete data.drivingLicenceCategory;
 
-          const res = await this.employeeInfoRepository.findOne({ where: { id: +responseInfo['id'] }, relations: ['employeeType', 'drivingLicenceCategory', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName', 'created_by', 'updated_by', 'employee'] });
-          res.drivingLicenceCategory = response;
-          await this.employeeInfoRepository.save(res)
+          // const res = await this.employeeInfoRepository.findOne({ where: { id: +responseInfo['id'] }, relations: ['employeeType', 'drivingLicenceCategory', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName', 'created_by', 'updated_by', 'employee'] });
+          // res.drivingLicenceCategory = response;
+          // await this.employeeInfoRepository.save(res)
 
           UpdateEmployeeModuleDto.employeeInfoId = resInfo["id"];
         } else {
@@ -672,17 +709,17 @@ export class EmployeeModuleService {
       } else {
 
         if (data.hasOwnProperty("drivingLicenceCategory")) {
-          const drivingLicenceCategories = data.drivingLicenceCategory;
-          let drivinglicensecategoryId = [];
-          for (const categoryid of drivingLicenceCategories) {
-            drivinglicensecategoryId.push(categoryid.id)
-          }
-          const response = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
+          // const drivingLicenceCategories = data.drivingLicenceCategory;
+          // let drivinglicensecategoryId = [];
+          // for (const categoryid of drivingLicenceCategories) {
+          //   drivinglicensecategoryId.push(categoryid.id)
+          // }
+          // const response = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
 
           // ** update employee info currnt record
           await this.employeeInfoRepository.update({ id: +UpdateEmployeeModuleDto.employeeInfoId }, dataWithoutDoc);
           const res = await this.employeeInfoRepository.findOne({ where: { id: +UpdateEmployeeModuleDto.employeeInfoId }, relations: ['employeeType', 'drivingLicenceCategory', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName', 'created_by', 'updated_by', 'employee'] });
-          res.drivingLicenceCategory = response;
+          // res.drivingLicenceCategory = response;
           await this.employeeInfoRepository.save(res)
           // delete data.drivingLicenceCategory;
         } else {
@@ -760,15 +797,15 @@ export class EmployeeModuleService {
         employeeId: +UpdateEmployeeModuleDto.employeeId,
         type: UpdateEmployeeModuleDto.type,
         status: 1,
-        start_date:  LessThanOrEqual(tommorow_date),
+        start_date: LessThanOrEqual(tommorow_date),
       },
       relations: ['updated_by', 'created_by'],
       order: {
-      start_date: 'DESC',
-    },
+        start_date: 'DESC',
+      },
     });
-    
-    
+
+
     // ** If a previous record exists, update its endDate
     if (previousRecord) {
       previousRecord.updated_at = new Date(Date.now());
@@ -837,7 +874,7 @@ export class EmployeeModuleService {
 
   async findLatestEmployeePayrollInfo(empid, data) {
     const start_date = data.startdate
-    const existLastestValues = await this.employeePayrollRepository.find({ where: { employee: empid, startDate: LessThanOrEqual(start_date), status: 1  }, relations: ['paymentFrequency', 'created_by', 'updated_by', 'employee'], order: { startDate: 'DESC' } })
+    const existLastestValues = await this.employeePayrollRepository.find({ where: { employee: empid, startDate: LessThanOrEqual(start_date), status: 1 }, relations: ['paymentFrequency', 'created_by', 'updated_by', 'employee'], order: { startDate: 'DESC' } })
     const employeeData = existLastestValues[0]
     return { employeeData };
   }
@@ -860,11 +897,11 @@ export class EmployeeModuleService {
     const employeeHistoryRecord = await this.employeedatahistoryrepo.update({ id: employeeHistoryId }, { status: false });
 
     let employeeInfoRecord;
-    if(previousRecord?.['employeeInfoId']){
+    if (previousRecord?.['employeeInfoId']) {
       employeeInfoRecord = await this.employeeInfoRepository.update({ id: +previousRecord?.['employeeInfoId']?.['id'] }, { status: false });
-    }else{
+    } else {
       employeeInfoRecord = await this.employeePayrollRepository.update({ id: +previousRecord?.['employeePayrollInfoId']?.['id'] }, { status: false });
-    }   
+    }
 
     return { employeeHistoryRecord, employeeInfoRecord }
   }
@@ -896,18 +933,18 @@ export class EmployeeModuleService {
         "(linkedEmployee.endDate IS NULL OR linkedEmployee.endDate > :date)",
         { date }
       )
-      // .andWhere("linkedEmployeePayroll.startDate <= :date", { date })
-      // .andWhere("linkedEmployeePayroll.status = :status", { status: 1 })
-      // .andWhere(
-      //   "(linkedEmployeePayroll.endDate IS NULL OR linkedEmployeePayroll.endDate > :date)",
-      //   { date }
-      // );
+    // .andWhere("linkedEmployeePayroll.startDate <= :date", { date })
+    // .andWhere("linkedEmployeePayroll.status = :status", { status: 1 })
+    // .andWhere(
+    //   "(linkedEmployeePayroll.endDate IS NULL OR linkedEmployeePayroll.endDate > :date)",
+    //   { date }
+    // );
 
     const data = await query.getMany();
 
     const newdata = [];
 
-    for (var i = 0; i < data.length; i++) {      
+    for (var i = 0; i < data.length; i++) {
       let passdata = {}
       const { linkedEmployee, ...mainEmployeeData } = data[i];
       const companyData = await this.companyservice.read(mainEmployeeData?.company?.id);
@@ -916,12 +953,12 @@ export class EmployeeModuleService {
         id: mainEmployeeData.id,
         employeeCode: mainEmployeeData.employeeCode,
         company: companyData,
-      } 
+      }
       newdata.push(passdata)
     }
 
-    const results = newdata.filter(function (row) {          
-        return Math.floor(new Date(row.leaveDate).getTime() / 86400000) > Math.floor(new Date().getTime() / 86400000) || row.leaveDate == null
+    const results = newdata.filter(function (row) {
+      return Math.floor(new Date(row.leaveDate).getTime() / 86400000) > Math.floor(new Date().getTime() / 86400000) || row.leaveDate == null
     })
 
     return results;
@@ -954,12 +991,12 @@ export class EmployeeModuleService {
         "(linkedEmployee.endDate IS NULL OR linkedEmployee.endDate > :date)",
         { date }
       )
-      // .andWhere("linkedEmployeePayroll.startDate <= :date", { date })
-      // .andWhere("linkedEmployeePayroll.status = :status", { status: 1 })
-      // .andWhere(
-      //   "(linkedEmployeePayroll.endDate IS NULL OR linkedEmployeePayroll.endDate > :date)",
-      //   { date }
-      // );
+    // .andWhere("linkedEmployeePayroll.startDate <= :date", { date })
+    // .andWhere("linkedEmployeePayroll.status = :status", { status: 1 })
+    // .andWhere(
+    //   "(linkedEmployeePayroll.endDate IS NULL OR linkedEmployeePayroll.endDate > :date)",
+    //   { date }
+    // );
 
     const data = await query.getMany();
 
@@ -979,8 +1016,8 @@ export class EmployeeModuleService {
     }
 
     const results = newdata.filter(function (row) {
-      if(row.leaveDate){
-        return Math.floor(new Date(row.leaveDate).getTime() / 86400000) <= Math.floor(new Date().getTime() / 86400000) 
+      if (row.leaveDate) {
+        return Math.floor(new Date(row.leaveDate).getTime() / 86400000) <= Math.floor(new Date().getTime() / 86400000)
       }
       return false;
     })
@@ -1023,12 +1060,12 @@ export class EmployeeModuleService {
         "(linkedEmployee.endDate IS NULL OR linkedEmployee.endDate > :date)",
         { date }
       )
-      // .orWhere("linkedEmployeePayroll.startDate <= :date", { date })
-      // .orWhere("linkedEmployeePayroll.status = :status", { status: 1 })
-      // .orWhere(
-      //   "(linkedEmployeePayroll.endDate IS NULL OR linkedEmployeePayroll.endDate > :date)",
-      //   { date }
-      // );
+    // .orWhere("linkedEmployeePayroll.startDate <= :date", { date })
+    // .orWhere("linkedEmployeePayroll.status = :status", { status: 1 })
+    // .orWhere(
+    //   "(linkedEmployeePayroll.endDate IS NULL OR linkedEmployeePayroll.endDate > :date)",
+    //   { date }
+    // );
 
     const data = await query.getMany();
 

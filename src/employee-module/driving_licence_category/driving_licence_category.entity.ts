@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 import { EmployeeInfo } from '../employee-module.entity';
+import { DrivingLicenceCategoryEmployee } from '../driving_licence_category_employee/driving_licence_category_employee.entity';
 
 @Entity('driving_licence_category')
 export class DrivingLicenceCategory {
@@ -12,8 +13,11 @@ export class DrivingLicenceCategory {
     @Column({ type: 'boolean', default: true })
     status: Boolean;
 
-    @ManyToMany(() => EmployeeInfo, employeemodule => employeemodule.drivingLicenceCategory)
-    // @JoinTable()
-    empDlCategory: EmployeeInfo[];
+    // @ManyToMany(() => EmployeeInfo, employeemodule => employeemodule.drivingLicenceCategory)
+    // // @JoinTable()
+    // empDlCategory: EmployeeInfo[];
+
+    @OneToMany(() => DrivingLicenceCategoryEmployee, cat => cat.empid, { cascade: true })
+    drivingLicenceCategoryEmployee: DrivingLicenceCategoryEmployee[];
 
 }
