@@ -19,6 +19,8 @@ import { Department } from 'src/departments/department.entity';
 import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entity';
 import { Companypackageassignhistory } from 'src/companypackagerow/companypackagerow.entity';
 import { PaymentLinkData } from 'src/payment/payment_link_otp/payment_link.entity';
+import { EmployeeAssignWorkPattern } from 'src/company-work-pattern/assign_work_pattern/employee-assign-work-pattern.entity';
+import { EmployeeAssignWorkPatternInfo } from 'src/company-work-pattern/assign_work_pattern/employee-assign-work-pattern.entity';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -200,4 +202,17 @@ export class User {
   @OneToMany(()=>PaymentLinkData, paymentdata=>paymentdata.created_by,{cascade:true})
   companypaymentlinkcreate:PaymentLinkData[];
 
+  @OneToMany(()=>EmployeeAssignWorkPattern, assignpattern=>assignpattern.created_by,{cascade:true})
+  assignworkpatterncreatedby:EmployeeAssignWorkPattern[];
+
+  @OneToMany(()=>EmployeeAssignWorkPattern, assignpattern=>assignpattern.updated_by,{cascade:true})
+  assignworkpatternupdatedby:EmployeeAssignWorkPattern[];
+
+  @OneToMany(()=>EmployeeAssignWorkPatternInfo, assignpattern=>assignpattern.created_by,{cascade:true})
+  assignworkpatterninfocreatedby:EmployeeAssignWorkPatternInfo[];
+
+  @OneToMany(()=>EmployeeAssignWorkPatternInfo, assignpattern=>assignpattern.updated_by,{cascade:true})
+  assignworkpatterninfoupdatedby:EmployeeAssignWorkPatternInfo[];
+
+  
 }

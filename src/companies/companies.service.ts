@@ -110,7 +110,7 @@ export class CompaniesService {
 
 
   async create(companyData, base_url) {
-
+console.log(companyData,8920)
     // ** Company name existing check
     const existingcompanyname = await this.companyinfoRepository.findOne({
       where: {
@@ -261,7 +261,8 @@ export class CompaniesService {
         }
       }
       // const users = await this.userRepository.findByIds(userIds);
-      if (!companyData.sameTradingAddress) {
+      console.log(companyData,89899)
+      if (companyData.sameTradingAddress=='false') {
         mainDataCompany = {
           company_code: companyCode,
           company_prefix: companyData.code,
@@ -328,7 +329,7 @@ export class CompaniesService {
         const adminUser = await this.userRepository.findByIds([userId]);
         users.push(adminUser[0]);
       }
-      if (!companyData.sameTradingAddress) {
+      if (companyData.sameTradingAddress=='false') {
         mainDataCompany = {
           company_code: companyCode,
           company_prefix: companyData.code,
@@ -896,6 +897,13 @@ export class CompaniesService {
     return stateList;
   }
 
+  // ** Get states
+  async getCitiesByFlag(data) {
+    const cityList = await this.cityRepository.find({ where: { country_code: data?.flagCode } });
+    const filteredCityList= cityList.filter((city) => city?.name?.toLowerCase().startsWith(data.inputValue));
+    return filteredCityList;
+  }
+
   // ** Get cities
   async getCities(stateId: string) {
     const cityList = await this.cityRepository.find({ where: { state_id: stateId } });
@@ -1043,7 +1051,7 @@ export class CompaniesService {
         : {}),
       ...(data.country ? { country: data.country.id } : {}),
       ...(data.companyType ? { companyType: data.companyType } : {}),
-      ...(data.sameTradingAddress !== false
+      ...(data.sameTradingAddress !== 'false'
         ? {
           regAddressNo: data.regAddressNo,
           regAddressStreet: data.regAddressStreet,
@@ -1654,43 +1662,31 @@ export class CompaniesService {
     // const response = await this.companyRepository.update({ id }, passdata);
   }
 
-  async extendtrial(data) {
-    // const numofdays = data.numofdays
-    // const updateDateTime = new Date(data.validitydate);
-    // updateDateTime.setDate(updateDateTime.getDate() + parseInt(data.numofdays));
-    // console.log(updateDateTime, 98898998989898)
-    // updateDateTime.setMilliseconds(0);
-
-    // const passdata = {
-    //   validityperiod: updateDateTime,
-    // }
-    // console.log(passdata, 77)
-    // const response = await this.companyRepository.update({ id: data.id }, passdata)
-    // console.log(response, 88)
-    // const createdbydata=await this.userRepository.findOne({where:{id:data.createdby}})
-    // // Find the previous record of the employee
-    // const previousRecord = await this.datahistoryrepo.findOne({
-    //   where: {
-    //     company: +data.id,
-    //     type: "Trial-extend-history"
-    //   },
-    //   order: { createdBy: 'DESC' },
-    // });
-
-    // // If a previous record exists, update its endDate
-    // if (previousRecord) {
-    //   previousRecord.endDate = new Date(Date.now());
-    //   previousRecord.editedBy=createdbydata
-    //   await this.datahistoryrepo.save(previousRecord);
-    // }
-    // const responsehistory = await this.datahistoryrepo.create({ type: "Trial-extend-history", data: JSON.stringify(passdata), company:{id:data.id},createdBy:createdbydata });
-    // const res = await this.datahistoryrepo.save(responsehistory);
-
-    // if (response) {
-    //   return "Updated"
-    // } else {
-    //   return "Error Occured"
-    // }
+  async extendtrial(companyid,data,date) {
+    const numofdays = data.numofdays
+    const updateDateTime = new Date(data.validitydate);
+    updateDateTime.setDate(updateDateTime.getDate() + parseInt(data.numofdays));
+    console.log(updateDateTime, 98898998989898)
+    updateDateTime.setMilliseconds(0);
+    const response = await this.companypackagerowrepository.find({
+      where: {
+        company: companyid , // Assuming 'id' is the ID of the company you want to filter by
+        enddate: MoreThanOrEqual(date),
+        status: AssignPackageStatus.ACTIVE
+      },
+      relations: ["module", "packages", "moduledetails"],
+      order: {
+        enddate: 'ASC', // Order by enddate in ascending order
+      },
+    });
+    for (const row of response) {
+      await this.companypackagerowrepository.update({ id: row.id },{enddate: updateDateTime})
+    }
+   if (response) {
+      return "Updated"
+    } else {
+      return "Error Occured"
+    }
   }
   async cancelrial(id, data) {
     //     // createdby

@@ -43,9 +43,9 @@ import { Companypackageassignhistory } from 'src/companypackagerow/companypackag
 import { State } from 'src/companies/country/states/states.entity';
 import { City } from 'src/companies/country/cities/city.entity';
 import { PaymentLinkData } from 'src/payment/payment_link_otp/payment_link.entity';
-import { Department } from 'src/departments/department.entity';
+import { DrivingLicenceCategoryEmployee } from 'src/employee-module/driving_licence_category_employee/driving_licence_category_employee.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([EmployeeDataHistory, CompaniesHistorydata, CompaniesEntityinfo, VisaType, EmployeePayrollInfo, Bank, DrivingLicenceType, PaymentFrequency, Gender, MaritalStatus, EmpDesignation, Companypackagerow, SystemCode, Moduledetailsofpackage, Employee, EmployeeInfo, EmployeeDocument, Createmodule, Createpackage, DrivingLicenceCategory, CompaniesEntity, User, PermissionRoleEntity, PagePermissionEntity, Bank, EmployeeType, CompanyDocument, CompanyWorkPattern, country, companytype, Companypackageassignhistory, State, City, PaymentLinkData, Department])],
+  imports: [TypeOrmModule.forFeature([EmployeeDataHistory, DrivingLicenceCategoryEmployee, CompaniesHistorydata, CompaniesEntityinfo, VisaType, EmployeePayrollInfo, Bank, DrivingLicenceType, PaymentFrequency, Gender, MaritalStatus, EmpDesignation, Companypackagerow, SystemCode, Moduledetailsofpackage, Employee, EmployeeInfo, EmployeeDocument, Createmodule, Createpackage, DrivingLicenceCategory, CompaniesEntity, User, PermissionRoleEntity, PagePermissionEntity, Bank, EmployeeType, CompanyDocument, CompanyWorkPattern, country, companytype, Companypackageassignhistory, State, City,PaymentLinkData])],
   controllers: [EmployeeDataHistoryController],
   providers: [EmployeeDataHistoryService, CompanypackagerowService, EmployeeModuleService, EmployeeDocumentService, UserService, CompaniesService, ImageUploadService, EmployeeDocumentService, SystemCodeService, CompanyDocumentService, HistoryTransactionservicedb]
 })

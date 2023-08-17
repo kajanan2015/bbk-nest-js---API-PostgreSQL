@@ -11,6 +11,7 @@ import {
   UseInterceptors,
   UploadedFiles,
   Req,
+  Headers
 } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -258,6 +259,17 @@ export class CompaniesController {
     };
   }
 
+  // Get cities based on country flag code
+  @UseGuards(AuthGuard('jwt'))
+  @Post('/cityByFlag')
+  async getCitiesByFlag( @Body() data) {
+    const cities = await this.service.getCitiesByFlag(data);
+    return {
+      statusCode: HttpStatus.OK,
+      cities
+    };
+  }
+
   // Get cities based on state id
   @UseGuards(AuthGuard('jwt'))
   @Get('/city/:stateId')
@@ -476,9 +488,9 @@ export class CompaniesController {
   @UseGuards(AuthGuard('jwt'))
   @Post('generatepaymentlink/:companyid')
   async generatepaymentlink(@Param('companyid') companyid: string, @Req() req, @Body() data) {
-    console.log(data,90990)
+    console.log(data, 90990)
     const base_url = `${req.get('origin')}/`;
-    return await this.service.generatepaymentlink(companyid, base_url,data);
+    return await this.service.generatepaymentlink(companyid, base_url, data);
   }
 
   @Get('verifypaymentdetailstoken/:token')
@@ -499,10 +511,14 @@ export class CompaniesController {
   // extend trial
   @UseGuards(AuthGuard('jwt'))
   @Put('extend-trial/:id')
-  async extendtrial(@Param('id') companyid: number, @Body() data: any) {
-    console.log(companyid, 555);
-    console.log(data, 444)
-    return await this.service.extendtrial(data)
+  async extendtrial(@Param('id') companyid: number, @Body() data: any, @Headers('userTime') userTime) {
+    let date;
+  if(userTime){
+   date=new Date(userTime);
+  }else{
+   date=new Date();
+  }
+    return await this.service.extendtrial(companyid,data,date)
 
 
   }

@@ -10,6 +10,7 @@ import {
   UseInterceptors,
   UploadedFiles,
   UseGuards,
+  Req,
 } from "@nestjs/common";
 import { ImageUploadService } from "src/imageupload/imageupload.service";
 import { CompanyUserRoleService } from "./company-user-role.service";
@@ -28,20 +29,28 @@ export class CompanyUserRoleController {
 
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
-  async create(@UploadedFiles() profileImg, @Body() data) {
-    const prflogo = await this.imageUploadService.upload(profileImg, "body");
+  async create(@UploadedFiles() profileImg, @Body() data,@Req() req) {
+    let prflogo=[];
+    let prflogothumb;
+    console.log(profileImg,89898)
+    if(profileImg.length>0){
+      prflogo = await this.imageUploadService.upload(profileImg, "body");
+      prflogothumb=await this.imageUploadService.uploadThumbnailToS3(prflogo[0])
+    }
+    const base_url = `${req.get('origin')}/`;
     const passdata = {
       ...data,
       profilePicture: prflogo[0],
       prfcreate: data.userId,
+      company:data.companyid,
       status: 1,
     };
-    return this.companyUserRoleService.create(passdata);
+    return this.companyUserRoleService.create(passdata,prflogothumb,base_url);
   }
 
-  @Get()
-  findAll() {
-    return this.companyUserRoleService.findAll();
+  @Get('company_wise/:id')
+  findAll(@Param("id") id) {
+    return this.companyUserRoleService.findAll(id);
   }
 
   @Get(":id")
@@ -66,8 +75,6 @@ export class CompanyUserRoleController {
         : {}),
     };
     delete data.userId;
-    console.log(data, 111111);
-
     // if (prfImg && prfImg.length) {
     //   const profilePicture = await this.imageUploadService.upload(
     //     prfImg,
@@ -87,14 +94,13 @@ export class CompanyUserRoleController {
         prfImg,
         "body"
       );
-      console.log(profilePicture, 12345);
       delete data.existprfpic;
 
       data = {
         ...data,
         profilePicture: profilePicture[0],
       };
-      console.log(data, 67890);
+      
     }
 
     return await this.companyUserRoleService.update(

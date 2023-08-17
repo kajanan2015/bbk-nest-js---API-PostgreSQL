@@ -13,7 +13,10 @@ import { country } from 'src/companies/country/country.entity';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { DrivingLicenceCategory } from './driving_licence_category/driving_licence_category.entity';
 import { VisaType } from './visa_type/visaType.entity';
+import { DrivingLicenceCategoryEmployee } from './driving_licence_category_employee/driving_licence_category_employee.entity';
 
+import { EmployeeAssignWorkPattern } from 'src/company-work-pattern/assign_work_pattern/employee-assign-work-pattern.entity';
+import { EmployeeAssignWorkPatternHistory } from 'src/company-work-pattern/assign_work_pattern/employee-assign-work-pattern.entity';
 export enum employeeStatus {
     active = 'active',
     inactive = 'inactive',
@@ -82,6 +85,12 @@ export class Employee {
 
     @OneToMany(() => EmployeeDataHistory, empDocuments => empDocuments.employeeId, { cascade: true })
     linkedHistory: EmployeeDataHistory[];
+
+    @OneToMany(() => EmployeeAssignWorkPattern, assignpattern => assignpattern.employeeId, { cascade: true })
+    assignworkpattern: EmployeeAssignWorkPattern[];
+
+    @OneToMany(() => EmployeeAssignWorkPatternHistory, assignpatternhistory => assignpatternhistory.employeeId, { cascade: true })
+    assignworkpatternhistory: EmployeeAssignWorkPatternHistory[];
 }
 
 @Entity('employee-info')
@@ -357,9 +366,11 @@ export class EmployeeInfo {
     @Column({ name: 'active', type: 'boolean', default: false })
     active: boolean;
 
-    @ManyToMany(() => DrivingLicenceCategory, category => category.empDlCategory, { cascade: true })
-    @JoinTable()
-    drivingLicenceCategory: DrivingLicenceCategory[];
+    // @ManyToMany(() => DrivingLicenceCategory, category => category.empDlCategory, { cascade: true })
+    // @JoinTable()
+    // drivingLicenceCategory: DrivingLicenceCategory[];
+    @OneToMany(() => DrivingLicenceCategoryEmployee, cat => cat.empid, { cascade: true })
+    drivingLicenceCategory: DrivingLicenceCategoryEmployee[];
 
     @Column("timestamp", { name: 'created_at', default: () => null })
     created_at: Date;

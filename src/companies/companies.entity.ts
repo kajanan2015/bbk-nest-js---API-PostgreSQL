@@ -25,7 +25,7 @@ import { State } from './country/states/states.entity';
 import { City } from './country/cities/city.entity';
 import { PaymentLinkData } from 'src/payment/payment_link_otp/payment_link.entity';
 import { CompanyPayment } from 'src/company-payment/company-payment.entity';
-
+import { CompanyUserRole } from 'src/company-user-role/company-user-role.entity';
 export enum Companyidentifier {
   MAIN = 'maincompany',
   SUB = 'subcompany'
@@ -140,6 +140,9 @@ export class CompaniesEntity {
 
   @OneToMany(() => CompanyPayment, paymentdata => paymentdata.company, ({ cascade: true }))
   paymentdata: CompanyPayment[];
+
+  @OneToMany(() => CompanyUserRole, companyuserrole => companyuserrole.company, ({ cascade: true }))
+  manualcreateduser: CompanyUserRole[];
 
 }
 
