@@ -3,7 +3,19 @@ import { User } from 'src/user/user.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { EmployeeAssignWorkPattern } from './assign_work_pattern/employee-assign-work-pattern.entity';
-@Entity()
+
+
+export enum WorkType {
+    WITHTIME = "with time",
+    WITHOUTTIME = "without time"
+  }
+ export enum WorkPatternType{
+    WEEK="default 7 day pattern",
+    MOREWEEK="more than 7 days",
+    CUSTOM="custom pattern"
+ } 
+
+@Entity("company-work-pattern")
 export class CompanyWorkPattern {
     @PrimaryGeneratedColumn()
     id: number;
@@ -15,12 +27,12 @@ export class CompanyWorkPattern {
     @Column("varchar", { length: 250 ,nullable: true ,default: () => null})
     workPatternCode: string;
 
-    @Column("tinyint", { default: 0, comment: ' 0-withouttime,1-withtime' })
-    workType: number;
 
-
-    @Column("tinyint", { default: 1, comment: ' 1-default 7 day pattern,2-more than 7 days, 3-custom pattern' })
-    patternType: number;
+    @Column("enum", { enum: WorkType, default: WorkType.WITHOUTTIME, comment: "with time/without time" })
+    workType: WorkType;
+   
+    @Column("enum", { enum: WorkPatternType, default: WorkPatternType.WEEK, comment: "default 7 day pattern/more than 7 days/custom pattern" })
+    patternType: WorkPatternType;
 
     @Column("int", { nullable: true, default: () => null })
     noOfDays: number;

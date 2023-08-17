@@ -399,7 +399,7 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
       .leftJoinAndSelect("drivingLicenceCategory.category", "category")
       .leftJoinAndSelect("documents.created_by", "created_byd")
-      .orWhere("drivingLicenceCategory.status = :status", { status: 1 })
+      // .orWhere("drivingLicenceCategory.status = :status", {status : 1})
       .andWhere("employee.id = :id", { id })
       .andWhere("linkedEmployee.startDate <= :date", { date })
       .andWhere(
@@ -422,6 +422,8 @@ export class EmployeeModuleService {
       )
       .orderBy('linkedEmployeePayroll.startDate', 'DESC');
 
+    const categories = this.dlCategoryEmployeeRepository.find({where: {empid: id, status: 1}, relations:['category']})
+
     const data = await query.getMany();
     const payrollData = await payrollQuery.getMany();
     const newdata = [];
@@ -429,7 +431,7 @@ export class EmployeeModuleService {
     for (var i = 0; i < data.length; i++) {
       let passdata = {}
       const { linkedEmployee, ...mainEmployeeData } = data[i];
-      const linkedEmployeePayroll = payrollData["linkedEmployeePayroll"];
+      const linkedEmployeePayroll = payrollData?.[0]?.['linkedEmployeePayroll'];
       const companyData = await this.companyservice.read(mainEmployeeData?.company?.id);
       passdata = {
         ...linkedEmployee[0],
@@ -439,7 +441,8 @@ export class EmployeeModuleService {
         payrollId: linkedEmployeePayroll?.[0]?.id,
         employeeCode: mainEmployeeData.employeeCode,
         company: companyData,
-        documents: mainEmployeeData?.documents
+        documents: mainEmployeeData?.documents,
+        drivingLicenceCategory: categories,
       }
       newdata.push(passdata)
     }
@@ -1109,7 +1112,11 @@ export class EmployeeModuleService {
       newdata.push(passdata)
     }
 
-    return newdata;
+    const results = newdata.filter(function (row) {
+      return Math.floor(new Date(row.leaveDate).getTime() / 86400000) > Math.floor(new Date().getTime() / 86400000) || row.leaveDate == null
+    })
+
+    return results;
   }
 
   async generateTemporaryNumber(gender, birthday) {
