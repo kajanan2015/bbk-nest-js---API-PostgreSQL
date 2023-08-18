@@ -62,7 +62,7 @@ export class CompaniesEntity {
   @Column("varchar", { length: 10, comment: "to declare employee id" })
   company_prefix: string | null;
 
-  @Column("int", {name:"contract_agreement", comment: "to check company aggrement date",nullable:true,default:null })
+  @Column("int", { name: "contract_agreement", comment: "to check company aggrement date", nullable: true, default: null })
   contractagreement: number;
 
   @ManyToOne(() => User, user => user.companymainusercreate)
@@ -169,13 +169,11 @@ export class CompaniesEntityinfo {
   @Column("varchar", { name: "company_place_street", nullable: true, length: 250, default: () => null })
   street: string | null;
 
-  @ManyToOne(() => City, city => city.companyAddressCity)
-  @JoinColumn({ name: 'company_place_city' })
-  city: City;
+  @Column("varchar", { name: "company_place_city", nullable: true, length: 250, default: () => null })
+  city: string | null;
 
-  @ManyToOne(() => State, state => state.companyAddress)
-  @JoinColumn({ name: 'company_place_state' })
-  state: State;
+  @Column("varchar", { name: "company_place_state", nullable: true, length: 250, default: () => null })
+  state: string | null;
 
   @ManyToOne(() => country, country => country.companyCountry)
   @JoinColumn({ name: 'company_contact_country' })
@@ -184,7 +182,6 @@ export class CompaniesEntityinfo {
   @ManyToOne(() => companytype, companytype => companytype.companyType)
   @JoinColumn({ name: 'company_type' })
   companyType: companytype;
-
 
   @Column("varchar", { name: "company_place_postal_code", nullable: true, length: 250, default: () => null })
   postalCode: string | null;
@@ -201,16 +198,14 @@ export class CompaniesEntityinfo {
   @Column("varchar", { name: "company_registration_address_street", nullable: true, length: 250, default: () => null })
   regAddressStreet: string | null;
 
-  @ManyToOne(() => City, city => city.companyRegAddressCity)
-  @JoinColumn({ name: 'comapny_registration_address_city' })
-  regAddressCity: City;
+  @Column("varchar", { name: "company_registration_address_city", nullable: true, length: 250, default: () => null })
+  regAddressCity: string | null;
+
+  @Column("varchar", { name: "company_registration_address_state", nullable: true, length: 250, default: () => null })
+  regAddressState: string | null;
 
   @Column("varchar", { name: "comapny_registration_postal_code", nullable: true, length: 250, default: () => null })
   regAddressPostalCode: string | null;
-
-  @ManyToOne(() => State, state => state.companyRegAddress)
-  @JoinColumn({ name: 'company_registration_address_state' })
-  regAddressState: State;
 
   @ManyToOne(() => country, countryreg => countryreg.companyRegAddressCountry)
   @JoinColumn({ name: 'company_registartion_address_country' })
@@ -233,7 +228,6 @@ export class CompaniesEntityinfo {
 
   @Column("enum", { name: "company_identifier", enum: Companyidentifier, default: Companyidentifier.MAIN, comment: "maincompany/sucompany" })
   companyIdentifier: Companyidentifier;
-
 
   @ManyToOne(() => CompaniesEntity, parentcompany => parentcompany.parentCompany)
   @JoinColumn({ name: 'parent_company_id' })

@@ -9,11 +9,16 @@ export enum WorkType {
     WITHTIME = "with time",
     WITHOUTTIME = "without time"
   }
- export enum WorkPatternType{
+export enum WorkPatternType{
     WEEK="default 7 day pattern",
     MOREWEEK="more than 7 days",
     CUSTOM="custom pattern"
  } 
+
+export enum WorkPatternStatus{
+    ACTIVE="active",
+    INACTIVE="inactive"
+} 
 
 @Entity("company-work-pattern")
 export class CompanyWorkPattern {
@@ -64,6 +69,9 @@ export class CompanyWorkPattern {
 
     @OneToMany(() => EmployeeAssignWorkPattern, assignpattern => assignpattern.workpatternId, { cascade: true })
     assignworkpattern: EmployeeAssignWorkPattern[];
+
+    @Column("enum", { enum: WorkPatternStatus, default: WorkPatternStatus.ACTIVE, comment: "active/inactive" })
+    status: WorkPatternStatus;
 
     // @OneToMany(() => EmployeeDataHistory, patternDataHistory => patternDataHistory.workpattern,{ cascade: true })
     // editHistory: EmployeeDataHistory[];
