@@ -1,8 +1,4 @@
-import { BeforeInsert, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import * as bcrypt from 'bcryptjs';
-import { country } from '../country.entity';
-import { State } from '../states/states.entity';
-import { CompaniesEntityinfo } from 'src/companies/companies.entity';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('country_city')
 export class City {
@@ -38,10 +34,4 @@ export class City {
 
     @Column("timestamp", { name: "updated_at", default: () => "CURRENT_TIMESTAMP" })
     updated_at: Date;
-
-    @OneToMany(() => CompaniesEntityinfo, company => company.city, { cascade: true })
-    companyAddressCity: CompaniesEntityinfo[];
-
-    @OneToMany(() => CompaniesEntityinfo, company => company.regAddressCity, { cascade: true })
-    companyRegAddressCity: CompaniesEntityinfo[];
 }
