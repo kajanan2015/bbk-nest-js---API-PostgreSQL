@@ -248,38 +248,38 @@ export class CompaniesController {
     };
   }
 
-  // Get states based on country flag code
-  @UseGuards(AuthGuard('jwt'))
-  @Get('/state/:flagcode')
-  async getStates(@Param('flagcode') flagcode: string) {
-    const states = await this.service.getStates(flagcode);
-    return {
-      statusCode: HttpStatus.OK,
-      states
-    };
-  }
+  // // Get states based on country flag code
+  // @UseGuards(AuthGuard('jwt'))
+  // @Get('/state/:flagcode')
+  // async getStates(@Param('flagcode') flagcode: string) {
+  //   const states = await this.service.getStates(flagcode);
+  //   return {
+  //     statusCode: HttpStatus.OK,
+  //     states
+  //   };
+  // }
 
-  // Get cities based on country flag code
-  @UseGuards(AuthGuard('jwt'))
-  @Post('/cityByFlag')
-  async getCitiesByFlag( @Body() data) {
-    const cities = await this.service.getCitiesByFlag(data);
-    return {
-      statusCode: HttpStatus.OK,
-      cities
-    };
-  }
+  // // Get cities based on country flag code
+  // @UseGuards(AuthGuard('jwt'))
+  // @Post('/cityByFlag')
+  // async getCitiesByFlag( @Body() data) {
+  //   const cities = await this.service.getCitiesByFlag(data);
+  //   return {
+  //     statusCode: HttpStatus.OK,
+  //     cities
+  //   };
+  // }
 
-  // Get cities based on state id
-  @UseGuards(AuthGuard('jwt'))
-  @Get('/city/:stateId')
-  async getCities(@Param('stateId') stateId: string) {
-    const cities = await this.service.getCities(stateId);
-    return {
-      statusCode: HttpStatus.OK,
-      cities
-    };
-  }
+  // // Get cities based on state id
+  // @UseGuards(AuthGuard('jwt'))
+  // @Get('/city/:stateId')
+  // async getCities(@Param('stateId') stateId: string) {
+  //   const cities = await this.service.getCities(stateId);
+  //   return {
+  //     statusCode: HttpStatus.OK,
+  //     cities
+  //   };
+  // }
 
   // when pass parent company id return sub company
   @UseGuards(AuthGuard('jwt'))
@@ -513,12 +513,12 @@ export class CompaniesController {
   @Put('extend-trial/:id')
   async extendtrial(@Param('id') companyid: number, @Body() data: any, @Headers('userTime') userTime) {
     let date;
-  if(userTime){
-   date=new Date(userTime);
-  }else{
-   date=new Date();
-  }
-    return await this.service.extendtrial(companyid,data,date)
+    if (userTime) {
+      date = new Date(userTime);
+    } else {
+      date = new Date();
+    }
+    return await this.service.extendtrial(companyid, data, date)
 
 
   }

@@ -1,9 +1,6 @@
-import { BeforeInsert, Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import * as bcrypt from 'bcryptjs';
-
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { CompaniesEntityinfo } from '../companies.entity';
-import { Employee, EmployeeInfo } from 'src/employee-module/employee-module.entity';
-import { State } from './states/states.entity';
+import { EmployeeInfo } from 'src/employee-module/employee-module.entity';
 import { companyvehicledata } from 'src/company-vehicle/companyvehicle.entity';
 
 @Entity('country')
@@ -38,7 +35,7 @@ export class country {
     @OneToMany(() => EmployeeInfo, employeemodule => employeemodule.refCompAddressCountry, { cascade: true })
     refCompAddressCountry: EmployeeInfo[];
 
-    @OneToMany(()=>companyvehicledata, vehicledetails => vehicledetails.addressCountry,{cascade:true})
-    vehicledetails:companyvehicledata[]
-    
+    @OneToMany(() => companyvehicledata, vehicledetails => vehicledetails.addressCountry, { cascade: true })
+    vehicledetails: companyvehicledata[]
+
 }

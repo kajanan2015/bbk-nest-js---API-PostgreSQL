@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards,Headers } from '@nestjs/common';
 import { CompanyWorkPatternService } from './company-work-pattern.service';
 import { CreateCompanyWorkPatternDto } from './create-company-work-pattern.dto';
 import { UpdateCompanyWorkPatternDto } from './update-company-work-pattern.dto';
@@ -14,10 +14,16 @@ export class CompanyWorkPatternController {
   }
 
   @Get()
+  async findAllActive() {
+    return await this.companyWorkPatternService.findAllActive();
+  
+  }
+
+
+  @Get('findallpattern')
   async findAll() {
     return await this.companyWorkPatternService.findAll();
   }
-
   @Post('findByname/:name')
   async findByname(@Param('name') name: string, @Body() data) {
     return await this.companyWorkPatternService.findbypattername(name, data.company);
@@ -37,9 +43,19 @@ export class CompanyWorkPatternController {
  async remove(@Param('id') id: string) {
     return await this.companyWorkPatternService.remove(+id);
   }
+
+
 // assign work pattern to the employee
-  @Post()
-  async assignworkpatternemployee(){
-    return await this.companyWorkPatternService.assignworkpatternemployee()
+@Post('assign-work-pattern')
+async assignworkpatterntoemployee(@Body() data, @Headers('userTime') userTime ){
+  let date;
+  if(userTime){
+   date=new Date(userTime);
+  }else{
+   date=new Date();
   }
+  data.userTime=date;
+       return await this.companyWorkPatternService.assignworkpatterntoemployee(data);
+}
+
 }

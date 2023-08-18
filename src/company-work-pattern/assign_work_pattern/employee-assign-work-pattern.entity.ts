@@ -68,7 +68,11 @@ export class EmployeeAssignWorkPatternInfo{
   @Column("time",{name:"end_time",nullable:true,default:()=>null})
   end_time:Date;
   
-  @Column("timestamp", { name: "assign_at", default: () => "CURRENT_TIMESTAMP" })
+  @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
+  created_at: Date;
+
+
+  @Column("date", { name: "assign_at", nullable:true, default: () => null })
   assign_at: Date;
 
   @Column("timestamp", { name: "updated_at", nullable: true, default: () => null })

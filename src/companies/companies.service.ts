@@ -55,8 +55,6 @@ import { AssignPackageType } from "src/companypackagerow/companypackagerow.entit
 import { Companypackageassignhistory } from "src/companypackagerow/companypackagerow.entity";
 import { AssignPackageHistoryType } from "src/companypackagerow/companypackagerow.entity";
 import { AssignPackageStatus } from "src/companypackagerow/companypackagerow.entity";
-import { State } from "./country/states/states.entity";
-import { City } from "./country/cities/city.entity";
 import { addMonths, format } from 'date-fns';
 import { PaymentLinkData } from "src/payment/payment_link_otp/payment_link.entity";
 @Injectable()
@@ -98,10 +96,6 @@ export class CompaniesService {
     private readonly assignpackagehistoryrepo: Repository<Companypackageassignhistory>,
     @InjectRepository(country)
     private readonly countryrepo: Repository<country>,
-    @InjectRepository(State)
-    private readonly stateRepository: Repository<State>,
-    @InjectRepository(City)
-    private readonly cityRepository: Repository<City>,
     @InjectRepository(companytype)
     private readonly companytyperepo: Repository<companytype>,
     @InjectRepository(PaymentLinkData)
@@ -110,7 +104,7 @@ export class CompaniesService {
 
 
   async create(companyData, base_url) {
-console.log(companyData,8920)
+    console.log(companyData, 8920)
     // ** Company name existing check
     const existingcompanyname = await this.companyinfoRepository.findOne({
       where: {
@@ -261,8 +255,8 @@ console.log(companyData,8920)
         }
       }
       // const users = await this.userRepository.findByIds(userIds);
-      console.log(companyData,89899)
-      if (companyData.sameTradingAddress=='false') {
+      console.log(companyData, 89899)
+      if (companyData.sameTradingAddress == 'false') {
         mainDataCompany = {
           company_code: companyCode,
           company_prefix: companyData.code,
@@ -329,7 +323,7 @@ console.log(companyData,8920)
         const adminUser = await this.userRepository.findByIds([userId]);
         users.push(adminUser[0]);
       }
-      if (companyData.sameTradingAddress=='false') {
+      if (companyData.sameTradingAddress == 'false') {
         mainDataCompany = {
           company_code: companyCode,
           company_prefix: companyData.code,
@@ -397,16 +391,8 @@ console.log(companyData,8920)
     }
     const countryobejct = await this.countryrepo.findOne({ id: dataCompany.country });
     dataCompany.country = countryobejct;
-    const stateobejct = await this.stateRepository.findOne({ id: dataCompany.state });
-    dataCompany.state = stateobejct;
-    const cityobject = await this.cityRepository.findOne({ id: dataCompany.city });
-    dataCompany.city = cityobject;
     const regcountryobejct = await this.countryrepo.findOne({ id: dataCompany.regAddressCountry });
     dataCompany.regAddressCountry = regcountryobejct;
-    const regstateobejct = await this.stateRepository.findOne({ id: dataCompany.regAddressState });
-    dataCompany.state = regstateobejct;
-    const regcityobject = await this.cityRepository.findOne({ id: dataCompany.regAddressCity });
-    dataCompany.regAddressCity = regcityobject;
     const companytypeobejct = await this.companytyperepo.findOne({ id: dataCompany.companyType });
     dataCompany.companyType = companytypeobejct
     const historydate = {
@@ -808,11 +794,7 @@ console.log(companyData,8920)
       .leftJoinAndSelect("company.linkedcompany", "linkedcompany")
       .leftJoinAndSelect("linkedcompany.mainCompany", "mainCompany")
       .leftJoinAndSelect("linkedcompany.country", "country")
-      .leftJoinAndSelect("linkedcompany.city", "city")
-      .leftJoinAndSelect("linkedcompany.state", "state")
       .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
-      .leftJoinAndSelect("linkedcompany.regAddressState", "regAddressState")
-      .leftJoinAndSelect("linkedcompany.regAddressCity", "regAddressCity")
       .leftJoinAndSelect("linkedcompany.companyType", "companyType")
       .leftJoinAndSelect("linkedcompany.billing", "billing")
       .where("linkedcompany.company_status = :status", { status: statusvalue })
@@ -891,24 +873,24 @@ console.log(companyData,8920)
     return countryList;
   }
 
-  // ** Get states
-  async getStates(flagcode: string) {
-    const stateList = await this.stateRepository.find({ where: { country_code: flagcode } });
-    return stateList;
-  }
+  // // ** Get states
+  // async getStates(flagcode: string) {
+  //   const stateList = await this.stateRepository.find({ where: { country_code: flagcode } });
+  //   return stateList;
+  // }
 
-  // ** Get states
-  async getCitiesByFlag(data) {
-    const cityList = await this.cityRepository.find({ where: { country_code: data?.flagCode } });
-    const filteredCityList= cityList.filter((city) => city?.name?.toLowerCase().startsWith(data.inputValue));
-    return filteredCityList;
-  }
+  // // ** Get states
+  // async getCitiesByFlag(data) {
+  //   const cityList = await this.cityRepository.find({ where: { country_code: data?.flagCode } });
+  //   const filteredCityList= cityList.filter((city) => city?.name?.toLowerCase().startsWith(data.inputValue));
+  //   return filteredCityList;
+  // }
 
-  // ** Get cities
-  async getCities(stateId: string) {
-    const cityList = await this.cityRepository.find({ where: { state_id: stateId } });
-    return cityList;
-  }
+  // // ** Get cities
+  // async getCities(stateId: string) {
+  //   const cityList = await this.cityRepository.find({ where: { state_id: stateId } });
+  //   return cityList;
+  // }
 
   async showSubAll(mainCompanyId: number): Promise<CompaniesEntity[]> {
     return await this.companyRepository.find({
@@ -924,11 +906,7 @@ console.log(companyData,8920)
         "users",
         "documents",
         "country",
-        "city",
-        "state",
         "regAddressCountry",
-        "regAddressState",
-        "regAddressCity",
         "companyType",
         "billing",
       ],
@@ -1008,11 +986,7 @@ console.log(companyData,8920)
       .leftJoinAndSelect("company.linkedcompany", "linkedcompany")
       .leftJoinAndSelect("linkedcompany.mainCompany", "mainCompany")
       .leftJoinAndSelect("linkedcompany.country", "country")
-      .leftJoinAndSelect("linkedcompany.state", "state")
-      .leftJoinAndSelect("linkedcompany.city", "city")
-      .leftJoinAndSelect("linkedcompany.regAddressCity", "regAddressCity")
       .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
-      .leftJoinAndSelect("linkedcompany.regAddressState", "regAddressState")
       .leftJoinAndSelect("linkedcompany.companyType", "companyType")
       .leftJoinAndSelect("linkedcompany.billing", "billing")
       .where("company.id = :id", { id })
@@ -1441,7 +1415,7 @@ console.log(companyData,8920)
   }
   async contractagreement(id, data) {
     // await this.companyRepository.update(id, data);
-    // const entity = await this.companyinfoRepository.findOne({ company_info_id: data.companyinfoid }, { relations: ['country', 'city', 'state', 'companyType', 'regAddressCountry', 'regAddressCity', 'regAddressState', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'] })
+    // const entity = await this.companyinfoRepository.findOne({ company_info_id: data.companyinfoid }, { relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'] })
     // if (!entity) {
     //   throw new NotFoundException('Entity not found');
     // }
@@ -1662,7 +1636,7 @@ console.log(companyData,8920)
     // const response = await this.companyRepository.update({ id }, passdata);
   }
 
-  async extendtrial(companyid,data,date) {
+  async extendtrial(companyid, data, date) {
     const numofdays = data.numofdays
     const updateDateTime = new Date(data.validitydate);
     updateDateTime.setDate(updateDateTime.getDate() + parseInt(data.numofdays));
@@ -1670,7 +1644,7 @@ console.log(companyData,8920)
     updateDateTime.setMilliseconds(0);
     const response = await this.companypackagerowrepository.find({
       where: {
-        company: companyid , // Assuming 'id' is the ID of the company you want to filter by
+        company: companyid, // Assuming 'id' is the ID of the company you want to filter by
         enddate: MoreThanOrEqual(date),
         status: AssignPackageStatus.ACTIVE
       },
@@ -1680,9 +1654,9 @@ console.log(companyData,8920)
       },
     });
     for (const row of response) {
-      await this.companypackagerowrepository.update({ id: row.id },{enddate: updateDateTime})
+      await this.companypackagerowrepository.update({ id: row.id }, { enddate: updateDateTime })
     }
-   if (response) {
+    if (response) {
       return "Updated"
     } else {
       return "Error Occured"
@@ -1749,32 +1723,16 @@ console.log(companyData,8920)
       const countryobejct = await this.countryrepo.findOne({ id: data.country });
       data.country = countryobejct;
     }
-    if (data.state) {
-      const stateobject = await this.stateRepository.findOne({ id: data.state });
-      data.state = stateobject;
-    }
-    if (data.city) {
-      const cityobject = await this.cityRepository.findOne({ id: data.city });
-      data.city = cityobject;
-    }
     if (data.regAddressCountry) {
       const regcountryobejct = await this.countryrepo.findOne({ id: data.regAddressCountry });
       data.regAddressCountry = regcountryobejct;
-    }
-    if (data.regAddressState) {
-      const regstateobject = await this.stateRepository.findOne({ id: data.regAddressState });
-      data.regAddressState = regstateobject;
-    }
-    if (data.regAddressCity) {
-      const regcityobject = await this.cityRepository.findOne({ id: data.regAddressCity });
-      data.regAddressCity = regcityobject;
     }
     if (data.companyType) {
       const companytypeobejct = await this.companytyperepo.findOne({ id: data.companyType });
       data.companyType = companytypeobejct
     }
 
-    const entity = await this.companyinfoRepository.findOne({ company_info_id: companyinfoid }, { relations: ['country', 'city', 'state', 'companyType', 'regAddressCountry', 'regAddressCity', 'regAddressState', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'] })
+    const entity = await this.companyinfoRepository.findOne({ company_info_id: companyinfoid }, { relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'] })
     if (!entity) {
       throw new NotFoundException('Entity not found');
     }
@@ -1796,7 +1754,7 @@ console.log(companyData,8920)
     }
 
 
-    const existLastestValues = await this.companyinfoRepository.find({ where: { company: companyid, start_date: LessThanOrEqual(start_date) }, relations: ['country', 'state', 'city', 'companyType', 'regAddressCountry', 'regAddressCity', 'regAddressState', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { start_date: 'DESC' } })
+    const existLastestValues = await this.companyinfoRepository.find({ where: { company: companyid, start_date: LessThanOrEqual(start_date) }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { start_date: 'DESC' } })
     const existLastestValue = existLastestValues[0]
 
     if (data.historyId) {
@@ -1864,11 +1822,11 @@ console.log(companyData,8920)
     const scheduleid = parseInt(data['CompanyDetails'].schedule_id)
 
 
-    const entity = await this.companyinfoRepository.findOne({ company_info_id: companyinfoid }, { relations: ['country', 'city', 'state', 'companyType', 'regAddressCountry', 'regAddressCity', 'regAddressState', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'] })
+    const entity = await this.companyinfoRepository.findOne({ company_info_id: companyinfoid }, { relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'] })
     if (!entity) {
       throw new NotFoundException('Entity not found');
     }
-    const existLastestValues = await this.companyinfoRepository.find({ where: { company: companyid, start_date: LessThan(entity['start_date']) }, relations: ['country', 'city', 'state', 'companyType', 'regAddressCountry', 'regAddressCity', 'regAddressState', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { company_info_id: 'DESC' } })
+    const existLastestValues = await this.companyinfoRepository.find({ where: { company: companyid, start_date: LessThan(entity['start_date']) }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { company_info_id: 'DESC' } })
     console.log(existLastestValues, 8989898)
     const companyExistHistory = await this.companyhistoryRepository.findOne({ id: scheduleid }, { relations: ['created_by', 'updated_by', 'companyinfo', 'company'] })
     await this.historytransaction.deleteExistScheduleTransaction(entity, existLastestValues, companyExistHistory, CompaniesEntityinfo, CompaniesHistorydata)
@@ -1919,7 +1877,7 @@ console.log(companyData,8920)
 
   async getlatestcompanyinfo(companyid, data) {
     const start_date = data.startdate
-    const existLastestValues = await this.companyinfoRepository.find({ where: { company: companyid, start_date: LessThanOrEqual(start_date) }, relations: ['country', 'state', 'city', 'companyType', 'regAddressCountry', 'regAddressCity', 'regAddressState', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { start_date: 'DESC' } })
+    const existLastestValues = await this.companyinfoRepository.find({ where: { company: companyid, start_date: LessThanOrEqual(start_date) }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { start_date: 'DESC' } })
     const existLastestValue = existLastestValues[0]
     return existLastestValue;
   }
