@@ -152,9 +152,9 @@ export class EmployeeModuleService {
       if (department) {
         const dept = department[0];
         console.log({ empInfoId: resInfo['id'], department: dept["id"] }, 66666666666)
-        const response = await this.employeeDeparmentRepository.save({ empInfoId: resInfo['id'], empId:res["id"], department: dept["id"] });
+        const response = await this.employeeDeparmentRepository.save({ empInfoId: resInfo['id'], empId: res["id"], department: dept["id"] });
         // delete infoData.department;
-      }    
+      }
 
       const documents = createEmployeeModuleDto['filenames'];
 
@@ -422,8 +422,6 @@ export class EmployeeModuleService {
       )
       .orderBy('linkedEmployeePayroll.startDate', 'DESC');
 
-    const categories = this.dlCategoryEmployeeRepository.find({where: {empid: id, status: 1}, relations:['category']})
-
     const data = await query.getMany();
     const payrollData = await payrollQuery.getMany();
     const newdata = [];
@@ -433,6 +431,7 @@ export class EmployeeModuleService {
       const { linkedEmployee, ...mainEmployeeData } = data[i];
       const linkedEmployeePayroll = payrollData?.[0]?.['linkedEmployeePayroll'];
       const companyData = await this.companyservice.read(mainEmployeeData?.company?.id);
+      const categories = await this.dlCategoryEmployeeRepository.find({ where: { empid: linkedEmployee[0]?.id, status:1 }, relations: ['category'] })
       passdata = {
         ...linkedEmployee[0],
         ...linkedEmployeePayroll?.[0],
@@ -665,7 +664,7 @@ export class EmployeeModuleService {
     }
 
     // ** remove docs
-    let { visaDoc, drivingLicenceCategory, tachoDoc, officialDoc, drivingLicenceDoc, cpcCardDoc, crbCardDoc, refdoc, empProvidedCopy, ...dataWithoutDoc } = data
+    let { deletedCategories, visaDoc, drivingLicenceCategory, tachoDoc, officialDoc, drivingLicenceDoc, cpcCardDoc, crbCardDoc, refdoc, empProvidedCopy, ...dataWithoutDoc } = data
 
     if (employeeHistoryId) {
 
@@ -684,6 +683,45 @@ export class EmployeeModuleService {
         await this.employeeInfoRepository.update({ id: +previousRecord?.['employeeInfoId']?.['id'] }, dataWithoutDoc);
       }
 
+      if (data.hasOwnProperty("deletedCategories")) {
+        for (const category of deletedCategories) {
+          this.dlCategoryEmployeeRepository.find({ where: { empid: +previousRecord?.['employeeInfoId'], category: category.category?.id, status: 1 } }).then(async (res) => {
+  
+            if (res) {
+              await this.dlCategoryEmployeeRepository.update({ id: +res?.[0]?.['id'] }, { status: false });
+            }
+          });
+        }
+      }
+
+      if (data.hasOwnProperty("drivingLicenceCategory")) {
+        const drivingLicenceCategories = drivingLicenceCategory;
+        const updatedDrivingLicenceCategories = [];
+
+        const existingCategories = await this.dlCategoryEmployeeRepository.find({ where: { empid: +previousRecord?.['employeeInfoId'], status: 1 }, relations: ['category'] })
+
+        for (const category of drivingLicenceCategories) {
+          const existingCategory = existingCategories.find(cat => cat.category?.id == category.category?.id);
+
+          if (existingCategory) {
+            // Update existing category
+            existingCategory.issueDate = category.issueDate;
+            existingCategory.expireDate = category.expireDate;
+            updatedDrivingLicenceCategories.push(existingCategory);
+          } else {
+            // Create new category
+            updatedDrivingLicenceCategories.push({
+              empid: +previousRecord?.['employeeInfoId'],
+              category: category.category?.id,
+              issueDate: category.issueDate,
+              expireDate: category.expireDate,
+            });
+          }
+        };
+        // Update or create categories in the database
+        const response = await this.dlCategoryEmployeeRepository.save(updatedDrivingLicenceCategories);
+      }
+
     } else {
       // ** compare shedule start date
       if (Math.floor(start_date.getTime() / 86400000) > Math.floor(date.getTime() / 86400000)) {
@@ -693,11 +731,58 @@ export class EmployeeModuleService {
         delete latestSheduleInfo.startDate;
         delete latestSheduleInfo.updated_by;
         const passvalue = {
-          ...latestSheduleInfo, ...dataWithoutDoc
+          drivingLicenceCategory, ...latestSheduleInfo, ...dataWithoutDoc
         }
+
+
 
         // ** save employee driving licence categories
         if (data.hasOwnProperty("drivingLicenceCategory")) {
+
+          // ** create new employee info record
+          const responseInfo = await this.employeeInfoRepository.create({ ...passvalue, startDate: start_date, employee: UpdateEmployeeModuleDto.employeeId });
+          const resInfo = await this.employeeInfoRepository.save(responseInfo)
+
+          if (data.hasOwnProperty("deletedCategories")) {
+            for (const category of data.deletedCategories) {
+              this.dlCategoryEmployeeRepository.find({ where: { empid: resInfo?.['id'], category: category.category?.id, status: 1 } }).then(async (res) => {
+      
+                if (res) {
+                  await this.dlCategoryEmployeeRepository.update({ id: +res?.[0]?.['id'] }, { status: false });
+                }
+              });
+            }
+            delete data.deletedCategories
+          }
+
+          const drivingLicenceCategories = data.drivingLicenceCategory;
+          const updatedDrivingLicenceCategories = [];
+
+          const existingCategories = await this.dlCategoryEmployeeRepository.find({ where: { empid: resInfo['id'], status: 1 }, relations: ['category'] })
+
+          for (const category of drivingLicenceCategories) {
+            const existingCategory = existingCategories.find(cat => cat.category?.id == category.category?.id);
+
+            if (existingCategory) {
+              // Update existing category
+              existingCategory.issueDate = category.issueDate;
+              existingCategory.expireDate = category.expireDate;
+              updatedDrivingLicenceCategories.push(existingCategory);
+            } else {
+              // Create new category
+              updatedDrivingLicenceCategories.push({
+                empid: UpdateEmployeeModuleDto.employeeInfoId,
+                category: category.category?.id,
+                issueDate: category.issueDate,
+                expireDate: category.expireDate,
+              });
+            }
+          };
+          // Update or create categories in the database
+          const response = await this.dlCategoryEmployeeRepository.save(updatedDrivingLicenceCategories);
+          delete data.drivingLicenceCategory;
+
+
           // const drivingLicenceCategories = data.drivingLicenceCategory;
           // let drivinglicensecategoryId = [];
           // for (const categoryid of drivingLicenceCategories) {
@@ -705,9 +790,7 @@ export class EmployeeModuleService {
           // }
           // const response = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
 
-          // ** create new employee info record
-          const responseInfo = await this.employeeInfoRepository.create({ ...passvalue, startDate: start_date, employee: UpdateEmployeeModuleDto.employeeId });
-          const resInfo = await this.employeeInfoRepository.save(responseInfo)
+
           // delete data.drivingLicenceCategory;
 
           // const res = await this.employeeInfoRepository.findOne({ where: { id: +responseInfo['id'] }, relations: ['employeeType', 'drivingLicenceCategory', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName', 'created_by', 'updated_by', 'employee'] });
@@ -730,6 +813,19 @@ export class EmployeeModuleService {
         }
 
       } else {
+        
+        if (data.hasOwnProperty("deletedCategories")) {
+          console.log(data.hasOwnProperty("deletedCategories"), 85858585);
+          for (const category of data.deletedCategories) {
+            this.dlCategoryEmployeeRepository.find({ where: { empid: UpdateEmployeeModuleDto.employeeInfoId, category: category.category?.id, status: 1 } }).then(async (res) => {
+    
+              if (res) {
+                await this.dlCategoryEmployeeRepository.update({ id: +res?.[0]?.['id'] }, { status: false });
+              }
+            });
+          }
+          delete data.deletedCategories
+        }
 
         if (data.hasOwnProperty("drivingLicenceCategory")) {
           // const drivingLicenceCategories = data.drivingLicenceCategory;
@@ -739,11 +835,38 @@ export class EmployeeModuleService {
           // }
           // const response = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
 
+          const drivingLicenceCategories = data.drivingLicenceCategory;
+          const updatedDrivingLicenceCategories = [];
+
+          const existingCategories = await this.dlCategoryEmployeeRepository.find({ where: { empid: UpdateEmployeeModuleDto.employeeInfoId, status: 1 }, relations: ['category'] })
+
+          for (const category of drivingLicenceCategories) {
+            const existingCategory = existingCategories.find(cat => cat.category?.id == category.category?.id);
+
+            if (existingCategory) {
+              // Update existing category
+              existingCategory.issueDate = category.issueDate;
+              existingCategory.expireDate = category.expireDate;
+              updatedDrivingLicenceCategories.push(existingCategory);
+            } else {
+              // Create new category
+              updatedDrivingLicenceCategories.push({
+                empid: UpdateEmployeeModuleDto.employeeInfoId,
+                category: category.category?.id,
+                issueDate: category.issueDate,
+                expireDate: category.expireDate,
+              });
+            }
+          };
+          // Update or create categories in the database
+          const response = await this.dlCategoryEmployeeRepository.save(updatedDrivingLicenceCategories);
+          delete dataWithoutDoc.drivingLicenceCategory;
+
           // ** update employee info currnt record
           await this.employeeInfoRepository.update({ id: +UpdateEmployeeModuleDto.employeeInfoId }, dataWithoutDoc);
-          const res = await this.employeeInfoRepository.findOne({ where: { id: +UpdateEmployeeModuleDto.employeeInfoId }, relations: ['employeeType', 'drivingLicenceCategory', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName', 'created_by', 'updated_by', 'employee'] });
+          // const res = await this.employeeInfoRepository.findOne({ where: { id: +UpdateEmployeeModuleDto.employeeInfoId }, relations: ['employeeType', 'drivingLicenceCategory', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName', 'created_by', 'updated_by', 'employee'] });
           // res.drivingLicenceCategory = response;
-          await this.employeeInfoRepository.save(res)
+          // await this.employeeInfoRepository.save(res)
           // delete data.drivingLicenceCategory;
         } else {
           if (data.salaryType) {
