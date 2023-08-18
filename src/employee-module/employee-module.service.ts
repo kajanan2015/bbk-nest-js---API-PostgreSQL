@@ -150,10 +150,11 @@ export class EmployeeModuleService {
       const resInfo = await this.employeeInfoRepository.save(responseInfo)
 
       if (department) {
-        const dept = department[0];
+        for (const dept of department) {
         console.log({ empInfoId: resInfo['id'], department: dept["id"] }, 66666666666)
         const response = await this.employeeDeparmentRepository.save({ empInfoId: resInfo['id'], empId:res["id"], department: dept["id"] });
         // delete infoData.department;
+        }
       }    
 
       const documents = createEmployeeModuleDto['filenames'];
@@ -424,6 +425,7 @@ export class EmployeeModuleService {
 
     const categories = this.dlCategoryEmployeeRepository.find({where: {empid: id, status: 1}, relations:['category']})
 
+
     const data = await query.getMany();
     const payrollData = await payrollQuery.getMany();
     const newdata = [];
@@ -433,6 +435,7 @@ export class EmployeeModuleService {
       const { linkedEmployee, ...mainEmployeeData } = data[i];
       const linkedEmployeePayroll = payrollData?.[0]?.['linkedEmployeePayroll'];
       const companyData = await this.companyservice.read(mainEmployeeData?.company?.id);
+      const departments = await this.employeeDeparmentRepository.find({ where: { empInfoId: linkedEmployee?.[0]?.id, status: 1 }, relations: ['department'] })
       passdata = {
         ...linkedEmployee[0],
         ...linkedEmployeePayroll?.[0],
@@ -443,6 +446,7 @@ export class EmployeeModuleService {
         company: companyData,
         documents: mainEmployeeData?.documents,
         drivingLicenceCategory: categories,
+        department: departments
       }
       newdata.push(passdata)
     }
@@ -650,7 +654,7 @@ export class EmployeeModuleService {
         .leftJoinAndSelect("employeeInfo.drivingLicenceType", "drivingLicenceType")
         .leftJoinAndSelect("employeeInfo.bankName", "bankName")
         .leftJoinAndSelect("employeeInfo.visaType", "visaType")
-        // .leftJoinAndSelect("employeeInfo.department", "department")
+        .leftJoinAndSelect("employeeInfo.department", "department")
         .leftJoinAndSelect("employeeInfo.created_by", "created_by")
         .leftJoinAndSelect("employeeInfo.updated_by", "updated_by")
         .leftJoinAndSelect("employeeInfo.employee", "employee")
@@ -889,7 +893,7 @@ export class EmployeeModuleService {
 
   async findLatestEmployeeInfo(empid, data) {
     const start_date = data.startdate
-    const existLastestValues = await this.employeeInfoRepository.find({ where: { employee: empid, startDate: LessThanOrEqual(start_date), status: 1 }, relations: ['employeeType', 'drivingLicenceCategory', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName', 'visaType', 'created_by', 'updated_by', 'employee'], order: { startDate: 'DESC' } })
+    const existLastestValues = await this.employeeInfoRepository.find({ where: { employee: empid, startDate: LessThanOrEqual(start_date), status: 1 }, relations: ['employeeType', 'drivingLicenceCategory', 'designation', 'gender', 'maritalStatus', 'addressCountry', 'refCompAddressCountry', 'drivingLicenceType', 'bankName', 'visaType', 'department', 'created_by', 'updated_by', 'employee'], order: { startDate: 'DESC' } })
     const documents = await this.employeeDocumentRepository.find({ empid: empid, active: 1 })
     const employeeData = existLastestValues[0]
     return { employeeData, documents };
@@ -944,7 +948,7 @@ export class EmployeeModuleService {
       .leftJoinAndSelect("linkedEmployee.maritalStatus", "maritalStatus")
       .leftJoinAndSelect("linkedEmployee.drivingLicenceType", "drivingLicenceType")
       .leftJoinAndSelect("linkedEmployee.visaType", "visaType")
-      // .leftJoinAndSelect("linkedEmployee.department", "department")
+      .leftJoinAndSelect("linkedEmployee.department", "department")
       .leftJoinAndSelect("linkedEmployee.created_by", "created_by")
       .leftJoinAndSelect("linkedEmployee.addressCountry", "addressCountry")
       .leftJoinAndSelect("linkedEmployee.refCompAddressCountry", "refCompAddressCountry")
