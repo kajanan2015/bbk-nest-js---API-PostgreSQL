@@ -656,7 +656,7 @@ export class EmployeeModuleService {
         .leftJoinAndSelect("employeeInfo.drivingLicenceType", "drivingLicenceType")
         .leftJoinAndSelect("employeeInfo.bankName", "bankName")
         .leftJoinAndSelect("employeeInfo.visaType", "visaType")
-        .leftJoinAndSelect("employeeInfo.department", "department")
+        // .leftJoinAndSelect("employeeInfo.department", "department")
         .leftJoinAndSelect("employeeInfo.created_by", "created_by")
         .leftJoinAndSelect("employeeInfo.updated_by", "updated_by")
         .leftJoinAndSelect("employeeInfo.employee", "employee")
