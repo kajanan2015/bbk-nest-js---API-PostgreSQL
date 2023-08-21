@@ -457,18 +457,31 @@ export class CompaniesController {
   }
 
 
+
   // deactivate compnay immediately
   @UseGuards(AuthGuard('jwt'))
   @Put('deactivatecustomerimmediate/:id')
-  async deactivatecustomerimmediate(@Param('id') id: number, @Body() data) {
-    return await this.service.deactivatecustomerupdateimmediate(id, data);
+  async deactivatecustomerimmediate(@Param('id') id: number, @Body() data,@Headers('userTime') userTime) {
+    let date;
+    if (userTime) {
+      date = new Date(userTime);
+    } else {
+      date = new Date();
+    }
+    return await this.service.deactivatecustomerupdateimmediate(id, data,date);
   }
 
   // schedule deactivate
   @UseGuards(AuthGuard('jwt'))
   @Put('deactivatecustomer/:id')
-  async deactivatecustomer(@Param('id') id: number, @Body() data) {
-    return await this.service.deactivatecustomerupdate(id, data);
+  async deactivatecustomer(@Param('id') id: number, @Body() data,@Headers('userTime') userTime) {
+    let date;
+    if (userTime) {
+      date = new Date(userTime);
+    } else {
+      date = new Date();
+    }
+    return await this.service.deactivatecustomerupdate(id, data,date);
   }
 
   // check company code exist or not

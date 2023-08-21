@@ -600,6 +600,7 @@ export class CompaniesService {
 
       passdata = {
         id: data[i].id,
+        company_info_id:data[i].linkedcompany[0].company_info_id,
         companyName: data[i].linkedcompany[0].companyName,
         companyEmail: data[i].linkedcompany[0].companyEmail,
         companyPhone: data[i].linkedcompany[0].companyPhone,
@@ -723,6 +724,7 @@ export class CompaniesService {
 
       passdata = {
         id: data[i].id,
+        company_info_id:data[i].linkedcompany[0].company_info_id,
         companyName: data[i].linkedcompany[0].companyName,
         companyEmail: data[i].linkedcompany[0].companyEmail,
         companyPhone: data[i].linkedcompany[0].companyPhone,
@@ -818,6 +820,7 @@ export class CompaniesService {
       }
       passdata = {
         id: data[i].id,
+        company_info_id:data[i].linkedcompany[0].company_info_id,
         companyName: data[i].linkedcompany[0].companyName,
         companyEmail: data[i].linkedcompany[0].companyEmail,
         companyPhone: data[i].linkedcompany[0].companyPhone,
@@ -1245,58 +1248,119 @@ export class CompaniesService {
     await this.companyinfoRepository.update({ company_info_id: id }, { company_status: () => status });
     return await this.companyRepository.findOne({ id });
   }
+// deactivate company main after scheduling
+  async deactivatecustomerupdate(id, data,date) {
+    console.log(id);
+    console.log(data, 9);
+    // Create the Date object (months are 0-indexed in JavaScript Date)
+    const start_date = new Date( data.scheduledatatime);
 
-  async deactivatecustomerupdate(id: number, data) {
-    await this.companyinfoRepository.update(
-      { company_info_id: id },
-      {
-        // scheduleddeactivation: data.scheduledatatime,
-        deactivationreason: data.reason,
-        deactivationmethod: this.deactivationmethodvalue,
-
-      }
-    );
-    return await this.companyRepository.findOne({ id });
-  }
-
-  async deactivatecustomerupdateimmediate(id: number, data) {
-    const currentDateTime = new Date();
-    await this.companyinfoRepository.update(
-      { company_info_id: id },
-      {
-        company_status: Companystatus.DEACTIVATE,
-        deactivationreason: data.reason,
-        deactivationmethod: Deactivationmethod.IMMEDIATE,
-      }
-    );
-    return await this.companyRepository.findOne({ id });
-  }
-
-  async scheduledeactivate() {
-    const currentDateTime = new Date();
-
-    console.log(currentDateTime.toISOString(), 888);
-    const scheduledeactivate = await this.companyRepository.find({
-      where: {
-        scheduleddeactivation: LessThanOrEqual(currentDateTime.toISOString()),
-      },
-    });
-    console.log(scheduledeactivate, 4343434);
-    if (!scheduledeactivate) {
-      throw new NotFoundException(` date '${currentDateTime}' not found`);
+    const companyinfoid = parseInt(data.companyInfoId);
+    const companyid = parseInt(id);
+    const entity = await this.companyinfoRepository.findOne({ company_info_id: companyinfoid }, { relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'] })
+    if (!entity) {
+      throw new NotFoundException('Entity not found');
     }
 
-    for (const item of scheduledeactivate) {
-      await this.companyinfoRepository.update(
-        item.id,
-        {
-          company_status: Companystatus.DEACTIVATE,
+    const jsonnewhistorydata = { ...entity, ...data };
+    const historydata = {
+      history_data_type: Historydatatype.COMPANY,
+      history_data: JSON.stringify(jsonnewhistorydata),
+      created_by: data.updatedBy,
+      created_at: data.updatedAt,
+      companyinfo: companyinfoid,
+      company: companyid,
+      start_date: start_date
+    }
+    const companyinfo = {
+      ...data,
+      updated_at: data.updatedAt,
+      updated_by: data.updatedBy
+    }
+
+
+    const existLastestValues = await this.companyinfoRepository.find({ where: { company: companyid, start_date: LessThanOrEqual(start_date) }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { start_date: 'DESC' } })
+    const existLastestValue = existLastestValues[0]
+
+    if (data.historyId) {
+      const previousentitydata = { ...existLastestValue }
+      const updatedpreviousdata = { ...existLastestValue };
+      updatedpreviousdata.updated_at = data.updatedAt,
+        updatedpreviousdata.updated_by = data.updatedBy,
+        updatedpreviousdata.end_date = start_date
+      delete existLastestValue.company_info_id;
+      delete existLastestValue.updated_at;
+      delete existLastestValue.end_date;
+      delete existLastestValue.updated_by;
+      const passvalue = {
+        ...existLastestValue, ...data, start_date: start_date
+      }
+      const companyExistHistory = await this.companyhistoryRepository.findOne({ id: data.historyId }, { relations: ['created_by', 'updated_by', 'companyinfo', 'company'] })
+      await this.historytransaction.updateExistScheduleTransaction(companyinfoid, previousentitydata, historydata, CompaniesEntityinfo, CompaniesHistorydata, companyExistHistory, existLastestValue, passvalue)
+    } else {
+      if (start_date.getTime() >= date.getTime()) {
+        // const passdatatogetschedule={type:'',companyInfoId:companyinfoid}
+        // const existschedule=await this.getscheduledcompanydatahistory(companyid,passdatatogetschedule);
+        // if(existschedule.length>0){
+        //   return  HttpStatus.CONFLICT;
+        // }
+        const previousentitydata = { ...existLastestValue }
+        const updatedpreviousdata = { ...existLastestValue };
+
+        updatedpreviousdata.updated_at = data.updatedAt,
+          updatedpreviousdata.updated_by = data.updatedBy,
+          updatedpreviousdata.end_date = start_date
+        delete existLastestValue.company_info_id;
+        delete existLastestValue.updated_at;
+        delete existLastestValue.end_date;
+        delete existLastestValue.updated_by;
+        const passvalue = {
+          ...existLastestValue, ...data, start_date: start_date
         }
-      );
-    }
 
-    return scheduledeactivate;
+        await this.historytransaction.updateEntityWithScheduleTransaction(passvalue, historydata, CompaniesEntityinfo, CompaniesHistorydata, previousentitydata, updatedpreviousdata)
+      } else {
+        await this.historytransaction.updateEntityWithTransaction(entity, companyinfo, historydata, CompaniesEntityinfo, CompaniesHistorydata);
+      }
+
+
+
+    
+    
+    
+    
+    
+    // await this.companyinfoRepository.update(
+    //   { company_info_id: id },
+    //   {
+    //     // scheduleddeactivation: data.scheduledatatime,
+    //     deactivationreason: data.reason,
+    //     deactivationmethod: this.deactivationmethodvalue,
+
+    //   }
+    // );
+    return await this.companyRepository.findOne({ id });
   }
+  }
+  async deactivatecustomerupdateimmediate(id, data,date) {
+    // id,startingDate,companyInfoId,status,
+    console.log(id, 123456)
+    console.log(data.companyInfoId, 33)
+    const currentDateTime = new Date();
+    const companyinfo = await this.companyinfoRepository.find({ where: { company: id }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { start_date: 'DESC' } })
+    for (const i of companyinfo) {
+  
+      i.company_status = Companystatus.DEACTIVATE;
+      i.deactivationmethod=Deactivationmethod.IMMEDIATE;
+      i.deactivationreason= data.reason;
+      await this.companyinfoRepository.save(i);
+    }
+ 
+    return await this.companyRepository.findOne({ id });
+  }
+  
+
+
   async getassignmodule(id) {
     const company = await this.companyRepository.findOne(id, { relations: ["module"] });
     const activeModules = company.module.filter((module) => module.status === 1);
@@ -1704,6 +1768,35 @@ export class CompaniesService {
 
   }
 
+
+// deactivate company main after scheduling
+  async scheduledeactivate() {
+    const currentDateTime = new Date();
+
+    console.log(currentDateTime.toISOString(), 888);
+    const scheduledeactivate = await this.companyRepository.find({
+      where: {
+        scheduleddeactivation: LessThanOrEqual(currentDateTime.toISOString()),
+      },
+    });
+    console.log(scheduledeactivate, 4343434);
+    if (!scheduledeactivate) {
+      throw new NotFoundException(` date '${currentDateTime}' not found`);
+    }
+
+    for (const item of scheduledeactivate) {
+      await this.companyinfoRepository.update(
+        item.id,
+        {
+          company_status: Companystatus.DEACTIVATE,
+        }
+      );
+    }
+
+    return scheduledeactivate;
+  }
+
+
   // update including history and schedule
   async updatenew(id, data) {
     console.log(id);
@@ -1799,7 +1892,6 @@ export class CompaniesService {
 
         await this.historytransaction.updateEntityWithScheduleTransaction(passvalue, historydata, CompaniesEntityinfo, CompaniesHistorydata, previousentitydata, updatedpreviousdata)
       } else {
-        console.log('master', 88)
         await this.historytransaction.updateEntityWithTransaction(entity, companyinfo, historydata, CompaniesEntityinfo, CompaniesHistorydata);
       }
 
