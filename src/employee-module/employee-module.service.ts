@@ -431,7 +431,7 @@ export class EmployeeModuleService {
       const { linkedEmployee, ...mainEmployeeData } = data[i];
       const linkedEmployeePayroll = payrollData?.[0]?.['linkedEmployeePayroll'];
       const companyData = await this.companyservice.read(mainEmployeeData?.company?.id);
-      const categories = await this.dlCategoryEmployeeRepository.find({ where: { empid: linkedEmployee[0]?.id, status:1 }, relations: ['category'] })
+      const categories = await this.dlCategoryEmployeeRepository.find({ where: { empid: linkedEmployee[0]?.id, status: 1 }, relations: ['category'] })
       passdata = {
         ...linkedEmployee[0],
         ...linkedEmployeePayroll?.[0],
@@ -683,16 +683,7 @@ export class EmployeeModuleService {
         await this.employeeInfoRepository.update({ id: +previousRecord?.['employeeInfoId']?.['id'] }, dataWithoutDoc);
       }
 
-      if (data.hasOwnProperty("deletedCategories")) {
-        for (const category of deletedCategories) {
-          this.dlCategoryEmployeeRepository.find({ where: { empid: +previousRecord?.['employeeInfoId'], category: category.category?.id, status: 1 } }).then(async (res) => {
-  
-            if (res) {
-              await this.dlCategoryEmployeeRepository.update({ id: +res?.[0]?.['id'] }, { status: false });
-            }
-          });
-        }
-      }
+      await this.dlCategoryEmployeeRepository.update({ empid:  previousRecord?.['employeeInfoId'], status: 1 }, { status: false });      
 
       if (data.hasOwnProperty("drivingLicenceCategory")) {
         const drivingLicenceCategories = drivingLicenceCategory;
@@ -743,17 +734,19 @@ export class EmployeeModuleService {
           const responseInfo = await this.employeeInfoRepository.create({ ...passvalue, startDate: start_date, employee: UpdateEmployeeModuleDto.employeeId });
           const resInfo = await this.employeeInfoRepository.save(responseInfo)
 
-          if (data.hasOwnProperty("deletedCategories")) {
-            for (const category of data.deletedCategories) {
-              this.dlCategoryEmployeeRepository.find({ where: { empid: resInfo?.['id'], category: category.category?.id, status: 1 } }).then(async (res) => {
-      
-                if (res) {
-                  await this.dlCategoryEmployeeRepository.update({ id: +res?.[0]?.['id'] }, { status: false });
-                }
-              });
-            }
-            delete data.deletedCategories
-          }
+          // if (data.hasOwnProperty("deletedCategories")) {
+          //   for (const category of data.deletedCategories) {
+          //     this.dlCategoryEmployeeRepository.find({ where: { empid: resInfo?.['id'], category: category.category?.id, status: 1 } }).then(async (res) => {
+
+          //       if (res) {
+          //         await this.dlCategoryEmployeeRepository.update({ id: +res?.[0]?.['id'] }, { status: false });
+          //       }
+          //     });
+          //   }
+          //   delete data.deletedCategories
+          // }
+
+          await this.dlCategoryEmployeeRepository.update({ empid:  resInfo?.['id'], status: 1 }, { status: false });
 
           const drivingLicenceCategories = data.drivingLicenceCategory;
           const updatedDrivingLicenceCategories = [];
@@ -814,26 +807,9 @@ export class EmployeeModuleService {
 
       } else {
         
-        if (data.hasOwnProperty("deletedCategories")) {
-          console.log(data.hasOwnProperty("deletedCategories"), 85858585);
-          for (const category of data.deletedCategories) {
-            this.dlCategoryEmployeeRepository.find({ where: { empid: UpdateEmployeeModuleDto.employeeInfoId, category: category.category?.id, status: 1 } }).then(async (res) => {
-    
-              if (res) {
-                await this.dlCategoryEmployeeRepository.update({ id: +res?.[0]?.['id'] }, { status: false });
-              }
-            });
-          }
-          delete data.deletedCategories
-        }
+        await this.dlCategoryEmployeeRepository.update({ empid: UpdateEmployeeModuleDto.employeeInfoId, status: 1 }, { status: false });           
 
         if (data.hasOwnProperty("drivingLicenceCategory")) {
-          // const drivingLicenceCategories = data.drivingLicenceCategory;
-          // let drivinglicensecategoryId = [];
-          // for (const categoryid of drivingLicenceCategories) {
-          //   drivinglicensecategoryId.push(categoryid.id)
-          // }
-          // const response = await this.drivingLicenceCategoryRepository.findByIds(drivinglicensecategoryId)
 
           const drivingLicenceCategories = data.drivingLicenceCategory;
           const updatedDrivingLicenceCategories = [];

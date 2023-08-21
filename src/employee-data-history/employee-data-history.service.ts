@@ -131,11 +131,11 @@ export class EmployeeDataHistoryService {
         } else if (key == 'created_by') {
           result[key] = obj1[key];
         } else if (key == 'drivingLicenceCategory') {
-          // const driverLicenceCategories1 = obj1[key]?.map(item => item.driverLicenceCategory).join(', ');
-          // const driverLicenceCategories2 = obj2[key]?.map(item => item.driverLicenceCategory).join(', ');
-          // if(driverLicenceCategories2?.toString() != driverLicenceCategories1?.toString()){
-          //   result[key] = `${driverLicenceCategories2 ?? ''} updated as ${driverLicenceCategories1 ?? ''}`;
-          // }          
+          const driverLicenceCategories1 = obj1[key]?.map(item => item?.category?.driverLicenceCategory).join(', ');
+          const driverLicenceCategories2 = obj2[key]?.map(item => item?.category?.driverLicenceCategory).join(', ');
+          if(driverLicenceCategories2?.toString() != driverLicenceCategories1?.toString()){
+            result[key] = `${driverLicenceCategories2 ?? ''} updated as ${driverLicenceCategories1 ?? ''}`;
+          }          
         } else if (key == 'empProvidedCopy' || key == 'visaDoc' || key == 'officialDoc' || key == 'refdoc' || key == 'drivingLicenceDoc' || key == 'tachoDoc' || key == 'cpcCardDoc' || key == 'crbCardDoc') {
           if (obj1?.[key]?.[0]?.['docPath'] != obj2?.[key]?.[0]?.['docPath']) {
             result[key] = obj1[key];
