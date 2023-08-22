@@ -163,7 +163,8 @@ export class CompanyWorkPatternService {
     for (const i of data.formattedData) {
       let parsedstartTime;
       let parsedendTime;
-      if (i.allignment == '0') {
+      console.log(i.allignment,88888)
+      if (i.allignment == 0) {
         workmode = AssignPatternInfoWorkMode.OFF
       } else {
         workmode = AssignPatternInfoWorkMode.ON
