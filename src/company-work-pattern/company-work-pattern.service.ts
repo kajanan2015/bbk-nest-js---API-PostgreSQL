@@ -75,6 +75,17 @@ export class CompanyWorkPatternService {
     }
   }
 
+
+  async findOneBycode(code) {
+    console.log(code,999)
+    const workpattern = await this.patternrepository.find({where:{workPatternCode:code,status:WorkPatternStatus.ACTIVE}});
+ 
+    if (!workpattern) {
+      throw new NotFoundException(` ID '${code}' not found`);
+    }
+    return workpattern;
+  }
+
   async findOne(id: number) {
     const workpattern = await this.patternrepository.findOne(id);
     let patternType;
