@@ -664,7 +664,13 @@ export class CompaniesService {
         { date },
       )
       .leftJoinAndSelect('company_info.mainCompany', 'mainCompany')
+      .leftJoinAndSelect('mainCompany.linkedcompany', 'linkedcompanysub')
       .leftJoinAndSelect('company_info.company', 'company')
+      .andWhere('linkedcompanysub.start_date <= :date', { date })
+      .andWhere(
+        '(linkedcompanysub.end_date > :date OR linkedcompanysub.end_date IS NULL)',
+        { date },
+      )
       .getMany();
   }
 
