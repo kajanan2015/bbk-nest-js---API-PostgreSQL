@@ -685,8 +685,10 @@ export class CompaniesService {
       statusvalue = 'trial'
     } else if (value == 1) {
       statusvalue = 'active'
-    } else {
+    } else if(value== 2) {
       statusvalue = 'deactivate'
+    }else{
+      statusvalue = ''
     }
 
     const query: SelectQueryBuilder<CompaniesEntity> = getConnection()
@@ -785,8 +787,10 @@ export class CompaniesService {
       statusvalue = 'trial'
     } else if (value == 1) {
       statusvalue = 'active'
-    } else {
+    } else if(value== 2) {
       statusvalue = 'deactivate'
+    }else{
+      statusvalue = ''
     }
     const query: SelectQueryBuilder<CompaniesEntity> = getConnection()
       .getRepository(CompaniesEntity)
