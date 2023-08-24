@@ -571,6 +571,7 @@ export class CompaniesService {
       .leftJoinAndSelect("company.documents", "documents")
       .leftJoinAndSelect("company.linkedcompany", "linkedcompany")
       .leftJoinAndSelect("linkedcompany.mainCompany", "mainCompany")
+      .leftJoinAndSelect("mainCompany.linkedcompany", "linkedcompanysub")
       .leftJoinAndSelect("linkedcompany.country", "country")
       .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
       .leftJoinAndSelect("linkedcompany.companyType", "companyType")
@@ -580,7 +581,13 @@ export class CompaniesService {
       .andWhere(
         "(linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date)",
         { date }
-      );
+      )
+      .andWhere("linkedcompanysub.start_date < :date", { date })
+      .andWhere(
+        "(linkedcompanysub.end_date IS NULL OR linkedcompanysub.end_date > :date)",
+        { date }
+      )
+      ;
 
     const data = await query.getMany();
     let passdata;
@@ -698,6 +705,7 @@ export class CompaniesService {
       .leftJoinAndSelect("company.documents", "documents")
       .leftJoinAndSelect("company.linkedcompany", "linkedcompany")
       .leftJoinAndSelect("linkedcompany.mainCompany", "mainCompany")
+      .leftJoinAndSelect("mainCompany.linkedcompany", "linkedcompanysub")
       .leftJoinAndSelect("linkedcompany.country", "country")
       .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
       .leftJoinAndSelect("linkedcompany.companyType", "companyType")
@@ -706,6 +714,11 @@ export class CompaniesService {
       .andWhere("linkedcompany.start_date < :date", { date })
       .andWhere(
         "(linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date)",
+        { date }
+      )
+      .andWhere("linkedcompanysub.start_date < :date", { date })
+      .andWhere(
+        "(linkedcompanysub.end_date IS NULL OR linkedcompanysub.end_date > :date)",
         { date }
       )
       .orderBy("linkedcompany.mainCompany", "ASC");
@@ -799,6 +812,7 @@ export class CompaniesService {
       .leftJoinAndSelect("company.documents", "documents")
       .leftJoinAndSelect("company.linkedcompany", "linkedcompany")
       .leftJoinAndSelect("linkedcompany.mainCompany", "mainCompany")
+      .leftJoinAndSelect("mainCompany.linkedcompany", "linkedcompanysub")
       .leftJoinAndSelect("linkedcompany.country", "country")
       .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
       .leftJoinAndSelect("linkedcompany.companyType", "companyType")
@@ -809,7 +823,14 @@ export class CompaniesService {
       .andWhere(
         "(linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date)",
         { date }
-      );;
+      )
+      .andWhere("linkedcompanysub.start_date < :date", { date })
+      .andWhere(
+        "(linkedcompanysub.end_date IS NULL OR linkedcompanysub.end_date > :date)",
+        { date }
+      )
+      ;
+
     const data = await query.getMany();
     let passdata;
     const newdata = [];
@@ -992,6 +1013,7 @@ export class CompaniesService {
       .leftJoinAndSelect("company.documents", "documents")
       .leftJoinAndSelect("company.linkedcompany", "linkedcompany")
       .leftJoinAndSelect("linkedcompany.mainCompany", "mainCompany")
+       .leftJoinAndSelect("mainCompany.linkedcompany", "linkedcompanysub")
       .leftJoinAndSelect("linkedcompany.country", "country")
       .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
       .leftJoinAndSelect("linkedcompany.companyType", "companyType")
@@ -1001,7 +1023,13 @@ export class CompaniesService {
       .andWhere(
         "(linkedcompany.end_date IS NULL OR linkedcompany.end_date > :date)",
         { date }
-      );
+      )
+      .andWhere("linkedcompanysub.start_date < :date", { date })
+      .andWhere(
+        "(linkedcompanysub.end_date IS NULL OR linkedcompanysub.end_date > :date)",
+        { date }
+      )
+      ;
     const data = await query.getOne();
     // const passdata={
     //   ...data.linkedcompany
