@@ -19,7 +19,6 @@ export class CompanyWorkPatternController {
   
   }
 
-
   @Get('findallpattern')
   async findAll() {
     return await this.companyWorkPatternService.findAll();
@@ -50,6 +49,11 @@ export class CompanyWorkPatternController {
     return await this.companyWorkPatternService.remove(+id);
   }
 
+  @Post('find-workPatternCode-workType')
+  async findOneBypatternCode(@Body() data) {
+    console.log(data, 111)
+    return await this.companyWorkPatternService.findOneBypatternCode(data);
+  }
 
 // assign work pattern to the employee
 @Post('assign-work-pattern')
