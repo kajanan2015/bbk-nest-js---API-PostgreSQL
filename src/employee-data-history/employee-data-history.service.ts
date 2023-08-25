@@ -114,7 +114,6 @@ export class EmployeeDataHistoryService {
 
     // ** history data group by
     const historyData = groupBy(results, 'type');
-
     // ** format date
     function formatDate(date) {
       const year = date.getFullYear()
@@ -136,6 +135,13 @@ export class EmployeeDataHistoryService {
           if(driverLicenceCategories2?.toString() != driverLicenceCategories1?.toString()){
             result[key] = `${driverLicenceCategories2 ?? ''} updated as ${driverLicenceCategories1 ?? ''}`;
           }          
+        }
+        else if (key == 'department') {
+          const departments1 = obj1[key]?.map(item => item?.departmentName).join(', ');
+          const departments2 = obj2[key]?.map(item => item?.departmentName).join(', ');
+          if (departments2?.toString() != departments1?.toString()) {
+            result[key] = `${departments2 ?? ''} updated as ${departments1 ?? ''}`;
+          }
         } else if (key == 'empProvidedCopy' || key == 'visaDoc' || key == 'officialDoc' || key == 'refdoc' || key == 'drivingLicenceDoc' || key == 'tachoDoc' || key == 'cpcCardDoc' || key == 'crbCardDoc') {
           if (obj1?.[key]?.[0]?.['docPath'] != obj2?.[key]?.[0]?.['docPath']) {
             result[key] = obj1[key];
