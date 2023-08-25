@@ -75,6 +75,10 @@ export class CompanyWorkPatternService {
     }
   }
 
+  async findOneBypatternCode(data) {
+    const workpattrnCode = await this.patternrepository.findOne({ where: { workPatternCode: data.workPatternCode, workType: data.workType } })
+    return workpattrnCode;
+  }
 
   async findOneBycode(code) {
     console.log(code,999)
