@@ -34,6 +34,12 @@ export class CompanyWorkPatternController {
     return await this.companyWorkPatternService.findOne(+id);
   }
 
+  @Get('findOneBycode/:code')
+  async findOneBycode(@Param('code') code){
+  console.log(code,77878787)
+    return await this.companyWorkPatternService.findOneBycode(code)
+  }
+
   @Patch(':id')
  async update(@Param('id') id: string, @Body() updateCompanyWorkPatternDto: UpdateCompanyWorkPatternDto) {
     return await this.companyWorkPatternService.update(+id, updateCompanyWorkPatternDto);

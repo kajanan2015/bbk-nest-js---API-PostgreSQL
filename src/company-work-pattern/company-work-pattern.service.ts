@@ -75,6 +75,17 @@ export class CompanyWorkPatternService {
     }
   }
 
+
+  async findOneBycode(code) {
+    console.log(code,999)
+    const workpattern = await this.patternrepository.find({where:{workPatternCode:code,status:WorkPatternStatus.ACTIVE}});
+ 
+    if (!workpattern) {
+      throw new NotFoundException(` ID '${code}' not found`);
+    }
+    return workpattern;
+  }
+
   async findOne(id: number) {
     const workpattern = await this.patternrepository.findOne(id);
     let patternType;
@@ -163,7 +174,8 @@ export class CompanyWorkPatternService {
     for (const i of data.formattedData) {
       let parsedstartTime;
       let parsedendTime;
-      if (i.allignment == '0') {
+      console.log(i.allignment,88888)
+      if (i.allignment == 0) {
         workmode = AssignPatternInfoWorkMode.OFF
       } else {
         workmode = AssignPatternInfoWorkMode.ON
