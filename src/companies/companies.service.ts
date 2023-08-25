@@ -607,7 +607,7 @@ export class CompaniesService {
 
       passdata = {
         id: data[i].id,
-        company_info_id:data[i].linkedcompany[0].company_info_id,
+        company_info_id: data[i].linkedcompany[0].company_info_id,
         companyName: data[i].linkedcompany[0].companyName,
         companyEmail: data[i].linkedcompany[0].companyEmail,
         companyPhone: data[i].linkedcompany[0].companyPhone,
@@ -698,9 +698,9 @@ export class CompaniesService {
       statusvalue = 'trial'
     } else if (value == 1) {
       statusvalue = 'active'
-    } else if(value== 2) {
+    } else if (value == 2) {
       statusvalue = 'deactivate'
-    }else{
+    } else {
       statusvalue = ''
     }
 
@@ -745,7 +745,7 @@ export class CompaniesService {
 
       passdata = {
         id: data[i].id,
-        company_info_id:data[i].linkedcompany[0].company_info_id,
+        company_info_id: data[i].linkedcompany[0].company_info_id,
         companyName: data[i].linkedcompany[0].companyName,
         companyEmail: data[i].linkedcompany[0].companyEmail,
         companyPhone: data[i].linkedcompany[0].companyPhone,
@@ -806,9 +806,9 @@ export class CompaniesService {
       statusvalue = 'trial'
     } else if (value == 1) {
       statusvalue = 'active'
-    } else if(value== 2) {
+    } else if (value == 2) {
       statusvalue = 'deactivate'
-    }else{
+    } else {
       statusvalue = ''
     }
     const query: SelectQueryBuilder<CompaniesEntity> = getConnection()
@@ -851,7 +851,7 @@ export class CompaniesService {
       }
       passdata = {
         id: data[i].id,
-        company_info_id:data[i].linkedcompany[0].company_info_id,
+        company_info_id: data[i].linkedcompany[0].company_info_id,
         companyName: data[i].linkedcompany[0].companyName,
         companyEmail: data[i].linkedcompany[0].companyEmail,
         companyPhone: data[i].linkedcompany[0].companyPhone,
@@ -1019,7 +1019,7 @@ export class CompaniesService {
       .leftJoinAndSelect("company.documents", "documents")
       .leftJoinAndSelect("company.linkedcompany", "linkedcompany")
       .leftJoinAndSelect("linkedcompany.mainCompany", "mainCompany")
-       .leftJoinAndSelect("mainCompany.linkedcompany", "linkedcompanysub")
+      .leftJoinAndSelect("mainCompany.linkedcompany", "linkedcompanysub")
       .leftJoinAndSelect("linkedcompany.country", "country")
       .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
       .leftJoinAndSelect("linkedcompany.companyType", "companyType")
@@ -1286,12 +1286,12 @@ export class CompaniesService {
     await this.companyinfoRepository.update({ company_info_id: id }, { company_status: () => status });
     return await this.companyRepository.findOne({ id });
   }
-// deactivate company main after scheduling
-  async deactivatecustomerupdate(id, data,date) {
+  // deactivate company main after scheduling
+  async deactivatecustomerupdate(id, data, date) {
     console.log(id);
     console.log(data, 9);
     // Create the Date object (months are 0-indexed in JavaScript Date)
-    const start_date = new Date( data.scheduledatatime);
+    const start_date = new Date(data.scheduledatatime);
 
     const companyinfoid = parseInt(data.companyInfoId);
     const companyid = parseInt(id);
@@ -1363,40 +1363,40 @@ export class CompaniesService {
 
 
 
-    
-    
-    
-    
-    
-    // await this.companyinfoRepository.update(
-    //   { company_info_id: id },
-    //   {
-    //     // scheduleddeactivation: data.scheduledatatime,
-    //     deactivationreason: data.reason,
-    //     deactivationmethod: this.deactivationmethodvalue,
 
-    //   }
-    // );
-    return await this.companyRepository.findOne({ id });
+
+
+
+
+      // await this.companyinfoRepository.update(
+      //   { company_info_id: id },
+      //   {
+      //     // scheduleddeactivation: data.scheduledatatime,
+      //     deactivationreason: data.reason,
+      //     deactivationmethod: this.deactivationmethodvalue,
+
+      //   }
+      // );
+      return await this.companyRepository.findOne({ id });
+    }
   }
-  }
-  async deactivatecustomerupdateimmediate(id, data,date) {
+  async deactivatecustomerupdateimmediate(id, data, date) {
     // id,startingDate,companyInfoId,status,
     console.log(id, 123456)
     console.log(data.companyInfoId, 33)
     const currentDateTime = new Date();
     const companyinfo = await this.companyinfoRepository.find({ where: { company: id }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { start_date: 'DESC' } })
     for (const i of companyinfo) {
-  
+
       i.company_status = Companystatus.DEACTIVATE;
-      i.deactivationmethod=Deactivationmethod.IMMEDIATE;
-      i.deactivationreason= data.reason;
+      i.deactivationmethod = Deactivationmethod.IMMEDIATE;
+      i.deactivationreason = data.reason;
       await this.companyinfoRepository.save(i);
     }
- 
+
     return await this.companyRepository.findOne({ id });
   }
-  
+
 
 
   async getassignmodule(id) {
@@ -1728,7 +1728,39 @@ export class CompaniesService {
       return 500
     }
   }
+  /**
+   *
+   *
+   * @param {*} id
+   * @param {*} currentDateTime
+   * @return {*} 
+   * @memberof CompaniesService
+   */
+  async makeparentcompany(id, currentDateTime) {
 
+    const passdata = {
+      companyIdentifier: Companyidentifier.MAIN,
+      mainCompany: id,
+    }
+
+    const companyinfo = await this.companyinfoRepository.find({ where: { company: id }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { start_date: 'DESC' } })
+    for (const i of companyinfo) {
+      i.companyIdentifier = Companyidentifier.MAIN;
+      i.mainCompany = id;
+      await this.companyinfoRepository.save(i);
+    }
+
+    return await this.companyRepository.findOne({ id });
+
+  }
+  
+  /**
+   *
+   *
+   * @param {*} id
+   * @param {*} data
+   * @memberof CompaniesService
+   */
   async changeparentadmin(id, data) {
 
     // const passdata = {
@@ -1807,7 +1839,7 @@ export class CompaniesService {
   }
 
 
-// deactivate company main after scheduling
+  // deactivate company main after scheduling
   async scheduledeactivate() {
     const currentDateTime = new Date();
 

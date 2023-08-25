@@ -515,6 +515,21 @@ export class CompaniesController {
   async paiddataupdate(@Param('token') token) {
     return await this.service.paiddataupdate(token);
   }
+
+  // make child customer as parent
+  @UseGuards(AuthGuard('jwt'))
+  @Post('makeasparent/:id')
+  async makeparent(@Param('id') id: number,@Headers('userTime') userTime) {
+    console.log('hi',8989)
+    let date;
+    if (userTime) {
+      date = new Date(userTime);
+    } else {
+      date = new Date();
+    }
+    return await this.service.makeparentcompany(id, date);
+  }
+
   // change parent
   @UseGuards(AuthGuard('jwt'))
   @Post('changeparent:/id')
