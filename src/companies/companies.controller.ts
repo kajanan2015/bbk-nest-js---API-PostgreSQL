@@ -25,13 +25,15 @@ export class CompaniesController {
     private service: CompaniesService,
     private readonly imageUploadService: ImageUploadService) { }
 
-  // decativate schedule-this call from lamda function-no need auth
-  @Post("scheduledeactivate")
-  async scheduledeactivatecustomer() {
+  //  schedule-this call from lamda function-no need auth
+  @Post("schedule")
+  async schedule() {
     const currentDateTime = new Date();
+    await this.service.packagetrialend(currentDateTime);
+      return 200;
 
-    console.log(currentDateTime.toISOString(), 343434);
-    return await this.service.scheduledeactivate()
+    // console.log(currentDateTime.toISOString(), 343434);
+    // return await this.service.scheduledeactivate()
   }
 
 
@@ -461,27 +463,27 @@ export class CompaniesController {
   // deactivate compnay immediately
   @UseGuards(AuthGuard('jwt'))
   @Put('deactivatecustomerimmediate/:id')
-  async deactivatecustomerimmediate(@Param('id') id: number, @Body() data,@Headers('userTime') userTime) {
+  async deactivatecustomerimmediate(@Param('id') id: number, @Body() data, @Headers('userTime') userTime) {
     let date;
     if (userTime) {
       date = new Date(userTime);
     } else {
       date = new Date();
     }
-    return await this.service.deactivatecustomerupdateimmediate(id, data,date);
+    return await this.service.deactivatecustomerupdateimmediate(id, data, date);
   }
 
   // schedule deactivate
   @UseGuards(AuthGuard('jwt'))
   @Put('deactivatecustomer/:id')
-  async deactivatecustomer(@Param('id') id: number, @Body() data,@Headers('userTime') userTime) {
+  async deactivatecustomer(@Param('id') id: number, @Body() data, @Headers('userTime') userTime) {
     let date;
     if (userTime) {
       date = new Date(userTime);
     } else {
       date = new Date();
     }
-    return await this.service.deactivatecustomerupdate(id, data,date);
+    return await this.service.deactivatecustomerupdate(id, data, date);
   }
 
   // check company code exist or not
@@ -516,11 +518,13 @@ export class CompaniesController {
     return await this.service.paiddataupdate(token);
   }
 
+
+
   // make child customer as parent
   @UseGuards(AuthGuard('jwt'))
   @Post('makeasparent/:id')
-  async makeparent(@Param('id') id: number,@Headers('userTime') userTime) {
-    console.log('hi',8989)
+  async makeparent(@Param('id') id: number, @Headers('userTime') userTime) {
+    console.log('hi', 8989)
     let date;
     if (userTime) {
       date = new Date(userTime);

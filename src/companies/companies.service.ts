@@ -1753,7 +1753,7 @@ export class CompaniesService {
     return await this.companyRepository.findOne({ id });
 
   }
-  
+
   /**
    *
    *
@@ -2042,5 +2042,36 @@ export class CompaniesService {
     const existLastestValues = await this.companyinfoRepository.find({ where: { company: companyid, start_date: LessThanOrEqual(start_date) }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { start_date: 'DESC' } })
     const existLastestValue = existLastestValues[0]
     return existLastestValue;
+  }
+
+  async packagetrialend(date) {
+    const response = await this.companypackagerowrepository.find({
+      where: {// Assuming 'id' is the ID of the company you want to filter by
+        enddate: MoreThanOrEqual(date),
+        status: AssignPackageStatus.ACTIVE
+      },
+      relations: ["module", "packages", "moduledetails","company"],
+      order: {
+        enddate: 'ASC', // Order by enddate in ascending order
+      },
+    });
+    for (const row of response) {
+     // id,startingDate,companyInfoId,status,
+   
+     const currentDateTime = new Date();
+     const companyinfo = await this.companyinfoRepository.find({ where: { company: row.company.id }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { start_date: 'DESC' } })
+     for (const i of companyinfo) {
+ 
+       i.company_status = Companystatus.DEACTIVATE;
+       i.deactivationmethod = Deactivationmethod.IMMEDIATE;
+       i.deactivationreason = "validity period ended";
+       await this.companyinfoRepository.save(i);
+     }
+    }
+    if (response) {
+      return 200
+    } else {
+      return "Error Occured"
+    }
   }
 }
