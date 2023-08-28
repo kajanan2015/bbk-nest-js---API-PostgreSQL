@@ -117,6 +117,9 @@ export class EmployeeInfo {
     @Column("varchar", { name: 'last_name', nullable: true, default: () => null })
     lastName: string | null;
 
+    @Column("varchar", { name: 'nick_name', nullable: true, default: () => null })
+    nickName: string | null;
+
     @Column({ name: 'dob', nullable: true, default: () => null })
     dob: Date | null;
 
