@@ -34,7 +34,7 @@ import { country } from 'src/companies/country/country.entity';
 import { companytype } from 'src/companies/company Type/companytype.entity';
 import { CompaniesEntityinfo } from 'src/companies/companies.entity';
 import { CompaniesHistorydata } from 'src/companies/companies.entity';
-import { HistoryTransactionservicedb } from 'src/Transaction-query/transaction.service';
+import { Transactionservicedb } from 'src/Transaction-query/transaction.service';
 import { Companypackageassignhistory } from 'src/companypackagerow/companypackagerow.entity';
 import { State } from 'src/companies/country/states/states.entity';
 import { City } from 'src/companies/country/cities/city.entity';
@@ -43,6 +43,6 @@ import { Department } from 'src/departments/department.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Companypackagerow, CompaniesEntityinfo, CompaniesHistorydata, CustomizeTable, User, CompaniesEntity, PermissionRoleEntity, PagePermissionEntity, CompanyDocument, Createmodule, Createpackage, Moduledetailsofpackage, SystemCode, Paymenttype, EmployeeDataHistory, Employee, EmployeeInfo, country, companytype, Companypackageassignhistory, State, City, PaymentLinkData, Department]), EmployeeDataHistoryModule, EmployeeModuleModule],
   controllers: [CustomizeTableController],
-  providers: [CustomizeTableService, UserService, CompaniesService, PermissionRoleService, PagePermissionService, CompanyDocumentService, SystemCodeService, ImageUploadService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService, CompanypackagerowService, EmployeeDataHistoryService,HistoryTransactionservicedb]
+  providers: [CustomizeTableService, UserService, CompaniesService, PermissionRoleService, PagePermissionService, CompanyDocumentService, SystemCodeService, ImageUploadService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService, CompanypackagerowService, EmployeeDataHistoryService,Transactionservicedb]
 })
 export class CustomizeTableModule { }

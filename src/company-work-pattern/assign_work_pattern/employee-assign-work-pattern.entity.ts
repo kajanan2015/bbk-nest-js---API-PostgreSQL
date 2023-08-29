@@ -62,6 +62,9 @@ export class EmployeeAssignWorkPatternInfo{
   @JoinColumn({ name: 'created_by' })
   created_by: User;
 
+  @Column("int",{name:"pattern_round",nullable:true,default:null})
+  pattern_round:number;
+
   @Column("time",{name:"start_time",nullable:true,default:()=>null})
   start_time:Date;
 
@@ -89,6 +92,49 @@ export class EmployeeAssignWorkPatternInfo{
   @Column("enum", { name: "work_mode", enum: AssignPatternInfoWorkMode, default: AssignPatternInfoWorkMode.OFF, comment: "work day/off day" })
   workmode: AssignPatternInfoWorkMode;
 }
+
+
+
+@Entity('master_employee_assign_work_pattern_info')
+export class MasterEmployeeAssignWorkPatternInfo{
+  @PrimaryGeneratedColumn()
+  assign_pattern_info_id:Number;
+
+  @ManyToOne(() => User, user => user.assignworkpatterninfocreatedby)
+  @JoinColumn({ name: 'created_by' })
+  created_by: User;
+
+  @Column("int",{name:"pattern_round",nullable:true,default:null})
+  pattern_round:number;
+
+  @Column("time",{name:"start_time",nullable:true,default:()=>null})
+  start_time:Date;
+
+  @Column("time",{name:"end_time",nullable:true,default:()=>null})
+  end_time:Date;
+  
+  @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
+  created_at: Date;
+
+
+  @Column("date", { name: "assign_at", nullable:true, default: () => null })
+  assign_at: Date;
+
+  @Column("timestamp", { name: "updated_at", nullable: true, default: () => null })
+  updated_at: Date;
+
+  @ManyToOne(() => User, user => user.assignworkpatterninfoupdatedby)
+  @JoinColumn({ name: 'updated_by' })
+  updated_by: User;
+
+  @ManyToOne(() => EmployeeAssignWorkPattern, pattern => pattern.assignworkpatterninfo)
+  @JoinColumn({ name: 'assign_work_pattern_main_id' })
+  assignpatternId: EmployeeAssignWorkPattern;
+
+  @Column("enum", { name: "work_mode", enum: AssignPatternInfoWorkMode, default: AssignPatternInfoWorkMode.OFF, comment: "work day/off day" })
+  workmode: AssignPatternInfoWorkMode;
+}
+
 
 
 export enum AssignPatternHistory {

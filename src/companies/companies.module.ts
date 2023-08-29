@@ -37,7 +37,7 @@ import { EmployeeDataHistoryModule } from 'src/employee-data-history/employee-da
 import { EmployeeDataHistoryService } from 'src/employee-data-history/employee-data-history.service';
 import { VehicleTypeEntity } from 'src/vehicle-type/vehicle-type.entity';
 import { Employee, EmployeeInfo } from 'src/employee-module/employee-module.entity';
-import { HistoryTransactionservicedb } from 'src/Transaction-query/transaction.service';
+import { Transactionservicedb } from 'src/Transaction-query/transaction.service';
 import { Companypackageassignhistory } from 'src/companypackagerow/companypackagerow.entity';
 import { State } from './country/states/states.entity';
 import { City } from './country/cities/city.entity';
@@ -46,6 +46,6 @@ import { Department } from 'src/departments/department.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([CompaniesEntity, CompaniesEntityinfo, CompaniesHistorydata, PagePermissionEntity, SystemCode, CompanyDocument, User, country, companytype, Employee, EmployeeInfo, Createmodule, Createpackage, Moduledetailsofpackage, Paymenttype, Companypackagerow, CompanyWorkPattern, EmployeeDataHistory, VehicleTypeEntity,Companypackageassignhistory, State, City,PaymentLinkData,Department]), PagePermissionModule, SystemCodeModule, UserModule, MailModule, CompanyDocumentModule, CreatemoduleModule],
   controllers: [CompaniesController],
-  providers: [CompanypackagerowService, CompaniesService, ImageUploadService, PagePermissionService, SystemCodeService, UserService, MailService, CompanyDocumentService, CreatemoduleService, EmployeeDataHistoryService, HistoryTransactionservicedb],
+  providers: [CompanypackagerowService, CompaniesService, ImageUploadService, PagePermissionService, SystemCodeService, UserService, MailService, CompanyDocumentService, CreatemoduleService, EmployeeDataHistoryService, Transactionservicedb],
 })
 export class CompaniesModule { }

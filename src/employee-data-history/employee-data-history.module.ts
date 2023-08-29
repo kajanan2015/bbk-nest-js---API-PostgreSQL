@@ -37,7 +37,7 @@ import { companytype } from 'src/companies/company Type/companytype.entity';
 import { CompaniesEntityinfo } from 'src/companies/companies.entity';
 import { CompaniesHistorydata } from 'src/companies/companies.entity';
 import { Employee, EmployeeInfo, EmployeePayrollInfo } from 'src/employee-module/employee-module.entity';
-import { HistoryTransactionservicedb } from 'src/Transaction-query/transaction.service';
+import { Transactionservicedb } from 'src/Transaction-query/transaction.service';
 import { VisaType } from 'src/employee-module/visa_type/visaType.entity';
 import { Companypackageassignhistory } from 'src/companypackagerow/companypackagerow.entity';
 import { State } from 'src/companies/country/states/states.entity';
@@ -49,6 +49,6 @@ import { EmployeeDepartments } from 'src/employee-module/employee_departments/em
 @Module({
   imports: [TypeOrmModule.forFeature([EmployeeDataHistory, DrivingLicenceCategoryEmployee, CompaniesHistorydata, CompaniesEntityinfo, VisaType, EmployeePayrollInfo, Bank, DrivingLicenceType, PaymentFrequency, Gender, MaritalStatus, EmpDesignation, Companypackagerow, SystemCode, Moduledetailsofpackage, Employee, EmployeeInfo, EmployeeDocument, Createmodule, Createpackage, DrivingLicenceCategory, CompaniesEntity, User, PermissionRoleEntity, PagePermissionEntity, Bank, EmployeeType, CompanyDocument, CompanyWorkPattern, country, companytype, Companypackageassignhistory, State, City, PaymentLinkData, Department, EmployeeDepartments])],
   controllers: [EmployeeDataHistoryController],
-  providers: [EmployeeDataHistoryService, CompanypackagerowService, EmployeeModuleService, EmployeeDocumentService, UserService, CompaniesService, ImageUploadService, EmployeeDocumentService, SystemCodeService, CompanyDocumentService, HistoryTransactionservicedb]
+  providers: [EmployeeDataHistoryService, CompanypackagerowService, EmployeeModuleService, EmployeeDocumentService, UserService, CompaniesService, ImageUploadService, EmployeeDocumentService, SystemCodeService, CompanyDocumentService, Transactionservicedb]
 })
 export class EmployeeDataHistoryModule { }

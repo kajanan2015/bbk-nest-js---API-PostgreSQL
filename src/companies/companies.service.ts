@@ -49,7 +49,7 @@ import { Deactivationmethod } from "./companies.entity";
 import { Companystatus } from "./companies.entity";
 import { Companyidentifier } from "./companies.entity";
 import { Historydatatype } from "./companies.entity";
-import { HistoryTransactionservicedb } from "src/Transaction-query/transaction.service";
+import { Transactionservicedb } from "src/Transaction-query/transaction.service";
 import { STATUS_CODES } from "http";
 import { AssignPackageType } from "src/companypackagerow/companypackagerow.entity";
 import { Companypackageassignhistory } from "src/companypackagerow/companypackagerow.entity";
@@ -76,7 +76,7 @@ export class CompaniesService {
     @InjectRepository(CompanyDocument)
     private companyDocumentRepository: Repository<CompanyDocument>,
     private readonly systemcodeService: SystemCodeService,
-    private readonly historytransaction: HistoryTransactionservicedb,
+    private readonly historytransaction: Transactionservicedb,
     private readonly userservice: UserService,
     private readonly companydocumentservice: CompanyDocumentService,
     private readonly mailservice: MailService,

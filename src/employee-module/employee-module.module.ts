@@ -52,7 +52,7 @@ import { CompaniesEntityinfo } from 'src/companies/companies.entity';
 import { CompaniesHistorydata } from 'src/companies/companies.entity';
 import { Employee, EmployeeInfo, EmployeePayrollInfo } from './employee-module.entity';
 
-import { HistoryTransactionservicedb } from 'src/Transaction-query/transaction.service';
+import { Transactionservicedb } from 'src/Transaction-query/transaction.service';
 import { VisaType } from './visa_type/visaType.entity';
 import { Companypackageassignhistory } from 'src/companypackagerow/companypackagerow.entity';
 import { State } from 'src/companies/country/states/states.entity';
@@ -66,6 +66,6 @@ import { EmployeeDepartments } from './employee_departments/employee_departments
 @Module({
   imports: [TypeOrmModule.forFeature([Companypackagerow, DrivingLicenceCategoryEmployee, CompaniesEntityinfo, CompaniesHistorydata, EmployeeInfo, EmployeePayrollInfo, Employee, EmployeeType, EmpDesignation, EmployeeInfo, EmpDesignation, CompaniesEntity, Gender, MaritalStatus, VisaType, EmployeeDocument, PagePermissionEntity, CompanyDocument, SystemCode, User, PermissionRoleEntity, DrivingLicenceType, Bank, PaymentFrequency, country, Createmodule, Createpackage, Paymenttype, Moduledetailsofpackage, EmployeeDataHistory, DrivingLicenceCategory, companytype, Companypackageassignhistory, State, City, PaymentLinkData, Department, EmployeeDepartments]), CompaniesModule, CreatemoduleModule, MailModule, DrivingLicenceCategory, Department, EmployeeDepartments],
   controllers: [EmployeeModuleController, ImageUploadController, DepartmentsController],
-  providers: [CompanypackagerowService, EmployeeModuleService, ImageUploadService, EmployeeDocumentService, CompaniesService, SystemCodeService, UserService, CompanyDocumentService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService, MailService, EmployeeDataHistoryService, DrivingLicenceCategory, HistoryTransactionservicedb, DepartmentsService]
+  providers: [CompanypackagerowService, EmployeeModuleService, ImageUploadService, EmployeeDocumentService, CompaniesService, SystemCodeService, UserService, CompanyDocumentService, CreatemoduleService, CreatepackageService, ModuledetailsofpackageService, MailService, EmployeeDataHistoryService, DrivingLicenceCategory, Transactionservicedb, DepartmentsService]
 })
 export class EmployeeModuleModule { }
