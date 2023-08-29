@@ -141,7 +141,7 @@ export class Transactionservicedb {
 @Transaction()
 async transactionforinsertworkpattern(assigninfotable, mastertable,
   data,masterdata,@TransactionManager() manager?: any,
-): Promise<void> {
+) {
   try {
 
     const createresponse = await manager.create(assigninfotable, data); // Using merge directly on manager
@@ -149,10 +149,12 @@ async transactionforinsertworkpattern(assigninfotable, mastertable,
 
     const createresponsemaster = await manager.create(mastertable, masterdata); // Using merge directly on manager
     await manager.save(mastertable, createresponsemaster);
-    
+   
     // You can add more business logic or other updates here
 
     // If everything is successful, the transaction will be committed automatically
+
+    return 200;
   } catch (err) {
     // If any error occurs, the transaction will be rolled back automatically
     throw err; // Rethrow the error to be handled at the higher level

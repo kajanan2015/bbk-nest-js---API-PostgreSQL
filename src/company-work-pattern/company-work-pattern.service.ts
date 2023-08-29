@@ -306,11 +306,16 @@ export class CompanyWorkPatternService {
 
       dataofassigninfo.push(assigninfo);
     }
-    await this.transactionService.transactionforinsertworkpattern(EmployeeAssignWorkPatternInfo,MasterEmployeeAssignWorkPatternInfo,dataofassigninfo,dataofassigninfo[0])
+    const response11=await this.transactionService.transactionforinsertworkpattern(EmployeeAssignWorkPatternInfo,MasterEmployeeAssignWorkPatternInfo,dataofassigninfo,dataofassigninfo[0])
+   if(response11==200){
+    return 200;
+   }else{
+    return 500
+   }
     // let inserttintomaster = await this.masteremployeeassigninforepo.create(dataofassigninfo[0])
     // await this.masteremployeeassigninforepo.save(inserttintomaster)
     // let insertassignemployeeinfo = await this.employeeassigninforepo.create(dataofassigninfo)
     // await this.employeeassigninforepo.save(insertassignemployeeinfo)
-    return 200
+  
   }
 }
