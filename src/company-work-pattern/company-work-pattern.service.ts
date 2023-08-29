@@ -171,7 +171,7 @@ export class CompanyWorkPatternService {
     let dateObject;
     // find pattern data
     const patterndata = await this.patternrepository.findOne({ where: { workPatternCode: data.workPatternName, workType: data.workType } })
-    console.log(patterndata, 89)
+  
     newdata = {
       assign_at: data.userTime,
       status: AssignWorkPatternSatatus.ACTIVE,
@@ -192,8 +192,7 @@ export class CompanyWorkPatternService {
         const startmaindate = new Date(parts[2], parts[1] - 1, parts[0]);
     // end date after 2 years
     const lastDateAfterTwoYears = endOfDay(addYears(startmaindate, 2));
-    console.log(lastDateAfterTwoYears,909091)
-    console.log(data.formattedData[0],89898)
+   
     // number of day in two years period
     const numberOfDaysAfterTwoYears = differenceInDays(lastDateAfterTwoYears, startmaindate)
     // one pattern data
@@ -232,12 +231,9 @@ export class CompanyWorkPatternService {
     // }
 
     const patternDays = data.formattedData.length;
-    console.log(numberOfDaysAfterTwoYears,189898)
     const repetitions = Math.floor(numberOfDaysAfterTwoYears / patternDays);
     const remainingDays = numberOfDaysAfterTwoYears % patternDays;
-    console.log(patternDays,89898)
-    console.log(repetitions,89898)
-     console.log(repetitions,89898)
+    
     // Generate records for the pattern repetitions
     for (let r = 0; r < repetitions; r++) {
   let value=0;
@@ -246,7 +242,7 @@ export class CompanyWorkPatternService {
       date.setDate(startmaindate.getDate() + r*patternDays+value);
       // recordsToInsert.push({ date, dayNumber: day + 1 });
       dateObject = parse(date, 'dd-MM-yyyy', new Date());
-      console.log(date,89898)
+  
       // console.log(dateObject,898983)
         let parsedstartTime;
         let parsedendTime;
