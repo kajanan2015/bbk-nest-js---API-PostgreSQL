@@ -470,7 +470,7 @@ export class CompaniesController {
     } else {
       date = new Date();
     }
-    return await this.service.deactivatecustomerupdateimmediate(id, data, date);
+    return await this.service.deactivatecustomerupdateimmediate(id, data, data.currentDate);
   }
 
   // schedule deactivate
@@ -479,8 +479,10 @@ export class CompaniesController {
   async deactivatecustomer(@Param('id') id: number, @Body() data, @Headers('userTime') userTime) {
     let date;
     if (userTime) {
+      console.log('a',78)
       date = new Date(userTime);
     } else {
+      console.log('b',78)
       date = new Date();
     }
     return await this.service.deactivatecustomerupdate(id, data, date);

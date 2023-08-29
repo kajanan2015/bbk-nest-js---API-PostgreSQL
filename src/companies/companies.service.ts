@@ -1386,15 +1386,15 @@ export class CompaniesService {
   async deactivatecustomerupdateimmediate(id, data, date) {
     // id,startingDate,companyInfoId,status,
 
-    const currentDateTime = new Date();
-    const formattedDate = format(date, 'dd-MM-yyyy');
+    const currentDateTime = new Date(date);
+    const formattedDate = format(currentDateTime, 'dd-MM-yyyy');
     const companyinfo = await this.companyinfoRepository.find({ where: { company: id }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { start_date: 'DESC' } })
     for (const i of companyinfo) {
       const data_history={
         companyInfoId:i.company_info_id,
         startingDate:formattedDate,
         updatedBy:data.userId,
-        updatedAt:date,
+        updatedAt:currentDateTime,
         company_status:Companystatus.DEACTIVATE,
        deactivationmethod: Deactivationmethod.IMMEDIATE,
        deactivationreason:data.reason,
