@@ -43,9 +43,14 @@ import { State } from './country/states/states.entity';
 import { City } from './country/cities/city.entity';
 import { PaymentLinkData } from 'src/payment/payment_link_otp/payment_link.entity';
 import { Department } from 'src/departments/department.entity';
+import { CompanyWorkPatternService } from 'src/company-work-pattern/company-work-pattern.service';
+import { EmployeeAssignWorkPattern } from 'src/company-work-pattern/assign_work_pattern/employee-assign-work-pattern.entity';
+import { EmployeeAssignWorkPatternInfo } from 'src/company-work-pattern/assign_work_pattern/employee-assign-work-pattern.entity';
+import { EmployeeAssignWorkPatternHistory } from 'src/company-work-pattern/assign_work_pattern/employee-assign-work-pattern.entity';
+import { MasterEmployeeAssignWorkPatternInfo } from 'src/company-work-pattern/assign_work_pattern/employee-assign-work-pattern.entity';
 @Module({
-  imports: [TypeOrmModule.forFeature([CompaniesEntity, CompaniesEntityinfo, CompaniesHistorydata, PagePermissionEntity, SystemCode, CompanyDocument, User, country, companytype, Employee, EmployeeInfo, Createmodule, Createpackage, Moduledetailsofpackage, Paymenttype, Companypackagerow, CompanyWorkPattern, EmployeeDataHistory, VehicleTypeEntity,Companypackageassignhistory, State, City,PaymentLinkData,Department]), PagePermissionModule, SystemCodeModule, UserModule, MailModule, CompanyDocumentModule, CreatemoduleModule],
+  imports: [TypeOrmModule.forFeature([CompaniesEntity, CompaniesEntityinfo, CompaniesHistorydata, PagePermissionEntity, SystemCode, CompanyDocument, User, country, companytype, Employee, EmployeeInfo, Createmodule, Createpackage, Moduledetailsofpackage, Paymenttype, Companypackagerow, CompanyWorkPattern, EmployeeDataHistory, VehicleTypeEntity,Companypackageassignhistory, State, City,PaymentLinkData,Department,EmployeeAssignWorkPatternInfo,EmployeeAssignWorkPatternHistory,EmployeeAssignWorkPattern,MasterEmployeeAssignWorkPatternInfo]), PagePermissionModule, SystemCodeModule, UserModule, MailModule, CompanyDocumentModule, CreatemoduleModule],
   controllers: [CompaniesController],
-  providers: [CompanypackagerowService, CompaniesService, ImageUploadService, PagePermissionService, SystemCodeService, UserService, MailService, CompanyDocumentService, CreatemoduleService, EmployeeDataHistoryService, Transactionservicedb],
+  providers: [CompanypackagerowService, CompaniesService, ImageUploadService, PagePermissionService, SystemCodeService, UserService, MailService, CompanyDocumentService, CreatemoduleService, EmployeeDataHistoryService, Transactionservicedb,CompanyWorkPatternService],
 })
 export class CompaniesModule { }
