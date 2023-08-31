@@ -390,18 +390,18 @@ export class CompaniesService {
       const saveDocuments = await this.companyDocumentRepository.save(addDocuments)
     }
 
-   
+
     const countryobejct = await this.countryrepo.findOne({ id: dataCompany.country });
     dataCompany.country = countryobejct;
     const regcountryobejct = await this.countryrepo.findOne({ id: dataCompany.regAddressCountry });
     dataCompany.regAddressCountry = regcountryobejct;
     const companytypeobejct = await this.companytyperepo.findOne({ id: dataCompany.companyType });
     dataCompany.companyType = companytypeobejct;
-    dataCompany.deactivationreason='-';
-    dataCompany.deactivationmethod='-';
-    dataCompany.company_status='trial'
+    dataCompany.deactivationreason = '-';
+    dataCompany.deactivationmethod = '-';
+    dataCompany.company_status = 'trial'
 
-  
+
     const historydate = {
       history_data_type: Historydatatype.COMPANY,
       history_data: JSON.stringify(dataCompany),
@@ -1388,20 +1388,32 @@ export class CompaniesService {
 
     const currentDateTime = new Date(date);
     const formattedDate = format(currentDateTime, 'dd-MM-yyyy');
+    const newDate = new Date(date);
     const companyinfo = await this.companyinfoRepository.find({ where: { company: id }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { start_date: 'DESC' } })
-    for (const i of companyinfo) {
-      const data_history={
-        companyInfoId:i.company_info_id,
-        startingDate:formattedDate,
-        updatedBy:data.userId,
-        updatedAt:currentDateTime,
-        company_status:Companystatus.DEACTIVATE,
-       deactivationmethod: Deactivationmethod.IMMEDIATE,
-       deactivationreason:data.reason,
-       }
-       await this.updatenew(id,data_history)
-
+    const data_history = {
+      companyInfoId: companyinfo[0].company_info_id,
+      startingDate: formattedDate,
+      updatedBy: data.userId,
+      updatedAt: currentDateTime,
+      company_status: Companystatus.DEACTIVATE,
+      deactivationmethod: Deactivationmethod.IMMEDIATE,
+      deactivationreason: data.reason,
     }
+    await this.updatenew(id, data_history)
+
+    // for (const i of companyinfo) {
+    //   const data_history={
+    //     companyInfoId:i.company_info_id,
+    //     startingDate:formattedDate,
+    //     updatedBy:data.userId,
+    //     updatedAt:currentDateTime,
+    //     company_status:Companystatus.DEACTIVATE,
+    //    deactivationmethod: Deactivationmethod.IMMEDIATE,
+    //    deactivationreason:data.reason,
+    //    }
+    //    await this.updatenew(id,data_history)
+
+    // }
 
     return await this.companyRepository.findOne({ id });
   }
@@ -1439,7 +1451,7 @@ export class CompaniesService {
     const companymaindata = await this.companyRepository.findOne({ id })
     const company_contarctdate = companymaindata.contractagreement;
     const futureDate = addMonths(new Date(), company_contarctdate);
-   
+
     let newcompassigndata;
 
     const finddata = await this.companypackagerowrepository.find({ where: { company: id, status: AssignPackageStatus.PENDING } })
@@ -1466,15 +1478,15 @@ export class CompaniesService {
           company: parseInt(id),
           status: AssignPackageStatus.PENDING
         }
-        
+
         const compackageresponse = await this.companypackagerowrepository.create(newcompassigndata)
         const comppackagerowadded = await this.companypackagerowrepository.save(compackageresponse)
       }
     }
-   
+
     let getpkgid;
     for (const newdata of data.customizerecord) {
-     
+
       getpkgid = await this.detailsrepository.findOne(newdata.packageId, { relations: ["packages", "module"] });
       newcompassigndata = {
         rowcount: newdata.records,
@@ -1492,7 +1504,7 @@ export class CompaniesService {
         company: parseInt(id),
         status: AssignPackageStatus.PENDING
       }
-     
+
       const compackageresponsecustomize = await this.companypackagerowrepository.create(newcompassigndata)
       const comppackagerowaddedcustomiza = await this.companypackagerowrepository.save(compackageresponsecustomize)
       //     const dataf = data.customizerecord[key];
@@ -1570,10 +1582,10 @@ export class CompaniesService {
     const checkcompanypackagerow = await this.companypackagerowrepository.find({ where: { company: id, enddate: null, trialpackageidentifier: null }, relations: ["module"] });
     let existmoduleid = [];
     for (const existmodule of checkcompanypackagerow) {
-      
+
       existmoduleid.push(existmodule.module.id)
     }
-    
+
     // const moduleid= checkcompanypackagerow.module.id
     const result = existmoduleid.filter(value => !data.module.includes(value));
 
@@ -1586,7 +1598,7 @@ export class CompaniesService {
         .where('companyId = :id', { id })
         .andWhere('moduleId IN (:...result)', { result })
         .execute();
-     
+
     }
     entityA.module = await this.modulerepository.findByIds(data.module);
     entityA.package = [];
@@ -1659,7 +1671,7 @@ export class CompaniesService {
       activate: 1,
       activated_time: currentDateTime
     }
-   
+
     if (decodedkey.hasOwnProperty('email') && decodedkey.hasOwnProperty('email') && decodedkey.hasOwnProperty('exp')) {
       console.log('decodedkey', 999)
       const exist = await this.userRepository.findOne({ email: decodedkey['email'] })
@@ -1872,7 +1884,7 @@ export class CompaniesService {
     return scheduledeactivate;
   }
 
- 
+
   // update including history and schedule
   async updatenew(id, data) {
 
@@ -1945,6 +1957,8 @@ export class CompaniesService {
       const companyExistHistory = await this.companyhistoryRepository.findOne({ id: data.historyId }, { relations: ['created_by', 'updated_by', 'companyinfo', 'company'] })
       await this.historytransaction.updateExistScheduleTransaction(companyinfoid, previousentitydata, historydata, CompaniesEntityinfo, CompaniesHistorydata, companyExistHistory, existLastestValue, passvalue)
     } else {
+      console.log(start_date, 223)
+      console.log(date, 2231)
       if (start_date.getTime() >= date.getTime()) {
         // const passdatatogetschedule={type:'',companyInfoId:companyinfoid}
         // const existschedule=await this.getscheduledcompanydatahistory(companyid,passdatatogetschedule);
@@ -2055,31 +2069,31 @@ export class CompaniesService {
         enddate: MoreThanOrEqual(date),
         status: AssignPackageStatus.ACTIVE
       },
-      relations: ["module", "packages", "moduledetails","company"],
+      relations: ["module", "packages", "moduledetails", "company"],
       order: {
         enddate: 'ASC', // Order by enddate in ascending order
       },
     });
     for (const row of response) {
-     // id,startingDate,companyInfoId,status,
-   
-     const currentDateTime = new Date();
-     const formattedDate = format(currentDateTime, 'dd-MM-yyyy');
-     const companyinfo = await this.companyinfoRepository.find({ where: { company: row.company.id }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { start_date: 'DESC' } })
-     for (const i of companyinfo) {
-      //  await this.companyinfoRepository.save(i);
+      // id,startingDate,companyInfoId,status,
 
-       const data_history={
-        companyInfoId:i.company_info_id,
-        startingDate:formattedDate,
-        updatedBy:'',
-        updatedAt:currentDateTime,
-        company_status:Companystatus.DEACTIVATE,
-       deactivationmethod: Deactivationmethod.IMMEDIATE,
-       deactivationreason:"validity period ended",
-       }
-       await this.updatenew(row.company.id,data_history)
-     }
+      const currentDateTime = new Date();
+      const formattedDate = format(currentDateTime, 'dd-MM-yyyy');
+      const companyinfo = await this.companyinfoRepository.find({ where: { company: row.company.id }, relations: ['country', 'companyType', 'regAddressCountry', 'mainCompany', 'company', 'created_by', 'updated_by', 'billing'], order: { start_date: 'DESC' } })
+      for (const i of companyinfo) {
+        //  await this.companyinfoRepository.save(i);
+
+        const data_history = {
+          companyInfoId: i.company_info_id,
+          startingDate: formattedDate,
+          updatedBy: 1,
+          updatedAt: currentDateTime,
+          company_status: Companystatus.DEACTIVATE,
+          deactivationmethod: Deactivationmethod.IMMEDIATE,
+          deactivationreason: "validity period ended",
+        }
+        await this.updatenew(row.company.id, data_history)
+      }
     }
     if (response) {
       return 200

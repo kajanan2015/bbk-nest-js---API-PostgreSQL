@@ -30,7 +30,7 @@ export class CompaniesController {
   async schedule() {
     const currentDateTime = new Date();
     await this.service.packagetrialend(currentDateTime);
-      return 200;
+    return 200;
 
     // console.log(currentDateTime.toISOString(), 343434);
     // return await this.service.scheduledeactivate()
