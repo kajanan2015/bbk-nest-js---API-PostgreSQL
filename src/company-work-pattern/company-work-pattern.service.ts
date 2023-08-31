@@ -188,9 +188,16 @@ export class CompanyWorkPatternService {
     let dateObject;
     // find pattern data
     const patterndata = await this.patternrepository.findOne({ where: { workPatternCode: data.workPatternName, workType: data.workType } })
-  
+    // pattern strat date
+    const dateString = data.patternstartdate;
+    const parts = dateString.split('-'); // Split the date string into parts
+        // Create a new Date object with the parts (Note: Months in JavaScript are 0-based)
+        const startmaindate = new Date(parts[2], parts[1] - 1, parts[0]);
+        console.log(startmaindate)
+        console.log(parse(dateString, 'dd-MM-yyyy', new Date()))
     newdata = {
-      assign_at: data.userTime,
+      created_at: data.userTime,
+      assign_at:parse(dateString, 'dd-MM-yyyy', new Date()),
       status: AssignWorkPatternSatatus.ACTIVE,
       created_by: data.created_by,
       employeeId: data.employeeId,
@@ -202,11 +209,7 @@ export class CompanyWorkPatternService {
 
 
 
-    // pattern strat date
-    const dateString = data.patternstartdate;
-    const parts = dateString.split('-'); // Split the date string into parts
-        // Create a new Date object with the parts (Note: Months in JavaScript are 0-based)
-        const startmaindate = new Date(parts[2], parts[1] - 1, parts[0]);
+  
     // end date after 2 years
     const lastDateAfterTwoYears = endOfDay(addYears(startmaindate, 2));
    
@@ -341,5 +344,6 @@ export class CompanyWorkPatternService {
 
   async extendassignworkpatterntoemployee(){
     const date=new Date();
+    const findexistdata=await this
   }
 }

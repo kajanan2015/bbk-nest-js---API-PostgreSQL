@@ -13,8 +13,11 @@ export class EmployeeAssignWorkPattern {
   @PrimaryGeneratedColumn()
   assign_id: number;
 
-  @Column("timestamp", { name: "assign_at", default: () => "CURRENT_TIMESTAMP" })
+  @Column("date", { name: "assign_at", nullable:true, default: () => null })
   assign_at: Date;
+
+  @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
+  created_at: Date;
 
   @Column("timestamp", { name: "updated_at", nullable: true, default: () => null })
   updated_at: Date;
