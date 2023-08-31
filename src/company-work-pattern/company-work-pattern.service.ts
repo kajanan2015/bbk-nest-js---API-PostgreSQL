@@ -3,7 +3,7 @@ import { CreateCompanyWorkPatternDto } from './create-company-work-pattern.dto';
 import { UpdateCompanyWorkPatternDto } from './update-company-work-pattern.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CompanyWorkPattern } from './company-work-pattern.entity';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder, getConnection } from 'typeorm';
 import { SystemCodeService } from 'src/system-code/system-code.service';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { WorkType } from './company-work-pattern.entity';
@@ -94,6 +94,23 @@ export class CompanyWorkPatternService {
       throw new NotFoundException(` ID '${code}' not found`);
     }
     return workpattern;
+  }
+
+  async findCurrentWorkPattern(empId) {
+    const date = new Date();
+    const workpattern = await this.employeeassignrepo.find({ where: { employeeId: empId, status: WorkPatternStatus.ACTIVE } });
+    // const workPatternInfo = await this.employeeassigninforepo.find({ where: { workpatternId: workpattern['id'] }});
+    const query: SelectQueryBuilder<EmployeeAssignWorkPattern> = getConnection()
+    .getRepository(EmployeeAssignWorkPattern)
+    .createQueryBuilder("workpattern")
+    .andWhere("workpattern.employeeId = :empId", { empId })
+    .andWhere("workpattern.assign_at <= :date", { date })
+    .andWhere("workpattern.status = :status", { status: WorkPatternStatus.ACTIVE })
+    .orderBy("workpattern.assign_at", 'DESC')
+
+    const data = await query.getMany();
+    return data[0];
+    
   }
 
   async findOne(id: number) {
