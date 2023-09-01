@@ -17,6 +17,9 @@ export class country {
     @Column("varchar", { nullable: true, length: 500, default: () => null })
     country_flag_code: string;
 
+    @Column("varchar", { nullable: true, length: 500, default: () => null })
+    country_code: string;
+
     @Column("varchar", { nullable: true, length: 250, default: () => null })
     time_zone: string;
 
