@@ -96,20 +96,38 @@ export class CompanyWorkPatternService {
     return workpattern;
   }
 
+  // ** Fine employee current work pattern
   async findCurrentWorkPattern(empId) {
+    // ** current date
     const date = new Date();
-    const workpattern = await this.employeeassignrepo.find({ where: { employeeId: empId, status: WorkPatternStatus.ACTIVE } });
-    // const workPatternInfo = await this.employeeassigninforepo.find({ where: { workpatternId: workpattern['id'] }});
+    // const workpattern = await this.employeeassignrepo.find({ where: { employeeId: empId, assign_at: LessThanOrEqual(date), status: WorkPatternStatus.ACTIVE }, order:{ assign_at: 'DESC' } });
+    
+    // ** get current work pattern
     const query: SelectQueryBuilder<EmployeeAssignWorkPattern> = getConnection()
-      .getRepository(EmployeeAssignWorkPattern)
-      .createQueryBuilder("workpattern")
-      .andWhere("workpattern.employeeId = :empId", { empId })
-      .andWhere("workpattern.assign_at <= :date", { date })
-      .andWhere("workpattern.status = :status", { status: WorkPatternStatus.ACTIVE })
-      .orderBy("workpattern.assign_at", 'DESC')
+    .getRepository(EmployeeAssignWorkPattern)
+    .createQueryBuilder("workpattern")
+    .leftJoinAndSelect("workpattern.workpatternId", "workpatternId")
+    .andWhere("workpattern.employeeId = :empId", { empId })
+    .andWhere("workpattern.assign_at <= :date", { date })
+    .andWhere("workpattern.status = :status", { status: WorkPatternStatus.ACTIVE })
+    .orderBy("workpattern.assign_at", 'DESC')
+    
+    // ** Current work pattern
+    const workPattern = await query.getOne();
 
-    const data = await query.getMany();
-    return data[0];
+    // ** Get current work pattern info
+    const workpatternInfo = await this.employeeassigninforepo.findOne({ where: { assignpatternId: workPattern?.['assign_id'], assign_at: format(
+      date,
+      'yyyy-MM-dd'
+    ) }});
+    // ** Current pattern rounds
+    const patternRounds = await this.employeeassigninforepo.find({ where: { assignpatternId: workPattern?.['assign_id'], pattern_round: workpatternInfo?.['pattern_round'] }});
+
+    return { 
+      patternInfo: patternRounds,
+      workPattern: workPattern?.['workpatternId'],
+      startedDate: workPattern?.['assign_at']
+    };
 
   }
 
