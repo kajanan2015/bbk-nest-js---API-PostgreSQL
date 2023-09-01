@@ -15,8 +15,8 @@ import { EmployeeAssignWorkPatternInfo } from './assign_work_pattern/employee-as
 import { WorkPatternStatus } from './company-work-pattern.entity';
 import { MasterEmployeeAssignWorkPatternInfo } from './assign_work_pattern/employee-assign-work-pattern.entity';
 import { Transactionservicedb } from 'src/Transaction-query/transaction.service';
-import { differenceInDays } from 'date-fns';
-const { parse, format, addYears, endOfDay, getDayOfYear,addMonths,parseISO } = require('date-fns');
+import { addDays, differenceInDays } from 'date-fns';
+const { parse, format, addYears, endOfDay, getDayOfYear, addMonths, parseISO } = require('date-fns');
 
 
 @Injectable()
@@ -101,16 +101,16 @@ export class CompanyWorkPatternService {
     const workpattern = await this.employeeassignrepo.find({ where: { employeeId: empId, status: WorkPatternStatus.ACTIVE } });
     // const workPatternInfo = await this.employeeassigninforepo.find({ where: { workpatternId: workpattern['id'] }});
     const query: SelectQueryBuilder<EmployeeAssignWorkPattern> = getConnection()
-    .getRepository(EmployeeAssignWorkPattern)
-    .createQueryBuilder("workpattern")
-    .andWhere("workpattern.employeeId = :empId", { empId })
-    .andWhere("workpattern.assign_at <= :date", { date })
-    .andWhere("workpattern.status = :status", { status: WorkPatternStatus.ACTIVE })
-    .orderBy("workpattern.assign_at", 'DESC')
+      .getRepository(EmployeeAssignWorkPattern)
+      .createQueryBuilder("workpattern")
+      .andWhere("workpattern.employeeId = :empId", { empId })
+      .andWhere("workpattern.assign_at <= :date", { date })
+      .andWhere("workpattern.status = :status", { status: WorkPatternStatus.ACTIVE })
+      .orderBy("workpattern.assign_at", 'DESC')
 
     const data = await query.getMany();
     return data[0];
-    
+
   }
 
   async findOne(id: number) {
@@ -191,14 +191,14 @@ export class CompanyWorkPatternService {
     // pattern strat date
     const dateString = data.patternstartdate;
     const parts = dateString.split('-'); // Split the date string into parts
-        // Create a new Date object with the parts (Note: Months in JavaScript are 0-based)
-        const startmaindate = new Date(parts[2], parts[1] - 1, parts[0]);
-        const parsedDate = parse(dateString, 'dd-MM-yyyy', new Date());
-        const nextextendeddate=addMonths(parsedDate, 3);
+    // Create a new Date object with the parts (Note: Months in JavaScript are 0-based)
+    const startmaindate = new Date(parts[2], parts[1] - 1, parts[0]);
+    const parsedDate = parse(dateString, 'dd-MM-yyyy', new Date());
+    const nextextendeddate = addMonths(parsedDate, 3);
     newdata = {
       created_at: data.userTime,
-      assign_at:parse(dateString, 'dd-MM-yyyy', new Date()),
-      next_extended_date:nextextendeddate,
+      assign_at: parse(dateString, 'dd-MM-yyyy', new Date()),
+      next_extended_date: nextextendeddate,
       status: AssignWorkPatternSatatus.ACTIVE,
       created_by: data.created_by,
       employeeId: data.employeeId,
@@ -210,10 +210,10 @@ export class CompanyWorkPatternService {
 
 
 
-  
+
     // end date after 2 years
     const lastDateAfterTwoYears = endOfDay(addYears(startmaindate, 2));
-   
+
     // number of day in two years period
     const numberOfDaysAfterTwoYears = differenceInDays(lastDateAfterTwoYears, startmaindate)
     // one pattern data
@@ -254,17 +254,17 @@ export class CompanyWorkPatternService {
     const patternDays = data.formattedData.length;
     const repetitions = Math.floor(numberOfDaysAfterTwoYears / patternDays);
     const remainingDays = numberOfDaysAfterTwoYears % patternDays;
-    
+
     // Generate records for the pattern repetitions
     for (let r = 0; r < repetitions; r++) {
-  let value=0;
+      let value = 0;
       for (const i of data.formattedData) {
-            const date = new Date(startmaindate);
-      date.setDate(startmaindate.getDate() + r*patternDays+value);
-      // recordsToInsert.push({ date, dayNumber: day + 1 });
-      dateObject = parse(date, 'dd-MM-yyyy', new Date());
-  
-      // console.log(dateObject,898983)
+        const date = new Date(startmaindate);
+        date.setDate(startmaindate.getDate() + r * patternDays + value);
+        // recordsToInsert.push({ date, dayNumber: day + 1 });
+        dateObject = parse(date, 'dd-MM-yyyy', new Date());
+
+        // console.log(dateObject,898983)
         let parsedstartTime;
         let parsedendTime;
         if (i.alignment == 0) {
@@ -272,7 +272,7 @@ export class CompanyWorkPatternService {
         } else {
           workmode = AssignPatternInfoWorkMode.ON
         }
-       
+
         if (i.startTime != undefined || i.endTime != undefined) {
           parsedstartTime = parse(i.startTime, 'h:mm a', new Date());
           parsedendTime = parse(i.endTime, 'h:mm a', new Date());
@@ -293,7 +293,7 @@ export class CompanyWorkPatternService {
         // console.log(assigninfo)
         value++
       }
-      
+
     }
 
     // Generate records for the remaining days
@@ -329,60 +329,162 @@ export class CompanyWorkPatternService {
     }
     const rangedArray = dataofassigninfo.slice(0, patternDays);
 
-    const response11=await this.transactionService.transactionforinsertworkpattern(EmployeeAssignWorkPatternInfo,MasterEmployeeAssignWorkPatternInfo,dataofassigninfo,rangedArray)
-   if(response11==200){
-    return 200;
-   }else{
-    return 500
-   }
-  // return 200
+    const response11 = await this.transactionService.transactionforinsertworkpattern(EmployeeAssignWorkPatternInfo, MasterEmployeeAssignWorkPatternInfo, dataofassigninfo, rangedArray)
+    if (response11 == 200) {
+      return 200;
+    } else {
+      return 500
+    }
+    // return 200
     // let inserttintomaster = await this.masteremployeeassigninforepo.create(dataofassigninfo[0])
     // await this.masteremployeeassigninforepo.save(inserttintomaster)
     // let insertassignemployeeinfo = await this.employeeassigninforepo.create(dataofassigninfo)
     // await this.employeeassigninforepo.save(insertassignemployeeinfo)
-  
+
   }
 
-  async extendassignworkpatterntoemployee(){
-    const date=new Date();
+  async extendassignworkpatterntoemployee() {
+    const date = new Date();
     const parsedDate = format(date, 'dd-MM-yyyy');;
-    console.log(parsedDate,34)
-    const findexistdata=await this.employeeassignrepo.find({where:{next_extended_date:LessThanOrEqual(date),ended_at:null},relations:['employeeId','workpatternId']})
+    console.log(date, 34)
+    console.log(parsedDate, 34)
+    const findexistdata = await this.employeeassignrepo.find({ where: { next_extended_date: LessThanOrEqual(date), ended_at: null }, relations: ['employeeId', 'workpatternId'] })
+    console.log(findexistdata,45)
     let patterndata;
     let lastvalue;
     let patternid;
-   let resultslength;
+    let resultslength;
     for (const i of findexistdata) {
-        resultslength=0
-         patterndata=await this.masteremployeeassigninforepo.find({where:{assignpatternId:i.assign_id}})
-        lastvalue=await this.employeeassigninforepo.findOne({where:{assignpatternId:i.assign_id},order:{pattern_round:'DESC'}})
-        patternid=i.assign_id
-        const subQuery = this.employeeassigninforepo.createQueryBuilder('sub')
+      resultslength = 0
+      patterndata = await this.masteremployeeassigninforepo.find({ where: { assignpatternId: i.assign_id },relations:['assignpatternId'] })
+    console.log(patterndata,788)
+      patternid = i.assign_id
+      const subQuery = await this.employeeassigninforepo.createQueryBuilder('sub')
         .select('MAX(sub.pattern_round)', 'maxPatternRound')
-        .where('sub.assignpatternId = :assignId', { assignId:patternid })
+        .where('sub.assignpatternId = :assignId', { assignId: patternid })
         .getQuery();
-  
+
       const results = await this.employeeassigninforepo.createQueryBuilder('entity')
-        .where(`entity.assignpatternId = :assignId AND entity.pattern_round = (${subQuery})`, { assignId:patternid })
+        .where(`entity.assignpatternId = :assignId AND entity.pattern_round = (${subQuery})`, { assignId: patternid })
         .getMany();
-        
-        
-  if(patterndata.length!=results.length){
-    resultslength=patterndata.length-results.length;
-    for (let i = results.length; i <= patterndata.length; i++) {
-    //  console.log(patterndata[i-1],1234) 
-    }
-    
-    
-  }
 
+
+        // console.log(results,78787878)
+      let lastValue = results[results.length - 1];
+      let startmaindate = new Date(lastValue.assign_at)
+      const nextextendeddate = addMonths(startmaindate, 3);
+      const formattedmaindate = format(startmaindate, 'dd-MM-yyyy');
+      const formattedendeddate = format(nextextendeddate, 'dd-MM-yyyy');
+      resultslength = patterndata.length - results.length;
+      // end date after 3 month
+      const new_main_date_after_put_exist_pattern=addDays(startmaindate,(resultslength+2))
+      
+      const lastDateAfterThreeMonths = endOfDay(addMonths(startmaindate, 3));
+      const nextupdatedate=addMonths(date,3)
+      // number of day in after 3 month
+      const numberOfDaysAfterthreemonths = differenceInDays(lastDateAfterThreeMonths, startmaindate)
+
+      let assigninfo;
+      let dataofassigninfo = [];
+      let dataassign = [];
+      let dateObject;
+      if (patterndata.length != results.length) {
+       
+        // console.log(startmaindate,898)
+       let x=1;
+        for (let i = results.length; i <= patterndata.length; i++) {
         
-        // EmployeeDataHistoryModule.id
+           const newmaindate = new Date(startmaindate);
+      newmaindate.setDate(startmaindate.getDate() + x);
+          // one pattern data 
+          assigninfo = {
+            created_by: 1,
+            start_time: patterndata[i - 1].start_time,
+            end_time: patterndata[i - 1].end_time,
+            created_at: date,
+            assign_at: newmaindate,
+            assignpatternId: patterndata[i - 1].assignpatternId.assign_id,
+            workmode: patterndata[i - 1].workmode,
+            pattern_round: lastValue.pattern_round
+          }
+          dataofassigninfo.push(assigninfo);
+          x++;
+        }
+
+     
+// console.log(dataofassigninfo,788)
+// console.log(startmaindate,788)
+      }
+      const patternDays =patterndata.length;
+      const repetitions = Math.floor((numberOfDaysAfterthreemonths-resultslength) / patternDays);
+      const remainingDays = (numberOfDaysAfterthreemonths-resultslength) % patternDays;
+ 
+      for (let r = 0; r < repetitions; r++) {
+        let value = 0;
+        for (const i of patterndata) {
+          const enddate = new Date(new_main_date_after_put_exist_pattern);
+          enddate.setDate(new_main_date_after_put_exist_pattern.getDate() + r * patternDays + value);
+          // recordsToInsert.push({ date, dayNumber: day + 1 });
+   
+          // console.log(dateObject,898983)
+          let parsedstartTime;
+          let parsedendTime;
+  
+          assigninfo = {
+            created_by: 1,
+            start_time: i.start_time,
+            end_time: i.end_time,
+            created_at: date,
+            assign_at: enddate,
+            assignpatternId:  i.assignpatternId.assign_id,
+            workmode: i.workmode,
+            pattern_round: r+lastValue.pattern_round
+          }
+  
+          dataofassigninfo.push(assigninfo);
+          // console.log(assigninfo)
+          value++
+        }
+  
+      }
+  
+      // Generate records for the remaining days
+      for (let r = 0; r < remainingDays; r++) {
+        const date_object = new Date(new_main_date_after_put_exist_pattern);
+        date_object.setDate(new_main_date_after_put_exist_pattern.getDate() + repetitions * patternDays + r);
+        const dayNumber = r % patternDays + 1;
+        let parsedstartTime;
+        let parsedendTime;
+        assigninfo = {
+          created_by:1,
+          start_time: patterndata[r].start_time,
+          end_time: patterndata[r].end_time,
+          created_at: date,
+          assign_at: date_object,
+          assignpatternId:  patterndata[r].assignpatternId.assign_id,
+          workmode:  patterndata[r].workmode,
+          pattern_round:lastValue.pattern_round+repetitions + 1
+        }
+  
+        dataofassigninfo.push(assigninfo);
+      }
+
+      // EmployeeDataHistoryModule.id
       // workpatternId.id
-      console.log(results,54)
+      // console.log(results,54)
+      console.log(dataofassigninfo,788)
+const rangedArray={next_extended_date:nextupdatedate,updated_at:date,updated_by:1}
+console.log(rangedArray,788)
+      const response11 = await this.transactionService.transactionforinsertworkpatternextend(EmployeeAssignWorkPatternInfo, EmployeeAssignWorkPattern, dataofassigninfo, rangedArray,i)
+      if (response11 == 200) {
+        return 200;
+      } else {
+        return 500
+      }
     }
-    const nextextendeddate=addMonths(date, 3);
-  }
 
   
+  }
+
+
 }
