@@ -490,9 +490,8 @@ export class CompanyWorkPatternService {
       // EmployeeDataHistoryModule.id
       // workpatternId.id
       // console.log(results,54)
-      console.log(dataofassigninfo,788)
 const rangedArray={next_extended_date:nextupdatedate,updated_at:date,updated_by:1}
-console.log(rangedArray,788)
+
       const response11 = await this.transactionService.transactionforinsertworkpatternextend(EmployeeAssignWorkPatternInfo, EmployeeAssignWorkPattern, dataofassigninfo, rangedArray,i)
       if (response11 == 200) {
         return 200;
