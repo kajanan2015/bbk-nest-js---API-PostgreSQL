@@ -8,6 +8,11 @@ export enum AssignWorkPatternSatatus {
   INACTIVE = "inactive"
 }
 
+export enum AssignWorkPatternInfoSatatus {
+  ACTIVE = "active",
+  INACTIVE = "inactive"
+}
+
 @Entity('employee_assign_work_pattern')
 export class EmployeeAssignWorkPattern {
   @PrimaryGeneratedColumn()
@@ -103,6 +108,10 @@ export class EmployeeAssignWorkPatternInfo{
 
   @Column("enum", { name: "work_mode", enum: AssignPatternInfoWorkMode, default: AssignPatternInfoWorkMode.OFF, comment: "work day/off day" })
   workmode: AssignPatternInfoWorkMode;
+
+  @Column("enum", { name: "info_status", enum: AssignWorkPatternInfoSatatus, default: AssignWorkPatternInfoSatatus.ACTIVE, comment: "active/inactive" })
+  status: AssignWorkPatternInfoSatatus;
+
 }
 
 
