@@ -16,6 +16,9 @@ export class EmployeeAssignWorkPattern {
   @Column("date", { name: "assign_at", nullable:true, default: () => null })
   assign_at: Date;
 
+  @Column("date", { name: "ended_at", nullable:true, default: () => null })
+  ended_at: Date;
+
   @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
   created_at: Date;
 
@@ -24,6 +27,9 @@ export class EmployeeAssignWorkPattern {
 
   @Column("enum", { name: "status", enum: AssignWorkPatternSatatus, default: AssignWorkPatternSatatus.ACTIVE, comment: "active/inactive" })
   status: AssignWorkPatternSatatus;
+
+  @Column("date",{name:"next_extended_date",nullable:true, default: () => null })
+  next_extended_date:Date;
 
   @ManyToOne(() => User, user => user.assignworkpatterncreatedby)
   @JoinColumn({ name: 'created_by' })
@@ -46,6 +52,9 @@ export class EmployeeAssignWorkPattern {
 
   @OneToMany(() => EmployeeAssignWorkPatternHistory, assignpatternhistory => assignpatternhistory.assignpatternId, { cascade: true })
   assignworkpatternhistory: EmployeeAssignWorkPatternHistory[];
+
+  @OneToMany(() => MasterEmployeeAssignWorkPatternInfo, assignpatternmaster => assignpatternmaster.assignpatternId, { cascade: true })
+  patternmaster: MasterEmployeeAssignWorkPatternInfo[];
 
 
 }
@@ -130,7 +139,7 @@ export class MasterEmployeeAssignWorkPatternInfo{
   @JoinColumn({ name: 'updated_by' })
   updated_by: User;
 
-  @ManyToOne(() => EmployeeAssignWorkPattern, pattern => pattern.assignworkpatterninfo)
+  @ManyToOne(() => EmployeeAssignWorkPattern, pattern => pattern.patternmaster)
   @JoinColumn({ name: 'assign_work_pattern_main_id' })
   assignpatternId: EmployeeAssignWorkPattern;
 

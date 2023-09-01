@@ -3,7 +3,7 @@ import { CreateCompanyWorkPatternDto } from './create-company-work-pattern.dto';
 import { UpdateCompanyWorkPatternDto } from './update-company-work-pattern.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CompanyWorkPattern } from './company-work-pattern.entity';
-import { LessThanOrEqual, Repository, SelectQueryBuilder, getConnection } from 'typeorm';
+import { LessThan, LessThanOrEqual, MoreThanOrEqual, Repository, SelectQueryBuilder, getConnection } from 'typeorm';
 import { SystemCodeService } from 'src/system-code/system-code.service';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { WorkType } from './company-work-pattern.entity';
@@ -16,7 +16,7 @@ import { WorkPatternStatus } from './company-work-pattern.entity';
 import { MasterEmployeeAssignWorkPatternInfo } from './assign_work_pattern/employee-assign-work-pattern.entity';
 import { Transactionservicedb } from 'src/Transaction-query/transaction.service';
 import { differenceInDays } from 'date-fns';
-const { parse, format, addYears, endOfDay, getDayOfYear } = require('date-fns');
+const { parse, format, addYears, endOfDay, getDayOfYear,addMonths,parseISO } = require('date-fns');
 
 
 @Injectable()
@@ -211,11 +211,12 @@ export class CompanyWorkPatternService {
     const parts = dateString.split('-'); // Split the date string into parts
         // Create a new Date object with the parts (Note: Months in JavaScript are 0-based)
         const startmaindate = new Date(parts[2], parts[1] - 1, parts[0]);
-        console.log(startmaindate)
-        console.log(parse(dateString, 'dd-MM-yyyy', new Date()))
+        const parsedDate = parse(dateString, 'dd-MM-yyyy', new Date());
+        const nextextendeddate=addMonths(parsedDate, 3);
     newdata = {
       created_at: data.userTime,
       assign_at:parse(dateString, 'dd-MM-yyyy', new Date()),
+      next_extended_date:nextextendeddate,
       status: AssignWorkPatternSatatus.ACTIVE,
       created_by: data.created_by,
       employeeId: data.employeeId,
@@ -362,6 +363,44 @@ export class CompanyWorkPatternService {
 
   async extendassignworkpatterntoemployee(){
     const date=new Date();
-    const findexistdata=await this
+    const parsedDate = format(date, 'dd-MM-yyyy');;
+    console.log(parsedDate,34)
+    const findexistdata=await this.employeeassignrepo.find({where:{next_extended_date:LessThanOrEqual(date),ended_at:null},relations:['employeeId','workpatternId']})
+    let patterndata;
+    let lastvalue;
+    let patternid;
+   let resultslength;
+    for (const i of findexistdata) {
+        resultslength=0
+         patterndata=await this.masteremployeeassigninforepo.find({where:{assignpatternId:i.assign_id}})
+        lastvalue=await this.employeeassigninforepo.findOne({where:{assignpatternId:i.assign_id},order:{pattern_round:'DESC'}})
+        patternid=i.assign_id
+        const subQuery = this.employeeassigninforepo.createQueryBuilder('sub')
+        .select('MAX(sub.pattern_round)', 'maxPatternRound')
+        .where('sub.assignpatternId = :assignId', { assignId:patternid })
+        .getQuery();
+  
+      const results = await this.employeeassigninforepo.createQueryBuilder('entity')
+        .where(`entity.assignpatternId = :assignId AND entity.pattern_round = (${subQuery})`, { assignId:patternid })
+        .getMany();
+        
+        
+  if(patterndata.length!=results.length){
+    resultslength=patterndata.length-results.length;
+    for (let i = results.length; i <= patterndata.length; i++) {
+    //  console.log(patterndata[i-1],1234) 
+    }
+    
+    
   }
+
+        
+        // EmployeeDataHistoryModule.id
+      // workpatternId.id
+      console.log(results,54)
+    }
+    const nextextendeddate=addMonths(date, 3);
+  }
+
+  
 }
