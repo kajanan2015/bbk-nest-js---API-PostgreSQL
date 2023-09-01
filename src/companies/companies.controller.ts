@@ -18,19 +18,21 @@ import { AuthGuard } from '@nestjs/passport';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ImageUploadService } from 'src/imageupload/imageupload.service';
 import { CompaniesEntity } from './companies.entity';
-
+import { CompanyWorkPatternService } from 'src/company-work-pattern/company-work-pattern.service';
 @Controller('companies')
 export class CompaniesController {
   constructor(
     private service: CompaniesService,
-    private readonly imageUploadService: ImageUploadService) { }
+    private readonly imageUploadService: ImageUploadService,
+    private readonly companyworkpatternservice:CompanyWorkPatternService) { }
 
   //  schedule-this call from lamda function-no need auth
   @Post("schedule")
   async schedule() {
     const currentDateTime = new Date();
-    await this.service.packagetrialend(currentDateTime);
-      return 200;
+    // await this.service.packagetrialend(currentDateTime);
+    await this.companyworkpatternservice.extendassignworkpatterntoemployee();
+    return 200;
 
     // console.log(currentDateTime.toISOString(), 343434);
     // return await this.service.scheduledeactivate()
@@ -470,7 +472,7 @@ export class CompaniesController {
     } else {
       date = new Date();
     }
-    return await this.service.deactivatecustomerupdateimmediate(id, data, date);
+    return await this.service.deactivatecustomerupdateimmediate(id, data, data.currentDate);
   }
 
   // schedule deactivate
@@ -479,8 +481,10 @@ export class CompaniesController {
   async deactivatecustomer(@Param('id') id: number, @Body() data, @Headers('userTime') userTime) {
     let date;
     if (userTime) {
+      console.log('a',78)
       date = new Date(userTime);
     } else {
+      console.log('b',78)
       date = new Date();
     }
     return await this.service.deactivatecustomerupdate(id, data, date);

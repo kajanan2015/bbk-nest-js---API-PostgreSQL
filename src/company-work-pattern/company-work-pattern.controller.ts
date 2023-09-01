@@ -44,6 +44,12 @@ export class CompanyWorkPatternController {
     return await this.companyWorkPatternService.update(+id, updateCompanyWorkPatternDto);
   }
 
+  @Get('find-current-pattern/:empid')
+  async findCurrentPattern(@Param('empid') empid){
+    return await this.companyWorkPatternService.findCurrentWorkPattern(empid)
+  }
+
+
   @Delete(':id')
  async remove(@Param('id') id: string) {
     return await this.companyWorkPatternService.remove(+id);
