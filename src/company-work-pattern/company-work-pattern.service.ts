@@ -364,10 +364,9 @@ export class CompanyWorkPatternService {
   async extendassignworkpatterntoemployee() {
     const date = new Date();
     const parsedDate = format(date, 'dd-MM-yyyy');;
-    console.log(date, 34)
-    console.log(parsedDate, 34)
+   
     const findexistdata = await this.employeeassignrepo.find({ where: { next_extended_date: LessThanOrEqual(date), ended_at: null }, relations: ['employeeId', 'workpatternId'] })
-    console.log(findexistdata,45)
+    
     let patterndata;
     let lastvalue;
     let patternid;
@@ -375,7 +374,7 @@ export class CompanyWorkPatternService {
     for (const i of findexistdata) {
       resultslength = 0
       patterndata = await this.masteremployeeassigninforepo.find({ where: { assignpatternId: i.assign_id },relations:['assignpatternId'] })
-    console.log(patterndata,788)
+
       patternid = i.assign_id
       const subQuery = await this.employeeassigninforepo.createQueryBuilder('sub')
         .select('MAX(sub.pattern_round)', 'maxPatternRound')
@@ -430,8 +429,7 @@ export class CompanyWorkPatternService {
         }
 
      
-// console.log(dataofassigninfo,788)
-// console.log(startmaindate,788)
+
       }
       const patternDays =patterndata.length;
       const repetitions = Math.floor((numberOfDaysAfterthreemonths-resultslength) / patternDays);
@@ -444,7 +442,6 @@ export class CompanyWorkPatternService {
           enddate.setDate(new_main_date_after_put_exist_pattern.getDate() + r * patternDays + value);
           // recordsToInsert.push({ date, dayNumber: day + 1 });
    
-          // console.log(dateObject,898983)
           let parsedstartTime;
           let parsedendTime;
   
@@ -460,7 +457,7 @@ export class CompanyWorkPatternService {
           }
   
           dataofassigninfo.push(assigninfo);
-          // console.log(assigninfo)
+
           value++
         }
   
@@ -489,7 +486,7 @@ export class CompanyWorkPatternService {
 
       // EmployeeDataHistoryModule.id
       // workpatternId.id
-      // console.log(results,54)
+ 
 const rangedArray={next_extended_date:nextupdatedate,updated_at:date,updated_by:1}
 
       const response11 = await this.transactionService.transactionforinsertworkpatternextend(EmployeeAssignWorkPatternInfo, EmployeeAssignWorkPattern, dataofassigninfo, rangedArray,i)
