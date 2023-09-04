@@ -76,7 +76,6 @@ export class UserService {
   }
 
   async update(id: number, data) {
-    console.log(data, 877878787878787878)
     let user = data;
     if (data.password) {
       const newhashpassword = await this.hashPassword(data.password);
