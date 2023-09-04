@@ -48,6 +48,7 @@ import { CompanyWorkPatternModule } from './company-work-pattern/company-work-pa
 import { CustomerSupportModule } from './customer-support/customer-support.module';
 import { DepartmentsModule } from './departments/departments.module';
 import { CompanyvehicleModule } from "./company-vehicle/companyvehicle.module";
+import { CompanyWiseThemeCustomizeModule } from './company-wise-theme-customize/company-wise-theme-customize.module';
 
 
 
@@ -101,7 +102,8 @@ const settings = require("../ormconfig.js");
     CompanyWorkPatternModule,
     CustomerSupportModule,
     DepartmentsModule,
-    CompanyvehicleModule
+    CompanyvehicleModule,
+    CompanyWiseThemeCustomizeModule
   ],
   controllers: [AppController],
   providers: [AppService],
