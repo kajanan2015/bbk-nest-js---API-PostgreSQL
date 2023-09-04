@@ -21,7 +21,7 @@ export class UserService {
 
   async getCompaniesByUserId(userId: number) {
     const user = await this.userRepository.findOne(userId, {
-      relations: ['companies', 'companies.linkedcompany', 'companies.linkedcompany.country','companies.linkedcompany.regAddressCountry'],
+      relations: ['companies', 'companies.linkedcompany', 'companies.linkedcompany.country','companies.linkedcompany.regAddressCountry','companies.themedata'],
     });
     return user.companies;
   }
@@ -75,7 +75,7 @@ export class UserService {
     return hashed;
   }
 
-  async update(id: number, data: Partial<User>) {
+  async update(id: number, data) {
     console.log(data, 877878787878787878)
     let user = data;
     if (data.password) {
