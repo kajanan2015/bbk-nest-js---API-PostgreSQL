@@ -48,7 +48,7 @@ export class CompanyUserRoleService {
     };
 
     const adminResponse = await this.userservice.create(adminData);
-    await this.mailservice.newadminadded(adminResponse.email, "", adminResponse.firstName, adminResponse.password, base_url);
+    await this.mailservice.newadminadded(adminResponse.email, "", adminResponse.firstName, adminData.password, base_url);
     if (adminResponse) {
       return {
         statusCode: HttpStatus.OK,
