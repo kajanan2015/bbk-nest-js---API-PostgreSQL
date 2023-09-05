@@ -1109,11 +1109,11 @@ export class EmployeeModuleService {
       newdata.push(passdata)
     }
 
-    const results = newdata.filter(function (row) {
-      return Math.floor(new Date(row.leaveDate).getTime() / 86400000) > Math.floor(new Date().getTime() / 86400000) || row.leaveDate == null
-    })
+    // const results = newdata.filter(function (row) {
+    //   return Math.floor(new Date(row.leaveDate).getTime() / 86400000) > Math.floor(new Date().getTime() / 86400000) || row.leaveDate == null
+    // })
 
-    return results;
+    return newdata;
   }
 
   async findCompanyFormerEmployees(companyid: number) {
