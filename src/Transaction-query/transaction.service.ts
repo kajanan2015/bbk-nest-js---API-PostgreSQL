@@ -139,8 +139,8 @@ export class Transactionservicedb {
 
 // transaction for insert 2 years record of work pattern assign info
 @Transaction()
-async transactionforinsertworkpattern(assigninfotable, mastertable,
-  data,masterdata,@TransactionManager() manager?: any,
+async transactionforinsertworkpattern(assigninfotable, mastertable, historyTable,
+  data,masterdata,historyData,@TransactionManager() manager?: any,
 ) {
   try {
 
@@ -149,6 +149,9 @@ async transactionforinsertworkpattern(assigninfotable, mastertable,
 
     const createresponsemaster = await manager.create(mastertable, masterdata); // Using merge directly on manager
     await manager.save(mastertable, createresponsemaster);
+
+    const createResponseHistoy = await manager.create(historyTable, historyData); // Using merge directly on manager
+    await manager.save(historyTable, createResponseHistoy);
    
     // You can add more business logic or other updates here
 

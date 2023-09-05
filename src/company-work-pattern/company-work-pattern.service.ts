@@ -8,7 +8,7 @@ import { SystemCodeService } from 'src/system-code/system-code.service';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { WorkType } from './company-work-pattern.entity';
 import { WorkPatternType } from './company-work-pattern.entity';
-import { EmployeeAssignWorkPattern } from './assign_work_pattern/employee-assign-work-pattern.entity';
+import { EmployeeAssignWorkPattern, EmployeeAssignWorkPatternHistory } from './assign_work_pattern/employee-assign-work-pattern.entity';
 import { AssignWorkPatternSatatus } from './assign_work_pattern/employee-assign-work-pattern.entity';
 import { AssignPatternInfoWorkMode } from './assign_work_pattern/employee-assign-work-pattern.entity';
 import { EmployeeAssignWorkPatternInfo } from './assign_work_pattern/employee-assign-work-pattern.entity';
@@ -16,7 +16,8 @@ import { WorkPatternStatus } from './company-work-pattern.entity';
 import { MasterEmployeeAssignWorkPatternInfo } from './assign_work_pattern/employee-assign-work-pattern.entity';
 import { Transactionservicedb } from 'src/Transaction-query/transaction.service';
 import { differenceInDays } from 'date-fns';
-const { parse, format, addYears, endOfDay, getDayOfYear,addMonths,parseISO } = require('date-fns');
+import { User } from 'src/user/user.entity';
+const { parse, format, addYears, endOfDay, getDayOfYear, addMonths, parseISO } = require('date-fns');
 
 
 @Injectable()
@@ -29,6 +30,10 @@ export class CompanyWorkPatternService {
     private readonly employeeassignrepo: Repository<EmployeeAssignWorkPattern>,
     @InjectRepository(EmployeeAssignWorkPatternInfo)
     private readonly employeeassigninforepo: Repository<EmployeeAssignWorkPatternInfo>,
+    @InjectRepository(EmployeeAssignWorkPatternHistory)
+    private readonly employeeWorkPatternHistoryRepo: Repository<EmployeeAssignWorkPatternHistory>,
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
     @InjectRepository(MasterEmployeeAssignWorkPatternInfo)
     private readonly masteremployeeassigninforepo: Repository<MasterEmployeeAssignWorkPatternInfo>,
     private readonly transactionService: Transactionservicedb,
@@ -101,33 +106,74 @@ export class CompanyWorkPatternService {
     // ** current date
     const date = new Date();
     // const workpattern = await this.employeeassignrepo.find({ where: { employeeId: empId, assign_at: LessThanOrEqual(date), status: WorkPatternStatus.ACTIVE }, order:{ assign_at: 'DESC' } });
-    
+
     // ** get current work pattern
     const query: SelectQueryBuilder<EmployeeAssignWorkPattern> = getConnection()
-    .getRepository(EmployeeAssignWorkPattern)
-    .createQueryBuilder("workpattern")
-    .leftJoinAndSelect("workpattern.workpatternId", "workpatternId")
-    .andWhere("workpattern.employeeId = :empId", { empId })
-    .andWhere("workpattern.assign_at <= :date", { date })
-    .andWhere("workpattern.status = :status", { status: WorkPatternStatus.ACTIVE })
-    .orderBy("workpattern.assign_at", 'DESC')
-    
+      .getRepository(EmployeeAssignWorkPattern)
+      .createQueryBuilder("workpattern")
+      .leftJoinAndSelect("workpattern.workpatternId", "workpatternId")
+      .andWhere("workpattern.employeeId = :empId", { empId })
+      .andWhere("workpattern.assign_at <= :date", { date })
+      .andWhere("workpattern.status = :status", { status: WorkPatternStatus.ACTIVE })
+      .orderBy("workpattern.assign_at", 'DESC')
+
     // ** Current work pattern
     const workPattern = await query.getOne();
 
     // ** Get current work pattern info
-    const workpatternInfo = await this.employeeassigninforepo.findOne({ where: { assignpatternId: workPattern?.['assign_id'], assign_at: format(
-      date,
-      'yyyy-MM-dd'
-    ) }});
+    const workpatternInfo = await this.employeeassigninforepo.findOne({
+      where: {
+        assignpatternId: workPattern?.['assign_id'], assign_at: format(
+          date,
+          'yyyy-MM-dd'
+        )
+      }
+    });
     // ** Current pattern rounds
-    const patternRounds = await this.employeeassigninforepo.find({ where: { assignpatternId: workPattern?.['assign_id'], pattern_round: workpatternInfo?.['pattern_round'] }});
+    const patternRounds = await this.employeeassigninforepo.find({ where: { assignpatternId: workPattern?.['assign_id'], pattern_round: workpatternInfo?.['pattern_round'] } });
 
-    return { 
+    return {
       patternInfo: patternRounds,
       workPattern: workPattern?.['workpatternId'],
       startedDate: workPattern?.['assign_at']
     };
+
+  }
+
+  // ** Fine employee future work pattern
+  async findFutureWorkPatterns(empId) {
+    // ** current date
+    const date = new Date();
+    // const workpattern = await this.employeeassignrepo.find({ where: { employeeId: empId, assign_at: LessThanOrEqual(date), status: WorkPatternStatus.ACTIVE }, order:{ assign_at: 'DESC' } });
+
+    // ** get future work pattern
+    const query: SelectQueryBuilder<EmployeeAssignWorkPattern> = getConnection()
+      .getRepository(EmployeeAssignWorkPattern)
+      .createQueryBuilder("workpattern")
+      .leftJoinAndSelect("workpattern.workpatternId", "workpatternId")
+      .andWhere("workpattern.employeeId = :empId", { empId })
+      .andWhere("workpattern.assign_at > :date", { date })
+      .andWhere("workpattern.status = :status", { status: WorkPatternStatus.ACTIVE })
+      .orderBy("workpattern.assign_at", 'ASC')
+
+    // ** future work patterns
+    const workPatterns = await query.getMany();
+
+    let results = [];
+
+    for (let i = 0; i < workPatterns?.length; i++) {    
+      // **  pattern rounds
+      const patternRounds = await this.employeeassigninforepo.find({ where: { assignpatternId: workPatterns?.[i]?.['assign_id'], pattern_round: 0 } });
+      
+      results.push({
+        patternInfo: patternRounds,
+        workPattern: workPatterns?.[i]?.['workpatternId'],
+        startedDate: workPatterns?.[i]?.['assign_at']
+      })
+    }
+
+
+    return results
 
   }
 
@@ -209,14 +255,14 @@ export class CompanyWorkPatternService {
     // pattern strat date
     const dateString = data.patternstartdate;
     const parts = dateString.split('-'); // Split the date string into parts
-        // Create a new Date object with the parts (Note: Months in JavaScript are 0-based)
-        const startmaindate = new Date(parts[2], parts[1] - 1, parts[0]);
-        const parsedDate = parse(dateString, 'dd-MM-yyyy', new Date());
-        const nextextendeddate=addMonths(parsedDate, 3);
+    // Create a new Date object with the parts (Note: Months in JavaScript are 0-based)
+    const startmaindate = new Date(parts[2], parts[1] - 1, parts[0]);
+    const parsedDate = parse(dateString, 'dd-MM-yyyy', new Date());
+    const nextextendeddate = addMonths(parsedDate, 3);
     newdata = {
       created_at: data.userTime,
-      assign_at:parse(dateString, 'dd-MM-yyyy', new Date()),
-      next_extended_date:nextextendeddate,
+      assign_at: parse(dateString, 'dd-MM-yyyy', new Date()),
+      next_extended_date: nextextendeddate,
       status: AssignWorkPatternSatatus.ACTIVE,
       created_by: data.created_by,
       employeeId: data.employeeId,
@@ -225,13 +271,24 @@ export class CompanyWorkPatternService {
     const insertassignemployee = await this.employeeassignrepo.create(newdata)
     const saveassignemployee = await this.employeeassignrepo.save(insertassignemployee)
 
+    const createdBy = await this.userRepo.findOne({id: data.created_by});
 
+    const historyData = {
+      history_data_type: 'employee assign work pattern history',
+      employeeId: data.employeeId,
+      history_data: JSON.stringify({
+        pattern: data.formattedData,
+        patternDetails: patterndata,
+        assign_at: parse(dateString, 'dd-MM-yyyy', new Date()),
+        created_by: createdBy?.['firstName'],
+        created_at: data.userTime,
+      }),
+      assignpatternId: saveassignemployee['id'],
+    }
 
-
-  
     // end date after 2 years
     const lastDateAfterTwoYears = endOfDay(addYears(startmaindate, 2));
-   
+
     // number of day in two years period
     const numberOfDaysAfterTwoYears = differenceInDays(lastDateAfterTwoYears, startmaindate)
     // one pattern data
@@ -272,17 +329,17 @@ export class CompanyWorkPatternService {
     const patternDays = data.formattedData.length;
     const repetitions = Math.floor(numberOfDaysAfterTwoYears / patternDays);
     const remainingDays = numberOfDaysAfterTwoYears % patternDays;
-    
+
     // Generate records for the pattern repetitions
     for (let r = 0; r < repetitions; r++) {
-  let value=0;
+      let value = 0;
       for (const i of data.formattedData) {
-            const date = new Date(startmaindate);
-      date.setDate(startmaindate.getDate() + r*patternDays+value);
-      // recordsToInsert.push({ date, dayNumber: day + 1 });
-      dateObject = parse(date, 'dd-MM-yyyy', new Date());
-  
-      // console.log(dateObject,898983)
+        const date = new Date(startmaindate);
+        date.setDate(startmaindate.getDate() + r * patternDays + value);
+        // recordsToInsert.push({ date, dayNumber: day + 1 });
+        dateObject = parse(date, 'dd-MM-yyyy', new Date());
+
+        // console.log(dateObject,898983)
         let parsedstartTime;
         let parsedendTime;
         if (i.alignment == 0) {
@@ -290,7 +347,7 @@ export class CompanyWorkPatternService {
         } else {
           workmode = AssignPatternInfoWorkMode.ON
         }
-       
+
         if (i.startTime != undefined || i.endTime != undefined) {
           parsedstartTime = parse(i.startTime, 'h:mm a', new Date());
           parsedendTime = parse(i.endTime, 'h:mm a', new Date());
@@ -311,7 +368,7 @@ export class CompanyWorkPatternService {
         // console.log(assigninfo)
         value++
       }
-      
+
     }
 
     // Generate records for the remaining days
@@ -347,60 +404,62 @@ export class CompanyWorkPatternService {
     }
     const rangedArray = dataofassigninfo.slice(0, patternDays);
 
-    const response11=await this.transactionService.transactionforinsertworkpattern(EmployeeAssignWorkPatternInfo,MasterEmployeeAssignWorkPatternInfo,dataofassigninfo,rangedArray)
-   if(response11==200){
-    return 200;
-   }else{
-    return 500
-   }
-  // return 200
+    const response11 = await this.transactionService.transactionforinsertworkpattern(EmployeeAssignWorkPatternInfo, MasterEmployeeAssignWorkPatternInfo, EmployeeAssignWorkPatternHistory, dataofassigninfo, rangedArray, historyData)
+    if (response11 == 200) {
+      return 200;
+    } else {
+      return 500
+    }
+    // return 200
     // let inserttintomaster = await this.masteremployeeassigninforepo.create(dataofassigninfo[0])
     // await this.masteremployeeassigninforepo.save(inserttintomaster)
     // let insertassignemployeeinfo = await this.employeeassigninforepo.create(dataofassigninfo)
     // await this.employeeassigninforepo.save(insertassignemployeeinfo)
-  
+
   }
 
-  async extendassignworkpatterntoemployee(){
-    const date=new Date();
+  async extendassignworkpatterntoemployee() {
+    const date = new Date();
     const parsedDate = format(date, 'dd-MM-yyyy');;
-    console.log(parsedDate,34)
-    const findexistdata=await this.employeeassignrepo.find({where:{next_extended_date:LessThanOrEqual(date),ended_at:null},relations:['employeeId','workpatternId']})
+    console.log(parsedDate, 34)
+    const findexistdata = await this.employeeassignrepo.find({ where: { next_extended_date: LessThanOrEqual(date), ended_at: null }, relations: ['employeeId', 'workpatternId'] })
     let patterndata;
     let lastvalue;
     let patternid;
-   let resultslength;
+    let resultslength;
     for (const i of findexistdata) {
-        resultslength=0
-         patterndata=await this.masteremployeeassigninforepo.find({where:{assignpatternId:i.assign_id}})
-        lastvalue=await this.employeeassigninforepo.findOne({where:{assignpatternId:i.assign_id},order:{pattern_round:'DESC'}})
-        patternid=i.assign_id
-        const subQuery = this.employeeassigninforepo.createQueryBuilder('sub')
+      resultslength = 0
+      patterndata = await this.masteremployeeassigninforepo.find({ where: { assignpatternId: i.assign_id } })
+      lastvalue = await this.employeeassigninforepo.findOne({ where: { assignpatternId: i.assign_id }, order: { pattern_round: 'DESC' } })
+      patternid = i.assign_id
+      const subQuery = this.employeeassigninforepo.createQueryBuilder('sub')
         .select('MAX(sub.pattern_round)', 'maxPatternRound')
-        .where('sub.assignpatternId = :assignId', { assignId:patternid })
+        .where('sub.assignpatternId = :assignId', { assignId: patternid })
         .getQuery();
-  
+
       const results = await this.employeeassigninforepo.createQueryBuilder('entity')
-        .where(`entity.assignpatternId = :assignId AND entity.pattern_round = (${subQuery})`, { assignId:patternid })
+        .where(`entity.assignpatternId = :assignId AND entity.pattern_round = (${subQuery})`, { assignId: patternid })
         .getMany();
-        
-        
-  if(patterndata.length!=results.length){
-    resultslength=patterndata.length-results.length;
-    for (let i = results.length; i <= patterndata.length; i++) {
-    //  console.log(patterndata[i-1],1234) 
-    }
-    
-    
-  }
 
-        
-        // EmployeeDataHistoryModule.id
+
+      if (patterndata.length != results.length) {
+        resultslength = patterndata.length - results.length;
+        for (let i = results.length; i <= patterndata.length; i++) {
+          //  console.log(patterndata[i-1],1234) 
+        }
+
+
+      }
+
+
+      // EmployeeDataHistoryModule.id
       // workpatternId.id
-      console.log(results,54)
+      console.log(results, 54)
     }
-    const nextextendeddate=addMonths(date, 3);
+    const nextextendeddate = addMonths(date, 3);
   }
 
-  
+  async getWorkPatternHistoryData(employeeId) {
+    return this.employeeWorkPatternHistoryRepo.find({employeeId: employeeId});
+  }
 }
