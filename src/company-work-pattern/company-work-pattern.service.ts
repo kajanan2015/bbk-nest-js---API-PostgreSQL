@@ -15,7 +15,7 @@ import { EmployeeAssignWorkPatternInfo } from './assign_work_pattern/employee-as
 import { WorkPatternStatus } from './company-work-pattern.entity';
 import { MasterEmployeeAssignWorkPatternInfo } from './assign_work_pattern/employee-assign-work-pattern.entity';
 import { Transactionservicedb } from 'src/Transaction-query/transaction.service';
-import { differenceInDays } from 'date-fns';
+import {addDays, differenceInDays } from 'date-fns';
 import { User } from 'src/user/user.entity';
 const { parse, format, addYears, endOfDay, getDayOfYear, addMonths, parseISO } = require('date-fns');
 
@@ -429,10 +429,10 @@ export class CompanyWorkPatternService {
     let resultslength;
     for (const i of findexistdata) {
       resultslength = 0
-      patterndata = await this.masteremployeeassigninforepo.find({ where: { assignpatternId: i.assign_id } })
-      lastvalue = await this.employeeassigninforepo.findOne({ where: { assignpatternId: i.assign_id }, order: { pattern_round: 'DESC' } })
+      patterndata = await this.masteremployeeassigninforepo.find({ where: { assignpatternId: i.assign_id },relations:['assignpatternId'] })
+
       patternid = i.assign_id
-      const subQuery = this.employeeassigninforepo.createQueryBuilder('sub')
+      const subQuery = await this.employeeassigninforepo.createQueryBuilder('sub')
         .select('MAX(sub.pattern_round)', 'maxPatternRound')
         .where('sub.assignpatternId = :assignId', { assignId: patternid })
         .getQuery();
@@ -442,24 +442,119 @@ export class CompanyWorkPatternService {
         .getMany();
 
 
+        // console.log(results,78787878)
+      let lastValue = results[results.length - 1];
+      let startmaindate = new Date(lastValue.assign_at)
+      const nextextendeddate = addMonths(startmaindate, 3);
+      const formattedmaindate = format(startmaindate, 'dd-MM-yyyy');
+      const formattedendeddate = format(nextextendeddate, 'dd-MM-yyyy');
+      resultslength = patterndata.length - results.length;
+      // end date after 3 month
+      const new_main_date_after_put_exist_pattern=addDays(startmaindate,(resultslength+2))
+      
+      const lastDateAfterThreeMonths = endOfDay(addMonths(startmaindate, 3));
+      const nextupdatedate=addMonths(date,3)
+      // number of day in after 3 month
+      const numberOfDaysAfterthreemonths = differenceInDays(lastDateAfterThreeMonths, startmaindate)
+
+      let assigninfo;
+      let dataofassigninfo = [];
+      let dataassign = [];
+      let dateObject;
       if (patterndata.length != results.length) {
-        resultslength = patterndata.length - results.length;
+       
+        // console.log(startmaindate,898)
+       let x=1;
         for (let i = results.length; i <= patterndata.length; i++) {
-          //  console.log(patterndata[i-1],1234) 
+        
+           const newmaindate = new Date(startmaindate);
+      newmaindate.setDate(startmaindate.getDate() + x);
+          // one pattern data 
+          assigninfo = {
+            created_by: 1,
+            start_time: patterndata[i - 1].start_time,
+            end_time: patterndata[i - 1].end_time,
+            created_at: date,
+            assign_at: newmaindate,
+            assignpatternId: patterndata[i - 1].assignpatternId.assign_id,
+            workmode: patterndata[i - 1].workmode,
+            pattern_round: lastValue.pattern_round
+          }
+          dataofassigninfo.push(assigninfo);
+          x++;
         }
 
+     
 
       }
+      const patternDays =patterndata.length;
+      const repetitions = Math.floor((numberOfDaysAfterthreemonths-resultslength) / patternDays);
+      const remainingDays = (numberOfDaysAfterthreemonths-resultslength) % patternDays;
+ 
+      for (let r = 0; r < repetitions; r++) {
+        let value = 0;
+        for (const i of patterndata) {
+          const enddate = new Date(new_main_date_after_put_exist_pattern);
+          enddate.setDate(new_main_date_after_put_exist_pattern.getDate() + r * patternDays + value);
+          // recordsToInsert.push({ date, dayNumber: day + 1 });
+   
+          let parsedstartTime;
+          let parsedendTime;
+  
+          assigninfo = {
+            created_by: 1,
+            start_time: i.start_time,
+            end_time: i.end_time,
+            created_at: date,
+            assign_at: enddate,
+            assignpatternId:  i.assignpatternId.assign_id,
+            workmode: i.workmode,
+            pattern_round: r+lastValue.pattern_round
+          }
+  
+          dataofassigninfo.push(assigninfo);
 
+          value++
+        }
+  
+      }
+  
+      // Generate records for the remaining days
+      for (let r = 0; r < remainingDays; r++) {
+        const date_object = new Date(new_main_date_after_put_exist_pattern);
+        date_object.setDate(new_main_date_after_put_exist_pattern.getDate() + repetitions * patternDays + r);
+        const dayNumber = r % patternDays + 1;
+        let parsedstartTime;
+        let parsedendTime;
+        assigninfo = {
+          created_by:1,
+          start_time: patterndata[r].start_time,
+          end_time: patterndata[r].end_time,
+          created_at: date,
+          assign_at: date_object,
+          assignpatternId:  patterndata[r].assignpatternId.assign_id,
+          workmode:  patterndata[r].workmode,
+          pattern_round:lastValue.pattern_round+repetitions + 1
+        }
+  
+        dataofassigninfo.push(assigninfo);
+      }
 
       // EmployeeDataHistoryModule.id
       // workpatternId.id
-      console.log(results, 54)
+ 
+const rangedArray={next_extended_date:nextupdatedate,updated_at:date,updated_by:1}
+
+      const response11 = await this.transactionService.transactionforinsertworkpatternextend(EmployeeAssignWorkPatternInfo, EmployeeAssignWorkPattern, dataofassigninfo, rangedArray,i)
+      if (response11 == 200) {
+        return 200;
+      } else {
+        return 500
+      }
     }
-    const nextextendeddate = addMonths(date, 3);
+
+  
   }
 
-  async getWorkPatternHistoryData(employeeId) {
-    return this.employeeWorkPatternHistoryRepo.find({employeeId: employeeId});
-  }
+
 }

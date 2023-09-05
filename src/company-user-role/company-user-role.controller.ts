@@ -25,27 +25,32 @@ export class CompanyUserRoleController {
   constructor(
     private readonly companyUserRoleService: CompanyUserRoleService,
     private readonly imageUploadService: ImageUploadService
-  ) {}
+  ) { }
 
   @Post()
   @UseInterceptors(AnyFilesInterceptor())
-  async create(@UploadedFiles() profileImg, @Body() data,@Req() req) {
-    let prflogo=[];
+  async create(@UploadedFiles() profileImg, @Body() data, @Req() req) {
+    let prflogo = [];
     let prflogothumb;
-    console.log(profileImg,89898)
-    if(profileImg.length>0){
+    console.log(profileImg, 89898)
+    if (profileImg.length > 0) {
       prflogo = await this.imageUploadService.upload(profileImg, "body");
-      prflogothumb=await this.imageUploadService.uploadThumbnailToS3(prflogo[0])
+      prflogothumb = await this.imageUploadService.uploadThumbnailToS3(prflogo[0])
     }
     const base_url = `${req.get('origin')}/`;
     const passdata = {
       ...data,
       profilePicture: prflogo[0],
       prfcreate: data.userId,
-      company:data.companyid,
+      company: data.companyid,
       status: 1,
     };
-    return this.companyUserRoleService.create(passdata,prflogothumb,base_url);
+    return this.companyUserRoleService.create(passdata, prflogothumb, base_url);
+  }
+
+  @Post('finduserbyusingtype')
+  async findbyusertype(@Body() data) {
+    return this.companyUserRoleService.findbyusertype(data.type)
   }
 
   @Get('company_wise/:id')
@@ -75,33 +80,27 @@ export class CompanyUserRoleController {
         : {}),
     };
     delete data.userId;
-    // if (prfImg && prfImg.length) {
-    //   const profilePicture = await this.imageUploadService.upload(
-    //     prfImg,
-    //     "body"
-    //   );
-    //   console.log(profilePicture, 12345);
-    //   delete data.existprfpic;
-    //   data = {
-    //     ...data,
-    //     profilePicture: profilePicture[0],
-    //   };
-    //   console.log(data, 23232323);
-    // }
-
-    if (updateCompanyUserRoleDto.existprfpic) {
+    if (prfImg && prfImg.length) {
       const profilePicture = await this.imageUploadService.upload(
         prfImg,
         "body"
       );
-      delete data.existprfpic;
-
+      console.log(profilePicture, 12345);
       data = {
         ...data,
-        profilePicture: profilePicture[0],
+        profilePic: profilePicture[0],
+        prflogothumb: await this.imageUploadService.uploadThumbnailToS3(profilePicture[0])
       };
+
+      if (updateCompanyUserRoleDto.existprfpic) {
+    
+        delete data.existprfpic;
+
+      }
       
+
     }
+
 
     return await this.companyUserRoleService.update(
       +id,

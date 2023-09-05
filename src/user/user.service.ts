@@ -21,7 +21,7 @@ export class UserService {
 
   async getCompaniesByUserId(userId: number) {
     const user = await this.userRepository.findOne(userId, {
-      relations: ['companies', 'companies.linkedcompany', 'companies.linkedcompany.country','companies.linkedcompany.regAddressCountry'],
+      relations: ['companies', 'companies.linkedcompany', 'companies.linkedcompany.country','companies.linkedcompany.regAddressCountry','companies.themedata'],
     });
     return user.companies;
   }
@@ -75,8 +75,7 @@ export class UserService {
     return hashed;
   }
 
-  async update(id: number, data: Partial<User>) {
-    console.log(data, 877878787878787878)
+  async update(id: number, data) {
     let user = data;
     if (data.password) {
       const newhashpassword = await this.hashPassword(data.password);
@@ -157,6 +156,7 @@ export class UserService {
 
   async findoneuserdata(id) {
     const users = await this.userRepository.findOne(id);
+    delete users.password;
     return users
   }
 
@@ -203,5 +203,12 @@ export class UserService {
   async findDepartmentUser(departmentId) {
     const users = await this.userRepository.find({ relations: ['departments'] });
     return users.filter((user) => user.departments.some(department => department.id == departmentId));
+  }
+
+
+  async finduserbyusertype(type){
+      const user=await this.userRepository.find({where:{uType:type}})
+      user.forEach(obj => delete obj.password);
+      return user;
   }
 }

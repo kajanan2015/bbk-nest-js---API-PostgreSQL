@@ -164,5 +164,29 @@ async transactionforinsertworkpattern(assigninfotable, mastertable, historyTable
   }
 }
 
+// transaction for insert 2 years record of work pattern assign info
+@Transaction()
+async transactionforinsertworkpatternextend(assigninfotable, maintable,
+  data,maindata,mainexistdata,@TransactionManager() manager?: any,
+) {
+  try {
+
+    const createresponse = await manager.create(assigninfotable, data); // Using merge directly on manager
+    await manager.save(assigninfotable, createresponse);
+
+    const newsexistdata = manager.merge(maintable, mainexistdata, maindata); // Using merge directly on manager
+    await manager.save(maintable, newsexistdata);
+   
+    // You can add more business logic or other updates here
+
+    // If everything is successful, the transaction will be committed automatically
+
+    return 200;
+  } catch (err) {
+    // If any error occurs, the transaction will be rolled back automatically
+    throw err; // Rethrow the error to be handled at the higher level
+  }
+}
+
 
 }

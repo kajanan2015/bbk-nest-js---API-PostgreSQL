@@ -27,6 +27,7 @@ import { PaymentLinkData } from 'src/payment/payment_link_otp/payment_link.entit
 import { CompanyPayment } from 'src/company-payment/company-payment.entity';
 import { CompanyUserRole } from 'src/company-user-role/company-user-role.entity';
 import { RoleCompany } from 'src/user/role/role_company.entity';
+import { CompanyWiseThemeCustomize } from 'src/company-wise-theme-customize/company-wise-theme-customize.entity';
 export enum Companyidentifier {
   MAIN = 'maincompany',
   SUB = 'subcompany'
@@ -147,6 +148,9 @@ export class CompaniesEntity {
 
   @OneToMany(() => RoleCompany, rolecompany => rolecompany.company, ({ cascade: true }))
   assignedrole: RoleCompany[];
+
+  @OneToMany(() => CompanyWiseThemeCustomize, theme => theme.company, ({ cascade: true }))
+  themedata: CompanyWiseThemeCustomize[];
 
 }
 

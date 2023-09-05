@@ -23,7 +23,7 @@ import { EmployeeAssignWorkPattern } from 'src/company-work-pattern/assign_work_
 import { EmployeeAssignWorkPatternInfo } from 'src/company-work-pattern/assign_work_pattern/employee-assign-work-pattern.entity';
 import { RoleCompany } from './role/role_company.entity';
 import { OperationRoleCompany } from './role/role_operation/role_company_operation.entity';
-
+import { CompanyWiseThemeCustomize } from 'src/company-wise-theme-customize/company-wise-theme-customize.entity';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -228,4 +228,10 @@ export class User {
 
   @OneToMany(()=>OperationRoleCompany, assignpattern=>assignpattern.updated_by,{cascade:true})
   roleoperationupdatedby:OperationRoleCompany[];
+
+  @OneToMany(()=>CompanyWiseThemeCustomize, assignpattern=>assignpattern.created_by,{cascade:true})
+  themedatacreateby:CompanyWiseThemeCustomize[];
+
+  @OneToMany(()=>CompanyWiseThemeCustomize, assignpattern=>assignpattern.updated_by,{cascade:true})
+  themedataupdatedby:OperationRoleCompany[];
 }
