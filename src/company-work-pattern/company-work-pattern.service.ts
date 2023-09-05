@@ -8,14 +8,15 @@ import { SystemCodeService } from 'src/system-code/system-code.service';
 import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
 import { WorkType } from './company-work-pattern.entity';
 import { WorkPatternType } from './company-work-pattern.entity';
-import { EmployeeAssignWorkPattern } from './assign_work_pattern/employee-assign-work-pattern.entity';
+import { EmployeeAssignWorkPattern, EmployeeAssignWorkPatternHistory } from './assign_work_pattern/employee-assign-work-pattern.entity';
 import { AssignWorkPatternSatatus } from './assign_work_pattern/employee-assign-work-pattern.entity';
 import { AssignPatternInfoWorkMode } from './assign_work_pattern/employee-assign-work-pattern.entity';
 import { EmployeeAssignWorkPatternInfo } from './assign_work_pattern/employee-assign-work-pattern.entity';
 import { WorkPatternStatus } from './company-work-pattern.entity';
 import { MasterEmployeeAssignWorkPatternInfo } from './assign_work_pattern/employee-assign-work-pattern.entity';
 import { Transactionservicedb } from 'src/Transaction-query/transaction.service';
-import { addDays, differenceInDays } from 'date-fns';
+import {addDays, differenceInDays } from 'date-fns';
+import { User } from 'src/user/user.entity';
 const { parse, format, addYears, endOfDay, getDayOfYear, addMonths, parseISO } = require('date-fns');
 
 
@@ -29,6 +30,10 @@ export class CompanyWorkPatternService {
     private readonly employeeassignrepo: Repository<EmployeeAssignWorkPattern>,
     @InjectRepository(EmployeeAssignWorkPatternInfo)
     private readonly employeeassigninforepo: Repository<EmployeeAssignWorkPatternInfo>,
+    @InjectRepository(EmployeeAssignWorkPatternHistory)
+    private readonly employeeWorkPatternHistoryRepo: Repository<EmployeeAssignWorkPatternHistory>,
+    @InjectRepository(User)
+    private readonly userRepo: Repository<User>,
     @InjectRepository(MasterEmployeeAssignWorkPatternInfo)
     private readonly masteremployeeassigninforepo: Repository<MasterEmployeeAssignWorkPatternInfo>,
     private readonly transactionService: Transactionservicedb,
@@ -101,33 +106,74 @@ export class CompanyWorkPatternService {
     // ** current date
     const date = new Date();
     // const workpattern = await this.employeeassignrepo.find({ where: { employeeId: empId, assign_at: LessThanOrEqual(date), status: WorkPatternStatus.ACTIVE }, order:{ assign_at: 'DESC' } });
-    
+
     // ** get current work pattern
     const query: SelectQueryBuilder<EmployeeAssignWorkPattern> = getConnection()
-    .getRepository(EmployeeAssignWorkPattern)
-    .createQueryBuilder("workpattern")
-    .leftJoinAndSelect("workpattern.workpatternId", "workpatternId")
-    .andWhere("workpattern.employeeId = :empId", { empId })
-    .andWhere("workpattern.assign_at <= :date", { date })
-    .andWhere("workpattern.status = :status", { status: WorkPatternStatus.ACTIVE })
-    .orderBy("workpattern.assign_at", 'DESC')
-    
+      .getRepository(EmployeeAssignWorkPattern)
+      .createQueryBuilder("workpattern")
+      .leftJoinAndSelect("workpattern.workpatternId", "workpatternId")
+      .andWhere("workpattern.employeeId = :empId", { empId })
+      .andWhere("workpattern.assign_at <= :date", { date })
+      .andWhere("workpattern.status = :status", { status: WorkPatternStatus.ACTIVE })
+      .orderBy("workpattern.assign_at", 'DESC')
+
     // ** Current work pattern
     const workPattern = await query.getOne();
 
     // ** Get current work pattern info
-    const workpatternInfo = await this.employeeassigninforepo.findOne({ where: { assignpatternId: workPattern?.['assign_id'], assign_at: format(
-      date,
-      'yyyy-MM-dd'
-    ) }});
+    const workpatternInfo = await this.employeeassigninforepo.findOne({
+      where: {
+        assignpatternId: workPattern?.['assign_id'], assign_at: format(
+          date,
+          'yyyy-MM-dd'
+        )
+      }
+    });
     // ** Current pattern rounds
-    const patternRounds = await this.employeeassigninforepo.find({ where: { assignpatternId: workPattern?.['assign_id'], pattern_round: workpatternInfo?.['pattern_round'] }});
+    const patternRounds = await this.employeeassigninforepo.find({ where: { assignpatternId: workPattern?.['assign_id'], pattern_round: workpatternInfo?.['pattern_round'] } });
 
-    return { 
+    return {
       patternInfo: patternRounds,
       workPattern: workPattern?.['workpatternId'],
       startedDate: workPattern?.['assign_at']
     };
+
+  }
+
+  // ** Fine employee future work pattern
+  async findFutureWorkPatterns(empId) {
+    // ** current date
+    const date = new Date();
+    // const workpattern = await this.employeeassignrepo.find({ where: { employeeId: empId, assign_at: LessThanOrEqual(date), status: WorkPatternStatus.ACTIVE }, order:{ assign_at: 'DESC' } });
+
+    // ** get future work pattern
+    const query: SelectQueryBuilder<EmployeeAssignWorkPattern> = getConnection()
+      .getRepository(EmployeeAssignWorkPattern)
+      .createQueryBuilder("workpattern")
+      .leftJoinAndSelect("workpattern.workpatternId", "workpatternId")
+      .andWhere("workpattern.employeeId = :empId", { empId })
+      .andWhere("workpattern.assign_at > :date", { date })
+      .andWhere("workpattern.status = :status", { status: WorkPatternStatus.ACTIVE })
+      .orderBy("workpattern.assign_at", 'ASC')
+
+    // ** future work patterns
+    const workPatterns = await query.getMany();
+
+    let results = [];
+
+    for (let i = 0; i < workPatterns?.length; i++) {    
+      // **  pattern rounds
+      const patternRounds = await this.employeeassigninforepo.find({ where: { assignpatternId: workPatterns?.[i]?.['assign_id'], pattern_round: 0 } });
+      
+      results.push({
+        patternInfo: patternRounds,
+        workPattern: workPatterns?.[i]?.['workpatternId'],
+        startedDate: workPatterns?.[i]?.['assign_at']
+      })
+    }
+
+
+    return results
 
   }
 
@@ -225,9 +271,20 @@ export class CompanyWorkPatternService {
     const insertassignemployee = await this.employeeassignrepo.create(newdata)
     const saveassignemployee = await this.employeeassignrepo.save(insertassignemployee)
 
+    const createdBy = await this.userRepo.findOne({id: data.created_by});
 
-
-
+    const historyData = {
+      history_data_type: 'employee assign work pattern history',
+      employeeId: data.employeeId,
+      history_data: JSON.stringify({
+        pattern: data.formattedData,
+        patternDetails: patterndata,
+        assign_at: parse(dateString, 'dd-MM-yyyy', new Date()),
+        created_by: createdBy?.['firstName'],
+        created_at: data.userTime,
+      }),
+      assignpatternId: saveassignemployee['id'],
+    }
 
     // end date after 2 years
     const lastDateAfterTwoYears = endOfDay(addYears(startmaindate, 2));
@@ -347,7 +404,7 @@ export class CompanyWorkPatternService {
     }
     const rangedArray = dataofassigninfo.slice(0, patternDays);
 
-    const response11 = await this.transactionService.transactionforinsertworkpattern(EmployeeAssignWorkPatternInfo, MasterEmployeeAssignWorkPatternInfo, dataofassigninfo, rangedArray)
+    const response11 = await this.transactionService.transactionforinsertworkpattern(EmployeeAssignWorkPatternInfo, MasterEmployeeAssignWorkPatternInfo, EmployeeAssignWorkPatternHistory, dataofassigninfo, rangedArray, historyData)
     if (response11 == 200) {
       return 200;
     } else {
@@ -364,9 +421,8 @@ export class CompanyWorkPatternService {
   async extendassignworkpatterntoemployee() {
     const date = new Date();
     const parsedDate = format(date, 'dd-MM-yyyy');;
-   
+    console.log(parsedDate, 34)
     const findexistdata = await this.employeeassignrepo.find({ where: { next_extended_date: LessThanOrEqual(date), ended_at: null }, relations: ['employeeId', 'workpatternId'] })
-    
     let patterndata;
     let lastvalue;
     let patternid;
@@ -500,5 +556,7 @@ const rangedArray={next_extended_date:nextupdatedate,updated_at:date,updated_by:
   
   }
 
-
+  async getWorkPatternHistoryData(employeeId) {
+    return this.employeeWorkPatternHistoryRepo.find({employeeId: employeeId});
+  }
 }

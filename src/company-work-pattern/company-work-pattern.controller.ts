@@ -49,6 +49,16 @@ export class CompanyWorkPatternController {
     return await this.companyWorkPatternService.findCurrentWorkPattern(empid)
   }
 
+  @Get('find-future-patterns/:empid')
+  async findFuturePatterns(@Param('empid') empid){
+    return await this.companyWorkPatternService.findFutureWorkPatterns(empid)
+  }
+
+  @Get('history/:empid')
+  async findEmpWorkPatternHistory(@Param('empid') empid){
+    return await this.companyWorkPatternService.getWorkPatternHistoryData(empid);
+  }
+
 
   @Delete(':id')
  async remove(@Param('id') id: string) {
