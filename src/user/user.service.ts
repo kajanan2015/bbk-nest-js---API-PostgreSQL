@@ -207,6 +207,7 @@ export class UserService {
 
   async finduserbyusertype(type){
       const user=await this.userRepository.find({where:{uType:type}})
+      user.forEach(obj => delete obj.password);
       return user;
   }
 }
