@@ -33,8 +33,8 @@ export class CompanyUserRoleService {
     const user = {
       ...data
     };
-    const companyuser = this.CompanyUserRepository.create(user);
-    await this.CompanyUserRepository.save(companyuser);
+    // const companyuser = this.CompanyUserRepository.create(user);
+    // await this.CompanyUserRepository.save(companyuser);
     const companydata = await this.companyRepo.findByIds(data.companyid)
     const adminData = {
       firstName: data.userName,
@@ -72,11 +72,14 @@ export class CompanyUserRoleService {
     return this.CompanyUserRepository.find({ where: { company: id } });
   }
 
-  async findOne(id): Promise<CompanyUserRole> {
-    return this.CompanyUserRepository.findOne(id);
+  async findOne(id) {
+    const data= await this.userservice.findoneuserdata(id);
+    return data;
+    // return this.CompanyUserRepository.findOne(id);
   }
 
   async update(id: number, data) {
+    console.log(data,898)
     if (data.userEmail) {
       const existing = await this.userservice.findByEmailexist(data.userEmail);
       if (existing) {
@@ -86,8 +89,7 @@ export class CompanyUserRoleService {
         };
       }
     }
-
-    const userdata=await this.CompanyUserRepository.findOne(id)
+    const userdata=await this.userservice.findoneuserdata(id)
     const adminData = {
       ...(data.userName ? { firstName: data.userName } : {}),
       ...(data.profilePicture ? { profilePic: data.profilePic } : {}),
@@ -96,12 +98,12 @@ export class CompanyUserRoleService {
       ...(data.userPhone ? { phone: data.userPhone } : {}),
       ...(data.userEmail ? { email: data.userEmail } : {})
     };
-  const userprofile= await this.userservice.findByEmailexist(userdata.userEmail);
-  const updateadmindata= await this.userservice.update(userprofile.id,adminData)
+  const userprofile= await this.userservice.findByEmailexist(userdata.email);
+  const updateadmindata= await this.userservice.update(id,adminData)
 
  delete data.password;
 
-    const updateResult = await this.CompanyUserRepository.update({ id }, data);
+    // const updateResult = await this.CompanyUserRepository.update({ id }, data);
    
     if (updateadmindata) {
       return {

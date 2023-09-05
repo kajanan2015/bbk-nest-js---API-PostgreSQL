@@ -156,6 +156,7 @@ export class UserService {
 
   async findoneuserdata(id) {
     const users = await this.userRepository.findOne(id);
+    delete users.password;
     return users
   }
 

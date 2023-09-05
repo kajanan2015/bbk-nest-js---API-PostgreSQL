@@ -41,6 +41,8 @@ export class UserController {
     if (profileImg.length > 0) {
       data.profilePic = await this.imageUploadService.upload(profileImg, 'body')
       data.profilePicThumb = await this.imageUploadService.uploadThumbnailToS3(data.profilePic[0]);
+    }else{
+      delete data.profileImg
     }
     await this.service.update(id, {...data});
     return {
