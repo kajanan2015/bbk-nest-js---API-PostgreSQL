@@ -203,4 +203,10 @@ export class UserService {
     const users = await this.userRepository.find({ relations: ['departments'] });
     return users.filter((user) => user.departments.some(department => department.id == departmentId));
   }
+
+
+  async finduserbyusertype(type){
+      const user=await this.userRepository.find({where:{uType:type}})
+      return user;
+  }
 }

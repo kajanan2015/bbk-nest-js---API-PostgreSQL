@@ -48,6 +48,11 @@ export class CompanyUserRoleController {
     return this.companyUserRoleService.create(passdata,prflogothumb,base_url);
   }
 
+@Post('finduserbyusingtype')
+async findbyusertype(@Body() data){
+  return this.companyUserRoleService.findbyusertype(data.type)
+}
+
   @Get('company_wise/:id')
   findAll(@Param("id") id) {
     return this.companyUserRoleService.findAll(id);

@@ -119,4 +119,8 @@ export class CompanyUserRoleService {
   async remove(id: number): Promise<void> {
     await this.CompanyUserRepository.delete(id);
   }
+
+  async findbyusertype(type){
+    return await this.userservice.finduserbyusertype(type)
+  }
 }
