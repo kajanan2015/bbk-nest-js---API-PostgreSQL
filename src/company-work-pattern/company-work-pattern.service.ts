@@ -556,5 +556,7 @@ const rangedArray={next_extended_date:nextupdatedate,updated_at:date,updated_by:
   
   }
 
-
+  async getWorkPatternHistoryData(employeeId) {
+    return this.employeeWorkPatternHistoryRepo.find({employeeId: employeeId});
+  }
 }
