@@ -63,6 +63,18 @@ export class CompanyUserRoleController {
     return this.companyUserRoleService.findOne(+id);
   }
 
+  @Post('changeuserstatus/:id')
+  async changeuserstatus(@Param('id') id, @Body() data) {
+    console.log(id, 333)
+    console.log(data, 90909)
+    const response = await this.companyUserRoleService.changeuserstatus(id, data.status)
+    if (response) {
+      return 200;
+    } else {
+      return 500;
+    }
+  }
+
   @Put("/edit/:id")
   @UseInterceptors(AnyFilesInterceptor())
   async update(
@@ -93,11 +105,11 @@ export class CompanyUserRoleController {
       };
 
       if (updateCompanyUserRoleDto.existprfpic) {
-    
+
         delete data.existprfpic;
 
       }
-      
+
 
     }
 
@@ -113,4 +125,5 @@ export class CompanyUserRoleController {
   remove(@Param("id") id: string) {
     return this.companyUserRoleService.remove(+id);
   }
+
 }

@@ -73,13 +73,13 @@ export class CompanyUserRoleService {
   }
 
   async findOne(id) {
-    const data= await this.userservice.findoneuserdata(id);
+    const data = await this.userservice.findoneuserdata(id);
     return data;
     // return this.CompanyUserRepository.findOne(id);
   }
 
   async update(id: number, data) {
-    console.log(data,898)
+    console.log(data, 898)
     if (data.userEmail) {
       const existing = await this.userservice.findByEmailexist(data.userEmail);
       if (existing) {
@@ -89,7 +89,7 @@ export class CompanyUserRoleService {
         };
       }
     }
-    const userdata=await this.userservice.findoneuserdata(id)
+    const userdata = await this.userservice.findoneuserdata(id)
     const adminData = {
       ...(data.userName ? { firstName: data.userName } : {}),
       ...(data.profilePicture ? { profilePic: data.profilePic } : {}),
@@ -98,13 +98,13 @@ export class CompanyUserRoleService {
       ...(data.userPhone ? { phone: data.userPhone } : {}),
       ...(data.userEmail ? { email: data.userEmail } : {})
     };
-  const userprofile= await this.userservice.findByEmailexist(userdata.email);
-  const updateadmindata= await this.userservice.update(id,adminData)
+    const userprofile = await this.userservice.findByEmailexist(userdata.email);
+    const updateadmindata = await this.userservice.update(id, adminData)
 
- delete data.password;
+    delete data.password;
 
     // const updateResult = await this.CompanyUserRepository.update({ id }, data);
-   
+
     if (updateadmindata) {
       return {
         statusCode: HttpStatus.OK,
@@ -122,7 +122,22 @@ export class CompanyUserRoleService {
     await this.CompanyUserRepository.delete(id);
   }
 
-  async findbyusertype(type){
+  async findbyusertype(type) {
     return await this.userservice.finduserbyusertype(type)
+  }
+
+  async changeuserstatus(id, data) {
+    console.log(data, 9090)
+    let status;
+    if (data == true) {
+      status = 1
+    } else {
+      status = 0;
+      
+    }
+    const passdata = {
+      status: status
+    }
+    return await this.userservice.update(id, passdata)
   }
 }
