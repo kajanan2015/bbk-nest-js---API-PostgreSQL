@@ -143,7 +143,7 @@ export class EmployeeModuleService {
       //const { providedCopyUrl, empProvidedCopyUrl, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
       const { department, profilePicUrl, employeeCode, company, ...infoData } = createEmployeeModuleDto;
 
-      const response = await this.employeeRepository.create({ employeeCode, company, linkedEmployee: infoData, created_at: infoData.created_at, created_by: infoData.created_by });
+      const response = await this.employeeRepository.create({ employeeCode, company: company ?? 95, linkedEmployee: infoData, created_at: infoData.created_at, created_by: infoData.created_by });
       const res = await this.employeeRepository.save(response);
 
       const responseInfo = await this.employeeInfoRepository.create({ ...infoData, employee: res.id, startDate: start_date });
