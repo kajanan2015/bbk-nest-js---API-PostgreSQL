@@ -81,47 +81,26 @@ export class CompanyUserRoleController {
     };
     delete data.userId;
     if (prfImg && prfImg.length) {
-      if (updateCompanyUserRoleDto.existprfpic) {
-        const profilePicture = await this.imageUploadService.upload(
-          prfImg,
-          "body"
-        );
-        delete data.existprfpic;
-
-        data = {
-          ...data,
-          profilePicture: profilePicture[0],
-        };
-
-      }
-      else {
-        const profilePicture = await this.imageUploadService.upload(
-          prfImg,
-          "body"
-        );
-        console.log(profilePicture, 12345);
-        data = {
-          ...data,
-          profilePicture: profilePicture[0],
-        };
-        console.log(data, 23232323);
-      }
-
-    }
-
-    if (updateCompanyUserRoleDto.existprfpic) {
       const profilePicture = await this.imageUploadService.upload(
         prfImg,
         "body"
       );
-      delete data.existprfpic;
-
+      console.log(profilePicture, 12345);
       data = {
         ...data,
-        profilePicture: profilePicture[0],
+        profilePic: profilePicture[0],
+        prflogothumb: await this.imageUploadService.uploadThumbnailToS3(profilePicture[0])
       };
 
+      if (updateCompanyUserRoleDto.existprfpic) {
+    
+        delete data.existprfpic;
+
+      }
+      
+
     }
+
 
     return await this.companyUserRoleService.update(
       +id,
