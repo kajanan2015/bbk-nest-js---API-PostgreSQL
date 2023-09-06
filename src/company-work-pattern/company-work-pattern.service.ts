@@ -67,11 +67,15 @@ export class CompanyWorkPatternService {
     }
   }
 
-  async findAll() {
-    const workpatterndata = await this.patternrepository.find({ relations: ['company', 'patterncreate'] })
+  async findAll(companyid) {
+    const workpatterndata = await this.patternrepository.find({where:{company:companyid}, relations: ['company', 'patterncreate'] })
     return workpatterndata;
   }
 
+  async findAllActiveCompanyWise(companyid) {
+    const workpatterndata = await this.patternrepository.find({ where: { company:companyid,status: WorkPatternStatus.ACTIVE }, relations: ['company', 'patterncreate'] })
+    return workpatterndata;
+  }
 
 
   async findAllActive() {

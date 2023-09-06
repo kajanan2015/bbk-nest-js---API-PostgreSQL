@@ -19,9 +19,14 @@ export class CompanyWorkPatternController {
   
   }
 
-  @Get('findallpattern')
-  async findAll() {
-    return await this.companyWorkPatternService.findAll();
+  @Get('findbycompanyid/:id')
+  async findAllActiveCompanyWise(@Param('id') companyid){
+    return await this.companyWorkPatternService.findAllActiveCompanyWise(companyid);
+  }
+
+  @Get('findallpattern/:id')
+  async findAll(@Param('id') companyid) {
+    return await this.companyWorkPatternService.findAll(companyid);
   }
   @Post('findByname/:name')
   async findByname(@Param('name') name: string, @Body() data) {
@@ -67,7 +72,6 @@ export class CompanyWorkPatternController {
 
   @Post('find-workPatternCode-workType')
   async findOneBypatternCode(@Body() data) {
-    console.log(data, 111)
     return await this.companyWorkPatternService.findOneBypatternCode(data);
   }
 
