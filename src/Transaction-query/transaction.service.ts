@@ -1,11 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Transaction, TransactionManager } from 'typeorm';
+import { LessThanOrEqual, MoreThan, MoreThanOrEqual, Repository, Transaction, TransactionManager } from 'typeorm';
 // import { FirstEntity } from './entities/first.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
 import { CompaniesHistorydata } from 'src/companies/companies.entity';
 import { CompaniesEntityinfo } from 'src/companies/companies.entity';
 import { Historydatatype } from 'src/companies/companies.entity';
+import { AssignWorkPatternInfoSatatus } from 'src/company-work-pattern/assign_work_pattern/employee-assign-work-pattern.entity';
+import { sub, format } from 'date-fns';
 @Injectable()
 export class Transactionservicedb {
   constructor() { } // Remove the repository injection
@@ -88,7 +90,7 @@ export class Transactionservicedb {
     }
   }
   @Transaction()
-  async updateExistScheduleTransaction(companyinfoid, previousentitydata, historydata, entityclass, historyclass, companyExistHistory,existLastestValue,passvalue,
+  async updateExistScheduleTransaction(companyinfoid, previousentitydata, historydata, entityclass, historyclass, companyExistHistory, existLastestValue, passvalue,
     @TransactionManager() manager?: any,
   ): Promise<void> {
     const newcomanyexisthistory = { ...companyExistHistory, history_data_type: Historydatatype.SCHEDULEHISTORY }
@@ -107,19 +109,19 @@ export class Transactionservicedb {
   }
 
   @Transaction()
-  async deleteExistScheduleTransaction(entity,existLastestValues,companyExistHistory,entityclass,historyclass,@TransactionManager() manager?: any,
+  async deleteExistScheduleTransaction(entity, existLastestValues, companyExistHistory, entityclass, historyclass, @TransactionManager() manager?: any,
   ): Promise<void> {
     const newcomanyexisthistory = { ...companyExistHistory, history_data_type: Historydatatype.DELETEDHISTORY }
     const updateprevioushistory = manager.merge(historyclass, companyExistHistory, newcomanyexisthistory); // Using merge directly on manager
     await manager.save(historyclass, updateprevioushistory);
 
-    const newcomanyexistdata = { ...existLastestValues[0]}
+    const newcomanyexistdata = { ...existLastestValues[0] }
     delete newcomanyexistdata.end_date
     delete newcomanyexistdata.updated_at
     delete newcomanyexistdata.updated_by
-    newcomanyexistdata.end_date=null
-    newcomanyexistdata.updated_at=null
-    newcomanyexistdata.updated_by=null
+    newcomanyexistdata.end_date = null
+    newcomanyexistdata.updated_at = null
+    newcomanyexistdata.updated_by = null
     const updatepreviousexistdata = manager.merge(entityclass, existLastestValues[0], newcomanyexistdata); // Using merge directly on manager
     await manager.save(entityclass, updatepreviousexistdata);
 
@@ -129,64 +131,96 @@ export class Transactionservicedb {
     // const updatepreviousdata = manager.merge(entityclass, previousentitydata, passvalue); // Using merge directly on manager
     // await manager.save(entityclass, updatepreviousdata);
 
-     // Remove the previous entity row from the database
-     const comanyexistdata = { ...entity, end_date:null, start_date:null, updated_by:null, updated_at: null}
+    // Remove the previous entity row from the database
+    const comanyexistdata = { ...entity, end_date: null, start_date: null, updated_by: null, updated_at: null }
     const newsexistdata = manager.merge(entityclass, entity, comanyexistdata); // Using merge directly on manager
     await manager.save(entityclass, newsexistdata);
     // await manager.remove(entityclass, entity);
   }
 
 
-// transaction for insert 2 years record of work pattern assign info
-@Transaction()
-async transactionforinsertworkpattern(assigninfotable, mastertable, historyTable,
-  data,masterdata,historyData,@TransactionManager() manager?: any,
-) {
-  try {
+  // transaction for insert 2 years record of work pattern assign info
+  @Transaction()
+  async transactionforinsertworkpattern(assigninfotable, mastertable, historyTable, patterntable,
+    data, masterdata, historyData, existpatterndata,startdate, @TransactionManager() manager?: any,
+  ) {
+    try {
 
-    const createresponse = await manager.create(assigninfotable, data); // Using merge directly on manager
-    await manager.save(assigninfotable, createresponse);
+      if (existpatterndata.length > 0) {
+        for(const i of existpatterndata){
+          let date=new Date();
+          let previousDate = sub(startdate, {
+            days: 1,
+          });
+          let formattedPreviousDate = format(previousDate, 'yyyy-MM-dd'); // Change the format as needed
+          let allRecords = await manager.findOne(assigninfotable, {
+            where: {
+              assignpatternId: i.assign_id,
+              assign_at:LessThanOrEqual(startdate)
+            },
+            order: {
+              assign_at: 'ASC', // Specify 'ASC' for ascending order
+            },
+          });
+// update status column
+             await manager.update(
+              assigninfotable, // Replace with your entity type
+          { assign_pattern_info_id: MoreThanOrEqual(allRecords.assign_pattern_info_id),assign_at:MoreThanOrEqual(startdate),status:AssignWorkPatternInfoSatatus.ACTIVE}, // Replace with your criteria
+          { status: AssignWorkPatternInfoSatatus.INACTIVE }, // Replace with the new status value
+        );
+        await manager.update(patterntable,{assign_id:i.assign_id},{ended_at:formattedPreviousDate,updated_at:date,updated_by:1})
+        }
 
-    const createresponsemaster = await manager.create(mastertable, masterdata); // Using merge directly on manager
-    await manager.save(mastertable, createresponsemaster);
 
-    const createResponseHistoy = await manager.create(historyTable, historyData); // Using merge directly on manager
-    await manager.save(historyTable, createResponseHistoy);
-   
-    // You can add more business logic or other updates here
 
-    // If everything is successful, the transaction will be committed automatically
 
-    return 200;
-  } catch (err) {
-    // If any error occurs, the transaction will be rolled back automatically
-    throw err; // Rethrow the error to be handled at the higher level
+     
+      }
+      
+
+      const createresponse = await manager.create(assigninfotable, data); // Using merge directly on manager
+      await manager.save(assigninfotable, createresponse);
+
+      const createresponsemaster = await manager.create(mastertable, masterdata); // Using merge directly on manager
+      await manager.save(mastertable, createresponsemaster);
+
+      const createResponseHistoy = await manager.create(historyTable, historyData); // Using merge directly on manager
+      await manager.save(historyTable, createResponseHistoy);
+
+      // You can add more business logic or other updates here
+
+      // If everything is successful, the transaction will be committed automatically
+
+      return 200;
+    } catch (err) {
+      // If any error occurs, the transaction will be rolled back automatically
+      throw err; // Rethrow the error to be handled at the higher level
+    }
   }
-}
 
-// transaction for insert 2 years record of work pattern assign info
-@Transaction()
-async transactionforinsertworkpatternextend(assigninfotable, maintable,
-  data,maindata,mainexistdata,@TransactionManager() manager?: any,
-) {
-  try {
+  // transaction for insert 2 years record of work pattern assign info
+  @Transaction()
+  async transactionforinsertworkpatternextend(assigninfotable, maintable,
+    data, maindata, mainexistdata, @TransactionManager() manager?: any,
+  ) {
+    try {
 
-    const createresponse = await manager.create(assigninfotable, data); // Using merge directly on manager
-    await manager.save(assigninfotable, createresponse);
+      const createresponse = await manager.create(assigninfotable, data); // Using merge directly on manager
+      await manager.save(assigninfotable, createresponse);
 
-    const newsexistdata = manager.merge(maintable, mainexistdata, maindata); // Using merge directly on manager
-    await manager.save(maintable, newsexistdata);
-   
-    // You can add more business logic or other updates here
+      const newsexistdata = manager.merge(maintable, mainexistdata, maindata); // Using merge directly on manager
+      await manager.save(maintable, newsexistdata);
 
-    // If everything is successful, the transaction will be committed automatically
+      // You can add more business logic or other updates here
 
-    return 200;
-  } catch (err) {
-    // If any error occurs, the transaction will be rolled back automatically
-    throw err; // Rethrow the error to be handled at the higher level
+      // If everything is successful, the transaction will be committed automatically
+
+      return 200;
+    } catch (err) {
+      // If any error occurs, the transaction will be rolled back automatically
+      throw err; // Rethrow the error to be handled at the higher level
+    }
   }
-}
 
 
 }

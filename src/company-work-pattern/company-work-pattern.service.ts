@@ -252,13 +252,24 @@ export class CompanyWorkPatternService {
     let dateObject;
     // find pattern data
     const patterndata = await this.patternrepository.findOne({ where: { workPatternCode: data.workPatternName, workType: data.workType } })
+    
+    
+    
     // pattern strat date
     const dateString = data.patternstartdate;
     const parts = dateString.split('-'); // Split the date string into parts
+    
+    // to find exist assign-info
+    const convertdatestring=parse(dateString, 'dd-MM-yyyy', new Date());
+    const findexistdata=await this.employeeassignrepo.find({where: {employeeId:data.employeeId,assign_at:LessThanOrEqual(convertdatestring)}})
+
+
     // Create a new Date object with the parts (Note: Months in JavaScript are 0-based)
     const startmaindate = new Date(parts[2], parts[1] - 1, parts[0]);
     const parsedDate = parse(dateString, 'dd-MM-yyyy', new Date());
     const nextextendeddate = addMonths(parsedDate, 3);
+
+
     newdata = {
       created_at: data.userTime,
       assign_at: parse(dateString, 'dd-MM-yyyy', new Date()),
@@ -404,7 +415,7 @@ export class CompanyWorkPatternService {
     }
     const rangedArray = dataofassigninfo.slice(0, patternDays);
 
-    const response11 = await this.transactionService.transactionforinsertworkpattern(EmployeeAssignWorkPatternInfo, MasterEmployeeAssignWorkPatternInfo, EmployeeAssignWorkPatternHistory, dataofassigninfo, rangedArray, historyData)
+    const response11 = await this.transactionService.transactionforinsertworkpattern(EmployeeAssignWorkPatternInfo, MasterEmployeeAssignWorkPatternInfo, EmployeeAssignWorkPatternHistory,EmployeeAssignWorkPattern, dataofassigninfo, rangedArray, historyData,findexistdata,convertdatestring)
     if (response11 == 200) {
       return 200;
     } else {
