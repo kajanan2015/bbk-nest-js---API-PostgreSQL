@@ -35,19 +35,18 @@ export class UserController {
   @Put('/edit/:id')
   @UseInterceptors(AnyFilesInterceptor())
   async update(@Param('id') id: number,@UploadedFiles() profileImg, @Body() data) {
-    console.log(data,9090909)
-    console.log(id,9090909)
-    console.log(profileImg,9090909)
+    
     if (profileImg.length > 0) {
       data.profilePic = await this.imageUploadService.upload(profileImg, 'body')
       data.profilePicThumb = await this.imageUploadService.uploadThumbnailToS3(data.profilePic[0]);
     }else{
       delete data.profileImg
     }
-    await this.service.update(id, {...data});
+    const returndata=await this.service.update(id, {...data});
     return {
       statusCode: HttpStatus.OK,
       message: 'User updated successfully',
+      data:returndata
     };
   }
 
