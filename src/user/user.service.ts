@@ -211,4 +211,14 @@ export class UserService {
       user.forEach(obj => delete obj.password);
       return user;
   }
+  async finduserbyusertypeCompanyId(companyid){
+    console.log(companyid,90909)
+    const user=await this.userRepository
+    .createQueryBuilder('user')
+    .innerJoin('user.companies', 'company')
+    .where('company.id = :companyid', { companyid })
+    .getMany();
+    user.forEach(obj => delete obj.password);
+    return user;
+}
 }

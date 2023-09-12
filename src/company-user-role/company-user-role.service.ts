@@ -38,6 +38,8 @@ export class CompanyUserRoleService {
     const companydata = await this.companyRepo.findByIds(data.companyid)
     const adminData = {
       firstName: data.userName,
+      middleName:data.middleName,
+      lastName:data.lastName,
       uType: data.uType,
       profilePic: data.profilePicture,
       profilePicThumb: prflogothumb,
@@ -125,7 +127,9 @@ export class CompanyUserRoleService {
   async findbyusertype(type) {
     return await this.userservice.finduserbyusertype(type)
   }
-
+async findbyusertypeandcompanyid(companyid){
+  return await this.userservice.finduserbyusertypeCompanyId(companyid)
+}
   async changeuserstatus(id, data) {
     console.log(data, 9090)
     let status;
