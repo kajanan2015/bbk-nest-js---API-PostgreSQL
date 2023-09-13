@@ -180,7 +180,7 @@ export class UserService {
     }
     const company = await this.companyRepository.findOne(id);
     user.companies = [company];
-    await this.mailservice.newadminadded(user.email, "", user.firstName, user.password, base_url);
+    await this.mailservice.newadminadded(user.email, "", user.firstName, data.password, base_url);
     return await this.userRepository.save(user);
   }
 
