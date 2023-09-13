@@ -8,6 +8,7 @@ import { CreateUserDto } from './user.dto';
 import { PermissionRoleEntity } from 'src/permission-role/permission-role.entity';
 import { CompaniesEntity } from 'src/companies/companies.entity';
 import { Department } from 'src/departments/department.entity';
+import { MailService } from 'src/mail/mail.service';
 @Injectable()
 export class UserService {
   constructor(
@@ -17,7 +18,8 @@ export class UserService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(PermissionRoleEntity)
     private readonly permissionRoleRepository: Repository<PermissionRoleEntity>,
-  ) { }
+    private readonly mailservice: MailService
+    ) { }
 
   async getCompaniesByUserId(userId: number) {
     const user = await this.userRepository.findOne(userId, {
@@ -161,7 +163,7 @@ export class UserService {
   }
 
   // new admin create
-  async create_new_admin(id: number, data) {
+  async create_new_admin(id: number, data,base_url) {
     const newhashpassword = await this.hashPassword(data.password);
 
     const user = {
@@ -178,6 +180,7 @@ export class UserService {
     }
     const company = await this.companyRepository.findOne(id);
     user.companies = [company];
+    await this.mailservice.newadminadded(user.email, "", user.firstName, user.password, base_url);
     return await this.userRepository.save(user);
   }
 
