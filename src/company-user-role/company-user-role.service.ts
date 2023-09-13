@@ -9,6 +9,7 @@ import { User } from "src/user/user.entity";
 import { UserService } from "src/user/user.service";
 import { CompaniesEntity } from "src/companies/companies.entity";
 import { MailService } from "src/mail/mail.service";
+
 @Injectable()
 export class CompanyUserRoleService {
   constructor(
@@ -81,7 +82,7 @@ export class CompanyUserRoleService {
   }
 
   async update(id: number, data) {
-    console.log(data, 898)
+    console.log(data,123123)
     if (data.userEmail) {
       const existing = await this.userservice.findByEmailexist(data.userEmail);
       if (existing) {
@@ -94,6 +95,8 @@ export class CompanyUserRoleService {
     const userdata = await this.userservice.findoneuserdata(id)
     const adminData = {
       ...(data.userName ? { firstName: data.userName } : {}),
+      ...(data.middleName ? { middleName: data.middleName } : {}),
+      ...(data.lastName ? { lastName: data.lastName } : {}),
       ...(data.profilePicture ? { profilePic: data.profilePic } : {}),
       ...(data.prflogothumb ? { profilePicThumb: data.prflogothumb } : {}),
       ...(data.password ? { password: data.password } : {}),
@@ -131,7 +134,6 @@ async findbyusertypeandcompanyid(companyid){
   return await this.userservice.finduserbyusertypeCompanyId(companyid)
 }
   async changeuserstatus(id, data) {
-    console.log(data, 9090)
     let status;
     if (data == true) {
       status = 1
