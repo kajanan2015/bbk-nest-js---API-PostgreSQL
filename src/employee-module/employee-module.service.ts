@@ -81,8 +81,7 @@ export class EmployeeModuleService {
     const start_date = new Date(Date.UTC(str_date.getFullYear(), str_date.getMonth(), str_date.getDate()));
 
     if (existingEmployee) {
-
-      const { providedCopyUrl, empProvidedCopyUrl, filenames, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
+      const { department, providedCopyUrl, empProvidedCopyUrl, filenames, profilePicUrl, ...dataWithouturl } = createEmployeeModuleDto;
       const data = {
         ...dataWithouturl
       }
@@ -92,7 +91,16 @@ export class EmployeeModuleService {
       const { employeeCode, company, ...infoData } = data
 
       const existingEmployeeInfo = await this.employeeInfoRepository.findOne({ where: { employee: existingEmployee.id } });
-      const res = await this.employeeInfoRepository.update({ id: existingEmployeeInfo.id }, infoData);
+      const res = await this.employeeInfoRepository.update({ id: existingEmployeeInfo.id }, infoData); 
+
+      if (department) {
+        this.employeeDeparmentRepository.update({ empInfoId: existingEmployeeInfo, status: 1 }, { status: false }).then(async (res) => {
+          for (const dept of department) {
+            const response = await this.employeeDeparmentRepository.save({ empInfoId: existingEmployeeInfo, empId: existingEmployee["id"], department: dept["id"] });
+          }
+        });
+      }
+
 
       if (documents.length > 0) {
         for (let document in documents) {
@@ -150,9 +158,10 @@ export class EmployeeModuleService {
       const resInfo = await this.employeeInfoRepository.save(responseInfo)
 
       if (department) {
+        console.log(department, 222222)
         for (const dept of department) {
-        const response = await this.employeeDeparmentRepository.save({ empInfoId: resInfo['id'], empId: res["id"], department: dept["id"] });
-        // delete infoData.department;
+          const response = await this.employeeDeparmentRepository.save({ empInfoId: resInfo['id'], empId: res["id"], department: dept["id"] });
+          //delete infoData.department;
         }
       }    
 
