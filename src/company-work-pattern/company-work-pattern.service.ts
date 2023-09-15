@@ -298,7 +298,8 @@ export class CompanyWorkPatternService {
         created_by: createdBy?.['firstName'],
         created_at: data.userTime,
       }),
-      assignpatternId: saveassignemployee['id'],
+      start_date: parse(dateString, 'dd-MM-yyyy', new Date()),
+      assignpatternId: saveassignemployee['assign_id'],
     }
 
     // end date after 2 years

@@ -21,7 +21,7 @@ async  create(createModuledetailsofpackageDto) {
 
   async findOne(id: number) {
     const packages= await this.createpkgmoduledetailsRepository.find({where:{module:id},relations:['packages']});
-    const filteredPackages = packages.filter((packagepass) => packagepass.packages.status === 1);
+    const filteredPackages = packages.filter((packagepass) => packagepass.packages?.status === 1);
 return filteredPackages;
   }
 

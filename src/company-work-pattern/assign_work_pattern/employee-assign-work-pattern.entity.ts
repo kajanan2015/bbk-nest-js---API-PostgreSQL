@@ -175,6 +175,9 @@ export class EmployeeAssignWorkPatternHistory{
   @Column({ type: "text", name: "history_data" })
   history_data: String;
 
+  @Column("date", { name: "start_date", nullable:true, default: () => null })
+  start_date: Date;
+
   @ManyToOne(() => Employee, employee => employee.assignworkpatternhistory)
   @JoinColumn({ name: 'assign_employee_id' })
   employeeId: Employee;
