@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete,Headers } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete,Headers, UseGuards } from '@nestjs/common';
 import { CompanypackagerowService } from './companypackagerow.service';
 import { CreateCompanypackagerowDto } from './create-companypackagerow.dto';
 import { UpdateCompanypackagerowDto } from './update-companypackagerow.dto';
-
+import { AuthGuard } from '@nestjs/passport';
+@UseGuards(AuthGuard('jwt'))
 @Controller('companypackagerow')
 export class CompanypackagerowController {
   constructor(private readonly companypackagerowService: CompanypackagerowService) { }

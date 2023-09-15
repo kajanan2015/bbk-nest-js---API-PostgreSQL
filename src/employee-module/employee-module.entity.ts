@@ -41,8 +41,8 @@ export enum salarySickType {
 }
 
 export enum empProvidedForm {
-    p45 = 'p45',
-    p46 = 'p46'
+    P45 = 'P45',
+    P46 = 'P46'
 }
 
 export enum officialDoc {

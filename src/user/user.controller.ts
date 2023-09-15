@@ -10,6 +10,7 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFiles,
+  Req,
 } from '@nestjs/common';
 
 
@@ -35,19 +36,18 @@ export class UserController {
   @Put('/edit/:id')
   @UseInterceptors(AnyFilesInterceptor())
   async update(@Param('id') id: number,@UploadedFiles() profileImg, @Body() data) {
-    console.log(data,9090909)
-    console.log(id,9090909)
-    console.log(profileImg,9090909)
+    
     if (profileImg.length > 0) {
       data.profilePic = await this.imageUploadService.upload(profileImg, 'body')
       data.profilePicThumb = await this.imageUploadService.uploadThumbnailToS3(data.profilePic[0]);
     }else{
       delete data.profileImg
     }
-    await this.service.update(id, {...data});
+    const returndata=await this.service.update(id, {...data});
     return {
       statusCode: HttpStatus.OK,
       message: 'User updated successfully',
+      data:returndata
     };
   }
 
@@ -183,21 +183,21 @@ export class UserController {
   // create user by one company
   @Post('/updatenewadminforcompany/:companyid')
   @UseInterceptors(AnyFilesInterceptor())
-  async updatenewadminforcompany(@Param('companyid') id: number, @UploadedFiles() profileImg, @Body() data: any) {
+  async updatenewadminforcompany(@Param('companyid') id: number, @UploadedFiles() profileImg, @Body() data, @Req() req) {
     let profileImage;
     let profilethumb;
     if (profileImg.length > 0) {
       profileImage = await this.imageUploadService.upload(profileImg, 'body')
       profilethumb = await this.imageUploadService.uploadThumbnailToS3(profileImage[0]);
     }
-
+    const base_url = `${req.get('origin')}/`;
     const passdata = {
       ...data,
       ...(profileImage
         ? { profilePic: profileImage, profilePicThumb: profilethumb }
         : {}),
     }
-    await this.service.create_new_admin(id, passdata);
+    await this.service.create_new_admin(id, passdata,base_url);
     return {
       statusCode: HttpStatus.OK,
       message: 'User created successfully',

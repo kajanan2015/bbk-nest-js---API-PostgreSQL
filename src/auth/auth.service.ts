@@ -88,7 +88,7 @@ export class AuthService {
       userid: user.id
     };
     await this.authRepository.save(data)
-    const payload = { utype: user.uType, name: user.firstName, email: user.email, sub: user.id, firstpasswordset: user.firsttimepasswordchange };
+    const payload = { utype: user.uType, name: user.firstName, email: user.email, sub: user.id, firstpasswordset: user.firsttimepasswordchange,profilePicture:user.profilePicThumb };
     let companies=await this.userService.getCompaniesByUserId(user.id)
     return {
       refreshtoken: this.jwtService.sign(payload),

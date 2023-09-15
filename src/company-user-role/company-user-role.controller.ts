@@ -32,7 +32,6 @@ export class CompanyUserRoleController {
   async create(@UploadedFiles() profileImg, @Body() data, @Req() req) {
     let prflogo = [];
     let prflogothumb;
-    console.log(profileImg, 89898)
     if (profileImg.length > 0) {
       prflogo = await this.imageUploadService.upload(profileImg, "body");
       prflogothumb = await this.imageUploadService.uploadThumbnailToS3(prflogo[0])
@@ -52,7 +51,11 @@ export class CompanyUserRoleController {
   async findbyusertype(@Body() data) {
     return this.companyUserRoleService.findbyusertype(data.type)
   }
-
+  @Post('finduserbyusingtypecompanyid')
+  async findbyusertypeandcompanyid(@Body() data) {
+    return this.companyUserRoleService.findbyusertypeandcompanyid(data.companyid)
+  }
+  
   @Get('company_wise/:id')
   findAll(@Param("id") id) {
     return this.companyUserRoleService.findAll(id);
@@ -65,8 +68,6 @@ export class CompanyUserRoleController {
 
   @Post('changeuserstatus/:id')
   async changeuserstatus(@Param('id') id, @Body() data) {
-    console.log(id, 333)
-    console.log(data, 90909)
     const response = await this.companyUserRoleService.changeuserstatus(id, data.status)
     if (response) {
       return 200;
@@ -82,7 +83,6 @@ export class CompanyUserRoleController {
     @Param("id") id,
     @Body() updateCompanyUserRoleDto
   ) {
-    console.log(prfImg, 999999);
     const currentDateTime = new Date();
     let data = {
       ...updateCompanyUserRoleDto,
@@ -97,7 +97,6 @@ export class CompanyUserRoleController {
         prfImg,
         "body"
       );
-      console.log(profilePicture, 12345);
       data = {
         ...data,
         profilePic: profilePicture[0],
