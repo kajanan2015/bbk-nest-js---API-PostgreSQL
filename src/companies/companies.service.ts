@@ -1022,6 +1022,7 @@ export class CompaniesService {
       .leftJoinAndSelect("company.documents", "documents")
       .leftJoinAndSelect("company.linkedcompany", "linkedcompany")
       .leftJoinAndSelect("linkedcompany.mainCompany", "mainCompany")
+      .leftJoinAndSelect("mainCompany.users", "mainusers")
       .leftJoinAndSelect("mainCompany.linkedcompany", "linkedcompanysub")
       .leftJoinAndSelect("linkedcompany.country", "country")
       .leftJoinAndSelect("linkedcompany.regAddressCountry", "regAddressCountry")
