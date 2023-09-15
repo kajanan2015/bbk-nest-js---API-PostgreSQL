@@ -19,13 +19,34 @@ export class UserService {
     @InjectRepository(PermissionRoleEntity)
     private readonly permissionRoleRepository: Repository<PermissionRoleEntity>,
     private readonly mailservice: MailService
-    ) { }
+  ) { }
 
   async getCompaniesByUserId(userId: number) {
+
+    const currentdate = new Date();
     const user = await this.userRepository.findOne(userId, {
-      relations: ['companies', 'companies.linkedcompany', 'companies.linkedcompany.country','companies.linkedcompany.regAddressCountry','companies.themedata'],
+      relations: ['companies', 'companies.linkedcompany', 'companies.linkedcompany.country', 'companies.linkedcompany.regAddressCountry', 'companies.themedata'],
     });
-    return user.companies;
+
+    const usersWithActiveLinkedCompanies = [];
+    const data = user.companies;
+    for (let i = 0; i < data.length; i++) {
+      const user = data[i];
+      const activeLinkedCompanies = [];
+
+      for (let j = 0; j < user.linkedcompany.length; j++) {
+        const linkedCompany = user.linkedcompany[j];
+        if (linkedCompany.start_date <= currentdate && (linkedCompany.end_date==null || linkedCompany.end_date > currentdate)) {
+          activeLinkedCompanies.push(linkedCompany);
+        }
+      }
+
+      usersWithActiveLinkedCompanies.push({
+        ...user,
+        linkedcompany: activeLinkedCompanies
+      });
+    }
+    return usersWithActiveLinkedCompanies;
   }
 
   async findAll(): Promise<User[]> {
@@ -163,7 +184,7 @@ export class UserService {
   }
 
   // new admin create
-  async create_new_admin(id: number, data,base_url) {
+  async create_new_admin(id: number, data, base_url) {
     const newhashpassword = await this.hashPassword(data.password);
 
     const user = {
@@ -209,19 +230,19 @@ export class UserService {
   }
 
 
-  async finduserbyusertype(type){
-      const user=await this.userRepository.find({where:{uType:type}})
-      user.forEach(obj => delete obj.password);
-      return user;
-  }
-  async finduserbyusertypeCompanyId(companyid){
-    console.log(companyid,90909)
-    const user=await this.userRepository
-    .createQueryBuilder('user')
-    .innerJoin('user.companies', 'company')
-    .where('company.id = :companyid', { companyid })
-    .getMany();
+  async finduserbyusertype(type) {
+    const user = await this.userRepository.find({ where: { uType: type } })
     user.forEach(obj => delete obj.password);
     return user;
-}
+  }
+  async finduserbyusertypeCompanyId(companyid) {
+    console.log(companyid, 90909)
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .innerJoin('user.companies', 'company')
+      .where('company.id = :companyid', { companyid })
+      .getMany();
+    user.forEach(obj => delete obj.password);
+    return user;
+  }
 }
