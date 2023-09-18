@@ -579,7 +579,6 @@ const rangedArray={next_extended_date:nextupdatedate,updated_at:date,updated_by:
   async editassignworkpattern(id,data){
     const {employeeId, startDate,patternId,userTime,created_by,...patterninfo}=data
     
-    console.log(patterninfo)
 
 
 
@@ -595,14 +594,16 @@ const rangedArray={next_extended_date:nextupdatedate,updated_at:date,updated_by:
     // pattern strat date
     const dateString =startDate;
     const parts = dateString.split('-'); // Split the date string into parts
-    
-    // to find exist assign-info
-    const convertdatestring=parse(dateString, 'dd-MM-yyyy', new Date());
-    const findexistdata=await this.employeeassignrepo.findOne({where: {employeeId:employeeId,assign_at:LessThanOrEqual(convertdatestring)},order:{assign_at:"DESC"}})
+    console.log(dateString)
 
+    // to find exist assign-info
+    const convertdatestring=new Date(dateString);
+    console.log(convertdatestring,77)
+    const findexistdata=await this.employeeassignrepo.findOne({where: {employeeId:employeeId,assign_at:LessThanOrEqual(convertdatestring)},order:{assign_at:"DESC"}})
+console.log(findexistdata,89)
     // Create a new Date object with the parts (Note: Months in JavaScript are 0-based)
     const startmaindate = new Date(parts[2], parts[1] - 1, parts[0]);
-    const parsedDate = parse(dateString, 'dd-MM-yyyy', new Date());
+    const parsedDate = format(dateString, 'dd-MM-yyyy');
     const nextextendeddate = findexistdata.next_extended_date;
     newdata = {
       created_at: data.userTime,
