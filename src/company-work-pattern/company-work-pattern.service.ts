@@ -575,4 +575,175 @@ const rangedArray={next_extended_date:nextupdatedate,updated_at:date,updated_by:
   async getWorkPatternHistoryData(employeeId) {
     return this.employeeWorkPatternHistoryRepo.find({employeeId: employeeId});
   }
+
+  async editassignworkpattern(id,data){
+    const {employeeId, startDate,patternId,userTime,created_by,...patterninfo}=data
+    
+    console.log(patterninfo)
+
+
+
+
+    console.log(data, 12345)
+    let newdata;
+    let assigninfo;
+    let workmode;
+    let dateObject;
+    // find pattern data
+    const patterndata = await this.patternrepository.findOne({ where: { id:patternId } })
+ 
+    // pattern strat date
+    const dateString =startDate;
+    const parts = dateString.split('-'); // Split the date string into parts
+    
+    // to find exist assign-info
+    const convertdatestring=parse(dateString, 'dd-MM-yyyy', new Date());
+    const findexistdata=await this.employeeassignrepo.findOne({where: {employeeId:employeeId,assign_at:LessThanOrEqual(convertdatestring)},order:{assign_at:"DESC"}})
+
+    // Create a new Date object with the parts (Note: Months in JavaScript are 0-based)
+    const startmaindate = new Date(parts[2], parts[1] - 1, parts[0]);
+    const parsedDate = parse(dateString, 'dd-MM-yyyy', new Date());
+    const nextextendeddate = findexistdata.next_extended_date;
+    newdata = {
+      created_at: data.userTime,
+      assign_at: parse(dateString, 'dd-MM-yyyy', new Date()),
+      next_extended_date: nextextendeddate,
+      status: AssignWorkPatternSatatus.ACTIVE,
+      created_by: created_by,
+      employeeId: employeeId,
+      workpatternId: patternId,
+    }
+
+    findexistdata.status=AssignWorkPatternSatatus.INACTIVE;
+    const updateassignemployee = await this.employeeassignrepo.save(findexistdata)
+
+
+    const insertassignemployee = await this.employeeassignrepo.create(newdata)
+    const saveassignemployee = await this.employeeassignrepo.save(insertassignemployee)
+
+    const createdBy = await this.userRepo.findOne({id: created_by});
+
+    const historyData = {
+      history_data_type: 'employee assign work pattern history',
+      employeeId: employeeId,
+      history_data: JSON.stringify({
+        pattern: patterninfo,
+        patternDetails: patterndata,
+        assign_at: parse(dateString, 'dd-MM-yyyy', new Date()),
+        created_by: createdBy?.['firstName'],
+        created_at: userTime,
+      }),
+      start_date: parse(dateString, 'dd-MM-yyyy', new Date()),
+      assignpatternId: saveassignemployee['assign_id'],
+    }
+
+    const findlastdate=await this.employeeassigninforepo.findOne({where:{assignpatternId:findexistdata.assign_id},order:{assign_pattern_info_id:"DESC"}})
+    // end date after 2 years
+    const lastDateAfterTwoYears = endOfDay(findlastdate.assign_at);
+
+    // number of day in two years period
+    const numberOfDaysAfterTwoYears = differenceInDays(lastDateAfterTwoYears, startmaindate)
+    // one pattern data
+    let dataofassigninfo = [];
+    let dataassign = [];
+    // make pattern
+    const patternDays = patterninfo.length;
+    const repetitions = Math.floor(numberOfDaysAfterTwoYears / patternDays);
+    const remainingDays = numberOfDaysAfterTwoYears % patternDays;
+
+    // Generate records for the pattern repetitions
+    for (let r = 0; r < repetitions; r++) {
+      let value = 0;
+      for (const i of patterninfo) {
+        const date = new Date(startmaindate);
+        date.setDate(startmaindate.getDate() + r * patternDays + value);
+        // recordsToInsert.push({ date, dayNumber: day + 1 });
+        dateObject = parse(date, 'dd-MM-yyyy', new Date());
+
+        // console.log(dateObject,898983)
+        let parsedstartTime;
+        let parsedendTime;
+        if (i.workmode == 'off day') {
+          workmode = AssignPatternInfoWorkMode.OFF
+        } else {
+          workmode = AssignPatternInfoWorkMode.ON
+        }
+
+        if (i.start_time != undefined || i.end_time != undefined) {
+          parsedstartTime = parse(i.start_time, 'h:mm a', new Date());
+          parsedendTime = parse(i.end_time, 'h:mm a', new Date());
+
+        }
+        assigninfo = {
+          created_by: created_by,
+          start_time: parsedstartTime,
+          end_time: parsedendTime,
+          created_at: userTime,
+          assign_at: date,
+          assignpatternId: insertassignemployee['assign_id'],
+          workmode: workmode,
+          pattern_round: r
+        }
+
+        dataofassigninfo.push(assigninfo);
+        // console.log(assigninfo)
+        value++
+      }
+
+    }
+
+    // Generate records for the remaining days
+    for (let r = 0; r < remainingDays; r++) {
+      const date = new Date(startmaindate);
+      date.setDate(startmaindate.getDate() + repetitions * patternDays + r);
+      const dayNumber = r % patternDays + 1;
+      let parsedstartTime;
+      let parsedendTime;
+      if (patterninfo[r].workmode == "off day") {
+        workmode = AssignPatternInfoWorkMode.OFF
+      } else {
+        workmode = AssignPatternInfoWorkMode.ON
+      }
+      if (patterninfo[r].start_time != undefined ||patterninfo[r].end_time != undefined) {
+        parsedstartTime = parse(patterninfo[r].start_time, 'h:mm a', new Date());
+        parsedendTime = parse(patterninfo[r].end_time, 'h:mm a', new Date());
+
+      }
+      assigninfo = {
+        created_by: created_by,
+        start_time: parsedstartTime,
+        end_time: parsedendTime,
+        created_at: userTime,
+        assign_at: date,
+        assignpatternId: insertassignemployee['assign_id'],
+        workmode: workmode,
+        pattern_round: repetitions + 1
+      }
+
+      dataofassigninfo.push(assigninfo);
+    }
+    const rangedArray = dataofassigninfo.slice(0, patternDays);
+
+    const response11 = await this.transactionService.transactionforinsertworkpattern(EmployeeAssignWorkPatternInfo, MasterEmployeeAssignWorkPatternInfo, EmployeeAssignWorkPatternHistory,EmployeeAssignWorkPattern, dataofassigninfo, rangedArray, historyData,findexistdata,convertdatestring)
+    if (response11 == 200) {
+      return 200;
+    } else {
+      return 500
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    return 200;
+   }
 }

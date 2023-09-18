@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards,Headers } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards,Headers, Put } from '@nestjs/common';
 import { CompanyWorkPatternService } from './company-work-pattern.service';
 import { CreateCompanyWorkPatternDto } from './create-company-work-pattern.dto';
 import { UpdateCompanyWorkPatternDto } from './update-company-work-pattern.dto';
@@ -65,11 +65,6 @@ export class CompanyWorkPatternController {
   }
 
 
-  @Delete(':id')
- async remove(@Param('id') id: string) {
-    return await this.companyWorkPatternService.remove(+id);
-  }
-
   @Post('find-workPatternCode-workType')
   async findOneBypatternCode(@Body() data) {
     return await this.companyWorkPatternService.findOneBypatternCode(data);
@@ -88,4 +83,18 @@ async assignworkpatterntoemployee(@Body() data, @Headers('userTime') userTime ){
        return await this.companyWorkPatternService.assignworkpatterntoemployee(data);
 }
 
+
+@Delete(':id')
+async remove(@Param('id') id: string) {
+   return await this.companyWorkPatternService.remove(+id);
+ }
+
+ @Put('editassignworkpattern/:id')
+ async editworkpattern(@Param('id') id: string,@Body() data){
+  console.log(data,89223)
+return await this.companyWorkPatternService.editassignworkpattern(id,data);
+ }
+
+ 
+ 
 }
