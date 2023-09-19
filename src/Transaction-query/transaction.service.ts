@@ -223,4 +223,47 @@ export class Transactionservicedb {
   }
 
 
+  // transaction for insert 2 years record of work pattern assign info
+  @Transaction()
+  async transactioneditassignworkpattern(assigninfotable,existpatterndata,assign_id,data,mastertable,masterdata,historyTable,historyData,  @TransactionManager() manager?: any,
+  ) {
+    try {
+
+      if (existpatterndata.length > 0) {
+        for(const i of existpatterndata){
+          let allRecords = await manager.findOne(assigninfotable, {
+            where: {
+              assignpatternId: assign_id,
+            }
+          });
+// update status column
+             await manager.update(
+              assigninfotable, // Replace with your entity type
+          { assign_pattern_info_id: MoreThanOrEqual(allRecords.assign_pattern_info_id),status:AssignWorkPatternInfoSatatus.ACTIVE}, // Replace with your criteria
+          { status: AssignWorkPatternInfoSatatus.INACTIVE }, // Replace with the new status value
+        );
+        }     
+      }
+      
+      const createresponse = await manager.create(assigninfotable, data); 
+      await manager.save(assigninfotable, createresponse);
+
+      const createresponsemaster = await manager.create(mastertable, masterdata); // Using merge directly on manager
+      await manager.save(mastertable, createresponsemaster);
+
+      const createResponseHistoy = await manager.create(historyTable, historyData); // Using merge directly on manager
+      await manager.save(historyTable, createResponseHistoy);
+
+      // You can add more business logic or other updates here
+
+      // If everything is successful, the transaction will be committed automatically
+
+      return 200;
+    } catch (err) {
+      // If any error occurs, the transaction will be rolled back automatically
+      throw err; // Rethrow the error to be handled at the higher level
+    }
+  }
+
+
 }
