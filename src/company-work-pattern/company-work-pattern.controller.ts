@@ -49,14 +49,16 @@ export class CompanyWorkPatternController {
     return await this.companyWorkPatternService.update(+id, updateCompanyWorkPatternDto);
   }
 
-  @Get('find-current-pattern/:empid')
-  async findCurrentPattern(@Param('empid') empid){
-    return await this.companyWorkPatternService.findCurrentWorkPattern(empid)
+  @Post('find-current-pattern/:empid')
+  async findCurrentPattern(@Param('empid') empid, @Body() data){
+    const date=new Date(data.date);
+    return await this.companyWorkPatternService.findCurrentWorkPattern(empid,date)
   }
 
-  @Get('find-future-patterns/:empid')
-  async findFuturePatterns(@Param('empid') empid){
-    return await this.companyWorkPatternService.findFutureWorkPatterns(empid)
+  @Post('find-future-patterns/:empid')
+  async findFuturePatterns(@Param('empid') empid, @Body() data){
+    const date=new Date(data.date);
+    return await this.companyWorkPatternService.findFutureWorkPatterns(empid,date)
   }
 
   @Get('history/:empid')
