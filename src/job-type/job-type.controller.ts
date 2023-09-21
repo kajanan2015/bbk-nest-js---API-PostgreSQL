@@ -1,15 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { JobTypeService } from './job-type.service';
-import { CreateJobTypeDto } from './dto/create-job-type.dto';
-import { UpdateJobTypeDto } from './dto/update-job-type.dto';
+import { CreateJobTypeDto } from './create-job-type.dto';
+import { UpdateJobTypeDto } from './update-job-type.dto';
+import { AuthGuard } from '@nestjs/passport';
 
+
+@UseGuards(AuthGuard('jwt'))
 @Controller('job-type')
 export class JobTypeController {
   constructor(private readonly jobTypeService: JobTypeService) {}
 
+  
   @Post()
-  create(@Body() createJobTypeDto: CreateJobTypeDto) {
-    return this.jobTypeService.create(createJobTypeDto);
+  async create(@Body() createJobTypeDto){
+    console.log(createJobTypeDto,111111)
+    return await this.jobTypeService.create(createJobTypeDto);
   }
 
   @Get()

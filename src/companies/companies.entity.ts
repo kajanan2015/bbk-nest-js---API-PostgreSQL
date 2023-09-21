@@ -28,6 +28,7 @@ import { CompanyPayment } from 'src/company-payment/company-payment.entity';
 import { CompanyUserRole } from 'src/company-user-role/company-user-role.entity';
 import { RoleCompany } from 'src/user/role/role_company.entity';
 import { CompanyWiseThemeCustomize } from 'src/company-wise-theme-customize/company-wise-theme-customize.entity';
+import { JobType } from 'src/job-type/job-type.entity';
 export enum Companyidentifier {
   MAIN = 'maincompany',
   SUB = 'subcompany'
@@ -70,7 +71,6 @@ export class CompaniesEntity {
   @ManyToOne(() => User, user => user.companymainusercreate)
   @JoinColumn({ name: 'created_by' })
   created_by: User;
-
 
   @Column("timestamp", { name: "created_at", default: () => "CURRENT_TIMESTAMP" })
   created_at: Date;
@@ -151,6 +151,9 @@ export class CompaniesEntity {
 
   @OneToMany(() => CompanyWiseThemeCustomize, theme => theme.company, ({ cascade: true }))
   themedata: CompanyWiseThemeCustomize[];
+
+  @OneToMany(() => JobType, jobTypeName => jobTypeName.company, ({ cascade: true }))
+  jobTypeName: JobType[];
 
 }
 

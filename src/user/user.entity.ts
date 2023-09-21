@@ -24,6 +24,7 @@ import { EmployeeAssignWorkPatternInfo } from 'src/company-work-pattern/assign_w
 import { RoleCompany } from './role/role_company.entity';
 import { OperationRoleCompany } from './role/role_operation/role_company_operation.entity';
 import { CompanyWiseThemeCustomize } from 'src/company-wise-theme-customize/company-wise-theme-customize.entity';
+import { JobType } from 'src/job-type/job-type.entity';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -234,4 +235,10 @@ export class User {
 
   @OneToMany(()=>CompanyWiseThemeCustomize, assignpattern=>assignpattern.updated_by,{cascade:true})
   themedataupdatedby:OperationRoleCompany[];
+
+  @OneToMany(()=>JobType, assignpattern=>assignpattern.created_by,{cascade:true})
+  jobtypeCreatedBy:JobType[];
+
+  @OneToMany(()=>JobType, assignpattern=>assignpattern.updated_by,{cascade:true})
+  jobtypeUpdatedBy:JobType[];
 }

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards,Headers } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards,Headers, Put } from '@nestjs/common';
 import { CompanyWorkPatternService } from './company-work-pattern.service';
 import { CreateCompanyWorkPatternDto } from './create-company-work-pattern.dto';
 import { UpdateCompanyWorkPatternDto } from './update-company-work-pattern.dto';
@@ -49,14 +49,16 @@ export class CompanyWorkPatternController {
     return await this.companyWorkPatternService.update(+id, updateCompanyWorkPatternDto);
   }
 
-  @Get('find-current-pattern/:empid')
-  async findCurrentPattern(@Param('empid') empid){
-    return await this.companyWorkPatternService.findCurrentWorkPattern(empid)
+  @Post('find-current-pattern/:empid')
+  async findCurrentPattern(@Param('empid') empid, @Body() data){
+    const date=new Date(data.date);
+    return await this.companyWorkPatternService.findCurrentWorkPattern(empid,date)
   }
 
-  @Get('find-future-patterns/:empid')
-  async findFuturePatterns(@Param('empid') empid){
-    return await this.companyWorkPatternService.findFutureWorkPatterns(empid)
+  @Post('find-future-patterns/:empid')
+  async findFuturePatterns(@Param('empid') empid, @Body() data){
+    const date=new Date(data.date);
+    return await this.companyWorkPatternService.findFutureWorkPatterns(empid,date)
   }
 
   @Get('history/:empid')
@@ -64,11 +66,6 @@ export class CompanyWorkPatternController {
     return await this.companyWorkPatternService.getWorkPatternHistoryData(empid);
   }
 
-
-  @Delete(':id')
- async remove(@Param('id') id: string) {
-    return await this.companyWorkPatternService.remove(+id);
-  }
 
   @Post('find-workPatternCode-workType')
   async findOneBypatternCode(@Body() data) {
@@ -88,4 +85,18 @@ async assignworkpatterntoemployee(@Body() data, @Headers('userTime') userTime ){
        return await this.companyWorkPatternService.assignworkpatterntoemployee(data);
 }
 
+
+@Delete(':id')
+async remove(@Param('id') id: string) {
+   return await this.companyWorkPatternService.remove(+id);
+ }
+
+ @Put('editassignworkpattern/:id')
+ async editworkpattern(@Param('id') id: string,@Body() data){
+  console.log(data,89223)
+return await this.companyWorkPatternService.editassignworkpattern(id,data);
+ }
+
+ 
+ 
 }
