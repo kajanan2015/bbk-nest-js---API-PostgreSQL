@@ -15,7 +15,7 @@ import { EmployeeAssignWorkPatternInfo } from './assign_work_pattern/employee-as
 import { WorkPatternStatus } from './company-work-pattern.entity';
 import { MasterEmployeeAssignWorkPatternInfo } from './assign_work_pattern/employee-assign-work-pattern.entity';
 import { Transactionservicedb } from 'src/Transaction-query/transaction.service';
-import { addDays, differenceInDays } from 'date-fns';
+import { addDays, differenceInDays, sub } from 'date-fns';
 import { User } from 'src/user/user.entity';
 import { AssignWorkPatternInfoSatatus } from './assign_work_pattern/employee-assign-work-pattern.entity';
 const { parse, format, addYears, endOfDay, getDayOfYear, addMonths, parseISO } = require('date-fns');
@@ -135,8 +135,8 @@ export class CompanyWorkPatternService {
       }
     });
     // ** Current pattern rounds
-    const patternRounds = await this.employeeassigninforepo.find({ where: { assignpatternId: workPattern?.['assign_id'], pattern_round: workpatternInfo?.['pattern_round'], status: AssignWorkPatternInfoSatatus.ACTIVE } });
-
+    const patternRounds = await this.employeeassigninforepo.find({ where: { assignpatternId: workPattern?.['assign_id'], pattern_round: workpatternInfo?.['pattern_round'], status:"active" } });
+console.log(patternRounds,90909)
     return {
       assign_id: workPattern?.['assign_id'],
       patternInfo: patternRounds,
@@ -169,7 +169,7 @@ export class CompanyWorkPatternService {
 
     for (let i = 0; i < workPatterns?.length; i++) {
       // **  pattern rounds
-      const patternRounds = await this.employeeassigninforepo.find({ where: { assignpatternId: workPatterns?.[i]?.['assign_id'], pattern_round: 0, status: AssignWorkPatternInfoSatatus.ACTIVE } });
+      const patternRounds = await this.employeeassigninforepo.find({ where: { assignpatternId: workPatterns?.[i]?.['assign_id'], pattern_round: 0,status:"active"} });
 
       results.push({
         assign_id: workPatterns?.[i]?.['assign_id'],
@@ -269,6 +269,9 @@ export class CompanyWorkPatternService {
     const convertdatestring = parse(dateString, 'dd-MM-yyyy', new Date());
     const findexistdata = await this.employeeassignrepo.find({ where: { employeeId: data.employeeId, assign_at: LessThanOrEqual(convertdatestring) } })
 
+    // to find current assign-info
+    const findcurrentdata = await this.employeeassignrepo.findOne({ where: { employeeId: data.employeeId, assign_at: MoreThanOrEqual(convertdatestring),status:AssignWorkPatternSatatus.ACTIVE },order:{assign_at:"DESC"} })
+
 
     // Create a new Date object with the parts (Note: Months in JavaScript are 0-based)
     const startmaindate = new Date(parts[2], parts[1] - 1, parts[0]);
@@ -281,8 +284,15 @@ export class CompanyWorkPatternService {
       const availableexitpattern = await this.employeeassignrepo.findOne({ where: { employeeId: data.employeeId, assign_at: MoreThanOrEqual(parse(dateString, 'dd-MM-yyyy', new Date())),status:AssignWorkPatternSatatus.ACTIVE }, order: { assign_at: "ASC" } })
       const findlastdate = await this.employeeassigninforepo.findOne({ where: { assignpatternId: availableexitpattern.assign_id }, order: { assign_pattern_info_id: "DESC" } })
       // end date after 2 years
-      enddateofassign=findlastdate.assign_at;
-      lastDateAfterTwoYears = endOfDay(new Date(findlastdate.assign_at));
+      enddateofassign=format(
+        sub(new Date(availableexitpattern.assign_at), {
+          days: 1,
+        }),
+        'yyyy-MM-dd'
+      )
+      lastDateAfterTwoYears = endOfDay(sub(new Date(availableexitpattern.assign_at), {
+        days: 1,
+      }));
     } else {
       const existassignpattern = await this.employeeassignrepo.find({ where: { employeeId: data.employeeId, assign_at: MoreThanOrEqual(parse(dateString, 'dd-MM-yyyy', new Date())), status: AssignWorkPatternSatatus.ACTIVE } })
      
@@ -298,7 +308,6 @@ export class CompanyWorkPatternService {
       // end date after 2 years
       lastDateAfterTwoYears = endOfDay(addYears(startmaindate, 2));
     }
-
 
 
     newdata = {
@@ -344,81 +353,81 @@ export class CompanyWorkPatternService {
     const remainingDays = numberOfDaysAfterTwoYears % patternDays;
 console.log(repetitions,65)
 console.log(remainingDays,65)
-    // // Generate records for the pattern repetitions
-    // for (let r = 0; r < repetitions; r++) {
-    //   let value = 0;
-    //   for (const i of data.formattedData) {
-    //     const date = new Date(startmaindate);
-    //     date.setDate(startmaindate.getDate() + r * patternDays + value);
-    //     // recordsToInsert.push({ date, dayNumber: day + 1 });
-    //     dateObject = parse(date, 'dd-MM-yyyy', new Date());
+    // Generate records for the pattern repetitions
+    for (let r = 0; r < repetitions; r++) {
+      let value = 0;
+      for (const i of data.formattedData) {
+        const date = new Date(startmaindate);
+        date.setDate(startmaindate.getDate() + r * patternDays + value);
+        // recordsToInsert.push({ date, dayNumber: day + 1 });
+        dateObject = parse(date, 'dd-MM-yyyy', new Date());
 
-    //     // console.log(dateObject,898983)
-    //     let parsedstartTime;
-    //     let parsedendTime;
-    //     if (i.alignment == 0) {
-    //       workmode = AssignPatternInfoWorkMode.OFF
-    //     } else {
-    //       workmode = AssignPatternInfoWorkMode.ON
-    //     }
+        // console.log(dateObject,898983)
+        let parsedstartTime;
+        let parsedendTime;
+        if (i.alignment == 0) {
+          workmode = AssignPatternInfoWorkMode.OFF
+        } else {
+          workmode = AssignPatternInfoWorkMode.ON
+        }
 
-    //     if (i.startTime != undefined || i.endTime != undefined) {
-    //       parsedstartTime = parse(i.startTime, 'h:mm a', new Date());
-    //       parsedendTime = parse(i.endTime, 'h:mm a', new Date());
+        if (i.startTime != undefined || i.endTime != undefined) {
+          parsedstartTime = parse(i.startTime, 'h:mm a', new Date());
+          parsedendTime = parse(i.endTime, 'h:mm a', new Date());
 
-    //     }
-    //     assigninfo = {
-    //       created_by: data.created_by,
-    //       start_time: parsedstartTime,
-    //       end_time: parsedendTime,
-    //       created_at: data.userTime,
-    //       assign_at: date,
-    //       assignpatternId: insertassignemployee['assign_id'],
-    //       workmode: workmode,
-    //       pattern_round: r
-    //     }
+        }
+        assigninfo = {
+          created_by: data.created_by,
+          start_time: parsedstartTime,
+          end_time: parsedendTime,
+          created_at: data.userTime,
+          assign_at: date,
+          assignpatternId: insertassignemployee['assign_id'],
+          workmode: workmode,
+          pattern_round: r
+        }
 
-    //     dataofassigninfo.push(assigninfo);
-    //     // console.log(assigninfo)
-    //     value++
-    //   }
+        dataofassigninfo.push(assigninfo);
+        // console.log(assigninfo)
+        value++
+      }
 
-    // }
+    }
 
-    // // Generate records for the remaining days
-    // for (let r = 0; r < remainingDays; r++) {
-    //   const date = new Date(startmaindate);
-    //   date.setDate(startmaindate.getDate() + repetitions * patternDays + r);
-    //   const dayNumber = r % patternDays + 1;
-    //   let parsedstartTime;
-    //   let parsedendTime;
-    //   console.log(data.formattedData[r].alignment, 88888)
-    //   if (data.formattedData[r].alignment == 0) {
-    //     workmode = AssignPatternInfoWorkMode.OFF
-    //   } else {
-    //     workmode = AssignPatternInfoWorkMode.ON
-    //   }
-    //   if (data.formattedData[r].startTime != undefined || data.formattedData[r].endTime != undefined) {
-    //     parsedstartTime = parse(data.formattedData[r].startTime, 'h:mm a', new Date());
-    //     parsedendTime = parse(data.formattedData[r].endTime, 'h:mm a', new Date());
+    // Generate records for the remaining days
+    for (let r = 0; r < remainingDays; r++) {
+      const date = new Date(startmaindate);
+      date.setDate(startmaindate.getDate() + repetitions * patternDays + r);
+      const dayNumber = r % patternDays + 1;
+      let parsedstartTime;
+      let parsedendTime;
+      console.log(data.formattedData[r].alignment, 88888)
+      if (data.formattedData[r].alignment == 0) {
+        workmode = AssignPatternInfoWorkMode.OFF
+      } else {
+        workmode = AssignPatternInfoWorkMode.ON
+      }
+      if (data.formattedData[r].startTime != undefined || data.formattedData[r].endTime != undefined) {
+        parsedstartTime = parse(data.formattedData[r].startTime, 'h:mm a', new Date());
+        parsedendTime = parse(data.formattedData[r].endTime, 'h:mm a', new Date());
 
-    //   }
-    //   assigninfo = {
-    //     created_by: data.created_by,
-    //     start_time: parsedstartTime,
-    //     end_time: parsedendTime,
-    //     created_at: data.userTime,
-    //     assign_at: date,
-    //     assignpatternId: insertassignemployee['assign_id'],
-    //     workmode: workmode,
-    //     pattern_round: repetitions
-    //   }
+      }
+      assigninfo = {
+        created_by: data.created_by,
+        start_time: parsedstartTime,
+        end_time: parsedendTime,
+        created_at: data.userTime,
+        assign_at: date,
+        assignpatternId: insertassignemployee['assign_id'],
+        workmode: workmode,
+        pattern_round: repetitions
+      }
 
-    //   dataofassigninfo.push(assigninfo);
-    // }
+      dataofassigninfo.push(assigninfo);
+    }
     const rangedArray = dataofassigninfo.slice(0, patternDays);
 
-    const response11 = await this.transactionService.transactionforinsertworkpattern(EmployeeAssignWorkPatternInfo, MasterEmployeeAssignWorkPatternInfo, EmployeeAssignWorkPatternHistory, EmployeeAssignWorkPattern, dataofassigninfo, rangedArray, historyData, findexistdata, convertdatestring)
+    const response11 = await this.transactionService.transactionforinsertworkpattern(EmployeeAssignWorkPatternInfo, MasterEmployeeAssignWorkPatternInfo, EmployeeAssignWorkPatternHistory, EmployeeAssignWorkPattern, dataofassigninfo, rangedArray, historyData, findexistdata, convertdatestring,data.availabilityfuturepattern,findcurrentdata)
     if (response11 == 200) {
       return 200;
     } else {
