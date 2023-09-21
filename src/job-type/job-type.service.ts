@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateJobTypeDto } from './create-job-type.dto';
 import { UpdateJobTypeDto } from './update-job-type.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,8 +15,18 @@ export class JobTypeService {
 
   async create(createJobTypeDto) {
     const jobTypeDetails = this.jobTypeRepository.create(createJobTypeDto);
-    await this.jobTypeRepository.save(createJobTypeDto);
-    return jobTypeDetails;
+    const response =await this.jobTypeRepository.save(createJobTypeDto);
+    if (response) {
+      return {
+        statusCode: HttpStatus.OK,
+        message: 200,
+      };
+    } else {
+      return {
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: 500,
+      };
+    }
    
   }
 

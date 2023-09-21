@@ -23,6 +23,9 @@ export class JobType {
     id: number;
 
     @Column("varchar", { nullable: true , length: 30 ,default: () => null })
+    jobTypeName: string;
+
+    @Column("varchar", { nullable: true , length: 30 ,default: () => null })
     shortCode: string;
 
     @Column("varchar", { nullable: true , length: 30 ,default: () => null })
