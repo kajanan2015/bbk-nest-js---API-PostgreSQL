@@ -6,8 +6,8 @@ import { EmployeeAssignWorkPattern } from './assign_work_pattern/employee-assign
 
 
 export enum WorkType {
-    WITHTIME = "with time",
-    WITHOUTTIME = "without time"
+    WITHTIME = "With time",
+    WITHOUTTIME = "Without time"
   }
 export enum WorkPatternType{
     WEEK="default 7 day pattern",
@@ -33,7 +33,7 @@ export class CompanyWorkPattern {
     workPatternCode: string;
 
 
-    @Column("enum", { enum: WorkType, default: WorkType.WITHOUTTIME, comment: "with time/without time" })
+    @Column("enum", { enum: WorkType, default: WorkType.WITHOUTTIME, comment: "With time/Without time" })
     workType: WorkType;
    
     @Column("enum", { enum: WorkPatternType, default: WorkPatternType.WEEK, comment: "default 7 day pattern/more than 7 days/custom pattern" })
