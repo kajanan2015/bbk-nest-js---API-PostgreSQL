@@ -431,6 +431,9 @@ export class EmployeePayrollInfo {
     @Column("int", { name: 'work_days_per_week', nullable: true, default: () => null })
     workDaysPerWeek: number;
 
+    @Column("int", { name: 'work_days_per_week_salary', nullable: true, default: () => null })
+    workDaysPerWeekSalary: number;
+
     @Column("int", { name: 'annual_salary', nullable: true, default: () => null })
     annualSalary: number;
 

@@ -97,6 +97,7 @@ export class CreateEmployeeModuleDto {
     slryRatePerDay: number;
     shiftHoursPerDay: number;
     workDaysPerWeek: number;
+    workDaysPerWeekSalary: number
     annualSalary:number;
     slryWeekly: number;
     slryOtType: string;
