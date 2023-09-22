@@ -17,7 +17,7 @@ export class TimesheetEmployeeController {
     return this.timesheetEmployeeService.findAll();
   }
 
-  @Get('timesheet-employee_get/:id')
+  @Post('timesheet-employee_get/:id')
   async finddata(@Param('id') id,@Body() data) {
     const start_date=data.start_date;
     const end_date=data.end_date
