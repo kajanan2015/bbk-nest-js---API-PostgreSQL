@@ -40,7 +40,7 @@ async findemployee(companyid,start_date,end_date){
     .innerJoin('employee.assignworkpattern', 'assignworkpattern') // Assuming there is a workpattern relation
     .andWhere('linkedEmployee.startDate <= :date', { date })
     .andWhere('linkedEmployee.status = :status', { status: 1 })
-    // .andWhere('linkedEmployee.active = :active', { active: 1 })
+    .andWhere('linkedEmployee.active = :active', { active: 1 })
     .andWhere('company.id = :companyid', { companyid })
     .andWhere('(linkedEmployee.endDate IS NULL OR linkedEmployee.endDate > :date)', { date });
 
