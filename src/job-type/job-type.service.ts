@@ -42,7 +42,18 @@ export class JobTypeService {
 
   async update(id: number, updateJobTypeDto: Partial<JobType>) {
     await this.jobTypeRepository.update({ id }, updateJobTypeDto);
-    return await this.jobTypeRepository.findOne({ id });
+   const response =   await this.jobTypeRepository.findOne({ id });
+   if (response) {
+    return {
+      statusCode: HttpStatus.OK,
+      message: 200,
+    };
+  } else {
+    return {
+      statusCode: HttpStatus.BAD_REQUEST,
+      message: 500,
+    };
+  }
   }
 
   remove(id: number) {
