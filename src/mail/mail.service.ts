@@ -53,8 +53,6 @@ async verifypaymentdetailstokendecode(key){
 
     const token = jwt.sign(payload,process.env.passwordresetemailkey, { expiresIn: "5m" }); // Set expiration to 24 hours
     let link = base_url +'reset-password?token='+ token;
-    console.log(token,343)
-    console.log(link,232323233)
     await this.mailerService.sendMail({
       to: accountemail.trim(),
       from: "noreply@hexagonasia.com", // override default from

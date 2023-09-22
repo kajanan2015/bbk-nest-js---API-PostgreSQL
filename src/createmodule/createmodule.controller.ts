@@ -23,7 +23,6 @@ export class CreatemoduleController {
       modulecreate:createCreatemoduleDto.userId,
       status:1
     }
-    console.log(data,67890)
     return this.createmoduleService.create(data);
   }
 
@@ -49,7 +48,6 @@ export class CreatemoduleController {
   @Patch(':id')
   @UseInterceptors(AnyFilesInterceptor())
   async update(@Param('id') id: string, @UploadedFiles() moduleImg, @Body() updateCreatemoduleDto: UpdateCreatemoduleDto) {
-    console.log(updateCreatemoduleDto,8888);
     const currentDateTime = new Date(); // Current date and time
     let data={
       ...updateCreatemoduleDto,
@@ -65,7 +63,6 @@ export class CreatemoduleController {
         ...data,
         modulelogo:modulelogo[0]
       }
-      console.log(data,67890)
     }
     // console.log(data,67890)
     return this.createmoduleService.update(+id, data);

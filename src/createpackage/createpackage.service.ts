@@ -49,8 +49,6 @@ export class CreatepackageService {
   }
 
   async update(id: number, updateCreatepackageDto) {
-    console.log(updateCreatepackageDto, 88889)
-    console.log(id, 818889)
     const currentDateTime = new Date(); // Current date and time
     const updateexistpackage = {
       enddate: currentDateTime,
@@ -96,7 +94,6 @@ export class CreatepackageService {
         CostPerRecord: value.details.costPerRecord,
         PackagePrice: value.details.packagePrice,
       }
-      console.log(detailsdata, 8998)
       await this.moduledetailspackageservice.create(detailsdata)
     }
     if (packageresponse) {

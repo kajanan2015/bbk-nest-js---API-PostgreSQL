@@ -17,7 +17,6 @@ export class CompanyPaymentService {
     private companyRepository: Repository<CompaniesEntity>
   ) { }
   async create(createCompanyPaymentDto) {
-    console.log(createCompanyPaymentDto,98989)
    
     const paymentlinkinsert=await this.companyPaymentRepository.create(createCompanyPaymentDto)
     const paymentlinksave=await this.companyPaymentRepository.save(paymentlinkinsert)
