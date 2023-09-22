@@ -14,8 +14,8 @@ export class JobTypeService {
   ) {}
 
   async create(createJobTypeDto) {
-    const jobTypeDetails = this.jobTypeRepository.create(createJobTypeDto);
-    const response =await this.jobTypeRepository.save(createJobTypeDto);
+    const jobTypeDetails = await this.jobTypeRepository.create(createJobTypeDto);
+    const response =await this.jobTypeRepository.save(jobTypeDetails);
     if (response) {
       return {
         statusCode: HttpStatus.OK,
@@ -32,7 +32,7 @@ export class JobTypeService {
 
   async findAll() {
     return await this.jobTypeRepository.find(
-      { where: { jobtypestatus: 1 } }
+      
     );
     }
 
