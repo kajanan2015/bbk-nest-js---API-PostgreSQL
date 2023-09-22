@@ -141,7 +141,6 @@ export class EmployeeModuleController {
 
   @Get('payroll-info/:id')
   async getEmployeePayrollData(@Param('id') id: string) {
-    console.log('dsfggg');
     const employeePayrollData = await this.employeeModuleService.findEmployeePayrollData(+id);
     return {
       statusCode: HttpStatus.OK,

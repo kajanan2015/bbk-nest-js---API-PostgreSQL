@@ -82,7 +82,6 @@ export class CompanyUserRoleService {
   }
 
   async update(id: number, data) {
-    console.log(data,123123)
     if (data.userEmail) {
       const existing = await this.userservice.findByEmailexist(data.userEmail);
       if (existing) {

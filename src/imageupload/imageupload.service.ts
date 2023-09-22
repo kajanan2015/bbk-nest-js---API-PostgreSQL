@@ -31,7 +31,6 @@ export class ImageUploadService {
       s3.upload(params, async (err, data) => {
         if (err) {
 
-          console.log(err , 888);
 
           Logger.error(err);
           reject(err.message);
@@ -53,7 +52,6 @@ async deletedoc(data){
      Bucket: 'intaap',
      Key: objectKey,
    };
- console.log(params,232323)
    // Call the deleteObject method to delete the file
    await s3.deleteObject(params).promise();
 }
@@ -208,7 +206,6 @@ async deletedoc(data){
   }
 
   async  uploadThumbnailToS3(imageUrl){
-    console.log(imageUrl,9090)
     const s3 = this.getS3();
     const image = await sharp(await fetch(imageUrl).then(res => res.buffer()));
     const thumbnail = await image.resize({ width: 50, height: 50, fit: 'inside' }).toBuffer();
@@ -219,7 +216,6 @@ async deletedoc(data){
       Body: thumbnail,
     };
     const { Location } = await s3.upload(uploadParams).promise();
-    console.log(Location,9090)
     return Location;
   }
   
