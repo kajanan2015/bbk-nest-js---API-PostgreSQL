@@ -30,7 +30,7 @@ export class Createmodule {
     @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
     createdat: Date;
   
-    @Column("timestamp", { name: "updatedat", default: () => null })
+    @Column("timestamp", { name: "updatedat", default: () => null,nullable:true })
     updatedat: Date;
 
 
