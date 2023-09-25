@@ -5,7 +5,7 @@ import { Employee } from 'src/employee-module/employee-module.entity';
 import { SelectQueryBuilder, getConnection } from 'typeorm';
 import { AssignWorkPatternSatatus } from 'src/company-work-pattern/assign_work_pattern/employee-assign-work-pattern.entity';
 import { AssignWorkPatternInfoSatatus } from 'src/company-work-pattern/assign_work_pattern/employee-assign-work-pattern.entity';
-const { parse, format, addYears, endOfDay, getDayOfYear, addMonths, parseISO } = require('date-fns');
+const { parse, format, addYears, endOfDay, getDayOfYear, addMonths, parseISO,parseDate } = require('date-fns');
 
 
 @Injectable()
@@ -20,16 +20,31 @@ export class TimesheetEmployeeService {
 
  async finddata(companyid,start_date,end_date) {
       const employee= await this.findemployee(companyid,start_date,end_date)
-    // return employee;
-    let employee_data=[]
+    
+    let employee_data=[];
+    let employee_assignworkpattern=[];
     let loopdata  
     for(const i of employee){
-        loopdata={
-          employeeId:i.id,
-          employeeCode:i.employeeCode,
-          nickName:i.linkedEmployee[0]?.nickName,
-        }
-        employee_data.push(loopdata)  
+      loopdata={
+        employeeId:i.id,
+        employeeCode:i.employeeCode,
+        nickName:i.linkedEmployee[0]?.nickName,
+      }
+
+      for(const l of i.assignworkpattern){
+         for(const k of l.assignworkpatterninfo){
+          let loopdatanew={
+              start_time:k.start_time,
+              end_time:k.end_time,
+              assign_at:k.assign_at,
+              workmode:k.workmode
+          }
+          employee_assignworkpattern.push(loopdatanew)
+         }  
+
+      }
+        loopdata.workpatterninfo=employee_assignworkpattern;
+        employee_data.push(loopdata);
     }
     return employee_data
   }
@@ -58,10 +73,10 @@ async findemployee(companyid,start_date,end_date){
     // .andWhere('linkedEmployee.active = :active', { active: 1 })
     .andWhere('company.id = :companyid', { companyid })
     .andWhere('(linkedEmployee.endDate IS NULL OR linkedEmployee.endDate > :date)', { date })
-    // .andWhere('assignworkpatterninfo.assign_at BETWEEN :start AND :end', {
-    //   start: startdateformatted,
-    //   end: endeddateformatted,
-    // });
+    .andWhere('assignworkpatterninfo.assign_at BETWEEN :start AND :end', {
+      start: date,
+      end: enddateconverted,
+    });
 
   const data= await query.getMany();
     
