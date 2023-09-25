@@ -29,6 +29,7 @@ import { CompanyUserRole } from 'src/company-user-role/company-user-role.entity'
 import { RoleCompany } from 'src/user/role/role_company.entity';
 import { CompanyWiseThemeCustomize } from 'src/company-wise-theme-customize/company-wise-theme-customize.entity';
 import { JobType } from 'src/job-type/job-type.entity';
+import { Bank } from 'src/employee-module/bank/bank.entity';
 export enum Companyidentifier {
   MAIN = 'maincompany',
   SUB = 'subcompany'
@@ -155,6 +156,8 @@ export class CompaniesEntity {
   @OneToMany(() => JobType, jobTypeName => jobTypeName.company, ({ cascade: true }))
   jobTypeName: JobType[];
 
+  @OneToMany(() => Bank, bank => bank.company)
+  banks: Bank[];
 }
 
 @Entity('company_info')

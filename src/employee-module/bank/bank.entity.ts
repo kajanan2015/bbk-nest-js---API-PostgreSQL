@@ -1,5 +1,6 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { EmployeeInfo } from '../employee-module.entity';
+import { CompaniesEntity } from 'src/companies/companies.entity';
 
 @Entity('bank')
 export class Bank {
@@ -20,4 +21,9 @@ export class Bank {
 
     @Column({ type: 'boolean', default: true })
     status: boolean;
+
+    @ManyToOne(() => CompaniesEntity, company => company.banks)
+    @JoinColumn({ name: "companyId" })
+    company: CompaniesEntity;
+
 }
