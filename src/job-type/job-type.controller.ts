@@ -13,7 +13,6 @@ export class JobTypeController {
   
   @Post()
   async create(@Body() createJobTypeDto){
-    console.log(createJobTypeDto,111111)
     return await this.jobTypeService.create(createJobTypeDto);
   }
 
