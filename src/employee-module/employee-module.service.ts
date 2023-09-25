@@ -289,7 +289,8 @@ export class EmployeeModuleService {
     const existingBank = await this.bankRepository.findOne({
       where: [
         { bankName: bank.bankName },
-        { sortCode: bank.sortCode }
+        { sortCode: bank.sortCode },
+        { company: bank.companyId }
       ]
     });
     if (existingBank) {
@@ -335,8 +336,8 @@ export class EmployeeModuleService {
     return paymentFrequencyTypeList;
   }
 
-  async getBank() {
-    const bankTypeList = await this.bankRepository.find();
+  async getBank(companyId) {
+    const bankTypeList = await this.bankRepository.find({ where: { company: companyId } });
     return bankTypeList;
   }
 

@@ -87,9 +87,9 @@ export class EmployeeModuleController {
       paymentFrequencyTypeList
     };
   }
-  @Get('/bank')
-  async getBank() {
-    const bankTypeList = await this.employeeModuleService.getBank();
+  @Get('/bank/:companyId')
+  async getBank(@Param('companyId') companyId) {
+    const bankTypeList = await this.employeeModuleService.getBank(+companyId);
     return {
       statusCode: HttpStatus.OK,
       bankTypeList
