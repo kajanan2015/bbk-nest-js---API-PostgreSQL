@@ -142,10 +142,10 @@ export class Transactionservicedb {
   // transaction for insert 2 years record of work pattern assign info
   @Transaction()
   async transactionforinsertworkpattern(assigninfotable, mastertable, historyTable, patterntable,
-    data, masterdata, historyData, existpatterndata,startdate, @TransactionManager() manager?: any,
+    data, masterdata, historyData, existpatterndata,startdate,availabilityfuturepattern,findcurrentdata, @TransactionManager() manager?: any,
   ) {
     try {
-
+if(!availabilityfuturepattern){
       if (existpatterndata.length > 0) {
         for(const i of existpatterndata){
           let date=new Date();
@@ -170,13 +170,34 @@ export class Transactionservicedb {
         );
         await manager.update(patterntable,{assign_id:i.assign_id},{ended_at:formattedPreviousDate,updated_at:date,updated_by:1})
         }
-
-
-
-
      
       }
-      
+    }else{
+if(findcurrentdata.length>0){
+  let date=new Date();
+  let previousDate = sub(startdate, {
+    days: 1,
+  });
+  let formattedPreviousDate = format(previousDate, 'yyyy-MM-dd'); // Change the format as needed
+  let allRecords = await manager.findOne(assigninfotable, {
+    where: {
+      assignpatternId: findcurrentdata.assign_id,
+      assign_at:LessThanOrEqual(startdate)
+    },
+    order: {
+      assign_at: 'ASC', // Specify 'ASC' for ascending order
+    },
+  });
+// update status column
+     await manager.update(
+      assigninfotable, // Replace with your entity type
+  { assign_pattern_info_id: MoreThanOrEqual(allRecords.assign_pattern_info_id),assign_at:MoreThanOrEqual(startdate),status:AssignWorkPatternInfoSatatus.ACTIVE}, // Replace with your criteria
+  { status: AssignWorkPatternInfoSatatus.INACTIVE }, // Replace with the new status value
+);
+await manager.update(patterntable,{assign_id:findcurrentdata.assign_id},{ended_at:formattedPreviousDate,updated_at:date,updated_by:1})
+
+}
+    }
 
       const createresponse = await manager.create(assigninfotable, data); // Using merge directly on manager
       await manager.save(assigninfotable, createresponse);

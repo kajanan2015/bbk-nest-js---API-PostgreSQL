@@ -34,7 +34,6 @@ export class EmployeeController {
     @Body() updateEmployeeStatusDto: UpdateEmployeeDto,
     
   ): Promise<void> {
-    console.log(updateEmployeeStatusDto,66666)
     await this.employeeService.updateEmployeeStatus(
       id,
       updateEmployeeStatusDto.status.toString(),

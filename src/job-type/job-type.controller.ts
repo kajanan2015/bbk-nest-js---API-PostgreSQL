@@ -28,7 +28,7 @@ export class JobTypeController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateJobTypeDto: UpdateJobTypeDto) {
+  update(@Param('id') id: string, @Body() updateJobTypeDto) {
     return this.jobTypeService.update(+id, updateJobTypeDto);
   }
 

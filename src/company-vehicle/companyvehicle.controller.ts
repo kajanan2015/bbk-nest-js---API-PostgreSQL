@@ -54,7 +54,6 @@ export class CompanyvehicleController {
       vehicleImg: vehicleImg,
       filesArray: filesArray,
     };
-    console.log(passdata, 123456);
     return this.companyvehicleService.create(passdata);
   }
 

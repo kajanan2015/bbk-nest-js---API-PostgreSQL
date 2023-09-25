@@ -30,7 +30,6 @@ export class MobileAccidentImageController {
     @UseInterceptors(AnyFilesInterceptor())
     async upload(@UploadedFiles() file , @Body() body) {
       const response=await this.imageUploadService.upload(file , body);
-      console.log(response,89898)
       return await this.imageUploadService.upload(file , body);
     }
   @Get()
