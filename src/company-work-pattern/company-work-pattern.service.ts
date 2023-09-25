@@ -253,7 +253,7 @@ console.log(patternRounds,90909)
   }
 
   async assignworkpatterntoemployee(data) {
-    console.log(data, 12345)
+   
     let newdata;
     let assigninfo;
     let workmode;
@@ -270,8 +270,8 @@ console.log(patternRounds,90909)
     const findexistdata = await this.employeeassignrepo.find({ where: { employeeId: data.employeeId, assign_at: LessThanOrEqual(convertdatestring) } })
 
     // to find current assign-info
-    const findcurrentdata = await this.employeeassignrepo.findOne({ where: { employeeId: data.employeeId, assign_at: MoreThanOrEqual(convertdatestring),status:AssignWorkPatternSatatus.ACTIVE },order:{assign_at:"DESC"} })
-
+    const findcurrentdata = await this.employeeassignrepo.findOne({ where: { employeeId: data.employeeId, assign_at: LessThanOrEqual(convertdatestring),status:AssignWorkPatternSatatus.ACTIVE },order:{assign_at:"ASC"} })
+console.log(findcurrentdata,5465445)
 
     // Create a new Date object with the parts (Note: Months in JavaScript are 0-based)
     const startmaindate = new Date(parts[2], parts[1] - 1, parts[0]);
@@ -351,8 +351,7 @@ console.log(patternRounds,90909)
     const patternDays = data.formattedData.length;
     const repetitions = Math.floor(numberOfDaysAfterTwoYears / patternDays);
     const remainingDays = numberOfDaysAfterTwoYears % patternDays;
-console.log(repetitions,65)
-console.log(remainingDays,65)
+
     // Generate records for the pattern repetitions
     for (let r = 0; r < repetitions; r++) {
       let value = 0;
@@ -427,6 +426,7 @@ console.log(remainingDays,65)
     }
     const rangedArray = dataofassigninfo.slice(0, patternDays);
 
+    console.log(convertdatestring,898)
     const response11 = await this.transactionService.transactionforinsertworkpattern(EmployeeAssignWorkPatternInfo, MasterEmployeeAssignWorkPatternInfo, EmployeeAssignWorkPatternHistory, EmployeeAssignWorkPattern, dataofassigninfo, rangedArray, historyData, findexistdata, convertdatestring,data.availabilityfuturepattern,findcurrentdata)
     if (response11 == 200) {
       return 200;

@@ -78,8 +78,7 @@ export class TimesheetEmployeeService {
     const endeddateformatted = format(enddateconverted, 'dd-MM-yyyy')
     const startDateAsDate = parse(startdateformatted, 'dd-MM-yyyy', new Date());
     const endDateAsDate = parse(endeddateformatted, 'dd-MM-yyyy', new Date());
-    console.log(startDateAsDate, 546)
-    console.log(endDateAsDate, 546)
+   
     const query = getConnection()
       .getRepository(Employee)
       .createQueryBuilder('employee')
