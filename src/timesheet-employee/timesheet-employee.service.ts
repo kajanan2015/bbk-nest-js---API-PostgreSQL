@@ -20,7 +20,7 @@ export class TimesheetEmployeeService {
 
  async finddata(companyid,start_date,end_date) {
       const employee= await this.findemployee(companyid,start_date,end_date)
-    
+    // return employee;
     let employee_data=[];
     let employee_assignworkpattern=[];
     let loopdata  
@@ -56,7 +56,10 @@ async findemployee(companyid,start_date,end_date){
     const enddateconverted=new Date(end_date);
     const startdateformatted=format(date,'dd-MM-yyyy')
     const endeddateformatted=format(enddateconverted,'dd-MM-yyyy')
-
+    const startDateAsDate = parse(startdateformatted, 'dd-MM-yyyy', new Date());
+    const endDateAsDate = parse(endeddateformatted, 'dd-MM-yyyy', new Date());
+    console.log(startDateAsDate,546)
+    console.log(endDateAsDate,546)
     const query = getConnection()
     .getRepository(Employee)
     .createQueryBuilder('employee')
@@ -74,8 +77,8 @@ async findemployee(companyid,start_date,end_date){
     .andWhere('company.id = :companyid', { companyid })
     .andWhere('(linkedEmployee.endDate IS NULL OR linkedEmployee.endDate > :date)', { date })
     .andWhere('assignworkpatterninfo.assign_at BETWEEN :start AND :end', {
-      start: date,
-      end: enddateconverted,
+      start: startDateAsDate,
+      end: endDateAsDate,
     });
 
   const data= await query.getMany();
