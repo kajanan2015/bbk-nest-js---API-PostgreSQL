@@ -13,7 +13,7 @@ export class JobTypeController {
   
   @Post()
   async create(@Body() createJobTypeDto){
-    return await this.jobTypeService.create(createJobTypeDto);
+  return await this.jobTypeService.create(createJobTypeDto);
   }
 
   @Get()
