@@ -56,9 +56,9 @@ export class EmployeeModuleController {
     };
   }
 
-  @Get('/employee-type-new')
-  async getEmployeeTypeNew(){
-    const employeeTypeList = await this.employeeModuleService.callYourStoredProcedure(136);
+  @Get('/employee-type-new/:id')
+  async getEmployeeTypeNew(@Param('id') id: number){
+    const employeeTypeList = await this.employeeModuleService.callYourStoredProcedure(id);
     return {
       statusCode: HttpStatus.OK,
       employeeTypeList
