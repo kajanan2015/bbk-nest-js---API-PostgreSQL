@@ -303,6 +303,12 @@ export class EmployeeModuleService {
     return await this.bankRepository.save(res);
   }
 
+  async callYourStoredProcedure(param1: any): Promise<any> {
+    const result = await this.empTypeRepository.query('CALL GetEmployeeTypeBycompany(?)', [param1]);
+    return result;
+}
+
+
   async getEmployeeType() {
     const employeeTypeList = await this.empTypeRepository.find();
     return employeeTypeList;
