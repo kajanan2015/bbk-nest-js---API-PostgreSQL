@@ -357,7 +357,7 @@ export class EmployeeModuleService {
   async getDepartment(companyid) {
 
     const result = await this.departmentRepository.query('CALL  GetDepartmentBycompany (?,?)', [companyid,1]);
-    return result;
+    return result[0];
     // const departmentList = await this.departmentRepository.find();
     // return departmentList;
   }
