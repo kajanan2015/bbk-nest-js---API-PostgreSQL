@@ -317,8 +317,7 @@ export class EmployeeModuleService {
     //const designationList = await this.empDesignationRepository.find();
     const result = await this.empTypeRepository.query('CALL GetDesignationBycompany(?,?)', [138,1]);
 
-    console.log(result[0] , 88888);
-    return result;
+    return result[0];
   }
   async getCompany() {
     const companyList = this.companyRepository.find()
