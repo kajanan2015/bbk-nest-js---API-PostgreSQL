@@ -24,6 +24,7 @@ export class DepartmentsController {
   // find all accident details
   @Get()
   findAll() {
+    
     return this.departmentsService.findAll();
   }
 
@@ -34,7 +35,7 @@ export class DepartmentsController {
   }
 
   // ** Get departments belongs to a company id
-  @Get('one-department/:id')
+  @Get('company-department/:id')
   findDepartments(@Param('id') id: number) {
     return this.departmentsService.findDepartmentsByCompanyId(+id);
   }

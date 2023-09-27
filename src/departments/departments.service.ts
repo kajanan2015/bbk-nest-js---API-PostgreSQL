@@ -49,9 +49,11 @@ export class DepartmentsService {
 
   // ** Get departments belongs to a company id
   async findDepartmentsByCompanyId(id: number) {
-    return await this.departmentRepository.find({
-      where: { companyId: id }
-    })
+    const result = await this.departmentRepository.query('CALL  GetDepartmentBycompany (?,?)', [id,1]);
+    return result;
+    // return await this.departmentRepository.find({
+    //   where: { companyId: id }
+    // })
   }
 
   // ** Update department
