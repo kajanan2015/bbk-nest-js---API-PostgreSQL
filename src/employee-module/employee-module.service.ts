@@ -304,7 +304,7 @@ export class EmployeeModuleService {
   }
 
   async callYourStoredProcedure(param1: any): Promise<any> {
-    const result = await this.empTypeRepository.query('CALL GetEmployeeTypeBycompany(?,?)', [param1,true]);
+    const result = await this.empTypeRepository.query('CALL GetEmployeeTypeBycompany(?,?)', [param1,1]);
     return result;
 }
 
