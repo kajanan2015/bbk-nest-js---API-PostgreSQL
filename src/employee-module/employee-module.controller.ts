@@ -66,9 +66,9 @@ export class EmployeeModuleController {
   }
 
 
-  @Get('/employee-designation')
-  async getDesignation(){
-    const designationList = await this.employeeModuleService.getDesignation();
+  @Get('/employee-designation/:id')
+  async getDesignation(@Param('id') id: number){
+    const designationList = await this.employeeModuleService.getDesignation(id);
     return {
       statusCode: HttpStatus.OK,
       designationList
