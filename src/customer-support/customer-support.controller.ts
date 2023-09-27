@@ -44,7 +44,6 @@ export class CustomerSupportController {
 
   @Put()
   async update(@Body() customerSupportData) {
-    console.log(customerSupportData, 9090)
     const savedData = await this.customerSupportService.update(customerSupportData['data']);
 
     const successResponse = {

@@ -14,8 +14,10 @@ export class JobTypeService {
   ) {}
 
   async create(createJobTypeDto) {
+   
     const jobTypeDetails = await this.jobTypeRepository.create(createJobTypeDto);
     const response =await this.jobTypeRepository.save(jobTypeDetails);
+
     if (response) {
       return {
         statusCode: HttpStatus.OK,
@@ -27,17 +29,14 @@ export class JobTypeService {
         message: 500,
       };
     }
-   
   }
 
   async findAll() {
-    return await this.jobTypeRepository.find(
-      
-    );
+    return await this.jobTypeRepository.find( {relations: ['company','updated_by','created_by']});
     }
 
   async findOne(id: number) {
-    return await this.jobTypeRepository.findOne({ where:{id:id} ,relations: ['company']});
+    return await this.jobTypeRepository.findOne({ where:{id:id} ,relations: ['company','updated_by','created_by']});
   }
 
   async update(id: number, updateJobTypeDto: Partial<JobType>) {

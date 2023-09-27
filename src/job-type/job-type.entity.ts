@@ -37,6 +37,9 @@ export class JobType {
     @Column("enum", { name: "salary_type", enum: Salarytype, default:null, nullable: true, comment: "Add with salary/No pay" })
     salarytype: Salarytype;
 
+    @Column("varchar", { nullable: true , length: 30 ,default: () => null })
+    setRatePerHour: string;
+
     @Column('enum', { name: "jobtype_status", enum: Jobtypestatus, default: Jobtypestatus.ACTIVE, comment: 'active/decativate' })
     jobtypestatus: Jobtypestatus;
 
