@@ -39,9 +39,9 @@ export class EmployeeModuleController {
       visaTypeList
     };
   }
-  @Get('/employee-department')
-  async getDepartment() {
-    const departmentList = await this.employeeModuleService.getDepartment();
+  @Get('/employee-department/:companyid')
+  async getDepartment(@Param('companyid') companyid) {
+    const departmentList = await this.employeeModuleService.getDepartment(companyid);
     return {
       statusCode: HttpStatus.OK,
       departmentList
