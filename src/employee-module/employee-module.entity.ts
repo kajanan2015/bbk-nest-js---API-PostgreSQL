@@ -36,8 +36,8 @@ export enum salaryOtType {
 }
 
 export enum salarySickType {
-    ssp = 'ssp',
-    csp = 'csp',
+    SSP = 'SSP',
+    CSP = 'CSP',
 }
 
 export enum empProvidedForm {
@@ -360,6 +360,12 @@ export class EmployeeInfo {
 
     @Column({ name: 'leave_date', nullable: true, default: () => null })
     leaveDate: Date | null;
+
+    @Column("varchar", { name: 'activate_note', nullable: true, length: 250, default: () => null })
+    activateNote: string | null;
+
+    @Column("varchar", { name: 'deactivate_note', nullable: true, length: 250, default: () => null })
+    deactivateNote: string | null;
 
     // @Column({ name: 'former', type: 'boolean', default: false })
     // former: boolean;

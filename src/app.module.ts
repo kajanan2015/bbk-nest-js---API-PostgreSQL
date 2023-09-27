@@ -51,6 +51,7 @@ import { CompanyvehicleModule } from "./company-vehicle/companyvehicle.module";
 import { CompanyWiseThemeCustomizeModule } from './company-wise-theme-customize/company-wise-theme-customize.module';
 import { JobTypeModule } from './job-type/job-type.module';
 import { TimesheetEmployeeModule } from './timesheet-employee/timesheet-employee.module';
+import { CompanyDutyTypeModule } from './company-duty-type/company-duty-type.module';
 
 
 
@@ -107,7 +108,8 @@ const settings = require("../ormconfig.js");
     CompanyvehicleModule,
     CompanyWiseThemeCustomizeModule,
     JobTypeModule,
-    TimesheetEmployeeModule
+    TimesheetEmployeeModule,
+    CompanyDutyTypeModule
   ],
   controllers: [AppController],
   providers: [AppService],

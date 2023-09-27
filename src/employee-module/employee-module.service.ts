@@ -543,6 +543,9 @@ export class EmployeeModuleService {
             } else if (docType == "visaDoc[]") {
               empExsistDocRow = await this.employeedocumentservice.findOne(+existingEmployee.id, 'visaDoc')
             }
+            else if (docType == "leaveDoc[]") {
+              empExsistDocRow = await this.employeedocumentservice.findOne(+existingEmployee.id, 'leaveDoc')
+            }
             if (empExsistDocRow) {
               const empdocs = []
               for (const url in docUrls as {}) {
@@ -557,7 +560,7 @@ export class EmployeeModuleService {
               await this.employeedocumentservice.create(empdocs)
             }
           } else if (docType == "contractDoc[]" || docType == "offerLetterDoc[]" ||
-            docType == "refdoc[]" || docType == "drivingLicenceDoc[]" || docType == "tachoDoc[]"
+            docType == "refdoc[]" || docType == "drivingLicenceDoc[]" || docType == "tachoDoc[]" 
             || docType == "cpcCardDoc[]" || docType == "crbCardDoc[]") {
             console.log(docType)
             const empdocs = []
@@ -617,12 +620,12 @@ export class EmployeeModuleService {
   }
 
   async updateWithHistory(id: string, UpdateEmployeeModuleDto) {
-
+    console.log(UpdateEmployeeModuleDto, 699)
 
     let data = {
       ...UpdateEmployeeModuleDto.data
     }
-
+    console.log(data, 11111)
 
     // ** shedule start date
     const str_date = new Date(UpdateEmployeeModuleDto.start_date)
@@ -683,7 +686,7 @@ export class EmployeeModuleService {
     }
 
     // ** remove docs
-    let { deletedCategories, department, visaDoc, drivingLicenceCategory, tachoDoc, officialDoc, drivingLicenceDoc, cpcCardDoc, crbCardDoc, refdoc, empProvidedCopy, ...dataWithoutDoc } = data
+    let { deletedCategories, department, visaDoc, drivingLicenceCategory, tachoDoc, officialDoc, drivingLicenceDoc, cpcCardDoc, crbCardDoc, refdoc, empProvidedCopy, leaveDoc, ...dataWithoutDoc } = data
     if (employeeHistoryId) {
       const previousRecord = await this.employeedatahistoryrepo.findOne({
         where: {
@@ -899,7 +902,7 @@ export class EmployeeModuleService {
         }
       }
     }
-
+    console.log(UpdateEmployeeModuleDto, 130)
     // ** get employee documents
     const documents = UpdateEmployeeModuleDto['filenames'];
 
@@ -925,6 +928,8 @@ export class EmployeeModuleService {
         docType = "cpcCardDoc";
       } else if (item.hasOwnProperty("crbCardDoc") || item.hasOwnProperty("crbCardDoc[]")) {
         docType = "crbCardDoc";
+      } else if (item.hasOwnProperty("leaveDoc") || item.hasOwnProperty("leaveDoc[]")) {
+        docType = "leaveDoc";
       }
 
       // ** deactivate previous documents
@@ -937,6 +942,7 @@ export class EmployeeModuleService {
         .execute();
     }
 
+    console.log(data, 122)
     // ** create employee document records
     if (documents.length > 0) {
       for (let document in documents) {
@@ -1126,11 +1132,11 @@ export class EmployeeModuleService {
       newdata.push(passdata)
     }
 
-    // const results = newdata.filter(function (row) {
-    //   return Math.floor(new Date(row.leaveDate).getTime() / 86400000) > Math.floor(new Date().getTime() / 86400000) || row.leaveDate == null
-    // })
-
-    return newdata;
+    const results = newdata.filter(function (row) {
+      return Math.floor(new Date(row.leaveDate).getTime() / 86400000) > Math.floor(new Date().getTime() / 86400000) || row.leaveDate == null
+    })
+    return results;
+    // return newdata;
   }
 
   async findCompanyFormerEmployees(companyid: number) {

@@ -46,7 +46,6 @@ export class CreateEmployeeModuleDto {
     officialDocNo: string;
     officialDocIssueDate: Date;
     officialDocExpireDate: Date;
-    //visaType: string;
     visaType: VisaType[];
     visaNo: string;
     visaIssueDate: Date;
@@ -107,6 +106,8 @@ export class CreateEmployeeModuleDto {
     slrySickRate: number;
     paymentFrequency: PaymentFrequency[];
     leaveDate: Date;
+    activateNote: string;
+    deactivateNote: string;
     former: boolean;
     addedBy:User[];
     driverLicenceCategory: DrivingLicenceCategory[];
