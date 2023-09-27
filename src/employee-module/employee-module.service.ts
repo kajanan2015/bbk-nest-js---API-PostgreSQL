@@ -67,7 +67,7 @@ export class EmployeeModuleService {
     @InjectRepository(DrivingLicenceCategory)
     private readonly dlCategoryRepository: Repository<DrivingLicenceCategory>,
     @InjectRepository(Department)
-    private readonly deparmentRepository: Repository<Department>,
+    private readonly departmentRepository: Repository<Department>,
     @InjectRepository(DrivingLicenceCategoryEmployee)
     private readonly dlCategoryEmployeeRepository: Repository<DrivingLicenceCategoryEmployee>,
     @InjectRepository(EmployeeDepartments)
@@ -354,10 +354,14 @@ export class EmployeeModuleService {
     return getDrivingLicenceCategory;
   }
 
-  async getDepartment() {
-    const departmentList = await this.deparmentRepository.find();
-    return departmentList;
+  async getDepartment(companyid) {
+
+    const result = await this.departmentRepository.query('CALL  GetDepartmentBycompany (?,?)', [companyid,1]);
+    return result;
+    // const departmentList = await this.departmentRepository.find();
+    // return departmentList;
   }
+
 
   async generateemployeeid(id) {
     const individualcompany = await this.companyservice.read(id)
