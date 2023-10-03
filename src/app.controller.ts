@@ -10,4 +10,12 @@ export class AppController {
   getProfile(@Req() req: Request) {
     return req.user;
   }
+
+  @Get('/test')
+  test(@Req() req: Request) {
+    return {
+      statusCode: 200,
+      message: 'Company updated successfully',
+    };
+  }
 }

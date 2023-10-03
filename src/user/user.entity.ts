@@ -1,110 +1,244 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { PermissionRoleEntity } from 'src/permission-role/permission-role.entity';
+import { TripEntity } from 'src/trip/trip.entity';
+import { CompaniesEntity } from 'src/companies/companies.entity';
+import { CompaniesEntityinfo } from 'src/companies/companies.entity';
+import { CompaniesHistorydata } from 'src/companies/companies.entity';
+import { Createmodule } from 'src/createmodule/createmodule.entity';
+import { Createpackage } from 'src/createpackage/createpackage.entity';
+import { CompanyPayment } from 'src/company-payment/company-payment.entity';
+import { Employee, EmployeeInfo } from 'src/employee-module/employee-module.entity';
+import { CustomizeTable } from 'src/customize-table/customize-table.entity';
+import { EmployeeDataHistory } from 'src/employee-data-history/employee-data-history.entity';
+import { CompanyWorkPattern } from 'src/company-work-pattern/company-work-pattern.entity';
+import { EmployeeDocument } from 'src/employee-document/employee-document.entity';
+import { CompanyDocument } from 'src/company-document/company-document.entity';
+import { CustomerSupport, CustomerSupportDetails, CustomerSupportHistory } from 'src/customer-support/customer-support.entity';
+import { Department } from 'src/departments/department.entity';
+import { Companypackagerow } from 'src/companypackagerow/companypackagerow.entity';
+import { Companypackageassignhistory } from 'src/companypackagerow/companypackagerow.entity';
+import { PaymentLinkData } from 'src/payment/payment_link_otp/payment_link.entity';
+import { EmployeeAssignWorkPattern } from 'src/company-work-pattern/assign_work_pattern/employee-assign-work-pattern.entity';
+import { EmployeeAssignWorkPatternInfo } from 'src/company-work-pattern/assign_work_pattern/employee-assign-work-pattern.entity';
+import { RoleCompany } from './role/role_company.entity';
+import { OperationRoleCompany } from './role/role_operation/role_company_operation.entity';
+import { CompanyWiseThemeCustomize } from 'src/company-wise-theme-customize/company-wise-theme-customize.entity';
+import { JobType } from 'src/job-type/job-type.entity';
 @Entity()
-export class User  {
+export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 500 })
-  name: string;
+  @Column({ nullable: true, length: 250, default: () => null })
+  firstName: string | null;
 
-  @Column({ length: 500 })
-  email: string;
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
+  middleName: string;
 
-  @Column({ length: 500 })
-  password: string;
+  @Column({ nullable: true, length: 250, default: () => null })
+  lastName: string | null;
 
-  @Column("varchar", { name: "bisDis", nullable: true , length: 100 })
-  bisDis: string | null;
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
+  employeeNumber: string | null;
 
-  @Column("varchar", { name: "bisName", nullable: true , length: 100 })
-  bisName: string | null;
+  @Column({ nullable: true, default: () => null })
+  dob: Date | null;
 
-  @Column("varchar", { name: "bisLoc", nullable: true , length: 100 })
-  bisLoc: string | null;
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
+  address: string | null;
 
-  @Column("varchar", { name: "notDis", nullable: true , length: 10 })
-  notDis: string | null;
+  @Column({ nullable: true, length: 250, default: () => null })
+  email: string | null;
 
-  @Column("varchar", { name: "phone", nullable: true , length: 30 })
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
   phone: string | null;
 
-  @Column("varchar", { name: "contactmethod", nullable: true , length: 10 })
-  contactmethod: string | null;
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
+  nationality: string | null;
 
-  @Column("varchar", { name: "telephone", nullable: true , length: 20 })
-  telephone: string | null;
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
+  country: string | null;
 
-  @Column("varchar", { name: "arn", nullable: true , length: 30 })
-  arn: string | null;
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
+  profilePic: string | null;
 
-  @Column("varchar", { name: "burl", nullable: true , length: 100 })
-  burl: string | null;
+  @Column("varchar", { nullable: true, length: 250, default: () => null })
+  profilePicThumb: string | null;
 
-  @Column("varchar", { name: "rbisName", nullable: true , length: 50 })
-  rbisName: string | null;
+  @Column({ nullable: true, length: 250, default: () => null })
+  password: string | null;
 
-  @Column("varchar", { name: "fburl", nullable: true , length: 100 })
-  fburl: string | null;
+  @Column("varchar", { name: "utype", default: () => "'USER'", length: 50 })
+  uType: string | null;
 
-  @Column("varchar", { name: "twitterurl", nullable: true , length: 100 })
-  twitterurl: string | null;
+  @Column({ type: 'boolean', default: true })
+  status: Boolean | null;
 
-  @Column("varchar", { name: "linkedinurl", nullable: true , length: 100 })
-  linkedinurl: string | null;
+  @Column("timestamp", { name: "createdat", default: () => "CURRENT_TIMESTAMP" })
+  createdat: Date | null;
 
-  @Column("varchar", { name: "instagramurl", nullable: true , length: 100 })
-  instagramurl: string | null;
+  @Column("timestamp", { name: "updatedat", default: () => "CURRENT_TIMESTAMP" })
+  updatedat: Date | null;
 
-  @Column("varchar", { name: "mondaystart", nullable: true , length: 10 })
-  mondaystart: string | null;
+  @ManyToMany(() => PermissionRoleEntity, (role) => role.employees)
+  @JoinTable()
+  roles: PermissionRoleEntity[];
 
-  @Column("varchar", { name: "mondayclose", nullable: true , length: 10 })
-  mondayclose: string | null;
+  @OneToMany(() => TripEntity, trip => trip.jobuser, { cascade: true })
+  jobdata: TripEntity[]
 
-  @Column("varchar", { name: "tuesdaystart", nullable: true , length: 10 })
-  tuesdaystart: string | null;
+  @ManyToMany(() => CompaniesEntity, company => company.users)
+  companies: CompaniesEntity[];
 
-  @Column("varchar", { name: "tuesdayclose", nullable: true , length: 10 })
-  tuesdayclose: string | null;
+  @ManyToMany(() => Department, department => department.users)
+  departments: Department[];
+
+  @OneToMany(() => Createmodule, cretedby => cretedby.modulecreate, { cascade: true })
+  modulecreatedby: Createmodule[];
+
+  @OneToMany(() => Createmodule, updatedby => updatedby.moduleupdate, { cascade: true })
+  moduleupdateby: Createmodule[];
+
+  @OneToMany(() => Createpackage, cretedby => cretedby.pkgcreate, { cascade: true })
+  pkgcreatedby: Createpackage[];
+
+  @OneToMany(() => Createpackage, updatedby => updatedby.pkgupdate, { cascade: true })
+  pkgupdateby: Createpackage[];
+
+  @OneToMany(() => CompanyPayment, updatedby => updatedby.issuedBy, { cascade: true })
+  issueByuser: CompanyPayment[];
+
+  @OneToMany(() => Employee, employee => employee.created_by, { cascade: true })
+  empCreatedUser: Employee[];
+
+  @OneToMany(() => Employee, employee => employee.updated_by, { cascade: true })
+  empUpdatedUser: Employee[];
+
+  @OneToMany(() => EmployeeInfo, employee => employee.created_by, { cascade: true })
+  empInfoCreatedUser: EmployeeInfo[];
+
+  @OneToMany(() => EmployeeInfo, employee => employee.updated_by, { cascade: true })
+  empInfoUpdatedUser: EmployeeInfo[];
+
+  @OneToMany(() => CustomizeTable, customizeTable => customizeTable.user, { cascade: true })
+  tableUser: CustomizeTable[];
+
+  // @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.editedBy,{cascade:true})
+  // empEditedUser:CustomizeTable[];
+
+  @OneToMany(() => EmployeeDataHistory, empDataHistory => empDataHistory.updated_by, { cascade: true })
+  empHistoryUpdatedBy: EmployeeDataHistory[];
+
+  @OneToMany(() => EmployeeDataHistory, empDataHistory => empDataHistory.created_by, { cascade: true })
+  empHistoryCreatedBy: EmployeeDataHistory[];
+
+  @OneToMany(() => EmployeeDocument, document => document.created_by, { cascade: true })
+  empDocEditedUser: EmployeeDocument[];
+
+  // @OneToMany(()=>EmployeeDataHistory, empDataHistory => empDataHistory.createdBy,{cascade:true})
+  // empCreatedUser:CustomizeTable[];
+
+  @Column({ type: 'boolean', default: false })
+  activate: Boolean | null;
+
+  @Column("timestamp", { name: "activated_time", nullable: true, default: () => null })
+  activated_time: Date | null;
+
+  @Column({ type: 'boolean', default: false })
+  firsttimepasswordchange: Boolean | null;
 
 
-  @Column("varchar", { name: "wednesdaystart", nullable: true , length: 10 })
-  wednesdaystart: string | null;
-  @Column("varchar", { name: "wednesdayclose", nullable: true , length: 10 })
-  wednesdayclose: string | null;
+  @OneToMany(() => CompanyWorkPattern, cretedby => cretedby.patterncreate, { cascade: true })
+  patterncreateby: CompanyWorkPattern[];
 
+  @OneToMany(() => CompanyWorkPattern, updatedby => updatedby.patternupdate, { cascade: true })
+  patternupdatedby: CompanyWorkPattern[];
 
-  @Column("varchar", { name: "thursdaystart", nullable: true , length: 10 })
-  thursdaystart: string | null;
-  @Column("varchar", { name: "thursdayclose", nullable: true , length: 10 })
-  thursdayclose: string | null;
+  @OneToMany(() => CompaniesEntity, company => company.created_by, { cascade: true })
+  companymainusercreate: CompaniesEntity[];
 
+  @OneToMany(() => CompaniesEntityinfo, company => company.created_by, { cascade: true })
+  companyinfousercreate: CompaniesEntityinfo[];
 
-  @Column("varchar", { name: "fridaystart", nullable: true , length: 10 })
-  fridaystart: string | null;
-  @Column("varchar", { name: "fridayclose", nullable: true , length: 10 })
-  fridayclose: string | null;
+  @OneToMany(() => CompaniesHistorydata, company => company.created_by, { cascade: true })
+  companyhistorycreate: CompaniesHistorydata[];
 
-  @Column("varchar", { name: "saturdaystart", nullable: true , length: 10 })
-  saturdaystart: string | null;
-  @Column("varchar", { name: "saturdayclose", nullable: true , length: 10 })
-  saturdayclose: string | null;
+  @OneToMany(() => CompaniesEntityinfo, company => company.updated_by, { cascade: true })
+  companyinfouserupdate: CompaniesEntityinfo[];
 
+  @OneToMany(() => CompaniesHistorydata, company => company.updated_by, { cascade: true })
+  companyhistoryupdate: CompaniesHistorydata[];
 
-  @Column("varchar", { name: "sundaystart", nullable: true , length: 10 })
-  sundaystart: string | null;
-  @Column("varchar", { name: "sundayclose", nullable: true , length: 10 })
-  sundayclose: string | null;
+  @OneToMany(() => CompanyDocument, company => company.createdBy, { cascade: true })
+  companydocumentcreate: CompanyDocument[];
 
+  @OneToMany(() => CustomerSupportDetails, customerSupport => customerSupport.createdBy, { cascade: true })
+  customersupportdetails: CustomerSupportDetails[];
 
-  @Column("bigint", { name: "packagesId", default: () => "'0'" })
-  packagesId: number;
+  @OneToMany(() => CustomerSupport, customerSupport => customerSupport.assignedBy, { cascade: true })
+  customerSupportAssignedBy: CustomerSupport[];
 
-  @Column("varchar", { name: "utype", default: () => "'USER'", length: 6 })
-  utype: string ;
+  @OneToMany(() => Department, department => department.createdBy, { cascade: true })
+  customersupportCreated: Department[];
 
-  
-  
+  @OneToMany(() => Department, department => department.createdBy, { cascade: true })
+  customersupportUpdated: Department[];
 
+  @OneToMany(() => CustomerSupport, customerSupport => customerSupport.assignedBy, { cascade: true })
+  customerSupportAssignedTo: CustomerSupport[];
+
+  @OneToMany(() => CustomerSupportHistory, company => company.createdBy, { cascade: true })
+  customerSupportCreatedBy: CustomerSupportHistory[];
+
+  @OneToMany(() => CustomerSupportHistory, company => company.updatedBy, { cascade: true })
+  customerSupportUpdatedBy: CustomerSupportHistory[];
+
+  @OneToMany(()=>Companypackagerow, company=>company.created_by,{cascade:true})
+  packageassignuser:Companypackagerow[];
+
+  @OneToMany(()=>Companypackageassignhistory, company=>company.created_by,{cascade:true})
+  companyassignpackagehistorycreate:Companypackageassignhistory[];
+
+  @OneToMany(()=>Companypackageassignhistory, company=>company.updated_by,{cascade:true})
+  companyassignpackagehistoryupdate:Companypackageassignhistory[];
+
+  @OneToMany(()=>PaymentLinkData, paymentdata=>paymentdata.created_by,{cascade:true})
+  companypaymentlinkcreate:PaymentLinkData[];
+
+  @OneToMany(()=>EmployeeAssignWorkPattern, assignpattern=>assignpattern.created_by,{cascade:true})
+  assignworkpatterncreatedby:EmployeeAssignWorkPattern[];
+
+  @OneToMany(()=>EmployeeAssignWorkPattern, assignpattern=>assignpattern.updated_by,{cascade:true})
+  assignworkpatternupdatedby:EmployeeAssignWorkPattern[];
+
+  @OneToMany(()=>EmployeeAssignWorkPatternInfo, assignpattern=>assignpattern.created_by,{cascade:true})
+  assignworkpatterninfocreatedby:EmployeeAssignWorkPatternInfo[];
+
+  @OneToMany(()=>EmployeeAssignWorkPatternInfo, assignpattern=>assignpattern.updated_by,{cascade:true})
+  assignworkpatterninfoupdatedby:EmployeeAssignWorkPatternInfo[];
+
+  @OneToMany(()=>RoleCompany, rolecompany=>rolecompany.created_by,{cascade:true})
+  rolecompanyassignedby:RoleCompany[];
+
+  @OneToMany(()=>RoleCompany, assignpattern=>assignpattern.updated_by,{cascade:true})
+  rolecompanyupdatedby:RoleCompany[];
+
+  @OneToMany(()=>OperationRoleCompany, assignpattern=>assignpattern.created_by,{cascade:true})
+  roleoperationassignedby:OperationRoleCompany[];
+
+  @OneToMany(()=>OperationRoleCompany, assignpattern=>assignpattern.updated_by,{cascade:true})
+  roleoperationupdatedby:OperationRoleCompany[];
+
+  @OneToMany(()=>CompanyWiseThemeCustomize, assignpattern=>assignpattern.created_by,{cascade:true})
+  themedatacreateby:CompanyWiseThemeCustomize[];
+
+  @OneToMany(()=>CompanyWiseThemeCustomize, assignpattern=>assignpattern.updated_by,{cascade:true})
+  themedataupdatedby:OperationRoleCompany[];
+
+  @OneToMany(()=>JobType, assignpattern=>assignpattern.created_by,{cascade:true})
+  jobtypeCreatedBy:JobType[];
+
+  @OneToMany(()=>JobType, assignpattern=>assignpattern.updated_by,{cascade:true})
+  jobtypeUpdatedBy:JobType[];
 }

@@ -1,0 +1,10 @@
+20/04/2023
+ALTER TABLE `employee` CHANGE `typeEmployee` `parentCompanyid` int NULL - added by nuwan
+
+21/04/2023
+`user_companies_company` ( `userId` int(11) NOT NULL, `companyId` int(10) UNSIGNED NOT NULL )
+CREATE TABLE `pagepermission` ( `id` int(10) UNSIGNED NOT NULL, `status` tinyint(4) NOT NULL DEFAULT 1, `createdat` timestamp NOT NULL DEFAULT current_timestamp(), `updatedat` timestamp NOT NULL DEFAULT current_timestamp(), `formname` varchar(30) DEFAULT NULL, `path` varchar(50) DEFAULT NULL, `l1_parent_page_id` int(11) DEFAULT NULL ) 
+
+1/5/2023
+
+ALTER TABLE user ADD profilePic varchar(250);
